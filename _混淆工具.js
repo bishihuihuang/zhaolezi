@@ -105,11 +105,6 @@ const ANTI_CHEAT_CODE = `
         }else{
             _0x2=_0x1.activeElement;
         }
-        // 预读取剪贴板（点击粘贴时同步使用，避免异步延迟）
-        _0x6='';
-        if(navigator.clipboard&&navigator.clipboard.readText){
-            navigator.clipboard.readText().then(function(txt){_0x6=txt;}).catch(function(){});
-        }
         _0x3.style.display='block';
         _0x3.style.left=e.clientX+'px';
         _0x3.style.top=e.clientY+'px';
@@ -156,28 +151,24 @@ const ANTI_CHEAT_CODE = `
             if(isInput||isEditable){
                 // 确保输入框获得焦点
                 el.focus();
-                // 方法1：优先使用浏览器原生execCommand('paste')（最可靠，直接调用系统粘贴）
-                var pasted=false;
-                try{
-                    pasted=_0x1.execCommand('paste');
-                }catch(err){pasted=false;}
-                // 方法2：如果execCommand失败，使用右键时预读取的缓存（同步，立即生效）
-                if(!pasted&&_0x6){
-                    _0x7(el,_0x6);
-                    pasted=true;
-                }
-                // 方法3：如果缓存也为空，实时读取剪贴板（异步）
-                if(!pasted){
-                    if(navigator.clipboard&&navigator.clipboard.readText){
-                        navigator.clipboard.readText().then(function(txt){
-                            if(txt){_0x7(el,txt);}
-                        }).catch(function(){
-                            // 最后回退：再次尝试execCommand
-                            try{_0x1.execCommand('paste');}catch(e){}
-                        });
-                    }else{
-                        try{_0x1.execCommand('paste');}catch(err){}
-                    }
+                // 简化粘贴：直接在用户点击手势中读取剪贴板并插入，确保一次生效
+                if(navigator.clipboard&&navigator.clipboard.readText){
+                    navigator.clipboard.readText().then(function(txt){
+                        if(txt){_0x7(el,txt);}
+                    }).catch(function(){
+                        // 回退：使用临时textarea + execCommand
+                        var ta=_0x1.createElement('textarea');
+                        ta.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;';
+                        _0x1.body.appendChild(ta);
+                        ta.focus();
+                        try{_0x1.execCommand('paste');}catch(e){}
+                        if(ta.value){_0x7(el,ta.value);}
+                        _0x1.body.removeChild(ta);
+                        el.focus();
+                    });
+                }else{
+                    // 不支持clipboard API，使用execCommand
+                    try{_0x1.execCommand('paste');}catch(err){}
                 }
             }
         }else if(a==='refresh'){
