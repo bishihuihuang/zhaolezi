@@ -21,72 +21,116 @@ const TARGET_FILES = ['index.html', ...Array.from({length: 29}, (_, i) => `${i +
 const BACKUP_DIR = '_原始未混淆版';
 
 // 防小白保护代码（会被添加到每个JS开头，然后一起混淆）
-// 自定义右键菜单：保留剪切、复制、粘贴、刷新，其余禁止
+// 自定义右键菜单：保留剪切、复制、粘贴、刷新，其余禁止（功能可靠版）
 const ANTI_CHEAT_CODE = `
 /* 防小白保护开始 */
 (function(){
     var _0x1=document;
+    var _0x2=null; // 记录右键时的焦点元素
     // 创建自定义右键菜单
-    var _0x2=_0x1.createElement('div');
-    _0x2.style.cssText='position:fixed;z-index:9999999;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:5px 0;min-width:100px;display:none;font-family:"Microsoft YaHei",sans-serif;font-size:14px;user-select:none;';
-    _0x2.innerHTML='<div data-a="cut" style="padding:8px 18px;cursor:pointer;color:#333;">剪切</div><div data-a="copy" style="padding:8px 18px;cursor:pointer;color:#333;">复制</div><div data-a="paste" style="padding:8px 18px;cursor:pointer;color:#333;">粘贴</div><div data-a="refresh" style="padding:8px 18px;cursor:pointer;color:#333;">刷新</div>';
-    _0x1.body.appendChild(_0x2);
+    var _0x3=_0x1.createElement('div');
+    _0x3.style.cssText='position:fixed;z-index:9999999;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:5px 0;min-width:100px;display:none;font-family:"Microsoft YaHei",sans-serif;font-size:14px;user-select:none;';
+    _0x3.innerHTML='<div data-a="cut" style="padding:8px 18px;cursor:pointer;color:#333;">剪切</div><div data-a="copy" style="padding:8px 18px;cursor:pointer;color:#333;">复制</div><div data-a="paste" style="padding:8px 18px;cursor:pointer;color:#333;">粘贴</div><div data-a="refresh" style="padding:8px 18px;cursor:pointer;color:#333;">刷新</div>';
+    _0x1.body.appendChild(_0x3);
     // 菜单项hover
-    _0x2.addEventListener('mouseover',function(e){if(e.target.getAttribute('data-a')){e.target.style.background='#f5f5f5';}});
-    _0x2.addEventListener('mouseout',function(e){if(e.target.getAttribute('data-a')){e.target.style.background='';}});
-    // 右键显示自定义菜单
+    _0x3.addEventListener('mouseover',function(e){if(e.target.getAttribute('data-a')){e.target.style.background='#f5f5f5';}});
+    _0x3.addEventListener('mouseout',function(e){if(e.target.getAttribute('data-a')){e.target.style.background='';}});
+    // 可靠的复制到剪贴板函数（带临时textarea回退）
+    function _0x4(text){
+        if(!text){return false;}
+        if(navigator.clipboard&&navigator.clipboard.writeText){
+            navigator.clipboard.writeText(text).catch(function(){});
+            return true;
+        }
+        var ta=_0x1.createElement('textarea');
+        ta.value=text;
+        ta.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;';
+        _0x1.body.appendChild(ta);
+        ta.focus();ta.select();
+        try{_0x1.execCommand('copy');}catch(e){}
+        _0x1.body.removeChild(ta);
+        return true;
+    }
+    // 获取选中文本（兼容输入框和普通文本）
+    function _0x5(el){
+        if(el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA')){
+            var s=el.selectionStart||0,e=el.selectionEnd||0;
+            return el.value.substring(s,e);
+        }
+        return window.getSelection().toString();
+    }
+    // 右键显示自定义菜单，并记录焦点元素
     _0x1.addEventListener('contextmenu',function(e){
         e.preventDefault();
-        _0x2.style.display='block';
-        _0x2.style.left=e.clientX+'px';
-        _0x2.style.top=e.clientY+'px';
-        setTimeout(function(){var r=_0x2.getBoundingClientRect();if(r.right>window.innerWidth){_0x2.style.left=(window.innerWidth-r.width-5)+'px';}if(r.bottom>window.innerHeight){_0x2.style.top=(window.innerHeight-r.height-5)+'px';}},0);
+        var t=e.target;
+        if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)){
+            t.focus();
+            _0x2=t;
+        }else{
+            _0x2=_0x1.activeElement;
+        }
+        _0x3.style.display='block';
+        _0x3.style.left=e.clientX+'px';
+        _0x3.style.top=e.clientY+'px';
+        setTimeout(function(){var r=_0x3.getBoundingClientRect();if(r.right>window.innerWidth){_0x3.style.left=(window.innerWidth-r.width-5)+'px';}if(r.bottom>window.innerHeight){_0x3.style.top=(window.innerHeight-r.height-5)+'px';}},0);
         return false;
     });
     // 隐藏菜单
-    _0x1.addEventListener('click',function(){_0x2.style.display='none';});
-    _0x1.addEventListener('scroll',function(){_0x2.style.display='none';});
-    _0x1.addEventListener('keydown',function(e){if(e.keyCode===27){_0x2.style.display='none';}});
-    // 菜单点击
-    _0x2.addEventListener('click',function(e){
+    _0x1.addEventListener('click',function(){_0x3.style.display='none';});
+    _0x1.addEventListener('scroll',function(){_0x3.style.display='none';});
+    _0x1.addEventListener('keydown',function(e){if(e.keyCode===27){_0x3.style.display='none';}});
+    // 菜单点击（功能可靠实现）
+    _0x3.addEventListener('click',function(e){
         var t=e.target;
         var a=t.getAttribute('data-a');
         if(!a){return;}
-        _0x2.style.display='none';
+        _0x3.style.display='none';
+        var el=_0x2||_0x1.activeElement;
+        var isInput=el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA');
+        var isEditable=el&&el.isContentEditable;
         if(a==='cut'){
-            document.execCommand('cut');
+            var txt=_0x5(el);
+            if(txt){
+                _0x4(txt); // 先复制
+                if(isInput){
+                    var s=el.selectionStart||0,en=el.selectionEnd||0;
+                    el.value=el.value.substring(0,s)+el.value.substring(en);
+                    el.selectionStart=el.selectionEnd=s;
+                    el.dispatchEvent(new Event('input',{bubbles:true}));
+                }else if(isEditable){
+                    try{_0x1.execCommand('delete');}catch(err){}
+                }
+            }
         }else if(a==='copy'){
-            var s=window.getSelection().toString();
-            if(s){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s);}else{document.execCommand('copy');}}
+            var txt=_0x5(el);
+            if(txt){_0x4(txt);}
         }else if(a==='paste'){
-            // 优先尝试现代API，失败则回退到execCommand
-            var ae=document.activeElement;
-            if(ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'||ae.isContentEditable)){
+            if(isInput||isEditable){
+                el.focus();
                 if(navigator.clipboard&&navigator.clipboard.readText){
                     navigator.clipboard.readText().then(function(txt){
-                        if(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'){
-                            var st=ae.selectionStart||0,en=ae.selectionEnd||0;
-                            ae.value=ae.value.substring(0,st)+txt+ae.value.substring(en);
-                            ae.selectionStart=ae.selectionEnd=st+txt.length;
+                        if(isInput){
+                            var s=el.selectionStart||0,en=el.selectionEnd||0;
+                            el.value=el.value.substring(0,s)+txt+el.value.substring(en);
+                            el.selectionStart=el.selectionEnd=s+txt.length;
+                            el.dispatchEvent(new Event('input',{bubbles:true}));
                         }else{
-                            document.execCommand('insertText',false,txt);
+                            try{_0x1.execCommand('insertText',false,txt);}catch(err){}
                         }
-                    }).catch(function(){document.execCommand('paste');});
+                    }).catch(function(){try{_0x1.execCommand('paste');}catch(err){}});
                 }else{
-                    document.execCommand('paste');
+                    try{_0x1.execCommand('paste');}catch(err){}
                 }
-            }else{
-                document.execCommand('paste');
             }
         }else if(a==='refresh'){
             location.reload();
         }
     });
     // 禁用F12等开发者工具快捷键（保留Ctrl+C/X/V复制剪切粘贴）
-    _0x1.addEventListener('keydown',function(_0x3){
-        var _0x4=_0x3.keyCode||_0x3.which;
-        if(_0x4===123||(_0x3.ctrlKey&&_0x3.shiftKey&&(_0x4===73||_0x4===74))||(_0x3.ctrlKey&&_0x4===85)||(_0x3.ctrlKey&&_0x4===83)||(_0x3.ctrlKey&&_0x3.shiftKey&&_0x4===67)){
-            _0x3.preventDefault();return false;
+    _0x1.addEventListener('keydown',function(_0x6){
+        var _0x7=_0x6.keyCode||_0x6.which;
+        if(_0x7===123||(_0x6.ctrlKey&&_0x6.shiftKey&&(_0x7===73||_0x7===74))||(_0x6.ctrlKey&&_0x7===85)||(_0x6.ctrlKey&&_0x7===83)||(_0x6.ctrlKey&&_0x6.shiftKey&&_0x7===67)){
+            _0x6.preventDefault();return false;
         }
     });
 })();
