@@ -47,13 +47,13 @@ const ANTI_CHEAT_CODE = `
         _0x1.addEventListener('DOMNodeInserted',function(){setTimeout(_0xBlockNative,100);});
     }
     
-    // 创建自定义右键菜单（v4：粘贴放第一位，与Firefox原生粘贴样式一致，完全重合）
+    // 创建自定义右键菜单（v5：黑色主题，flex布局上下对齐）
     var _0x3=_0x1.createElement('div');
-    _0x3.style.cssText='position:fixed;z-index:2147483647;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:4px 0;min-width:200px;display:none;font-family:"Microsoft YaHei","Segoe UI",sans-serif;font-size:13px;user-select:none;';
-    _0x3.innerHTML='<div data-a="paste" style="padding:6px 24px;cursor:pointer;color:#000;line-height:1.5;">粘贴<span style="float:right;color:#666;font-size:12px;margin-left:20px;">Ctrl+V</span></div><div data-a="cut" style="padding:6px 24px;cursor:pointer;color:#000;line-height:1.5;">剪切<span style="float:right;color:#666;font-size:12px;margin-left:20px;">Ctrl+X</span></div><div data-a="copy" style="padding:6px 24px;cursor:pointer;color:#000;line-height:1.5;">复制<span style="float:right;color:#666;font-size:12px;margin-left:20px;">Ctrl+C</span></div><div data-a="refresh" style="padding:6px 24px;cursor:pointer;color:#000;line-height:1.5;">刷新<span style="float:right;color:#666;font-size:12px;margin-left:20px;">F5</span></div>';
+    _0x3.style.cssText='position:fixed;z-index:2147483647;background:#1e1e1e;border:1px solid #3a3a3a;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);padding:6px 0;min-width:220px;display:none;font-family:"Microsoft YaHei","Segoe UI",sans-serif;font-size:14px;user-select:none;';
+    _0x3.innerHTML='<div data-a="paste" style="display:flex;justify-content:space-between;align-items:center;padding:8px 20px;cursor:pointer;color:#fff;line-height:1.4;">粘贴<span style="color:#888;font-size:12px;margin-left:30px;">Ctrl+V</span></div><div data-a="cut" style="display:flex;justify-content:space-between;align-items:center;padding:8px 20px;cursor:pointer;color:#fff;line-height:1.4;">剪切<span style="color:#888;font-size:12px;margin-left:30px;">Ctrl+X</span></div><div data-a="copy" style="display:flex;justify-content:space-between;align-items:center;padding:8px 20px;cursor:pointer;color:#fff;line-height:1.4;">复制<span style="color:#888;font-size:12px;margin-left:30px;">Ctrl+C</span></div><div data-a="refresh" style="display:flex;justify-content:space-between;align-items:center;padding:8px 20px;cursor:pointer;color:#fff;line-height:1.4;">刷新<span style="color:#888;font-size:12px;margin-left:30px;">F5</span></div>';
     _0x1.body.appendChild(_0x3);
-    // 菜单项hover
-    _0x3.addEventListener('mouseover',function(e){if(e.target.getAttribute('data-a')||e.target.closest('[data-a]')){var t=e.target.closest('[data-a]');if(t)t.style.background='#f5f5f5';}});
+    // 菜单项hover（黑色主题深灰色背景）
+    _0x3.addEventListener('mouseover',function(e){if(e.target.getAttribute('data-a')||e.target.closest('[data-a]')){var t=e.target.closest('[data-a]');if(t)t.style.background='#3a3a3a';}});
     _0x3.addEventListener('mouseout',function(e){if(e.target.getAttribute('data-a')||e.target.closest('[data-a]')){var t=e.target.closest('[data-a]');if(t)t.style.background='';}});
     // 可靠的复制到剪贴板函数（带临时textarea回退）
     function _0x4(text){
