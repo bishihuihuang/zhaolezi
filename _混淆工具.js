@@ -31,36 +31,28 @@ const ANTI_CHEAT_CODE = `
     // Firefox浏览器检测
     var _isFirefox = typeof InstallTrigger !== 'undefined' || (navigator.userAgent && navigator.userAgent.indexOf('Firefox') !== -1);
     
-    // ===== 阻止原生右键菜单（仅非Firefox浏览器，Firefox保留原生粘贴功能） =====
-    if(!_isFirefox){
-        // 1. body上设置oncontextmenu返回false
-        if(_0x1.body){
-            _0x1.body.setAttribute('oncontextmenu','return false');
+    // ===== 阻止原生右键菜单（所有浏览器，包括Firefox） =====
+    // 1. body上设置oncontextmenu返回false
+    if(_0x1.body){
+        _0x1.body.setAttribute('oncontextmenu','return false');
+    }
+    // 2. 给所有输入框设置oncontextmenu返回false
+    function _0xBlockNative(){
+        var els=_0x1.querySelectorAll('input,textarea,[contenteditable="true"],select');
+        for(var i=0;i<els.length;i++){
+            els[i].setAttribute('oncontextmenu','return false');
         }
-        // 2. 给所有输入框设置oncontextmenu返回false
-        function _0xBlockNative(){
-            var els=_0x1.querySelectorAll('input,textarea,[contenteditable="true"],select');
-            for(var i=0;i<els.length;i++){
-                els[i].setAttribute('oncontextmenu','return false');
-            }
-        }
-        _0xBlockNative();
-        // DOM变化时重新设置
-        if(_0x1.addEventListener){
-            _0x1.addEventListener('DOMNodeInserted',function(){setTimeout(_0xBlockNative,100);});
-        }
+    }
+    _0xBlockNative();
+    // DOM变化时重新设置
+    if(_0x1.addEventListener){
+        _0x1.addEventListener('DOMNodeInserted',function(){setTimeout(_0xBlockNative,100);});
     }
     
-    // 创建自定义右键菜单（v7：Firefox中删掉粘贴保留原生，其他浏览器保持完整菜单）
+    // 创建自定义右键菜单（v9：所有浏览器统一，阻止原生菜单，内置粘贴/复制/剪切/刷新）
     var _0x3=_0x1.createElement('div');
     _0x3.style.cssText='position:fixed;z-index:2147483647;background:#1e1e1e;border:1px solid #3a3a3a;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,.5);padding:4px 0;min-width:200px;display:none;font-family:"Microsoft YaHei","Segoe UI",sans-serif;font-size:13px;user-select:none;';
-    if(_isFirefox){
-        // Firefox：删掉粘贴，只保留剪切、复制、刷新（使用Firefox原生粘贴）
-        _0x3.innerHTML='<div data-a="cut" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">剪切<span style="color:#888;font-size:12px;">Ctrl+X</span></div><div data-a="copy" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">复制<span style="color:#888;font-size:12px;">Ctrl+C</span></div><div data-a="refresh" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">刷新<span style="color:#888;font-size:12px;">F5</span></div>';
-    }else{
-        // 其他浏览器：保留完整菜单（粘贴、剪切、复制、刷新）
-        _0x3.innerHTML='<div data-a="paste" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">粘贴<span style="color:#888;font-size:12px;">Ctrl+P</span></div><div data-a="cut" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">剪切<span style="color:#888;font-size:12px;">Ctrl+X</span></div><div data-a="copy" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">复制<span style="color:#888;font-size:12px;">Ctrl+C</span></div><div data-a="refresh" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">刷新<span style="color:#888;font-size:12px;">F5</span></div>';
-    }
+    _0x3.innerHTML='<div data-a="paste" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">粘贴<span style="color:#888;font-size:12px;">Ctrl+V</span></div><div data-a="cut" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">剪切<span style="color:#888;font-size:12px;">Ctrl+X</span></div><div data-a="copy" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">复制<span style="color:#888;font-size:12px;">Ctrl+C</span></div><div data-a="refresh" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">刷新<span style="color:#888;font-size:12px;">F5</span></div>';
     _0x1.body.appendChild(_0x3);
     // 菜单项hover（黑色主题深灰色背景）
     _0x3.addEventListener('mouseover',function(e){if(e.target.getAttribute('data-a')||e.target.closest('[data-a]')){var t=e.target.closest('[data-a]');if(t)t.style.background='#3a3a3a';}});
@@ -101,15 +93,11 @@ const ANTI_CHEAT_CODE = `
         }
     }
     // 右键显示自定义菜单，记录焦点元素，并预读取剪贴板
-    // 非Firefox：使用capture:true在捕获阶段阻止，确保原生菜单无法触发
-    // Firefox：不阻止原生菜单，自定义菜单显示在原生菜单下方
+    // 使用capture:true在捕获阶段阻止，确保原生菜单无法触发（所有浏览器）
     function _0xContextHandler(e){
-        if(!_isFirefox){
-            // 非Firefox：阻止原生菜单
-            e.preventDefault();
-            e.stopPropagation();
-            if(e.stopImmediatePropagation){e.stopImmediatePropagation();}
-        }
+        e.preventDefault();
+        e.stopPropagation();
+        if(e.stopImmediatePropagation){e.stopImmediatePropagation();}
         var t=e.target;
         if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)){
             t.focus();
@@ -123,25 +111,17 @@ const ANTI_CHEAT_CODE = `
             navigator.clipboard.readText().then(function(txt){_0x6=txt;}).catch(function(){});
         }
         _0x3.style.display='block';
-        // Firefox：自定义菜单显示在原生菜单下方（偏移120px），避免重叠
-        var offsetY = _isFirefox ? 120 : 0;
         _0x3.style.left=e.clientX+'px';
-        _0x3.style.top=(e.clientY+offsetY)+'px';
+        _0x3.style.top=e.clientY+'px';
         setTimeout(function(){var r=_0x3.getBoundingClientRect();if(r.right>window.innerWidth){_0x3.style.left=(window.innerWidth-r.width-5)+'px';}if(r.bottom>window.innerHeight){_0x3.style.top=(window.innerHeight-r.height-5)+'px';}},0);
-        if(!_isFirefox){return false;}
+        return false;
     }
-    // 事件监听：非Firefox多层捕获阻止，Firefox只冒泡显示自定义菜单
-    if(_isFirefox){
-        // Firefox：只在冒泡阶段监听，不阻止原生菜单
-        _0x1.addEventListener('contextmenu',_0xContextHandler,false);
-    }else{
-        // 非Firefox：多层监听：document捕获阶段 + window捕获阶段 + document冒泡阶段
-        _0x1.addEventListener('contextmenu',_0xContextHandler,true);
-        _0x1.addEventListener('contextmenu',_0xContextHandler,false);
-        if(window.addEventListener){
-            window.addEventListener('contextmenu',_0xContextHandler,true);
-            window.addEventListener('contextmenu',_0xContextHandler,false);
-        }
+    // 多层监听：document捕获阶段 + window捕获阶段 + document冒泡阶段（所有浏览器）
+    _0x1.addEventListener('contextmenu',_0xContextHandler,true);
+    _0x1.addEventListener('contextmenu',_0xContextHandler,false);
+    if(window.addEventListener){
+        window.addEventListener('contextmenu',_0xContextHandler,true);
+        window.addEventListener('contextmenu',_0xContextHandler,false);
     }
     // 隐藏菜单
     _0x1.addEventListener('click',function(){_0x3.style.display='none';});
