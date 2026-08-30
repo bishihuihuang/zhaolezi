@@ -21,15 +21,15 @@ const TARGET_FILES = ['index.html', ...Array.from({length: 29}, (_, i) => `${i +
 const BACKUP_DIR = '_原始未混淆版';
 
 // 防小白保护代码（会被添加到每个JS开头，然后一起混淆）
-// 自定义右键菜单：只保留复制和刷新，其余禁止
+// 自定义右键菜单：保留剪切、复制、粘贴、刷新，其余禁止
 const ANTI_CHEAT_CODE = `
 /* 防小白保护开始 */
 (function(){
     var _0x1=document;
     // 创建自定义右键菜单
     var _0x2=_0x1.createElement('div');
-    _0x2.style.cssText='position:fixed;z-index:9999999;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:5px 0;min-width:90px;display:none;font-family:"Microsoft YaHei",sans-serif;font-size:14px;user-select:none;';
-    _0x2.innerHTML='<div data-a="copy" style="padding:8px 18px;cursor:pointer;color:#333;">复制</div><div data-a="refresh" style="padding:8px 18px;cursor:pointer;color:#333;">刷新</div>';
+    _0x2.style.cssText='position:fixed;z-index:9999999;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:5px 0;min-width:100px;display:none;font-family:"Microsoft YaHei",sans-serif;font-size:14px;user-select:none;';
+    _0x2.innerHTML='<div data-a="cut" style="padding:8px 18px;cursor:pointer;color:#333;">剪切</div><div data-a="copy" style="padding:8px 18px;cursor:pointer;color:#333;">复制</div><div data-a="paste" style="padding:8px 18px;cursor:pointer;color:#333;">粘贴</div><div data-a="refresh" style="padding:8px 18px;cursor:pointer;color:#333;">刷新</div>';
     _0x1.body.appendChild(_0x2);
     // 菜单项hover
     _0x2.addEventListener('mouseover',function(e){if(e.target.getAttribute('data-a')){e.target.style.background='#f5f5f5';}});
@@ -53,14 +53,36 @@ const ANTI_CHEAT_CODE = `
         var a=t.getAttribute('data-a');
         if(!a){return;}
         _0x2.style.display='none';
-        if(a==='copy'){
+        if(a==='cut'){
+            document.execCommand('cut');
+        }else if(a==='copy'){
             var s=window.getSelection().toString();
             if(s){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s);}else{document.execCommand('copy');}}
+        }else if(a==='paste'){
+            // 优先尝试现代API，失败则回退到execCommand
+            var ae=document.activeElement;
+            if(ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'||ae.isContentEditable)){
+                if(navigator.clipboard&&navigator.clipboard.readText){
+                    navigator.clipboard.readText().then(function(txt){
+                        if(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'){
+                            var st=ae.selectionStart||0,en=ae.selectionEnd||0;
+                            ae.value=ae.value.substring(0,st)+txt+ae.value.substring(en);
+                            ae.selectionStart=ae.selectionEnd=st+txt.length;
+                        }else{
+                            document.execCommand('insertText',false,txt);
+                        }
+                    }).catch(function(){document.execCommand('paste');});
+                }else{
+                    document.execCommand('paste');
+                }
+            }else{
+                document.execCommand('paste');
+            }
         }else if(a==='refresh'){
             location.reload();
         }
     });
-    // 禁用F12等开发者工具快捷键（保留Ctrl+C复制）
+    // 禁用F12等开发者工具快捷键（保留Ctrl+C/X/V复制剪切粘贴）
     _0x1.addEventListener('keydown',function(_0x3){
         var _0x4=_0x3.keyCode||_0x3.which;
         if(_0x4===123||(_0x3.ctrlKey&&_0x3.shiftKey&&(_0x4===73||_0x4===74))||(_0x3.ctrlKey&&_0x4===85)||(_0x3.ctrlKey&&_0x4===83)||(_0x3.ctrlKey&&_0x3.shiftKey&&_0x4===67)){
