@@ -176,13 +176,15 @@ const ANTI_CHEAT_CODE = `
         }
     });
     // 键盘拦截：只允许粘贴(Ctrl+V)、复制(Ctrl+C)、剪切(Ctrl+X)、刷新(F5)，以及正常文字输入
-    // 阻止其他所有快捷键组合（Ctrl+其他、Alt+其他、F1-F12除F5等）
+    // 阻止其他所有快捷键组合和F1-F12功能键（除F5），包括F12开发者工具
     _0x1.addEventListener('keydown',function(_0x8){
         var _0x9=_0x8.keyCode||_0x8.which;
         // 允许的四个功能快捷键：粘贴(86=V)、复制(67=C)、剪切(88=X)、刷新(116=F5)
         var _allowed = (_0x8.ctrlKey && (_0x9===86 || _0x9===67 || _0x9===88)) || _0x9===116;
-        // 正常文字输入（没有Ctrl/Alt/Meta修饰键）也允许
-        var _normal = !_0x8.ctrlKey && !_0x8.altKey && !_0x8.metaKey;
+        // F1-F12功能键（112-123）全部阻止，除了已允许的F5(116)
+        var _isFuncKey = _0x9>=112 && _0x9<=123;
+        // 正常文字输入（没有Ctrl/Alt/Meta修饰键，且不是功能键）也允许
+        var _normal = !_0x8.ctrlKey && !_0x8.altKey && !_0x8.metaKey && !_isFuncKey;
         // 阻止其他所有按键
         if(!_allowed && !_normal){
             _0x8.preventDefault();
