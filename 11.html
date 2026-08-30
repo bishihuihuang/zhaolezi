@@ -525,6 +525,28 @@
                 padding: 8px 12px !important;
             }
         }
+
+        /* ========== 手机端针对性修复：单列堆叠布局 ========== */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr !important;
+                grid-template-rows: auto !important;
+            }
+            .title-area, .back-area, .donation-text, .donation-qr {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            .donation-text {
+                padding: 24px 20px !important;
+                min-height: 200px !important;
+                font-size: 16px !important;
+                line-height: 1.8 !important;
+            }
+            .donation-qr {
+                min-height: 300px !important;
+                padding: 16px !important;
+            }
+        }
 </style>
 </head>
 <body>

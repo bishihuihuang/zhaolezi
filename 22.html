@@ -194,6 +194,58 @@
                 padding: 8px 12px !important;
             }
         }
+
+        /* ========== 手机端针对性修复：扫雷棋盘格子恢复 ========== */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr !important;
+                grid-template-rows: auto !important;
+            }
+            .title-area, .back-area, .game-area, .game-main {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 恢复扫雷格子固定尺寸，覆盖通用CSS破坏 */
+            .cell {
+                width: 28px !important;
+                height: 28px !important;
+                min-height: 0 !important;
+                padding: 0 !important;
+                font-size: 14px !important;
+                line-height: 1 !important;
+            }
+            .cell.flagged::after {
+                font-size: 15px !important;
+            }
+            /* 棋盘容器自适应，允许横向滚动 */
+            .minefield {
+                width: 100% !important;
+                max-width: 340px !important;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                margin: 0 auto !important;
+            }
+            .game-area {
+                padding: 12px 8px !important;
+            }
+            .game-status {
+                font-size: 14px !important;
+                padding: 8px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .cell {
+                width: 24px !important;
+                height: 24px !important;
+                font-size: 12px !important;
+            }
+            .cell.flagged::after {
+                font-size: 13px !important;
+            }
+            .minefield {
+                max-width: 280px !important;
+            }
+        }
 </style>
 </head>
 <body>

@@ -498,6 +498,32 @@
                 padding: 8px 12px !important;
             }
         }
+
+        /* ========== 手机端针对性修复：日期计算器按钮对称 ========== */
+        @media (max-width: 768px) {
+            .button-row {
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 10px !important;
+                justify-content: center !important;
+            }
+            .capsule-btn {
+                flex: 1 1 calc(50% - 10px) !important;
+                min-width: 0 !important;
+                margin: 0 !important;
+                font-size: 14px !important;
+                padding: 12px 16px !important;
+            }
+            .calculator-body {
+                padding: 16px 12px !important;
+                gap: 12px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .capsule-btn {
+                flex: 1 1 100% !important;
+            }
+        }
 </style>
 </head>
 <body>
