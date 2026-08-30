@@ -47,10 +47,10 @@ const ANTI_CHEAT_CODE = `
         _0x1.addEventListener('DOMNodeInserted',function(){setTimeout(_0xBlockNative,100);});
     }
     
-    // 创建自定义右键菜单（z-index设为最高，确保盖在原生菜单上面）
+    // 创建自定义右键菜单（v4：粘贴放第一位，与Firefox原生粘贴样式一致，完全重合）
     var _0x3=_0x1.createElement('div');
-    _0x3.style.cssText='position:fixed;z-index:2147483647;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:5px 0;min-width:170px;display:none;font-family:"Microsoft YaHei",sans-serif;font-size:14px;user-select:none;';
-    _0x3.innerHTML='<div data-a="cut" style="padding:8px 18px;cursor:pointer;color:#333;">剪切<span style="float:right;color:#999;font-size:12px;">Ctrl+X</span></div><div data-a="copy" style="padding:8px 18px;cursor:pointer;color:#333;">复制<span style="float:right;color:#999;font-size:12px;">Ctrl+C</span></div><div data-a="paste" style="padding:8px 18px;cursor:pointer;color:#333;">粘贴<span style="float:right;color:#999;font-size:12px;">Ctrl+V</span></div><div data-a="refresh" style="padding:8px 18px;cursor:pointer;color:#333;">刷新<span style="float:right;color:#999;font-size:12px;">F5</span></div>';
+    _0x3.style.cssText='position:fixed;z-index:2147483647;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:4px 0;min-width:200px;display:none;font-family:"Microsoft YaHei","Segoe UI",sans-serif;font-size:13px;user-select:none;';
+    _0x3.innerHTML='<div data-a="paste" style="padding:6px 24px;cursor:pointer;color:#000;line-height:1.5;">粘贴<span style="float:right;color:#666;font-size:12px;margin-left:20px;">Ctrl+V</span></div><div data-a="cut" style="padding:6px 24px;cursor:pointer;color:#000;line-height:1.5;">剪切<span style="float:right;color:#666;font-size:12px;margin-left:20px;">Ctrl+X</span></div><div data-a="copy" style="padding:6px 24px;cursor:pointer;color:#000;line-height:1.5;">复制<span style="float:right;color:#666;font-size:12px;margin-left:20px;">Ctrl+C</span></div><div data-a="refresh" style="padding:6px 24px;cursor:pointer;color:#000;line-height:1.5;">刷新<span style="float:right;color:#666;font-size:12px;margin-left:20px;">F5</span></div>';
     _0x1.body.appendChild(_0x3);
     // 菜单项hover
     _0x3.addEventListener('mouseover',function(e){if(e.target.getAttribute('data-a')||e.target.closest('[data-a]')){var t=e.target.closest('[data-a]');if(t)t.style.background='#f5f5f5';}});
