@@ -1,0 +1,408 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——黑客模拟器</title>
+    <style>
+        *,
+        *::before,
+        *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Consolas','Courier New','Segoe UI','Microsoft YaHei',sans-serif; background: #0a0a0a; color: #00ff41; overflow-x: hidden; }
+        /* 恐怖黑客背景 */
+        .hacker-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: hidden; background: radial-gradient(ellipse at 50% 50%, #0a0a0a, #020202); }
+        .hacker-bg::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,255,65,.03) 3px, rgba(0,255,65,.03) 4px); animation: scanline 8s linear infinite; }
+        @keyframes scanline { 0% { transform: translateY(0); } 100% { transform: translateY(4px); } }
+        .hacker-bg .glitch { position: absolute; font-size: 120px; font-weight: 900; color: rgba(255,0,0,.05); top: 20%; left: 10%; white-space: nowrap; letter-spacing: 20px; animation: glitchShift 3s ease-in-out infinite; }
+        .hacker-bg .glitch2 { position: absolute; font-size: 80px; font-weight: 900; color: rgba(0,255,65,.03); top: 70%; right: 10%; white-space: nowrap; letter-spacing: 15px; animation: glitchShift 5s ease-in-out infinite reverse; }
+        @keyframes glitchShift { 0%,100% { transform: translate(0,0); opacity: .3; } 50% { transform: translate(10px,-5px); opacity: .8; } }
+        .red-particles { position: absolute; inset: 0; overflow: hidden; }
+        .red-particles span { position: absolute; width: 4px; height: 4px; background: #ff0000; border-radius: 50%; animation: particleFloat 6s ease-in-out infinite; box-shadow: 0 0 8px #ff0000; }
+        @keyframes particleFloat { 0%,100% { transform: translateY(0); opacity: .2; } 50% { transform: translateY(-20px); opacity: 1; } }
+        main { position: relative; z-index: 10; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 20px 0; }
+        .container { width: 94%; max-width: 1300px; background: rgba(10,10,10,.95); border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,65,.2), 0 0 100px rgba(0,0,0,.8); padding: 10px; margin-top: 20px; border: 1px solid rgba(0,255,65,.3); }
+        .grid { display: grid; grid-template-columns: repeat(6,1fr); grid-template-rows: repeat(8,minmax(70px,auto)); gap: 8px; }
+        .cell { border-radius: 6px; border: 1px solid rgba(0,255,65,.3); background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 10px; position: relative; }
+        /* 标题区 */
+        .title-area { grid-row: 1/3; grid-column: 1/5; background: linear-gradient(135deg,#0a0a0a,#1a0a0a); border: 2px solid #ff0000; box-shadow: 0 0 20px rgba(255,0,0,.4); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .title-area h1 { font-size: 36px; font-weight: 900; letter-spacing: 6px; background: linear-gradient(90deg,#ff0000,#ff3333,#ff0000); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: redGlow 2s ease-in-out infinite; text-shadow: 0 0 30px rgba(255,0,0,.5); }
+        @keyframes redGlow { 0%,100% { filter: brightness(.8); } 50% { filter: brightness(1.3); } }
+        .title-area small { color: rgba(255,255,255,.5); margin-top: 6px; letter-spacing: 3px; font-size: 12px; }
+        /* 返回主页 */
+        .back-area { grid-row: 1/3; grid-column: 5/7; background: linear-gradient(135deg,#1a0a0a,#0a0a0a); border: 2px solid #ff3333; color: #ff6666; text-decoration: none; font-weight: 900; font-size: 20px; letter-spacing: 3px; cursor: pointer; transition: all .3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-shadow: 0 0 10px rgba(255,0,0,.6); }
+        .back-area:hover { background: #ff0000; color: #fff; box-shadow: 0 0 30px #ff0000; }
+        /* 命令提示符区域 */
+        .terminal-area { grid-row: 3/9; grid-column: 1/7; background: #0c0c0c; border: 2px solid #00ff41; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,255,65,.3); }
+        .terminal-titlebar { background: linear-gradient(90deg,#1a1a1a,#0d0d0d); padding: 6px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #00ff4133; }
+        .terminal-titlebar .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .terminal-titlebar .dot-red { background: #ff0000; }
+        .terminal-titlebar .dot-yellow { background: #ffaa00; }
+        .terminal-titlebar .dot-green { background: #00ff41; }
+        .terminal-titlebar .title { color: #888; font-size: 13px; margin-left: 6px; font-family: 'Consolas', monospace; }
+        .terminal-titlebar .title::after { content: '|'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+        .terminal-body { flex: 1; padding: 10px; overflow-y: auto; font-family: 'Consolas','Courier New',monospace; font-size: 14px; line-height: 1.5; max-height: 500px; scrollbar-width: thin; scrollbar-color: #00ff41 #0a0a0a; }
+        .terminal-body::-webkit-scrollbar { width: 8px; }
+        .terminal-body::-webkit-scrollbar-track { background: #0a0a0a; }
+        .terminal-body::-webkit-scrollbar-thumb { background: #00ff41; border-radius: 4px; }
+        /* 随机颜色类 */
+        .terminal-output.color-red { color: #ff0000; }
+        .terminal-output.color-yellow { color: #ffff00; }
+        .terminal-output.color-green { color: #00ff00; }
+        .terminal-output.random { animation: flicker .3s ease-in-out infinite; }
+        @keyframes flicker { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
+        /* 输入行 */
+        .terminal-input-line { padding: 8px 0; margin-top: 4px; background: transparent; border-top: 1px solid #00ff4133; display: flex; align-items: center; }
+        .terminal-input-line .prompt { color: #00ff41; font-weight: bold; margin-right: 6px; font-family: 'Consolas', monospace; white-space: nowrap; margin-left: 10px; }
+        .terminal-input-line input { flex: 1; background: transparent; border: none; outline: none; color: #00ff41; font-size: 14px; font-family: 'Consolas','Courier New',monospace; letter-spacing: 1px; caret-color: #00ff41; }
+        .terminal-input-line input::placeholder { color: rgba(0,255,65,.4); }
+        /* 跳转覆盖层 */
+        .transition-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; background: rgba(0,0,0,.95); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .4s, visibility .4s; pointer-events: none; }
+        .transition-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        .transition-overlay::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent 0px, transparent 5px, rgba(255,0,0,.03) 5px, rgba(255,0,0,.03) 6px); animation: scanline 3s linear infinite; }
+        .transition-overlay .red-ring { position: relative; width: 180px; height: 180px; border: 3px solid rgba(255,0,0,.8); border-radius: 50%; animation: ringPulse 1.5s ease-in-out infinite; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, rgba(255,0,0,.2), transparent 70%); box-shadow: 0 0 30px rgba(255,0,0,.5), inset 0 0 20px rgba(255,0,0,.3); }
+        .transition-overlay .red-ring::before { content: ''; position: absolute; inset: 15px; border-radius: 50%; border: 2px dashed rgba(255,0,0,.5); animation: ringSpin 3s linear infinite; }
+        .transition-overlay .red-ring::after { content: ''; position: absolute; inset: 35px; border-radius: 50%; border: 1px solid rgba(255,0,0,.3); animation: ringPulse 2s ease-in-out infinite reverse; }
+        @keyframes ringPulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: .6; } }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        .transition-overlay .find-text { position: relative; font-size: 36px; font-weight: 900; color: #ff0000; text-shadow: 0 0 30px #ff0000; letter-spacing: 8px; animation: textFlicker 1s ease-in-out infinite; z-index: 2; background: rgba(0,0,0,.5); padding: 10px 20px; border-radius: 10px; }
+        @keyframes textFlicker { 0%,100% { opacity: 1; } 25% { opacity: .7; } 50% { opacity: 1; } 75% { opacity: .5; } }
+        @media (max-width: 900px) { .grid { gap: 6px; } .title-area h1 { font-size: 24px; } .back-area { font-size: 16px; } .terminal-body { font-size: 13px; } }
+        @media (max-width: 600px) { .container { width: 98%; padding: 5px; } .grid { grid-template-columns: repeat(2,1fr); grid-template-rows: auto; } .title-area { grid-row: 1; grid-column: 1/3; } .back-area { grid-row: 2; grid-column: 1/3; } .terminal-area { grid-row: 3; grid-column: 1/3; min-height: 400px; } }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+</style>
+</head>
+<body>
+    <div class="hacker-bg" aria-hidden="true">
+        <div class="glitch">SYSTEM_BREACH</div>
+        <div class="glitch2">ACCESS_GRANTED</div>
+        <div class="red-particles" id="redParticles"></div>
+    </div>
+    <main>
+        <div class="container">
+            <div class="grid">
+                <div class="cell title-area"><h1>找乐子——黑客模拟器</h1><small>ROOT ACCESS TERMINAL</small></div>
+                <a href="index.html" class="cell back-area" id="backHome"><span style="font-size:36px;">☠️</span>返回<br>主页</a>
+                <div class="cell terminal-area">
+                    <div class="terminal-titlebar">
+                        <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
+                        <span class="title">C:\Windows\System32\cmd.exe (管理员)</span>
+                    </div>
+                    <div class="terminal-body" id="terminalBody" aria-live="polite" aria-atomic="false">
+                        <div class="terminal-output color-red">⚠️ 警告：本页面为模拟环境，不会执行任何真实操作。</div>
+                        <div class="terminal-output color-yellow">==========================================</div>
+                        <div class="terminal-output color-green">欢迎使用找乐子——黑客模拟器</div>
+                        <div class="terminal-output color-red">输入 help 查看可用命令列表</div>
+                        <div class="terminal-output color-yellow">==========================================</div>
+                        <div class="terminal-input-line">
+                            <span class="prompt">C:\></span>
+                            <input type="text" id="cmdInput" placeholder="输入命令…" autofocus autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="transition-overlay" id="transitionOverlay"><div class="red-ring"><div class="find-text">找乐子</div></div></div>
+    <script>
+        (function() {
+            // 生成红色粒子
+            const redParticles = document.getElementById('redParticles');
+            for (let i = 0; i < 30; i++) {
+                const s = document.createElement('span');
+                s.style.left = Math.random() * 100 + '%';
+                s.style.top = Math.random() * 100 + '%';
+                s.style.animationDelay = Math.random() * 6 + 's';
+                s.style.animationDuration = (4 + Math.random() * 4) + 's';
+                redParticles.appendChild(s);
+            }
+            const cmdInput = document.getElementById('cmdInput');
+            const terminalBody = document.getElementById('terminalBody');
+            const backHome = document.getElementById('backHome');
+            const transitionOverlay = document.getElementById('transitionOverlay');
+            let randomCodeTimer = null;
+            // 存储所有活动计时器的引用，以便统一清理
+            let activeTimers = new Set();
+
+            function clearAllTimers() {
+                // 清理所有活动计时器
+                activeTimers.forEach(timer => clearInterval(timer));
+                activeTimers.clear();
+                if (randomCodeTimer) { clearInterval(randomCodeTimer); randomCodeTimer = null; }
+            }
+
+            function addTimer(timerId) {
+                activeTimers.add(timerId);
+                return timerId;
+            }
+
+            function removeTimer(timerId) {
+                activeTimers.delete(timerId);
+            }
+
+            // 追加输出（颜色改为随机概率选择）
+            function appendOutput(text, type = 'info') {
+                const div = document.createElement('div');
+                // 随机从三个颜色中选一个
+                const colors = ['color-red', 'color-yellow', 'color-green'];
+                const colorClass = colors[Math.floor(Math.random() * colors.length)];
+                div.className = 'terminal-output ' + colorClass;
+                if (type === 'random') div.classList.add('random');
+                div.textContent = text;
+                const inputLine = document.querySelector('.terminal-input-line');
+                if (inputLine) {
+                    terminalBody.insertBefore(div, inputLine);
+                } else {
+                    terminalBody.appendChild(div);
+                }
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+                return div;
+            }
+
+            function generateRandomLine() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{};:,.<>?/\\|`~';
+                const prefixes = ['0x7F', 'ERROR:', 'WARNING:', '>>', '>', '$', '[SYSTEM]', '[KERNEL]', '[NETWORK]', '0x1A', '0x3B'];
+                let line = '';
+                if (Math.random() > 0.7) line += prefixes[Math.floor(Math.random() * prefixes.length)] + ' ';
+                const targetLength = 85 + Math.floor(Math.random() * 30);
+                while (line.length < targetLength) line += chars[Math.floor(Math.random() * chars.length)];
+                return line;
+            }
+
+            function outputRandomCode() {
+                clearAllTimers(); // 先清理旧计时器
+                appendOutput('\n[ERROR] 未知命令，正在执行安全扫描…', 'random');
+                appendOutput('>>> 系统检测到异常输入，开始分析…', 'random');
+                appendOutput('>>> 正在访问受限区域…', 'random');
+                let lineCount = 0;
+                randomCodeTimer = addTimer(setInterval(() => {
+                    const line = generateRandomLine();
+                    appendOutput(line, 'random');
+                    lineCount++;
+                    if (lineCount > 300) {
+                        clearInterval(randomCodeTimer);
+                        removeTimer(randomCodeTimer);
+                        randomCodeTimer = null;
+                        appendOutput('\n[进程已终止] 安全扫描完成，未发现威胁。', 'random');
+                        appendOutput('输入 help 查看可用命令', 'random');
+                    }
+                }, 200));
+            }
+
+            function handleCommand(cmd) {
+                const lower = cmd.toLowerCase().trim();
+                clearAllTimers(); // 清除所有活动计时器
+                if (lower === 'help') outputHelp();
+                else if (lower.startsWith('dir')) outputDir();
+                else if (lower.startsWith('cd') || lower.startsWith('chdir')) outputCd(cmd);
+                else if (lower.startsWith('ipconfig')) outputIpconfig();
+                else if (lower.startsWith('ping')) outputPing(cmd);
+                else if (lower.startsWith('cls')) { 
+                    terminalBody.innerHTML = ''; 
+                    const inputLine = document.createElement('div'); 
+                    inputLine.className = 'terminal-input-line'; 
+                    inputLine.innerHTML = '<span class="prompt">C:\\></span><input type="text" id="cmdInput" placeholder="输入命令…" autofocus autocomplete="off">'; 
+                    terminalBody.appendChild(inputLine); 
+                    cmdInput = document.getElementById('cmdInput'); 
+                    bindInputEvents(cmdInput); 
+                    appendOutput('屏幕已清空', 'random'); 
+                }
+                else if (lower.startsWith('exit')) outputExit();
+                else if (lower.startsWith('systeminfo')) outputSystemInfo();
+                else if (lower.startsWith('taskkill')) outputTaskkill(cmd);
+                else if (lower.startsWith('tasklist')) outputTasklist();
+                else if (lower.startsWith('chkdsk')) outputChkdsk(cmd);
+                else if (lower.startsWith('sfc')) outputSfc(cmd);
+                else if (lower.startsWith('dism')) outputDism(cmd);
+                else if (lower.startsWith('cleanmgr')) outputCleanmgr();
+                else if (lower.startsWith('netsh')) outputNetsh(cmd);
+                else if (lower.startsWith('pathping')) outputPathping(cmd);
+                else if (lower.startsWith('powercfg')) outputPowercfg();
+                else if (lower.startsWith('attrib')) outputAttrib();
+                else if (lower.startsWith('mklink')) outputMklink();
+                else if (lower.startsWith('verifier')) outputVerifier();
+                else if (lower.startsWith('mdsched')) outputMdsched();
+                else if (lower.startsWith('eventvwr')) outputEventvwr();
+                else if (lower.startsWith('findstr')) outputFindstr();
+                else if (lower.startsWith('hostname')) outputHostname();
+                else if (lower.startsWith('ver')) outputVer();
+                else if (lower.startsWith('whoami')) outputWhoami();
+                else if (lower.startsWith('netstat')) outputNetstat();
+                else if (lower.startsWith('nslookup')) outputNslookup(cmd);
+                else if (lower.startsWith('tracert')) outputTracert(cmd);
+                else if (lower.startsWith('shutdown')) outputShutdown(cmd);
+                else if (lower.startsWith('echo')) outputEcho(cmd);
+                else if (lower.startsWith('date')) outputDate();
+                else if (lower.startsWith('time')) outputTime();
+                else if (lower.startsWith('color')) outputColor(cmd);
+                else if (lower.startsWith('title')) outputTitle(cmd);
+                else if (lower.startsWith('prompt')) outputPrompt(cmd);
+                else if (lower.startsWith('set')) outputSet(cmd);
+                else if (lower.startsWith('md') || lower.startsWith('mkdir')) outputMd(cmd);
+                else if (lower.startsWith('rd') || lower.startsWith('rmdir')) outputRd(cmd);
+                else if (lower.startsWith('copy')) outputCopy(cmd);
+                else if (lower.startsWith('move')) outputMove(cmd);
+                else if (lower.startsWith('ren') || lower.startsWith('rename')) outputRen(cmd);
+                else if (lower.startsWith('del') || lower.startsWith('erase')) outputDel(cmd);
+                else if (lower.startsWith('type')) outputType(cmd);
+                else if (lower.startsWith('tree')) outputTree();
+                else outputRandomCode();
+            }
+
+            // 输出各命令结果
+            function outputHelp() { appendOutput('============================================================'); appendOutput('可用命令列表：'); appendOutput('  dir                       查看当前目录内容'); appendOutput('  cd <路径>                 切换目录'); appendOutput('  md <文件夹名>             创建目录'); appendOutput('  rd /s /q <文件夹名>       强制删除非空目录'); appendOutput('  copy <源> <目标>          复制文件'); appendOutput('  move <源> <目标>          移动文件'); appendOutput('  ren <旧> <新>             重命名文件'); appendOutput('  del <文件名>              删除文件'); appendOutput('  type <文件名>             显示文件内容'); appendOutput('  tree                      以树形结构显示目录'); appendOutput('  ipconfig                  查看IP地址'); appendOutput('  ping <地址>               测试网络连通性'); appendOutput('  tracert <地址>            路由追踪'); appendOutput('  netstat                   显示网络连接状态'); appendOutput('  nslookup <域名>           查询DNS记录'); appendOutput('  hostname                  显示计算机名称'); appendOutput('  systeminfo                查看系统信息'); appendOutput('  tasklist                  列出进程'); appendOutput('  taskkill                  强制关闭进程'); appendOutput('  chkdsk                    磁盘检查'); appendOutput('  sfc /scannow              系统文件检查'); appendOutput('  dism                      系统映像修复'); appendOutput('  cleanmgr                  磁盘清理'); appendOutput('  netsh                     网络重置'); appendOutput('  pathping                  深度路由追踪'); appendOutput('  powercfg                  电源计划'); appendOutput('  attrib                    属性修改'); appendOutput('  mklink                    符号链接'); appendOutput('  verifier                  驱动验证'); appendOutput('  mdsched                   内存诊断'); appendOutput('  eventvwr                  事件查看器'); appendOutput('  findstr                   在文件中搜索字符串'); appendOutput('  whoami                    显示当前用户名'); appendOutput('  ver                       显示Windows版本'); appendOutput('  echo <文本>               显示消息'); appendOutput('  date                      显示/设置日期'); appendOutput('  time                      显示/设置时间'); appendOutput('  color <属性>              设置控制台颜色'); appendOutput('  title <标题>              设置窗口标题'); appendOutput('  prompt <文本>             设置命令提示符'); appendOutput('  set <变量>=<值>           设置环境变量'); appendOutput('  shutdown /s /r            关机/重启'); appendOutput('  cls                       清屏'); appendOutput('  exit                      退出模拟器'); appendOutput('============================================================'); appendOutput('提示：输入不存在的命令会触发安全扫描（乱码）。'); }
+
+            function outputDir() { appendOutput('驱动器 C 中的卷没有标签。'); appendOutput('卷的序列号是 4A2B-1C3D'); appendOutput(''); appendOutput('C:\\Users\\Hacker 的目录'); appendOutput(''); appendOutput('2026/08/28  15:24    <DIR>          .'); appendOutput('2026/08/28  15:24    <DIR>          ..'); appendOutput('2026/08/28  14:00    <DIR>          Desktop'); appendOutput('2026/08/28  13:30    <DIR>          Documents'); appendOutput('2026/08/28  12:30    <DIR>          Downloads'); appendOutput('2026/08/28  10:00            1,234  secret.txt'); appendOutput('2026/08/28  09:00              567  password.txt'); appendOutput('2026/08/28  08:00           12,345  key.log'); appendOutput('               3 个文件         14,146 字节'); appendOutput('               5 个目录  104,857,600 可用字节'); }
+
+            function outputCd(cmd) { if (cmd === 'cd' || cmd === 'cd.') { appendOutput('C:\\Users\\Hacker'); } else { const parts = cmd.split(' '); if (parts[1] === '..') { appendOutput('切换目录: C:\\Users'); } else if (parts[1]) { appendOutput('切换目录: ' + parts[1].toUpperCase()); } } }
+
+            function outputMd(cmd) { const parts = cmd.split(' '); if (parts[1]) { appendOutput('已创建目录 ' + parts[1]); } else { appendOutput('参数错误，请指定目录名'); } }
+            function outputRd(cmd) { const parts = cmd.split(' '); if (parts[3]) { appendOutput('已强制删除目录 ' + parts[3]); } else { appendOutput('参数错误，请指定目录名'); } }
+            function outputCopy(cmd) { const parts = cmd.split(' '); if (parts[1]) { appendOutput('已复制 1 个文件。'); } else { appendOutput('参数错误，请指定源文件和目标文件'); } }
+            function outputMove(cmd) { const parts = cmd.split(' '); if (parts[1]) { appendOutput('已移动 1 个文件。'); } else { appendOutput('参数错误，请指定源文件和目标文件'); } }
+            function outputRen(cmd) { const parts = cmd.split(' '); if (parts[1]) { appendOutput('已重命名文件。'); } else { appendOutput('参数错误，请指定原文件名和新文件名'); } }
+            function outputDel(cmd) { const parts = cmd.split(' '); if (parts[1]) { appendOutput('已删除文件 ' + parts[1]); } else { appendOutput('参数错误，请指定文件名'); } }
+            function outputType(cmd) { const parts = cmd.split(' '); if (parts[1]) { appendOutput('这是文件 ' + parts[1] + ' 的内容（模拟）'); appendOutput('Hello, World! This is a simulated file content.'); } else { appendOutput('参数错误，请指定文件名'); } }
+            function outputTree() { appendOutput('C:\\.'); appendOutput('├───Users'); appendOutput('│   ├───Hacker'); appendOutput('│   │   ├───Desktop'); appendOutput('│   │   ├───Documents'); appendOutput('│   │   └───Downloads'); appendOutput('├───Windows'); appendOutput('│   ├───System32'); appendOutput('│   └───Temp'); appendOutput('└───Program Files'); }
+            function outputHostname() { appendOutput('DESKTOP-HACKER'); }
+            function outputVer() { appendOutput('Microsoft Windows [版本 10.0.22631.3000]'); }
+            function outputWhoami() { appendOutput('desktop-hacker\\hacker'); }
+            function outputIpconfig() { appendOutput('Windows IP 配置'); appendOutput(''); appendOutput('以太网适配器 以太网:'); appendOutput('   连接特定的 DNS 后缀 . . . . . . . :'); appendOutput('   IPv4 地址 . . . . . . . . . . . . : 192.168.1.105'); appendOutput('   子网掩码  . . . . . . . . . . . . : 255.255.255.0'); appendOutput('   默认网关  . . . . . . . . . . . . : 192.168.1.1'); appendOutput(''); appendOutput('无线局域网适配器 WLAN:'); appendOutput('   IPv4 地址 . . . . . . . . . . . . : 10.0.0.138'); appendOutput('   子网掩码  . . . . . . . . . . . . : 255.255.0.0'); appendOutput('   默认网关  . . . . . . . . . . . . : 10.0.0.1'); }
+            function outputPing(cmd) { const parts = cmd.split(' '); const target = parts[1] || '127.0.0.1'; appendOutput('正在 Ping ' + target + ' 具有 32 字节的数据:'); appendOutput('来自 ' + target + ' 的回复: 字节=32 时间=1ms TTL=128'); appendOutput('来自 ' + target + ' 的回复: 字节=32 时间=1ms TTL=128'); appendOutput('来自 ' + target + ' 的回复: 字节=32 时间=2ms TTL=128'); appendOutput('来自 ' + target + ' 的回复: 字节=32 时间=1ms TTL=128'); appendOutput(''); appendOutput(target + ' 的 Ping 统计信息:'); appendOutput('    数据包: 已发送 = 4，已接收 = 4，丢失 = 0 (0% 丢失)，'); appendOutput('往返行程的估计时间(以毫秒为单位):'); appendOutput('    最短 = 1ms，最长 = 2ms，平均 = 1ms'); }
+            function outputTracert(cmd) { const parts = cmd.split(' '); const target = parts[1] || 'www.google.com'; appendOutput('通过最多 30 个跃点跟踪到 ' + target + ' 的路由:'); appendOutput('  1     1 ms     1 ms     1 ms  192.168.1.1'); appendOutput('  2     3 ms     2 ms     3 ms  10.0.0.1'); appendOutput('  3     8 ms     7 ms     8 ms  202.96.128.1'); appendOutput('  4    15 ms    14 ms    15 ms  203.208.45.1'); appendOutput('  5    18 ms    18 ms    19 ms  ' + target); appendOutput('跟踪完成。'); }
+            function outputNetstat() { appendOutput('活动连接'); appendOutput(''); appendOutput('  协议    本地地址          外部地址        状态'); appendOutput('  TCP    192.168.1.105:80  10.0.0.1:443   ESTABLISHED'); appendOutput('  TCP    192.168.1.105:443 10.0.0.5:8080  TIME_WAIT'); appendOutput('  UDP    192.168.1.105:53  *:*'); }
+            function outputNslookup(cmd) { const parts = cmd.split(' '); const domain = parts[1] || 'www.baidu.com'; appendOutput('服务器:  dns.google'); appendOutput('Address:  8.8.8.8'); appendOutput(''); appendOutput('名称:    ' + domain); appendOutput('Address:  110.242.68.66'); }
+            function outputExit() { appendOutput('退出命令提示符…'); setTimeout(() => { appendOutput('模拟器已关闭。刷新页面重新进入。'); }, 1000); }
+            function outputSystemInfo() { appendOutput('主机名:           DESKTOP-HACKER'); appendOutput('OS 名称:          Microsoft Windows 11 专业版'); appendOutput('OS 版本:          10.0.22631.3000'); appendOutput('系统制造商:       MSI'); appendOutput('系统型号:         MS-7C56'); appendOutput('处理器:           Intel(R) Core(TM) i9-14900K @ 3.20GHz'); appendOutput('BIOS 版本:        2.10, 2026/08/28'); appendOutput('物理内存:         32.0 GB (可用: 27.5 GB)'); appendOutput('虚拟内存:         66.5 GB (可用: 62.3 GB)'); }
+            function outputTaskkill(cmd) { const parts = cmd.split(' '); const proc = parts[3] || 'chrome.exe'; appendOutput('成功: 已终止进程 ' + proc + '，其 PID 为 1234。'); }
+            function outputTasklist() { appendOutput('映像名称                       PID  会话名  会话#  内存使用'); appendOutput('========================= ====== ======== ======== ==========='); appendOutput('System Idle Process              0 Services    0         24 K'); appendOutput('System                           4 Services    0        132 K'); appendOutput('chrome.exe                    1234 Console    1    350,000 K'); appendOutput('notepad.exe                   2345 Console    1     12,000 K'); appendOutput('explorer.exe                  4567 Console    1     80,000 K'); }
+            function outputFindstr() { appendOutput('在 C:\\Windows\\Logs\\CBS\\CBS.log 中搜索 [SR] 字符串:'); appendOutput('> C:\\Users\\Hacker\\Desktop\\chkdsk_log.txt'); appendOutput('已找到 3 个匹配项，已保存到桌面。'); }
+            function outputChkdsk(cmd) { appendOutput('文件系统的类型是 NTFS。'); appendOutput('正在扫描卷 C: …'); appendOutput('阶段 1: 检查基本文件系统结构... 100% 完成。'); appendOutput('阶段 2: 检查文件名链接... 100% 完成。'); appendOutput('阶段 3: 检查安全描述符... 100% 完成。'); appendOutput('阶段 4: 检查用户数据... 100% 完成。'); appendOutput('Windows 已更正文件系统问题。'); }
+            function outputSfc(cmd) { appendOutput('开始系统扫描。这个过程可能需要一些时间。'); appendOutput(''); let progress = 0; const timerId = addTimer(setInterval(() => { progress += 10; appendOutput('验证 ' + progress + '% 已完成。'); if (progress >= 100) { clearInterval(timerId); removeTimer(timerId); appendOutput('Windows 资源保护未找到任何完整性违规。'); } }, 300)); }
+            function outputDism(cmd) { appendOutput('部署映像服务和管理工具'); appendOutput('版本: 10.0.22631.3000'); appendOutput(''); appendOutput('[===== 50% =====] 正在扫描系统映像…'); let progress = 50; const timerId = addTimer(setInterval(() => { progress += 20; appendOutput('[=====' + '='.repeat(progress / 20) + ' ' + (100 - progress) + '% =====] ' + progress + '% 完成'); if (progress >= 100) { clearInterval(timerId); removeTimer(timerId); appendOutput('操作成功完成。'); } }, 500)); }
+            function outputCleanmgr() { appendOutput('磁盘清理程序'); appendOutput('正在计算 C: 盘可以释放多少空间…'); appendOutput('请稍候…'); setTimeout(() => { appendOutput('完成后将自动弹出界面。（模拟）'); }, 2000); }
+            function outputNetsh(cmd) { appendOutput('重要提示: 需要管理员权限。'); appendOutput('正在重置 TCP/IP 协议栈…'); appendOutput('已成功重置 Winsock 目录。'); appendOutput('必须重新启动计算机才能完成重置。'); }
+            function outputPathping(cmd) { const target = cmd.split(' ')[1] || 'www.google.com'; appendOutput('通过 ' + target + ' 的路由跟踪（最多 30 跳）:'); appendOutput(' 0  192.168.1.105   [0ms]'); appendOutput(' 1  192.168.1.1     [1ms]  0%丢失'); appendOutput(' 2  10.0.0.1        [3ms]  0%丢失'); appendOutput(' 3  202.96.128.1    [8ms]  0%丢失'); appendOutput(' 4  203.208.45.1    [15ms] 0%丢失'); appendOutput(' 5  ' + target + '     [18ms] 0%丢失'); appendOutput('跟踪完成。'); }
+            function outputPowercfg() { appendOutput('电源计划已还原为默认设置。'); }
+            function outputAttrib() { appendOutput('已清除指定文件的隐藏和系统属性。'); }
+            function outputMklink() { appendOutput('为 C:\\Games <<===>> D:\\SteamLibrary 创建的联接。'); }
+            function outputVerifier() { appendOutput('验证器已启用: standard /all。'); appendOutput('需要重新启动计算机才能生效。'); }
+            function outputMdsched() { appendOutput('内存诊断工具将安排测试，并提示重启后运行。'); }
+            function outputEventvwr() { appendOutput('已打开事件查看器（模拟）。'); appendOutput('可查看系统、应用程序、安全日志。'); }
+            function outputShutdown(cmd) { if (cmd.includes('/s')) { appendOutput('正在关机…（模拟，不会真正关机）'); } else if (cmd.includes('/r')) { appendOutput('正在重启…（模拟，不会真正重启）'); } else { appendOutput('参数错误。使用 /s 关机，使用 /r 重启。'); } }
+            function outputEcho(cmd) { const text = cmd.substring(5); if (text) { appendOutput(text); } else { appendOutput('ECHO 处于打开状态。'); } }
+            function outputDate() { appendOutput('当前日期: 2026/08/28'); }
+            function outputTime() { appendOutput('当前时间: 15:24:36.78'); }
+            function outputColor(cmd) { const parts = cmd.split(' '); if (parts[1]) { appendOutput('已设置控制台颜色属性为 ' + parts[1]); } else { appendOutput('颜色属性帮助: 前两位背景，后两位前景。例如: color 0A'); } }
+            function outputTitle(cmd) { const text = cmd.substring(6); if (text) { appendOutput('窗口标题已设置为: ' + text); } else { appendOutput('标题未设置'); } }
+            function outputPrompt(cmd) { const text = cmd.substring(7); if (text) { appendOutput('命令提示符已设置为: ' + text); } else { appendOutput('命令提示符重置为默认。'); } }
+            function outputSet(cmd) { const parts = cmd.split(' '); if (parts[1]) { appendOutput('已设置环境变量 ' + parts[1]); } else { appendOutput('环境变量列表: (模拟) 显示部分变量'); appendOutput('USERPROFILE=C:\\Users\\Hacker'); appendOutput('OS=Windows_NT'); appendOutput('PATH=C:\\Windows\\System32'); } }
+
+            function bindInputEvents(input) {
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        const cmd = input.value.trim();
+                        if (cmd) {
+                            appendOutput('C:\\>' + cmd);
+                            input.value = '';
+                            handleCommand(cmd);
+                        }
+                    }
+                });
+            }
+
+            bindInputEvents(cmdInput);
+            const terminalArea = document.querySelector('.terminal-area');
+            terminalArea.addEventListener('click', function() { if (cmdInput) cmdInput.focus(); });
+            backHome.addEventListener('click', function(e) {
+                e.preventDefault();
+                transitionOverlay.classList.add('active');
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+            });
+            cmdInput.focus();
+        })();
+    </script>
+</body>
+</html>

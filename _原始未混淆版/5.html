@@ -1,0 +1,1425 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>找乐子</title>
+<style>
+/* ========== 基础重置 ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ========== 1. 流光溢彩动态背景（系列统一） ========== */
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ========== 背景漂浮光球 ========== */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    filter: blur(2px);
+    z-index: 1;
+    animation: orbFloat 8s ease-in-out infinite;
+}
+.orb1 { width: 120px; height: 120px; top: 15%; left: 12%; }
+.orb2 { width: 80px;  height: 80px;  bottom: 18%; right: 15%; animation-delay: -3s; }
+.orb3 { width: 50px;  height: 50px;  top: 65%; left: 22%; animation-delay: -5s; }
+@keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-25px) scale(1.08); }
+}
+
+/* ========== 2. 居中 19:10 横长方形 ========== */
+.stage-rect {
+    width: min(92vw, 167.2vh);   /* 167.2vh ≈ 92vh × 19 ÷ 10 */
+    aspect-ratio: 19 / 10;        /* 强制保持 19:10 比例 */
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(10px);      /* 磨砂玻璃效果 */
+    border-radius: 25px;              /* 大圆角 */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;                 /* 裁剪内容，保证线不出圆角 */
+    z-index: 10;
+    animation: cardEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* 顶部四色渐变装饰条（与系列一致） */
+.stage-rect::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 5px;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    z-index: 5;
+}
+
+/* 卡片入场动画（上浮淡入） */
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(40px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ========== 3. 四宫格：2×2 均等划分 ========== */
+.stage-grid {
+    position: absolute;
+    inset: 0;                         /* 铺满整个长方形 */
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* 左右两个等宽列 */
+    grid-template-rows: 1fr 1fr;      /* 上下两个等高行 */
+}
+
+/* 每个小长方形单元格 */
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #999;
+    transition: background 0.3s ease;
+    cursor: default;
+    min-width: 0;                     /* 防止内容撑破格子 */
+    min-height: 0;
+}
+/* 悬停时微微提亮，增加精致感 */
+.cell:hover {
+    background: rgba(255, 255, 255, 0.45);
+}
+
+/* ========== 4. 三条同款媒体框：16:9，三格大小一致 ========== */
+.media-box {
+    width: 84%;                       /* 占格子宽度的 84%，"小的"框 */
+    aspect-ratio: 16 / 9;             /* 强制 16:9 比例 */
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 视频 / 图片铺满播放框 */
+.media-box video,
+.media-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;              /* 完整显示，不变形 */
+    background: #000;
+    display: block;
+}
+
+/* 文本框：内容自适应 + 超出可滚动 */
+.text-content {
+    width: 100%;
+    height: 100%;
+    padding: 14px 18px;
+    overflow-y: auto;                 /* 文字太多时内部滚动 */
+    color: #444;
+    line-height: 1.8;
+    text-align: justify;
+    word-break: break-all;
+    font-size: 18px;                  /* 默认字号，JS 会按文字多少自适应 */
+}
+
+/* 音频播放框 */
+.audio-content {
+    width: 100%;
+    padding: 0 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.audio-content audio {
+    width: 100%;
+}
+
+/* 框内空状态提示（未抽取 / 池为空时显示） */
+.empty-tip {
+    font-size: 14px;
+    color: #b5b5b5;
+    text-align: center;
+    line-height: 1.8;
+    padding: 0 16px;
+}
+
+/* ========== 5. 右下格：三个橙边白底"输入框样式"按钮 ========== */
+.br-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    width: 84%;
+}
+
+.input-btn {
+    width: 100%;
+    padding: 11px 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: #e65100;
+    background: #ffffff;              /* 白底 */
+    border: 3px solid #FF9800;        /* 橙色边框 */
+    border-radius: 50px;              /* 胶囊形，与 4.html 输入框同款 */
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+    min-height: 44px;                 /* 【修复】确保触摸目标 ≥44x44 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.input-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 4px 14px rgba(255, 152, 0, 0.4);
+}
+.input-btn:active {
+    transform: scale(0.96);
+}
+
+/* 冷却中的禁用样式 */
+.input-btn.disabled {
+    background: #f0f0f0;
+    border-color: #c8c8c8;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* ========== 6. 四条鲜艳橙色分割线（不碰边框、不在中心相接） ========== */
+.divider {
+    position: absolute;
+    background: #FF8C00;              /* 鲜艳橙色 */
+    box-shadow: 0 0 8px rgba(255, 140, 0, 0.5); /* 橙色柔光，更醒目 */
+    border-radius: 3px;               /* 线头圆润 */
+    pointer-events: none;             /* 不挡住格子的点击 */
+    z-index: 4;
+}
+
+/* ① 左侧横线：分割 左上 与 左下 */
+.divider-left {
+    height: 3px;
+    top: 50%;
+    left: 22px;
+    right: calc(50% + 16px);
+    transform: translateY(-50%);
+}
+
+/* ② 底部竖线：分割 左下 与 右下 */
+.divider-bottom {
+    width: 3px;
+    left: 50%;
+    top: calc(50% + 16px);
+    bottom: 22px;
+    transform: translateX(-50%);
+}
+
+/* ③ 右侧横线：分割 右下 与 右上 */
+.divider-right {
+    height: 3px;
+    top: 50%;
+    left: calc(50% + 16px);
+    right: 22px;
+    transform: translateY(-50%);
+}
+
+/* ④ 顶部竖线：分割 右上 与 左上 */
+.divider-top {
+    width: 3px;
+    left: 50%;
+    top: 22px;
+    bottom: calc(50% + 16px);
+    transform: translateX(-50%);
+}
+
+/* ========== 7. 背景上的透明按钮（提高不透明度，且确保不碰大长方形） ========== */
+.ghost-btn {
+    position: fixed;
+    z-index: 100;
+    padding: 12px 26px;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-decoration: none;
+    /* 提高不透明度：背景从0.18提升至0.35，文字从0.55提升至0.85，边框从0.35提升至0.7 */
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.35);
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50px;
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 44px;                 /* 【优化】确保触摸目标 ≥44px */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.ghost-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+    transform: translateY(-2px);
+}
+.ghost-btn:active { transform: scale(0.95); }
+
+/* 左上角：返回按钮 */
+#backBtn {
+    top: 24px;
+    left: 24px;
+}
+
+/* 右上角：返回主程序按钮 */
+#backMain {
+    top: 24px;
+    right: 24px;
+}
+
+/* 右下角：高级按钮 */
+#advancedBtn {
+    bottom: 24px;
+    right: 24px;
+}
+
+/* ========== 8. 保存乐子弹窗 ========== */
+.save-mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+    z-index: 9000;
+    display: none;                    /* 默认隐藏，点击"保存乐子"后显示 */
+    justify-content: center;
+    align-items: center;
+}
+.save-mask.show {
+    display: flex;
+    animation: maskFadeIn 0.3s ease;
+}
+
+/* 弹窗卡片（玻璃拟态） */
+.save-card {
+    width: min(90vw, 440px);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
+    border-radius: 22px;
+    padding: 26px 26px 22px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: cardEnter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.save-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    letter-spacing: 2px;
+}
+.save-sub {
+    font-size: 13px;
+    color: #999;
+    text-align: center;
+    margin-top: 8px;
+}
+
+/* 三项保存项列表 */
+.save-list {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.save-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 2.5px solid #FF9800;      /* 橙色边框，与按钮呼应 */
+    border-radius: 16px;
+    padding: 12px 14px;
+    transition: all 0.3s ease;
+}
+.save-item:hover {
+    box-shadow: 0 4px 14px rgba(255, 152, 0, 0.3);
+}
+/* 无内容时的禁用外观 */
+.save-item.disabled {
+    border-color: #ddd;
+    background: #f7f7f7;
+}
+
+.save-item-icon { font-size: 24px; }
+.save-item-info { flex: 1; min-width: 0; }
+.save-item-name { font-size: 15px; font-weight: bold; color: #e65100; }
+.save-item.disabled .save-item-name { color: #999; }
+.save-item-file {
+    font-size: 12px;
+    color: #888;
+    margin-top: 3px;
+    word-break: break-all;
+}
+
+/* 单项保存按钮（黄色胶囊，与 4.html 确定按钮呼应） */
+.save-item-btn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: bold;
+    background: linear-gradient(to right, #FFC107, #FFEB3B);
+    color: #7a5c00;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.35);
+    min-height: 44px;                 /* 【优化】确保触摸目标 ≥44px */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.save-item-btn:hover { transform: scale(1.06); }
+.save-item.disabled .save-item-btn {
+    background: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* 弹窗关闭按钮 */
+.save-close {
+    margin-top: 18px;
+    text-align: center;
+    padding: 11px 0;
+    border-radius: 50px;
+    border: 2.5px solid #FF9800;
+    color: #e65100;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 44px;                 /* 【优化】确保触摸目标 ≥44px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.save-close:hover {
+    background: #FF9800;
+    color: #fff;
+}
+
+/* ========== 9. 保存成功提示气泡 ========== */
+#toast {
+    position: fixed;
+    top: 18%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: rgba(46, 204, 113, 0.92);
+    color: #fff;
+    font-weight: bold;
+    padding: 12px 26px;
+    border-radius: 50px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 9500;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+#toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ========== 10. 转场遮罩层（index.html 通用圆环样式） ========== */
+#transitionMask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(8, 10, 25, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+#transitionMask.show {
+    display: flex;
+    animation: maskFadeIn 0.3s ease;
+}
+@keyframes maskFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* 转圈动画结构 */
+.loader-wrap {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loader-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, .1);
+    border-top-color: #f6d365;
+    border-right-color: #fda085;
+    animation: ringSpin .8s linear infinite;
+    box-sizing: border-box;
+}
+.loader-ring::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-bottom-color: #a78bfa;
+    border-left-color: #667eea;
+    animation: ringSpin 1.4s linear infinite reverse;
+}
+.loader-ring::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    right: 28px;
+    bottom: 28px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    border-top-color: #fb7185;
+    border-right-color: #2dd4bf;
+    animation: ringSpin 2s linear infinite;
+}
+.loader-text {
+    position: relative;
+    z-index: 5;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: textShine 1.5s linear infinite;
+}
+@keyframes ringSpin {
+    to { transform: rotate(360deg); }
+}
+@keyframes textShine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+    .ghost-btn { padding: 8px 16px; font-size: 13px; }
+    #backBtn { top: 16px; left: 16px; }
+    #backMain { top: 16px; right: 16px; }
+    #advancedBtn { bottom: 16px; right: 16px; }
+}
+
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+
+        /* ========== 手机端针对性修复：5.html影音娱乐单列布局（优化版） ========== */
+@media (max-width: 768px) {
+    html, body {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: auto !important;
+        min-height: 100vh !important;
+    }
+    .stage-rect {
+        width: 94vw !important;
+        aspect-ratio: auto !important;
+        min-height: auto !important;
+        height: auto !important;
+        padding: 14px !important;
+        border-radius: 20px !important;
+        position: relative !important;
+        margin: 80px auto 100px !important;
+    }
+    .stage-grid {
+        position: relative !important;
+        inset: auto !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto !important;
+        gap: 10px !important;
+    }
+    .cell {
+        min-height: auto !important;
+        min-width: 0 !important;
+        padding: 2px !important;
+    }
+    /* 图片/视频框：固定高度，不再16:9 */
+    .media-box {
+        width: 100% !important;
+        aspect-ratio: auto !important;
+        height: 130px !important;
+        border-radius: 12px !important;
+    }
+    #mediaStage img, #mediaStage video {
+        max-height: 130px !important;
+        object-fit: contain !important;
+    }
+    /* 文字内容区：固定较小高度，可滚动 */
+    .text-content {
+        width: 100% !important;
+        height: 120px !important;
+        max-height: 120px !important;
+        padding: 10px 12px !important;
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+        overflow-y: auto !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
+    }
+    /* 音频区：固定高度 */
+    .audio-content {
+        width: 100% !important;
+        height: 80px !important;
+        padding: 6px 4px !important;
+    }
+    .audio-content audio {
+        width: 100% !important;
+    }
+    /* 按钮列：紧凑布局，确保三个按钮都能显示 */
+    .br-column {
+        width: 100% !important;
+        gap: 8px !important;
+        padding: 2px 0 !important;
+    }
+    .input-btn {
+        width: 100% !important;
+        padding: 10px 0 !important;
+        font-size: 15px !important;
+        border-radius: 50px !important;
+        border-width: 2px !important;
+    }
+    /* 分隔线隐藏 */
+    .divider {
+        display: none !important;
+    }
+    /* 保存弹窗适配 */
+    .save-mask {
+        padding: 12px !important;
+    }
+    .save-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 16px 12px !important;
+    }
+    .save-title {
+        font-size: 18px !important;
+    }
+    .save-item {
+        flex-direction: column !important;
+        gap: 6px !important;
+        text-align: center !important;
+        padding: 10px !important;
+    }
+    .save-item-btn {
+        width: 100% !important;
+    }
+    /* 幽灵按钮调整 */
+    .ghost-btn {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+    }
+}
+@media (max-width: 480px) {
+    .stage-rect {
+        width: 96vw !important;
+        padding: 10px !important;
+        margin: 70px auto 90px !important;
+    }
+    .media-box {
+        height: 110px !important;
+    }
+    .text-content {
+        height: 100px !important;
+        max-height: 100px !important;
+        font-size: 14px !important;
+    }
+    .audio-content {
+        height: 70px !important;
+    }
+    .input-btn {
+        padding: 9px 0 !important;
+        font-size: 14px !important;
+    }
+}
+            .text-content {
+                font-size: 15px !important;
+                max-height: 180px !important;
+            }
+            .input-btn {
+                padding: 12px 0 !important;
+                font-size: 15px !important;
+            }
+        }
+</style>
+</head>
+<body>
+
+<!-- 背景漂浮光球 -->
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+
+<!-- 背景左上角：返回按钮（原有，跳转4.html） -->
+<a class="ghost-btn" id="backBtn" href="4.html">&larr; 返回</a>
+
+<!-- 背景右上角：主程序按钮（跳转index.html） -->
+<a class="ghost-btn" id="backMain" href="index.html">主程序</a>
+
+<!-- 背景右下角：高级按钮 -> 7.html -->
+<a class="ghost-btn" id="advancedBtn" href="7.html">高级</a>
+
+<!-- 居中 19:10 横长方形：2×2 四宫格 -->
+<div class="stage-rect" id="stageRect">
+
+    <!-- 四个相等的小长方形（左上 / 右上 / 左下 / 右下） -->
+    <div class="stage-grid">
+
+        <!-- 左上格：视频 / 图片播放框（16:9） -->
+        <div class="cell" id="cellTL">
+            <div class="media-box" id="mediaBox">
+                <div id="mediaStage" style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;">
+                    <div class="empty-tip">视频 / 图片播放区</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右上格：文本显示框（同款大小，文字多少自适应） -->
+        <div class="cell" id="cellTR">
+            <div class="media-box" id="textBox">
+                <div class="text-content" id="textStage">
+                    <div class="empty-tip" style="display:flex;justify-content:center;align-items:center;height:100%;">文本展示区</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 左下格：音频播放框（同款大小） -->
+        <div class="cell" id="cellBL">
+            <div class="media-box" id="audioBox">
+                <div class="audio-content" id="audioStage" style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;">
+                    <div class="empty-tip">音频播放区</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右下格：三个橙边白底输入框样式按钮 -->
+        <div class="cell" id="cellBR">
+            <div class="br-column">
+                <!-- 修复：添加 role/tabindex/aria-label -->
+                <div class="input-btn" id="drawBtn" role="button" tabindex="0" aria-label="抽取乐子">抽取乐子</div>
+                <div class="input-btn" id="saveBtn" role="button" tabindex="0" aria-label="保存乐子">保存乐子</div>
+                <div class="input-btn" id="bagBtn" role="button" tabindex="0" aria-label="背包">背包</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 四条橙色分割线：两两分隔相邻格子，均不碰边框、不在中心相接 -->
+    <div class="divider divider-left"></div>
+    <div class="divider divider-bottom"></div>
+    <div class="divider divider-right"></div>
+    <div class="divider divider-top"></div>
+
+</div>
+
+<!-- ================= 保存乐子弹窗 ================= -->
+<div class="save-mask" id="saveMask">
+    <div class="save-card">
+        <div class="save-title">保存乐子</div>
+        <div class="save-sub">以下为当前抽取到的乐子，点击保存即可下载到本地并放入背包</div>
+
+        <div class="save-list">
+            <!-- 视频保存项 -->
+            <div class="save-item" id="saveVideoRow">
+                <div class="save-item-icon">🎬</div>
+                <div class="save-item-info">
+                    <div class="save-item-name">视频</div>
+                    <div class="save-item-file" id="saveVideoFile">暂无内容（请先抽取）</div>
+                </div>
+                <div class="save-item-btn" id="saveVideoBtn" role="button" tabindex="0" aria-label="保存视频">保存</div>
+            </div>
+
+            <!-- 图片保存项 -->
+            <div class="save-item" id="saveImageRow">
+                <div class="save-item-icon">🖼️</div>
+                <div class="save-item-info">
+                    <div class="save-item-name">图片</div>
+                    <div class="save-item-file" id="saveImageFile">暂无内容（请先抽取）</div>
+                </div>
+                <div class="save-item-btn" id="saveImageBtn" role="button" tabindex="0" aria-label="保存图片">保存</div>
+            </div>
+
+            <!-- 音乐保存项 -->
+            <div class="save-item" id="saveAudioRow">
+                <div class="save-item-icon">🎵</div>
+                <div class="save-item-info">
+                    <div class="save-item-name">音乐</div>
+                    <div class="save-item-file" id="saveAudioFile">暂无内容（请先抽取）</div>
+                </div>
+                <div class="save-item-btn" id="saveAudioBtn" role="button" tabindex="0" aria-label="保存音乐">保存</div>
+            </div>
+        </div>
+
+        <div class="save-close" id="saveClose" role="button" tabindex="0" aria-label="关闭弹窗">关闭</div>
+    </div>
+</div>
+
+<!-- 保存成功提示气泡 -->
+<div id="toast"></div>
+
+<!-- 转场遮罩层 -->
+<div id="transitionMask">
+    <div class="loader-wrap">
+        <div class="loader-ring"></div>
+        <div class="loader-text">找乐子～</div>
+    </div>
+</div>
+
+<script>
+/* ==========================================================
+ * ★★★ 刷新池配置区 ★★★
+ * ----------------------------------------------------------
+ * 【如何添加文件】
+ *   1. 把视频 / 图片 / 音频 / txt 文件放到与 5.html 同一个文件夹；
+ *   2. 在下面对应数组中追加文件名（含扩展名），
+ *      每个文件名用英文单引号包裹，相邻两个用英文逗号分隔；
+ *   3. 例：
+ *      const videoPool = ['搞笑1.mp4', '名场面.mp4'];
+ * ========================================================== */
+const videoPool = [
+
+];
+
+const imagePool = [
+'国风图片1.jpg',
+'国风图片2.jpg',
+'国风图片3.jpg',
+'国风图片4.jpg',
+'国风图片5.jpg',
+'国风图片6.jpg',
+'1787713793215_2594a208-4882-49eb-b91a-0f4eb411eeb6.jpg',
+'1787714000642_edit_10228843218916.png',
+'Camera_1040g3k0322jrqnak7u6g5nskkm3g8iktefo70go_edit_10609536199785.jpg',
+'Screenshot_20260826_111640_com.xingin.xhs_edit_10434097370005.jpg',
+'Screenshot_20260826_111640_com.xingin.xhs_edit_10461230579853.jpg',
+'1787731644908_edit_25376657992435.png',
+'1787731650648_edit_25436016954361.png',
+'1787733144274_edit_26936555754681.png',
+'1787733245100_edit_26948560495682.png',
+'1787733349062_edit_27065467274074.png',
+'1787733422917_edit_27116038512923.png',
+'Camera_1040g3k8321m0ji7n7u7g5q3pqajngjhh5dvmb58_edit_26850808415061.jpg',
+'Camera_1040g3k8321m0ji7n7u8g5q3pqajngjhhtu44t20_edit_26869730471985.jpg',
+'Camera_1040g3k8321m0ji7n7u705q3pqajngjhhpj68ufg_edit_26837413651906.jpg',
+'Camera_1040g3k8321m0ji7n7u805q3pqajngjhhev4v78g_edit_26863362005831.jpg',
+'Camera_1040g3k8321m0ji7n7u905q3pqajngjhhlqn1s6o_edit_26844035609445.jpg',
+'Camera_1040g3k8321m0ji7n7ua05q3pqajngjhho1jscfg_edit_26875967126678.jpg',
+'Camera_1040g3k8321m0ji7n7uag5q3pqajngjhhppme3i0_edit_26880752842678.jpg',
+'Camera_1040g3k8321m0ji7n7ub05q3pqajngjhh2vvvfb0_edit_26885813888909.jpg',
+'Camera_1040g3k8321m0ji7n7ubg5q3pqajngjhhl0ibp9o_edit_26890454248217.jpg',
+'Camera_1040g3k8321m0ji7n7uc05q3pqajngjhhba0uib0_edit_26895417110679.jpg'
+];
+
+const audioPool = [
+ '《BGM串烧》——1.mp3',
+'《III》.mp3',
+'《Komorbi》——纯音乐.mp3',
+'《Take a Walk》——纯音乐.mp3',
+'《潮汐》.mp3',
+'《赤伶》——HITA.mp3',
+'《辞九门回忆》——解忧草.mp3',
+'《浮光》——纯音乐.mp3',
+'《海阔天空》——黄家驹.mp3',
+'《诀别书》——纯音乐.mp3',
+'《明天会更好》——华语群星.mp3',
+'《你看，天黑了》.mp3',
+'《年轮》——张碧晨.mp3',
+'《起风了》——买辣椒也用卷.mp3',
+'《失余年》——尹昔眠.mp3',
+'《十年人间》——李超常.mp3',
+'《十年人间钢琴》——钢琴纯音乐.mp3',
+'《虞兮叹》——闻人听书.mp3',
+'《账号已注销》.mp3',
+];
+
+const textPool = [
+// '文本1.txt',
+// '文本2.txt'
+];
+
+/* 内置文字池：不依赖文件，任何打开方式都能稳定显示 */
+const inlineTexts = [
+'欢迎来到找乐子！点击右下角「抽取乐子」，视频、文字、音频会一起刷新～',
+'你的胆子真是肥嘟嘟的。',
+'问：有只小象每天上班都生气，请问为什么？答：因为它在气象局上班。',
+'问:穿什么裤子显年轻？答：：纸尿裤。',
+'问：铁放在外面会生锈，那金子呢？答：会被偷走。',
+'问：四个人在屋里打麻将，结果警察带走五个请问为什么？答：因为他们打的那个人，名字就叫麻将。',
+'问：隔夜的开水不能喝，因为它有毒，你知道什么毒吗？答：想你的夜好孤独。',
+'问：你知道为什么有时候不开心不能用中药要用西药吗？答：因为西药笑。',
+'问：为什么古代人最多只能吃6个蘑菇？答：因为再吃会犯下七菌之罪。',
+'问：你知道什么动物可以贴在墙上吗？答：海豹。',
+'问：什么数字最爱喝酒？答：是1，因为一醉方休。',
+'问：站着的菠萝和躺着的菠萝哪个比较酸？答：站着的，因为站久了会酸。',
+'问：一棵树断了，用英语怎么说？答：嘎嘣tree',
+'问：四个周杰伦等于什么？ 答：等于一个月杰伦',
+'问：为什么路易十六不能上高速？ 答：因为高速禁止调头',
+'问：路易十六为什么是绅士？ 答：因为他是摘头man(gentleman)',
+'问：什么水果最胆小？ 答：是木瓜，因为它papaya（怕怕呀）',
+'问：一只青蛙嗓子发炎会变成什么？ 答：南瓜（难呱）',
+'问：小王剪了个中分他变成了什么？ 答：小全',
+'问：醋和酱油打架，看热闹的路人会帮谁？ 答：帮醋，因为大家都是来打酱油的',
+'问：打电话喊赤橙黄绿青蓝紫出来玩，谁没有来？ 答：青黄没来，因为打电话的时候青黄不接',
+'问：敖丙的爸爸死了他会变成什么？ 答：爸亡龙',
+'问：木兰从军为何从未被揭穿？ 答：因为“木兰无长兄”',
+'问：为什么瘦子和胖子掉进河里，瘦子淹死了，胖子没有？ 答：因为肥而不腻(溺)',
+'问：假如生活欺骗了你，我建议你吃披萨。为什么？ 答：因为披萨有6片和8片，没有7片',
+'问：高个子和矮个子谁更喜欢游泳？ 答：矮个子，矮LOVE游',
+'问：阿姨去划船，船翻了，为什么？ 答：因为有姨的小船说翻就翻',
+'问：摄像机坏了，猜一个动物？ 答：梅花鹿(没法录)',
+'问：狮子和熊谁的便便比较厉害？ 答：是狮子，因为狮屎胜于熊便',
+'问：有一匹马只有你能骑，为什么？ 答：因为小猪配骑',
+'问：如果在野外遇到老虎，怎么才能免除一死？ 答：跪下来叫爹，因为虎毒不食子',
+'问：为什么鲨鱼拍照后突然晕倒了？ 答：因为它拍的是婚(昏)纱(鲨)照',
+'问：蜘蛛侠被警察抓走了，请问他犯了什么罪？ 答：走私(丝)罪',
+'问：卖水果的大爷为什么能娶到黄金店的美女销售员？ 答：因为大爷当时问黄金“这玩意多少钱一斤”,结果结婚后一吵架大妈就骂大爷是骗子',
+'问：陪岳父遛弯时,岳父为什么对女儿脾气差的了解如此透彻？ 答：因为岳父说女儿简直跟她妈一模一样',
+'问：大哥去医院看病得了什么病？ 答：间接性失忆症,一看到漂亮姑娘就忘记结婚了,医生说这病他自己都没治好',
+'问：以后写文章不用笔,不能叫笔者那该叫什么？ 答：用键盘的叫做键人,用鼠标的叫做鼠辈,用触摸屏的叫做触生',
+'问：大哥去医院看病得了什么病？ 答：间接性失忆症,一看到漂亮姑娘就忘记结婚了,医生说这病他自己都没治好'
+];
+
+/* ==========================================================
+ * 一、通用工具函数
+ * ========================================================== */
+
+/* 从数组中随机取一个元素。
+ * 重复机制：有 20% 的概率重复上一次的乐子（current），
+ * 其余 80% 抽取一个与上一次不同的新乐子。 */
+function randomPick(arr, current) {
+    if (!arr || arr.length === 0) return null;
+    if (arr.length === 1) return arr[0];
+
+    /* 20% 概率：直接重复上一次 */
+    if (current && arr.indexOf(current) !== -1 && Math.random() < 0.2) {
+        return current;
+    }
+
+    /* 80% 概率：抽一个不重复的新乐子 */
+    let pick;
+    let guard = 0;                     /* 防止极端情况死循环 */
+    do {
+        pick = arr[Math.floor(Math.random() * arr.length)];
+        guard++;
+    } while (pick === current && guard < 20);
+    return pick;
+}
+
+/* 生成时间字符串：YYYY-MM-DD HH:mm */
+function nowStr() {
+    const n = new Date();
+    const pad = function (x) { return x < 10 ? '0' + x : '' + x; };
+    return n.getFullYear() + '-' + pad(n.getMonth() + 1) + '-' + pad(n.getDate()) +
+           ' ' + pad(n.getHours()) + ':' + pad(n.getMinutes());
+}
+
+/* ==========================================================
+ * 二、左上格：视频 / 图片播放
+ * ========================================================== */
+let currentMedia = null;               /* 记录当前文件，避免连续重复 */
+let currentMediaType = null;           /* 当前播放的是 'video' 还是 'image' */
+
+function refreshMedia() {
+    const stage = document.getElementById('mediaStage');
+    const types = [];
+    if (videoPool.length > 0) types.push('video');
+    if (imagePool.length > 0) types.push('image');
+
+    /* 两个池都为空：提示用户添加文件 */
+    if (types.length === 0) {
+        stage.innerHTML = '<div class="empty-tip">视频/图片池为空<br>请先在代码顶部添加文件</div>';
+        currentMedia = null;
+        currentMediaType = null;
+        return;
+    }
+
+    /* 随机决定本次放视频还是图片，再从对应池随机取文件（20% 可重复） */
+    const type = types[Math.floor(Math.random() * types.length)];
+    const pool = (type === 'video') ? videoPool : imagePool;
+    const file = randomPick(pool, currentMedia);
+    currentMedia = file;
+    currentMediaType = type;
+
+    if (type === 'video') {
+        stage.innerHTML = '<video src="' + file + '" controls playsinline></video>';
+    } else {
+        stage.innerHTML = '<img src="' + file + '" alt="乐子图片">';
+    }
+
+    /* 文件不存在时给出提示 */
+    const el = stage.firstChild;
+    if (el) {
+        el.onerror = function () {
+            stage.innerHTML = '<div class="empty-tip">未找到文件：<br>' + file + '</div>';
+        };
+    }
+}
+
+/* ==========================================================
+ * 三、右上格：文本显示（按文字多少自适应字号）
+ * ========================================================== */
+let currentTextFile = null;
+
+/* 按文字长度自适应字号；再长就在框内滚动 */
+function fitText(el, text) {
+    const len = text.length;
+    let size;
+    if (len <= 15)       size = 26;
+    else if (len <= 40)  size = 21;
+    else if (len <= 90)  size = 17;
+    else if (len <= 180) size = 15;
+    else                 size = 13;
+    el.style.fontSize = size + 'px';
+    el.textContent = text;
+}
+
+/* 尝试读取本地 txt（file:// 下可能被浏览器拦截，失败返回 null） */
+function loadTxt(fileName, callback) {
+    try {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', fileName, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if ((xhr.status === 200 || xhr.status === 0) && xhr.responseText) {
+                    callback(xhr.responseText);
+                } else {
+                    callback(null);
+                }
+            }
+        };
+        xhr.onerror = function () { callback(null); };
+        xhr.send();
+    } catch (e) {
+        callback(null);
+    }
+}
+
+function refreshText() {
+    const stage = document.getElementById('textStage');
+
+    /* 候选 = txt 文件 + 内置文字 */
+    const candidates = textPool.concat(inlineTexts);
+    if (candidates.length === 0) {
+        stage.innerHTML = '<div class="empty-tip">文本池为空</div>';
+        return;
+    }
+
+    const pick = randomPick(candidates, currentTextFile);
+    currentTextFile = pick;
+
+    /* 以 .txt 结尾：尝试读取文件，失败则回退到内置文字 */
+    if (/\.txt$/i.test(pick)) {
+        loadTxt(pick, function (content) {
+            if (content && content.trim()) {
+                fitText(stage, content.trim());
+            } else {
+                const fallback = randomPick(inlineTexts);
+                fitText(stage, fallback || '（txt 读取受限，请在 inlineTexts 中添加文字）');
+            }
+        });
+    } else {
+        /* 内置文字：直接显示 */
+        fitText(stage, pick);
+    }
+}
+
+/* ==========================================================
+ * 四、左下格：音频播放
+ * ========================================================== */
+let currentAudio = null;
+
+function refreshAudio() {
+    const stage = document.getElementById('audioStage');
+
+    if (audioPool.length === 0) {
+        stage.innerHTML = '<div class="empty-tip">音频池为空<br>请先在代码顶部添加文件</div>';
+        currentAudio = null;
+        return;
+    }
+
+    const file = randomPick(audioPool, currentAudio);
+    currentAudio = file;
+
+    stage.innerHTML = '<audio src="' + file + '" controls style="width:92%;"></audio>';
+
+    const el = stage.firstChild;
+    if (el) {
+        el.onerror = function () {
+            stage.innerHTML = '<div class="empty-tip">未找到文件：<br>' + file + '</div>';
+        };
+    }
+}
+
+/* ==========================================================
+ * 五、背包本地记录（浏览器 localStorage，供 8.html 读取）
+ * ========================================================== */
+const SAVE_KEY = 'zhaolezi_saved_items';
+
+/* 读取已保存的乐子列表 */
+function loadSavedList() {
+    try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return [];
+        const list = JSON.parse(raw);
+        return Array.isArray(list) ? list : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+/* 把一条乐子记录写入本地（同类型同文件只保留一条，更新时间） */
+function saveToBag(type, file) {
+    try {
+        const list = loadSavedList();
+        let found = false;
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].type === type && list[i].file === file) {
+                list[i].time = nowStr();
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            list.push({ type: type, file: file, time: nowStr() });
+        }
+        localStorage.setItem(SAVE_KEY, JSON.stringify(list));
+        return true;
+    } catch (e) {
+        return false;                  /* 浏览器不支持本地记录 */
+    }
+}
+
+/* ==========================================================
+ * 六、保存乐子弹窗逻辑
+ * ========================================================== */
+
+/* 提示气泡 */
+let toastTimer = null;
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+        t.classList.remove('show');
+    }, 2000);
+}
+
+/* 触发文件下载（保存到浏览器下载目录） */
+function downloadFile(file) {
+    const a = document.createElement('a');
+    a.href = file;
+    a.download = file;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+/* 填充弹窗中的一行保存项 */
+function fillSaveRow(rowId, fileId, btnId, file, type) {
+    const row = document.getElementById(rowId);
+    const fileEl = document.getElementById(fileId);
+    const btn = document.getElementById(btnId);
+    if (file) {
+        row.classList.remove('disabled');
+        fileEl.textContent = file;
+        btn.dataset.file = file;
+        btn.dataset.type = type;
+        btn.textContent = '保存';
+    } else {
+        row.classList.add('disabled');
+        fileEl.textContent = '暂无内容（请先抽取）';
+        btn.removeAttribute('data-file');
+        btn.textContent = '不可用';
+    }
+}
+
+/* 打开弹窗：实时读取当前抽取结果 */
+function openSaveModal() {
+    const videoFile = (currentMediaType === 'video') ? currentMedia : null;
+    const imageFile = (currentMediaType === 'image') ? currentMedia : null;
+
+    fillSaveRow('saveVideoRow', 'saveVideoFile', 'saveVideoBtn', videoFile, 'video');
+    fillSaveRow('saveImageRow', 'saveImageFile', 'saveImageBtn', imageFile, 'image');
+    fillSaveRow('saveAudioRow', 'saveAudioFile', 'saveAudioBtn', currentAudio, 'audio');
+
+    document.getElementById('saveMask').classList.add('show');
+}
+
+document.getElementById('saveBtn').addEventListener('click', openSaveModal);
+document.getElementById('saveClose').addEventListener('click', function () {
+    document.getElementById('saveMask').classList.remove('show');
+});
+/* 点击弹窗外的灰色遮罩也可关闭 */
+document.getElementById('saveMask').addEventListener('click', function (e) {
+    if (e.target === this) this.classList.remove('show');
+});
+
+/* 三个保存按钮：下载 + 写入背包记录 */
+function bindSaveBtn(btnId) {
+    document.getElementById(btnId).addEventListener('click', function () {
+        const file = this.dataset.file;
+        const type = this.dataset.type;
+        if (!file) {
+            showToast('该项暂无内容，请先抽取乐子');
+            return;
+        }
+        downloadFile(file);            /* 先触发下载 */
+        const ok = saveToBag(type, file); /* 再写入背包记录 */
+        showToast(ok ? '已下载，并放入背包 ✓' : '已下载，但当前浏览器不支持背包记录');
+    });
+}
+bindSaveBtn('saveVideoBtn');
+bindSaveBtn('saveImageBtn');
+bindSaveBtn('saveAudioBtn');
+
+/* ==========================================================
+ * 七、"抽取乐子"按钮：一次刷新三格 + 5秒冷却
+ * ========================================================== */
+let cooldown = 0;                      /* 剩余冷却秒数 */
+let cooldownTimer = null;
+
+function updateDrawBtn() {
+    const btn = document.getElementById('drawBtn');
+    if (cooldown > 0) {
+        btn.classList.add('disabled');
+        btn.textContent = '抽取乐子（' + cooldown + '秒）';
+    } else {
+        btn.classList.remove('disabled');
+        btn.textContent = '抽取乐子';
+    }
+}
+
+function drawFun() {
+    const btn = document.getElementById('drawBtn');
+    if (cooldown > 0) return;          /* 冷却中：忽略点击 */
+
+    /* 三个框一起随机刷新（每次有 20% 概率重复上一次） */
+    refreshMedia();
+    refreshText();
+    refreshAudio();
+
+    /* 开始 5 秒冷却 */
+    cooldown = 5;
+    updateDrawBtn();
+    cooldownTimer = setInterval(function () {
+        cooldown--;
+        updateDrawBtn();
+        if (cooldown <= 0) {
+            clearInterval(cooldownTimer);
+            cooldownTimer = null;
+        }
+    }, 1000);
+}
+
+document.getElementById('drawBtn').addEventListener('click', drawFun);
+
+/* ==========================================================
+ * 八、转场动画控制（"找乐子"遮罩，1 秒后跳转）
+ * ========================================================== */
+let isTransitioning = false;           /* 防止连点重复触发 */
+
+function showTransition(targetUrl) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+
+    document.getElementById('transitionMask').classList.add('show');
+
+    setTimeout(function () {
+        window.location.href = targetUrl;
+    }, 1000);                          /* 1 秒（1000 毫秒）后跳转 */
+}
+
+/* 为链接绑定转场：先拦截默认跳转，播完动画再跳 */
+function bindTransition(linkId) {
+    const el = document.getElementById(linkId);
+    if (!el) return;
+    el.addEventListener('click', function (e) {
+        e.preventDefault();
+        showTransition(el.getAttribute('href'));
+    });
+}
+
+bindTransition('backBtn');             // 返回 -> 4.html
+bindTransition('backMain');            // 主程序 -> index.html
+bindTransition('advancedBtn');         // 高级 -> 7.html
+
+/* "背包"按钮：播放转场后跳转 8.html */
+document.getElementById('bagBtn').addEventListener('click', function () {
+    showTransition('8.html');
+});
+
+/* ==========================================================
+ * 九、键盘可访问性支持（Enter / Space 触发点击）
+ * ========================================================== */
+function bindKeyAccessibility(elementId, handler) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handler(e);
+        }
+    });
+}
+
+bindKeyAccessibility('drawBtn', drawFun);
+bindKeyAccessibility('saveBtn', openSaveModal);
+bindKeyAccessibility('bagBtn', function () { showTransition('8.html'); });
+bindKeyAccessibility('saveClose', function () {
+    document.getElementById('saveMask').classList.remove('show');
+});
+bindKeyAccessibility('saveVideoBtn', function () {
+    document.getElementById('saveVideoBtn').click();
+});
+bindKeyAccessibility('saveImageBtn', function () {
+    document.getElementById('saveImageBtn').click();
+});
+bindKeyAccessibility('saveAudioBtn', function () {
+    document.getElementById('saveAudioBtn').click();
+});
+</script>
+
+</body>
+</html>

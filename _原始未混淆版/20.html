@@ -1,0 +1,1022 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五子棋·人机对弈 - 找乐子</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景与悬浮球（已添加 aria-hidden） */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
+            background-size: 400% 400%;
+            animation: flowGradient 20s ease-in-out infinite;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%;
+            left: -40%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%, rgba(120,180,255,.3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%, rgba(220,130,250,.25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle at 50% 50%, rgba(255,200,130,.15), transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(80,220,200,.2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+        }
+        @keyframes flowGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes flowDrift {
+            0% { transform: translate(0,0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%,-4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%,3%) scale(.97) rotate(-5deg); }
+        }
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.3), rgba(255,255,255,.1) 50%, transparent 70%);
+            box-shadow: 0 0 60px rgba(255,255,255,.08), inset 0 0 30px rgba(255,255,255,.04);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+        .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+        @keyframes orbFloatA {
+            0% { transform: translate(0,0) scale(1); opacity:.6; }
+            30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+            60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+            100% { transform: translate(0,0) scale(1); opacity:.6; }
+        }
+        @keyframes orbFloatB {
+            0% { transform: translate(0,0) scale(1); opacity:.5; }
+            35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+            70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+            100% { transform: translate(0,0) scale(1); opacity:.5; }
+        }
+        @keyframes orbSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 主容器 */
+        main {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 20px 40px;
+        }
+        .container {
+            width: 90%;
+            max-width: 1600px;
+            background: rgba(245,247,255,.96);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.3), inset 0 1px 0 rgba(255,255,255,.6);
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* 网格布局 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 12px;
+        }
+        .title-area {
+            grid-column: 1 / 5;
+            grid-row: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+            background-size: 300% 300%;
+            animation: titleGradient 6s ease infinite;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(255,150,50,.35), inset 0 1px 0 rgba(255,255,255,.2);
+        }
+        .title-area h2 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: #fff;
+            text-shadow: 2px 2px 10px rgba(0,0,0,.3);
+        }
+        @keyframes titleGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .back-area {
+            grid-column: 5 / 7;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(17,153,142,.4), inset 0 1px 0 rgba(255,255,255,.2);
+            text-decoration: none;
+            color: #fff;
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform .3s, box-shadow .3s;
+            min-height: 80px;
+            min-width: 44px;
+        }
+        .back-area:hover { transform: translateY(-5px); box-shadow: 0 18px 50px rgba(17,153,142,.5); }
+        .back-area:active { transform: translateY(-2px) scale(.96); }
+
+        /* 游戏主区域 */
+        .game-main {
+            grid-column: 1 / 7;
+            grid-row: 3 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            padding: 10px;
+        }
+        .decor-panel {
+            flex: 0 0 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px 10px;
+        }
+        .decor-card {
+            background: rgba(255,255,255,.9);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,.15);
+            width: 100%;
+            border: 2px solid #d4af37;
+            transition: transform .3s, box-shadow .3s;
+        }
+        .decor-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(212,175,55,.4); }
+        .decor-card h4 { font-size: 16px; color: #8b5a2b; margin-bottom: 10px; letter-spacing: 2px; }
+        .decor-card p { font-size: 13px; color: #666; line-height: 1.6; font-style: italic; }
+        .decor-piece { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+        .piece-demo {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,.3);
+            animation: piecePulse 2s infinite alternate;
+        }
+        .piece-demo.black { background: radial-gradient(circle at 35% 30%, #555, #000); }
+        .piece-demo.white { background: radial-gradient(circle at 35% 30%, #fff, #ccc); border: 1px solid #999; }
+        @keyframes piecePulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
+        .decor-quote {
+            font-family: "KaiTi", serif;
+            font-size: 18px;
+            color: #b8860b;
+            text-align: center;
+            padding: 10px;
+            background: rgba(255,255,255,.6);
+            border-radius: 12px;
+            border-left: 4px solid #d4af37;
+        }
+
+        /* 棋盘 */
+        .board-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            max-width: 560px;
+        }
+        .board-wrapper {
+            position: relative;
+            width: min(520px, 100%);
+            aspect-ratio: 1/1;
+            background: #deb887;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,.2);
+            overflow: hidden;
+        }
+        #boardCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 12px;
+            cursor: pointer;
+            outline: none;
+        }
+        #boardCanvas:focus-visible {
+            box-shadow: 0 0 0 4px rgba(102,126,234,.4);
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 6px 15px rgba(102,126,234,.4);
+            transition: transform .2s, box-shadow .2s;
+            min-height: 44px;
+            min-width: 44px;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(102,126,234,.5); }
+        .btn:active { transform: translateY(0) scale(.95); }
+        .btn-secondary { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .difficulty-select {
+            padding: 10px 16px;
+            border-radius: 30px;
+            border: 2px solid #d4af37;
+            font-size: 14px;
+            font-weight: 700;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,.1);
+            transition: all .3s;
+            min-height: 44px;
+        }
+        .difficulty-select:hover { box-shadow: 0 8px 20px rgba(0,0,0,.15); }
+        .status {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            min-height: 24px;
+            min-width: 44px;
+        }
+
+        /* 转场遮罩 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8,10,25,.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,.1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        @media (max-width: 1100px) {
+            .game-main { flex-direction: column; }
+            .decor-panel { flex: 0 0 auto; flex-direction: row; gap: 15px; width: 100%; justify-content: center; flex-wrap: wrap; }
+            .decor-card { width: auto; max-width: 280px; }
+        }
+        @media (max-width: 700px) {
+            .container { width: 95%; padding: 12px; }
+            .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+            .title-area { grid-column: 1/3; grid-row: auto; min-height: 100px; }
+            .back-area { grid-column: 1/3; grid-row: auto; min-height: 80px; }
+            .game-main { grid-column: 1/3; grid-row: auto; }
+            .decor-panel { flex-direction: row; width: 100%; }
+            
+            /* 新增：棋盘自适应宽度 */
+            .board-wrapper {
+                width: min(92vw, 420px);
+            }
+            .board-area {
+                width: 100%;
+                max-width: none;
+            }
+        }
+        @media (max-width: 480px) {
+            .container { padding: 8px; }
+            .title-area h2 { font-size: 24px; letter-spacing: 2px; }
+            .back-area { font-size: 16px; }
+            .decor-card { padding: 12px; }
+            .decor-card h4 { font-size: 14px; }
+            .decor-card p { font-size: 12px; }
+            .controls { gap: 8px; }
+            .btn { font-size: 12px; padding: 8px 14px; min-height: 44px; }
+            .difficulty-select { padding: 8px 12px; font-size: 12px; min-height: 44px; }
+            
+            /* 新增：隐藏装饰面板腾出空间 */
+            .decor-panel {
+                display: none;
+            }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+</style>
+</head>
+<body>
+    <!-- 背景（已添加 aria-hidden） -->
+    <div class="bg-animation" aria-hidden="true">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <div class="title-area">
+                    <h2>五子棋·人机对弈</h2>
+                </div>
+                <a href="index.html" class="back-area" id="backHome" aria-label="返回主页">
+                    <span style="font-size:32px;">🏠</span>
+                    返回主页
+                </a>
+
+                <!-- 游戏主区域 -->
+                <div class="game-main">
+                    <!-- 左侧装饰 -->
+                    <div class="decor-panel">
+                        <div class="decor-card">
+                            <h4>⚔️ 对弈规则</h4>
+                            <p>黑子先行，白子后手<br>五子连珠即为胜利<br>水平、垂直、斜线均可</p>
+                            <div class="decor-piece">
+                                <span class="piece-demo black" aria-hidden="true"></span>
+                                <span class="piece-demo white" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="decor-card">
+                            <h4>🎯 棋艺技巧</h4>
+                            <p>活三需堵<br>冲四必挡<br>双三成型，大势已定</p>
+                        </div>
+                        <div class="decor-quote" aria-hidden="true">“棋逢对手，将遇良才”</div>
+                    </div>
+
+                    <!-- 棋盘区域 -->
+                    <div class="board-area">
+                        <div class="board-wrapper">
+                            <canvas id="boardCanvas" width="520" height="520" tabindex="0" role="application" aria-label="五子棋棋盘，使用方向键移动光标，空格键落子"></canvas>
+                        </div>
+                        <div class="controls">
+                            <select id="difficultySelect" class="difficulty-select" aria-label="选择难度">
+                                <option value="easy">简单</option>
+                                <option value="normal" selected>普通</option>
+                                <option value="hard">困难</option>
+                            </select>
+                            <button id="restartBtn" class="btn" aria-label="重新开始">重新开始</button>
+                            <button id="undoBtn" class="btn btn-secondary" aria-label="悔棋">悔棋</button>
+                        </div>
+                        <div class="status" id="statusText" aria-live="polite">轮到你了，请落子</div>
+                    </div>
+
+                    <!-- 右侧装饰 -->
+                    <div class="decor-panel">
+                        <div class="decor-card">
+                            <h4>🏆 名人棋谱</h4>
+                            <p>“棋逢对手，将遇良才”<br>——诸葛亮</p>
+                        </div>
+                        <div class="decor-card">
+                            <h4>🧠 AI策略</h4>
+                            <p>评估棋盘形势<br>活三冲四攻防一体<br>深谋远虑方能制胜</p>
+                        </div>
+                        <div class="decor-quote" aria-hidden="true">“一着不慎，满盘皆输”</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 转场遮罩 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // 设置
+            const BOARD_SIZE = 15;
+            const canvas = document.getElementById('boardCanvas');
+            const ctx = canvas.getContext('2d');
+            const CELL_SIZE = 520 / (BOARD_SIZE + 1);
+            const MARGIN = CELL_SIZE / 2;
+
+            const difficultySelect = document.getElementById('difficultySelect');
+            const statusText = document.getElementById('statusText');
+            const backHome = document.getElementById('backHome');
+            const overlay = document.getElementById('overlay');
+
+            // 音效 (独立于核心逻辑，不会干扰AI走棋)
+            let audioCtx = null;
+            function playSound(type) {
+                try {
+                    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    if (type === 'place') {
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.1);
+                        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.15);
+                    } else if (type === 'win') {
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                        osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.3);
+                        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.3);
+                    } else if (type === 'lose') {
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                        osc.frequency.linearRampToValueAtTime(200, audioCtx.currentTime + 0.3);
+                        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.3);
+                    } else if (type === 'draw') {
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.2);
+                    }
+                } catch (e) { /* 音效失败不影响游戏 */ }
+            }
+
+            // 游戏状态
+            let board = [];
+            let currentPlayer = 1;
+            let gameOver = false;
+            let lastMove = null;
+            let history = [];
+
+            // 键盘操作状态
+            let keyboardCursor = { row: 7, col: 7 };
+            let keyboardActive = false;
+
+            // 初始化棋盘
+            function initBoard() {
+                board = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(0));
+                currentPlayer = 1;
+                gameOver = false;
+                lastMove = null;
+                history = [];
+                keyboardCursor = { row: 7, col: 7 };
+                drawBoard();
+                statusText.textContent = '⚫ 轮到你了，请落子';
+            }
+
+            // 绘制棋盘
+            function drawBoard() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#deb887';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // 绘制网格
+                ctx.strokeStyle = '#8b5a2b';
+                ctx.lineWidth = 1.5;
+                for (let i = 0; i < BOARD_SIZE; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(MARGIN, MARGIN + i * CELL_SIZE);
+                    ctx.lineTo(MARGIN + (BOARD_SIZE - 1) * CELL_SIZE, MARGIN + i * CELL_SIZE);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(MARGIN + i * CELL_SIZE, MARGIN);
+                    ctx.lineTo(MARGIN + i * CELL_SIZE, MARGIN + (BOARD_SIZE - 1) * CELL_SIZE);
+                    ctx.stroke();
+                }
+
+                // 绘制星位
+                ctx.fillStyle = '#8b5a2b';
+                [3, 7, 11].forEach(r => [3, 7, 11].forEach(c => {
+                    ctx.beginPath();
+                    ctx.arc(MARGIN + c * CELL_SIZE, MARGIN + r * CELL_SIZE, 4, 0, 2 * Math.PI);
+                    ctx.fill();
+                }));
+
+                // 绘制棋子
+                for (let r = 0; r < BOARD_SIZE; r++) {
+                    for (let c = 0; c < BOARD_SIZE; c++) {
+                        if (board[r][c] !== 0) {
+                            drawPiece(r, c, board[r][c]);
+                        }
+                    }
+                }
+
+                // 绘制最后一手标记
+                if (lastMove) {
+                    ctx.strokeStyle = '#ff0000';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(MARGIN + lastMove.c * CELL_SIZE, MARGIN + lastMove.r * CELL_SIZE, 8, 0, 2 * Math.PI);
+                    ctx.stroke();
+                }
+
+                // 绘制键盘光标
+                if (keyboardActive && !gameOver && currentPlayer === 1) {
+                    ctx.strokeStyle = '#00ff00';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.arc(MARGIN + keyboardCursor.col * CELL_SIZE, MARGIN + keyboardCursor.row * CELL_SIZE, CELL_SIZE * 0.48, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+
+            function drawPiece(row, col, player) {
+                const x = MARGIN + col * CELL_SIZE;
+                const y = MARGIN + row * CELL_SIZE;
+                const radius = CELL_SIZE * 0.42;
+                const gradient = ctx.createRadialGradient(x - 3, y - 3, radius * 0.1, x, y, radius);
+                
+                if (player === 1) {
+                    gradient.addColorStop(0, '#666');
+                    gradient.addColorStop(0.7, '#111');
+                    gradient.addColorStop(1, '#000');
+                } else {
+                    gradient.addColorStop(0, '#fff');
+                    gradient.addColorStop(0.7, '#eee');
+                    gradient.addColorStop(1, '#bbb');
+                }
+                
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.strokeStyle = player === 1 ? '#000' : '#999';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 高光
+                ctx.beginPath();
+                ctx.arc(x - radius * 0.3, y - radius * 0.3, radius * 0.15, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                ctx.fill();
+            }
+
+            // 坐标映射
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const x = (e.clientX - rect.left) * scaleX;
+                const y = (e.clientY - rect.top) * scaleY;
+                return {
+                    row: Math.round((y - MARGIN) / CELL_SIZE),
+                    col: Math.round((x - MARGIN) / CELL_SIZE)
+                };
+            }
+
+            // 检查胜利
+            function checkWin(r, c, p) {
+                const dirs = [[1,0], [0,1], [1,1], [1,-1]];
+                for (let d of dirs) {
+                    let count = 1;
+                    for (let i = 1; i < 5; i++) {
+                        let nr = r + d[0]*i, nc = c + d[1]*i;
+                        if (nr>=0 && nr<15 && nc>=0 && nc<15 && board[nr][nc] === p) count++;
+                        else break;
+                    }
+                    for (let i = 1; i < 5; i++) {
+                        let nr = r - d[0]*i, nc = c - d[1]*i;
+                        if (nr>=0 && nr<15 && nc>=0 && nc<15 && board[nr][nc] === p) count++;
+                        else break;
+                    }
+                    if (count >= 5) return true;
+                }
+                return false;
+            }
+
+            // 核心AI评分系统
+            function getScore(r, c, p) {
+                let score = 0;
+                const dirs = [[1,0], [0,1], [1,1], [1,-1]];
+                for (let d of dirs) {
+                    let count = 1, open = 0;
+                    // 正向
+                    let nr = r + d[0], nc = c + d[1];
+                    while (nr>=0 && nr<15 && nc>=0 && nc<15 && board[nr][nc] === p) { count++; nr += d[0]; nc += d[1]; }
+                    if (nr>=0 && nr<15 && nc>=0 && nc<15 && board[nr][nc] === 0) open++;
+                    // 反向
+                    nr = r - d[0]; nc = c - d[1];
+                    while (nr>=0 && nr<15 && nc>=0 && nc<15 && board[nr][nc] === p) { count++; nr -= d[0]; nc -= d[1]; }
+                    if (nr>=0 && nr<15 && nc>=0 && nc<15 && board[nr][nc] === 0) open++;
+
+                    if (count >= 5) score += 1000000;
+                    else if (count === 4 && open === 2) score += 200000;
+                    else if (count === 4 && open === 1) score += 10000;
+                    else if (count === 3 && open === 2) score += 5000;
+                    else if (count === 3 && open === 1) score += 500;
+                    else if (count === 2 && open === 2) score += 200;
+                    else if (count === 2 && open === 1) score += 50;
+                }
+                return score;
+            }
+
+            // 获取AI最佳落子点
+            function getBestMove() {
+                let bestScore = -Infinity;
+                let bestMove = { row: 7, col: 7 }; // 默认下中心
+
+                for (let r = 0; r < 15; r++) {
+                    for (let c = 0; c < 15; c++) {
+                        if (board[r][c] !== 0) continue;
+                        let aiScore = getScore(r, c, 2);
+                        let playerScore = getScore(r, c, 1);
+                        let total = aiScore + playerScore;
+                        const diff = difficultySelect.value;
+
+                        if (diff === 'easy') {
+                            total = aiScore * 0.5 + playerScore * 0.5 + Math.random() * 1000;
+                        } else if (diff === 'normal') {
+                            total = aiScore * 0.8 + playerScore * 0.8;
+                        } else if (diff === 'hard') {
+                            total = aiScore * 1.5 + playerScore * 1.2; // 进攻优先
+                        }
+
+                        if (total > bestScore) {
+                            bestScore = total;
+                            bestMove = { row: r, col: c };
+                        }
+                    }
+                }
+                return bestMove;
+            }
+
+            // 电脑回合（100%必走）
+            function aiTurn() {
+                if (gameOver || currentPlayer !== 2) return;
+                let move = getBestMove();
+                if (!move) move = { row: 7, col: 7 }; // 兜底
+
+                board[move.row][move.col] = 2;
+                lastMove = move;
+                history.push({ row: move.row, col: move.col, player: 2 });
+                drawBoard();
+
+                if (checkWin(move.row, move.col, 2)) {
+                    gameOver = true;
+                    statusText.textContent = '🤖 电脑赢了！再来一局？';
+                    playSound('lose');
+                    return;
+                }
+
+                if (history.length === 225) {
+                    gameOver = true;
+                    statusText.textContent = '🤝 平局！';
+                    playSound('draw');
+                    return;
+                }
+
+                currentPlayer = 1;
+                statusText.textContent = '⚫ 轮到你了，请落子';
+                playSound('place');
+            }
+
+            // 玩家回合
+            function playerMove(row, col) {
+                if (gameOver || currentPlayer !== 1 || board[row][col] !== 0) return;
+
+                board[row][col] = 1;
+                lastMove = { row, col };
+                history.push({ row, col, player: 1 });
+                drawBoard();
+                playSound('place');
+
+                if (checkWin(row, col, 1)) {
+                    gameOver = true;
+                    statusText.textContent = '🎉 你赢了！';
+                    playSound('win');
+                    return;
+                }
+
+                if (history.length === 225) {
+                    gameOver = true;
+                    statusText.textContent = '🤝 平局！';
+                    playSound('draw');
+                    return;
+                }
+
+                currentPlayer = 2;
+                statusText.textContent = '⚪ 电脑思考中...';
+                
+                // 立刻启动AI回合
+                setTimeout(aiTurn, 300);
+            }
+
+            // 监听鼠标事件
+            canvas.addEventListener('click', function(e) {
+                const { row, col } = getPos(e);
+                if (row >= 0 && row < 15 && col >= 0 && col < 15) {
+                    keyboardActive = true;
+                    keyboardCursor = { row, col };
+                    playerMove(row, col);
+                }
+            });
+
+            // 键盘操作支持（方向键移动光标，空格/回车落子）
+            canvas.addEventListener('keydown', function(e) {
+                if (gameOver || currentPlayer !== 1) return;
+
+                const key = e.key;
+                let moved = false;
+
+                if (key === 'ArrowUp') {
+                    keyboardCursor.row = Math.max(0, keyboardCursor.row - 1);
+                    moved = true;
+                } else if (key === 'ArrowDown') {
+                    keyboardCursor.row = Math.min(14, keyboardCursor.row + 1);
+                    moved = true;
+                } else if (key === 'ArrowLeft') {
+                    keyboardCursor.col = Math.max(0, keyboardCursor.col - 1);
+                    moved = true;
+                } else if (key === 'ArrowRight') {
+                    keyboardCursor.col = Math.min(14, keyboardCursor.col + 1);
+                    moved = true;
+                } else if (key === ' ' || key === 'Enter') {
+                    keyboardActive = true;
+                    playerMove(keyboardCursor.row, keyboardCursor.col);
+                    e.preventDefault();
+                    return;
+                }
+
+                if (moved) {
+                    keyboardActive = true;
+                    drawBoard();
+                    e.preventDefault();
+                }
+            });
+
+            // 重开按钮
+            document.getElementById('restartBtn').addEventListener('click', function() {
+                initBoard();
+            });
+
+            // 悔棋
+            document.getElementById('undoBtn').addEventListener('click', function() {
+                if (history.length < 2) { alert('无法悔棋'); return; }
+                history.pop(); // 移除电脑
+                history.pop(); // 移除玩家
+                board = Array.from({ length: 15 }, () => Array(15).fill(0));
+                history.forEach(m => {
+                    board[m.row][m.col] = m.player;
+                });
+                lastMove = history.length > 0 ? history[history.length - 1] : null;
+                currentPlayer = 1;
+                gameOver = false;
+                drawBoard();
+                statusText.textContent = '⚫ 轮到你了，请落子';
+            });
+
+            // 难度切换
+            difficultySelect.addEventListener('change', function() {
+                initBoard();
+            });
+
+            // 返回主页转场
+            let isTransitioning = false;
+            backHome.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isTransitioning) return;
+                isTransitioning = true;
+                overlay.classList.add('active');
+                setTimeout(function() {
+                    window.location.href = 'index.html';
+                }, 1000);
+            });
+
+            // 启动游戏
+            initBoard();
+        })();
+    </script>
+</body>
+</html>

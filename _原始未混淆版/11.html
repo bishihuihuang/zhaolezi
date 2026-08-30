@@ -655,7 +655,18 @@
     </div>
 
     <script>
-eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("Ci8qIOmYsuWwj+eZveS/neaKpOW8gOWniyAqLwooZnVuY3Rpb24oKXsKICAgIHZhciBfMHgxPWRvY3VtZW50OwogICAgXzB4MS5hZGRFdmVudExpc3RlbmVyKCdjb250ZXh0bWVudScsZnVuY3Rpb24oXzB4Mil7XzB4Mi5wcmV2ZW50RGVmYXVsdCgpO3JldHVybiBmYWxzZTt9KTsKICAgIF8weDEuYWRkRXZlbnRMaXN0ZW5lcigna2V5ZG93bicsZnVuY3Rpb24oXzB4Myl7CiAgICAgICAgdmFyIF8weDQ9XzB4My5rZXlDb2RlfHxfMHgzLndoaWNoOwogICAgICAgIGlmKF8weDQ9PT0xMjN8fChfMHgzLmN0cmxLZXkmJl8weDMuc2hpZnRLZXkmJihfMHg0PT09NzN8fF8weDQ9PT03NCkpfHwoXzB4My5jdHJsS2V5JiZfMHg0PT09ODUpfHwoXzB4My5jdHJsS2V5JiZfMHg0PT09ODMpfHwoXzB4My5jdHJsS2V5JiZfMHgzLnNoaWZ0S2V5JiZfMHg0PT09NjcpKXsKICAgICAgICAgICAgXzB4My5wcmV2ZW50RGVmYXVsdCgpO3JldHVybiBmYWxzZTsKICAgICAgICB9CiAgICB9KTsKICAgIC8vIOeugOWNleeahOW8gOWPkeiAheW3peWFt+ajgOa1i++8iOajgOa1i+eql+WPo+Wkp+Wwj+WPmOWMlu+8iQogICAgdmFyIF8weDU9d2luZG93LmlubmVyV2lkdGgsIF8weDY9d2luZG93LmlubmVySGVpZ2h0OwogICAgc2V0SW50ZXJ2YWwoZnVuY3Rpb24oKXsKICAgICAgICBpZihNYXRoLmFicyh3aW5kb3cuaW5uZXJXaWR0aC1fMHg1KT4xMDB8fE1hdGguYWJzKHdpbmRvdy5pbm5lckhlaWdodC1fMHg2KT4xMDApewogICAgICAgICAgICAvLyDlvIDlj5HogIXlt6XlhbfmiZPlvIDml7bnmoTlpITnkIbvvIjlj6/pgInvvJrliLfmlrDpobXpnaLmiJbmmL7npLrmj5DnpLrvvIkKICAgICAgICB9CiAgICB9LDEwMDApOwp9KSgpOwovKiDpmLLlsI/nmb3kv53miqTnu5PmnZ8gKi8KCg0KICAgICAgICAvLyA9PT09PSDov5Tlm57kuLvpobXovazlnLrliqjnlLsgPT09PT0NCiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JhY2tIb21lJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbihlKSB7DQogICAgICAgICAgICBlLnByZXZlbnREZWZhdWx0KCk7DQogICAgICAgICAgICBjb25zdCBvdmVybGF5ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ292ZXJsYXknKTsNCiAgICAgICAgICAgIG92ZXJsYXkuY2xhc3NMaXN0LmFkZCgnYWN0aXZlJyk7DQogICAgICAgICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uKCkgew0KICAgICAgICAgICAgICAgIHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gJ2luZGV4Lmh0bWwnOw0KICAgICAgICAgICAgfSwgMTAwMCk7DQogICAgICAgIH0pOw0KDQogICAgICAgIC8vIOWIneWni+WMlg0KICAgICAgICBjb25zb2xlLmxvZygn5om+5LmQ5a2Q4oCU4oCU5LyY6LSo5bel5YW35bqT5bey5Yqg6L29Jyk7DQogICAg");
-</script>
+        // ===== 返回主页转场动画 =====
+        document.getElementById('backHome').addEventListener('click', function(e) {
+            e.preventDefault();
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+            setTimeout(function() {
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+
+        // 初始化
+        console.log('找乐子——优质工具库已加载');
+    </script>
 </body>
 </html>

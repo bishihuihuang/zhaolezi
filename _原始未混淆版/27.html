@@ -5,11 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- 修复问题 5：添加 favicon -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
-<title>找乐子——免责声明</title>
+<title>摩斯密码转换 - 找乐子</title>
 <style>
-    *,
-    *::before,
-    *::after {
+    * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
@@ -114,7 +112,7 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-    /* 主体容器 */
+    /* 主体布局 */
     main {
         position: relative;
         z-index: 10;
@@ -196,100 +194,107 @@
         transform: translateY(-2px) scale(.96);
     }
     /* 内容区 */
-    .disclaimer-card {
+    .converter-card {
         grid-column: 1 / 7;
         grid-row: 3 / 9;
         background: #fff;
         border-radius: 16px;
-        padding: 30px;
+        padding: 24px;
         box-shadow: 0 6px 20px rgba(0,0,0,.1);
         border: 2px solid #e8e8e8;
         display: flex;
         flex-direction: column;
         gap: 20px;
-        transition: transform .2s, box-shadow .2s;
     }
-    .disclaimer-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(0,0,0,.15);
-    }
-    .disclaimer-card h3 {
-        font-size: 26px;
-        color: #333;
-        border-bottom: 2px solid #e0e0e0;
-        padding-bottom: 10px;
-        letter-spacing: 2px;
+    .mode-select {
         display: flex;
-        align-items: center;
+        gap: 12px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    .mode-btn {
+        padding: 12px 24px;
+        border: 2px solid #ddd;
+        border-radius: 30px;
+        background: #fff;
+        color: #555;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+    }
+    .mode-btn.active {
+        border-color: #667eea;
+        background: #667eea;
+        color: #fff;
+    }
+    .mode-btn:hover {
+        border-color: #667eea;
+        color: #667eea;
+    }
+    .mode-btn.active:hover {
+        color: #fff;
+    }
+    .input-area, .output-area {
+        display: flex;
+        flex-direction: column;
         gap: 8px;
     }
-    .disclaimer-card h3::before {
-        content: '⚠️';
-        font-size: 28px;
-    }
-    .disclaimer-content {
-        line-height: 1.9;
+    .label {
+        font-size: 14px;
+        font-weight: 600;
         color: #555;
+    }
+    textarea {
+        width: 100%;
+        min-height: 180px;
+        padding: 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
         font-size: 15px;
-    }
-    .disclaimer-content p {
-        margin-bottom: 12px;
-    }
-    .disclaimer-content strong {
+        line-height: 1.7;
+        resize: vertical;
+        outline: none;
+        transition: border-color .3s, box-shadow .3s;
+        background: #fafafe;
         color: #333;
     }
-    .highlight-box {
-        background: #fff3cd;
-        border: 1px solid #ffeeba;
-        border-radius: 8px;
-        padding: 16px;
-        margin: 10px 0;
+    textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102,126,234,.15);
     }
-    .highlight-box p {
-        margin: 0;
-        color: #856404;
+    .btn-row {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 10px;
     }
-    /* 高级图片装饰 */
-    .decorations {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 0;
-        overflow: hidden;
-        border-radius: 16px;
+    .btn {
+        border: none;
+        border-radius: 12px;
+        padding: 12px 28px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .2s, box-shadow .2s;
+        color: #fff;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        box-shadow: 0 8px 20px rgba(102,126,234,.4);
     }
-    .decor-circle {
-        position: absolute;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(102,126,234,.2), transparent 70%);
-        animation: pulse 6s ease-in-out infinite;
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(102,126,234,.5);
     }
-    .decor-circle.c1 {
-        width: 180px;
-        height: 180px;
-        top: 10%;
-        right: 10%;
+    .btn:active {
+        transform: translateY(-1px) scale(.96);
     }
-    .decor-circle.c2 {
-        width: 120px;
-        height: 120px;
-        bottom: 20%;
-        left: 5%;
-        animation-delay: 2s;
+    .btn-secondary {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        box-shadow: 0 8px 20px rgba(240,147,251,.4);
     }
-    .decor-circle.c3 {
-        width: 80px;
-        height: 80px;
-        top: 60%;
-        right: 40%;
-        animation-delay: 4s;
-    }
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: .5; }
-        50% { transform: scale(1.2); opacity: .9; }
+    .btn-copy {
+        background: linear-gradient(135deg, #2dd4bf, #4ade80);
+        box-shadow: 0 8px 20px rgba(45,212,191,.4);
     }
     /* 转场遮罩 */
     .overlay {
@@ -377,13 +382,12 @@
         0% { background-position: 0% 50%; }
         100% { background-position: 200% 50%; }
     }
-    /* 响应式 */
     @media (max-width: 900px) {
         .container { width: 95%; padding: 12px; }
         .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
         .title-area { grid-column: 1/3; grid-row: auto; min-height: 100px; }
         .back-area { grid-column: 1/3; grid-row: auto; min-height: 80px; }
-        .disclaimer-card { grid-column: 1/3; grid-row: auto; }
+        .converter-card { grid-column: 1/3; grid-row: auto; }
     }
 
         /* ========== 手机端响应式适配（通用） ========== */
@@ -487,40 +491,30 @@
         <div class="container">
             <div class="grid">
                 <div class="title-area">
-                    <h2>找乐子——免责声明</h2>
+                    <h2>摩斯密码转换</h2>
                 </div>
                 <a href="index.html" class="back-area" id="backHome">
                     <span style="font-size:32px;">🏠</span>
                     返回主页
                 </a>
-
-                <div class="disclaimer-card">
-                    <!-- 高级图片装饰 -->
-                    <div class="decorations">
-                        <div class="decor-circle c1"></div>
-                        <div class="decor-circle c2"></div>
-                        <div class="decor-circle c3"></div>
+                <!-- 转换区 -->
+                <div class="converter-card">
+                    <div class="mode-select">
+                        <button class="mode-btn active" id="modeTextToMorse">文本转摩斯</button>
+                        <button class="mode-btn" id="modeMorseToText">摩斯转文本</button>
                     </div>
-                    <h3>免责声明</h3>
-                    <div class="disclaimer-content">
-                        <p><strong>1. 使用许可</strong><br>
-                        本站所有工具均为学习与交流目的提供。用户可自由使用本站工具，但不得用于任何违法、侵权或商业用途。</p>
-
-                        <p><strong>2. 数据与隐私</strong><br>
-                        本站所有工具均在本地浏览器运行，不会收集、上传或存储您的任何个人数据。请放心使用。</p>
-
-                        <p><strong>3. 准确性免责</strong><br>
-                        虽然我们力求提供准确的结果，但部分工具（如二维码生成、词频统计等）可能因输入内容、环境或算法限制而产生偏差。用户应自行判断并承担使用风险。</p>
-
-                        <p><strong>4. 第三方链接</strong><br>
-                        本站部分工具若包含跳转到外部网站的链接。对于外部网站的内容和隐私政策，本站不承担任何责任。</p>
-
-                        <p><strong>5. 版权声明</strong><br>
-                        本站原创代码与设计受版权保护。未经允许，不得复制、修改或用于商业用途。</p>
-
-                        <div class="highlight-box">
-                            <p><strong>⚠️ 特别提示：</strong>使用本站即表示您已阅读并同意以上全部条款。如您不同意，请立即停止使用本站。对于因使用本站而产生的任何直接或间接损失，本站概不负责。——找乐子官方</p>
-                        </div>
+                    <div class="input-area">
+                        <label class="label" id="inputLabel">输入文本（支持英文、数字、常用标点）</label>
+                        <textarea id="inputBox" placeholder="请输入要转换的内容..."></textarea>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn" id="convertBtn">转换</button>
+                        <button class="btn btn-secondary" id="clearBtn">清空</button>
+                        <button class="btn btn-copy" id="copyBtn">复制结果</button>
+                    </div>
+                    <div class="output-area">
+                        <label class="label" id="outputLabel">转换结果</label>
+                        <textarea id="outputBox" readonly placeholder="转换结果将显示在这里"></textarea>
                     </div>
                 </div>
             </div>
@@ -536,7 +530,156 @@
     </div>
 
     <script>
-eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("Ci8qIOmYsuWwj+eZveS/neaKpOW8gOWniyAqLwooZnVuY3Rpb24oKXsKICAgIHZhciBfMHgxPWRvY3VtZW50OwogICAgXzB4MS5hZGRFdmVudExpc3RlbmVyKCdjb250ZXh0bWVudScsZnVuY3Rpb24oXzB4Mil7XzB4Mi5wcmV2ZW50RGVmYXVsdCgpO3JldHVybiBmYWxzZTt9KTsKICAgIF8weDEuYWRkRXZlbnRMaXN0ZW5lcigna2V5ZG93bicsZnVuY3Rpb24oXzB4Myl7CiAgICAgICAgdmFyIF8weDQ9XzB4My5rZXlDb2RlfHxfMHgzLndoaWNoOwogICAgICAgIGlmKF8weDQ9PT0xMjN8fChfMHgzLmN0cmxLZXkmJl8weDMuc2hpZnRLZXkmJihfMHg0PT09NzN8fF8weDQ9PT03NCkpfHwoXzB4My5jdHJsS2V5JiZfMHg0PT09ODUpfHwoXzB4My5jdHJsS2V5JiZfMHg0PT09ODMpfHwoXzB4My5jdHJsS2V5JiZfMHgzLnNoaWZ0S2V5JiZfMHg0PT09NjcpKXsKICAgICAgICAgICAgXzB4My5wcmV2ZW50RGVmYXVsdCgpO3JldHVybiBmYWxzZTsKICAgICAgICB9CiAgICB9KTsKICAgIC8vIOeugOWNleeahOW8gOWPkeiAheW3peWFt+ajgOa1i++8iOajgOa1i+eql+WPo+Wkp+Wwj+WPmOWMlu+8iQogICAgdmFyIF8weDU9d2luZG93LmlubmVyV2lkdGgsIF8weDY9d2luZG93LmlubmVySGVpZ2h0OwogICAgc2V0SW50ZXJ2YWwoZnVuY3Rpb24oKXsKICAgICAgICBpZihNYXRoLmFicyh3aW5kb3cuaW5uZXJXaWR0aC1fMHg1KT4xMDB8fE1hdGguYWJzKHdpbmRvdy5pbm5lckhlaWdodC1fMHg2KT4xMDApewogICAgICAgICAgICAvLyDlvIDlj5HogIXlt6XlhbfmiZPlvIDml7bnmoTlpITnkIbvvIjlj6/pgInvvJrliLfmlrDpobXpnaLmiJbmmL7npLrmj5DnpLrvvIkKICAgICAgICB9CiAgICB9LDEwMDApOwp9KSgpOwovKiDpmLLlsI/nmb3kv53miqTnu5PmnZ8gKi8KCg0KICAgICAgICAoZnVuY3Rpb24oKSB7DQogICAgICAgICAgICAndXNlIHN0cmljdCc7DQoNCiAgICAgICAgICAgIC8vIOi/lOWbnuS4u+mhtei9rOWcug0KICAgICAgICAgICAgdmFyIGJhY2tIb21lID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JhY2tIb21lJyk7DQogICAgICAgICAgICB2YXIgb3ZlcmxheSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdvdmVybGF5Jyk7DQogICAgICAgICAgICB2YXIgaXNUcmFuc2l0aW9uaW5nID0gZmFsc2U7DQoNCiAgICAgICAgICAgIGJhY2tIb21lLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oZSkgew0KICAgICAgICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsNCiAgICAgICAgICAgICAgICBpZiAoaXNUcmFuc2l0aW9uaW5nKSByZXR1cm47DQogICAgICAgICAgICAgICAgaXNUcmFuc2l0aW9uaW5nID0gdHJ1ZTsNCiAgICAgICAgICAgICAgICBvdmVybGF5LmNsYXNzTGlzdC5hZGQoJ2FjdGl2ZScpOw0KICAgICAgICAgICAgICAgIHNldFRpbWVvdXQoZnVuY3Rpb24oKSB7DQogICAgICAgICAgICAgICAgICAgIHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gJ2luZGV4Lmh0bWwnOw0KICAgICAgICAgICAgICAgIH0sIDEwMDApOw0KICAgICAgICAgICAgfSk7DQoNCiAgICAgICAgICAgIC8vIEVzYyDlhbPpl63ovazlnLrpga7nvakNCiAgICAgICAgICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbihlKSB7DQogICAgICAgICAgICAgICAgaWYgKGUua2V5ID09PSAnRXNjYXBlJyAmJiBvdmVybGF5LmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpIHsNCiAgICAgICAgICAgICAgICAgICAgb3ZlcmxheS5jbGFzc0xpc3QucmVtb3ZlKCdhY3RpdmUnKTsNCiAgICAgICAgICAgICAgICAgICAgaXNUcmFuc2l0aW9uaW5nID0gZmFsc2U7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfSk7DQogICAgICAgIH0pKCk7DQogICAg");
-</script>
+        (function() {
+            'use strict';
+
+            // 摩斯码映射
+            const MORSE_MAP = {
+                'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+                'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+                'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+                'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+                'Y': '-.--', 'Z': '--..',
+                '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
+                '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+                '.': '.-.-.-', ',': '--..--', '?': '..--..', "'": '.----.', '!': '-.-.--',
+                '/': '-..-.', '(': '-.--.', ')': '-.--.-', '&': '.-...', ':': '---...',
+                ';': '-.-.-.', '=': '-...-', '+': '.-.-.', '-': '-....-', '_': '..--.-',
+                '"': '.-..-.', '$': '...-..-', '@': '.--.-.', ' ': ' '
+            };
+            
+            // 反转映射（用于解码）
+            const REVERSE_MAP = {};
+            for (const key in MORSE_MAP) {
+                if (MORSE_MAP[key] !== ' ') {
+                    REVERSE_MAP[MORSE_MAP[key]] = key;
+                }
+            }
+
+            // DOM元素
+            const inputBox = document.getElementById('inputBox');
+            const outputBox = document.getElementById('outputBox');
+            const convertBtn = document.getElementById('convertBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const backHome = document.getElementById('backHome');
+            const overlay = document.getElementById('overlay');
+            const inputLabel = document.getElementById('inputLabel');
+            const outputLabel = document.getElementById('outputLabel');
+            const modeTextToMorseBtn = document.getElementById('modeTextToMorse');
+            const modeMorseToTextBtn = document.getElementById('modeMorseToText');
+
+            let currentMode = 'textToMorse'; // 'textToMorse' 或 'morseToText'
+
+            // 模式切换
+            function setMode(mode) {
+                currentMode = mode;
+                if (mode === 'textToMorse') {
+                    modeTextToMorseBtn.classList.add('active');
+                    modeMorseToTextBtn.classList.remove('active');
+                    inputLabel.textContent = '输入文本（支持英文、数字、常用标点）';
+                    outputLabel.textContent = '摩斯密码结果';
+                    inputBox.value = '';
+                    outputBox.value = '';
+                    inputBox.placeholder = '例如：HELLO WORLD';
+                } else {
+                    modeMorseToTextBtn.classList.add('active');
+                    modeTextToMorseBtn.classList.remove('active');
+                    inputLabel.textContent = '输入摩斯密码（字母间空格，单词间用 / 分隔）';
+                    outputLabel.textContent = '文本结果';
+                    inputBox.value = '';
+                    outputBox.value = '';
+                    inputBox.placeholder = '例如：.... . .-.. .-.. --- / .-- --- .-. .-.. -..';
+                }
+            }
+
+            modeTextToMorseBtn.addEventListener('click', () => setMode('textToMorse'));
+            modeMorseToTextBtn.addEventListener('click', () => setMode('morseToText'));
+
+            // 文本转摩斯
+            function textToMorse(text) {
+                const upper = text.toUpperCase();
+                let result = [];
+                for (let i = 0; i < upper.length; i++) {
+                    const char = upper[i];
+                    if (char === ' ') {
+                        result.push('/');
+                    } else if (MORSE_MAP[char] !== undefined && MORSE_MAP[char] !== ' ') {
+                        result.push(MORSE_MAP[char]);
+                    } else {
+                        // 忽略不支持的字符
+                        continue;
+                    }
+                }
+                return result.join(' ');
+            }
+
+            // 摩斯转文本
+            function morseToText(morse) {
+                const words = morse.trim().split(/\s*\/\s*/);
+                let result = '';
+                for (let word of words) {
+                    const letters = word.trim().split(/\s+/);
+                    for (let letter of letters) {
+                        if (letter === '') continue;
+                        if (REVERSE_MAP[letter] !== undefined) {
+                            result += REVERSE_MAP[letter];
+                        } else {
+                            // 无效摩斯码，用?替代
+                            result += '?';
+                        }
+                    }
+                    result += ' ';
+                }
+                return result.trim();
+            }
+
+            // 转换操作
+            function convert() {
+                const input = inputBox.value;
+                let output = '';
+                if (currentMode === 'textToMorse') {
+                    output = textToMorse(input);
+                } else {
+                    output = morseToText(input);
+                }
+                outputBox.value = output;
+            }
+
+            // 事件绑定
+            convertBtn.addEventListener('click', convert);
+            clearBtn.addEventListener('click', () => {
+                inputBox.value = '';
+                outputBox.value = '';
+            });
+            copyBtn.addEventListener('click', () => {
+                if (outputBox.value) {
+                    navigator.clipboard.writeText(outputBox.value).then(() => {
+                        alert('结果已复制到剪贴板');
+                    }).catch(() => {
+                        // 降级方案
+                        outputBox.select();
+                        document.execCommand('copy');
+                        alert('结果已复制到剪贴板');
+                    });
+                }
+            });
+
+            // 返回主页转场
+            let isTransitioning = false;
+            backHome.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isTransitioning) return;
+                isTransitioning = true;
+                overlay.classList.add('active');
+                setTimeout(function() {
+                    window.location.href = 'index.html';
+                }, 1000);
+            });
+
+            // 初始化
+            setMode('textToMorse');
+        })();
+    </script>
 </body>
 </html>

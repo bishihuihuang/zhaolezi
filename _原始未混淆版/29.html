@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- 修复问题 5：添加 favicon -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
-<title>找乐子——免责声明</title>
+<title>找乐子——反馈渠道</title>
 <style>
     *,
     *::before,
@@ -114,7 +114,7 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-    /* 主体容器 */
+    /* 主体布局 */
     main {
         position: relative;
         z-index: 10;
@@ -138,14 +138,14 @@
     .container::-webkit-scrollbar { width: 10px; }
     .container::-webkit-scrollbar-track { background: rgba(0,0,0,.04); border-radius: 12px; }
     .container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 12px; border: 2px solid rgba(255,255,255,.4); }
-    /* 网格布局 */
+    /* 网格布局（6列8行） */
     .grid {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
         grid-template-rows: repeat(8, minmax(80px, auto));
         gap: 12px;
     }
-    /* 标题区 */
+    /* 标题区（前2行前4列） */
     .title-area {
         grid-column: 1 / 5;
         grid-row: 1 / 3;
@@ -170,7 +170,7 @@
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
     }
-    /* 返回主页 */
+    /* 返回主页（前2行5-6列） */
     .back-area {
         grid-column: 5 / 7;
         grid-row: 1 / 3;
@@ -195,101 +195,128 @@
     .back-area:active {
         transform: translateY(-2px) scale(.96);
     }
-    /* 内容区 */
-    .disclaimer-card {
-        grid-column: 1 / 7;
-        grid-row: 3 / 9;
-        background: #fff;
-        border-radius: 16px;
-        padding: 30px;
-        box-shadow: 0 6px 20px rgba(0,0,0,.1);
-        border: 2px solid #e8e8e8;
+    /* 内容区：邮箱展示框（3行1列） */
+    .email-display {
+        grid-column: 1 / 2;
+        grid-row: 3;
+        background: linear-gradient(135deg, #f0f4ff, #fafbff);
+        border: 2px solid #d0d0e0;
+        border-radius: 12px;
+        padding: 16px;
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        transition: transform .2s, box-shadow .2s;
-    }
-    .disclaimer-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(0,0,0,.15);
-    }
-    .disclaimer-card h3 {
-        font-size: 26px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 600;
         color: #333;
-        border-bottom: 2px solid #e0e0e0;
-        padding-bottom: 10px;
-        letter-spacing: 2px;
+        box-shadow: 0 4px 12px rgba(0,0,0,.06);
+        transition: all .3s;
+    }
+    .email-display:hover {
+        box-shadow: 0 8px 20px rgba(0,0,0,.12);
+        transform: translateY(-2px);
+    }
+    .email-display .label {
+        margin: 0 0 5px 0;
+    }
+    .email-display .address {
+        color: #667eea;
+        font-size: 18px;
+        font-weight: 800;
+    }
+    /* 内容区：邮箱操作框（3行2列） */
+    .email-actions {
+        grid-column: 2 / 3;
+        grid-row: 3;
+        background: linear-gradient(135deg, #f0f4ff, #fafbff);
+        border: 2px solid #d0d0e0;
+        border-radius: 12px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    }
+    .email-actions .btn {
+        width: 100%;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 20px;
+        background: #667eea;
+        color: #fff;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all .2s;
+    }
+    .email-actions .btn:hover {
+        transform: translateY(-2px);
+        background: #764ba2;
+    }
+    .email-actions .btn:active {
+        transform: scale(.95);
+    }
+    .email-actions .btn-secondary {
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+    .email-actions .btn-secondary:hover {
+        background: #f5576c;
+    }
+    /* 文本展示框（4-8行1-2列）彩边纯白 */
+    .text-display {
+        grid-column: 1 / 3;
+        grid-row: 4 / 9;
+        background: #fff;
+        border: 4px solid transparent;
+        border-image: linear-gradient(45deg, #ff6b6b, #ffa500, #ffd700, #667eea, #764ba2) 1;
+        border-radius: 12px;
+        padding: 20px;
+        overflow-y: auto;
+        color: #000;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.8;
+        box-shadow: 0 6px 20px rgba(0,0,0,.1);
+        transition: all .3s;
+        text-align: left;
+    }
+    .text-display:hover {
+        box-shadow: 0 12px 30px rgba(0,0,0,.15);
+        transform: translateY(-2px);
+    }
+    .text-display p {
+        margin: 0 0 8px 0;
+    }
+    .text-display .last-line {
+        letter-spacing: -1px; /* 微缩左右距 */
+        margin-bottom: 0;
+    }
+    /* 图片展示框（3-8行3-6列）占满剩余空间 */
+    .image-display {
+        grid-column: 3 / 7;
+        grid-row: 3 / 9;
+        background: #f8f9ff;
+        border: 2px dashed #d0d0e0;
+        border-radius: 12px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        justify-content: center;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0,0,0,.08);
+        transition: all .3s;
+        position: relative;
     }
-    .disclaimer-card h3::before {
-        content: '⚠️';
-        font-size: 28px;
+    .image-display:hover {
+        box-shadow: 0 12px 30px rgba(0,0,0,.12);
+        border-color: #667eea;
     }
-    .disclaimer-content {
-        line-height: 1.9;
-        color: #555;
-        font-size: 15px;
-    }
-    .disclaimer-content p {
-        margin-bottom: 12px;
-    }
-    .disclaimer-content strong {
-        color: #333;
-    }
-    .highlight-box {
-        background: #fff3cd;
-        border: 1px solid #ffeeba;
-        border-radius: 8px;
-        padding: 16px;
-        margin: 10px 0;
-    }
-    .highlight-box p {
-        margin: 0;
-        color: #856404;
-    }
-    /* 高级图片装饰 */
-    .decorations {
-        position: absolute;
-        top: 0;
-        left: 0;
+    .image-display img {
         width: 100%;
         height: 100%;
-        pointer-events: none;
-        z-index: 0;
-        overflow: hidden;
-        border-radius: 16px;
-    }
-    .decor-circle {
-        position: absolute;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(102,126,234,.2), transparent 70%);
-        animation: pulse 6s ease-in-out infinite;
-    }
-    .decor-circle.c1 {
-        width: 180px;
-        height: 180px;
-        top: 10%;
-        right: 10%;
-    }
-    .decor-circle.c2 {
-        width: 120px;
-        height: 120px;
-        bottom: 20%;
-        left: 5%;
-        animation-delay: 2s;
-    }
-    .decor-circle.c3 {
-        width: 80px;
-        height: 80px;
-        top: 60%;
-        right: 40%;
-        animation-delay: 4s;
-    }
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: .5; }
-        50% { transform: scale(1.2); opacity: .9; }
+        object-fit: contain;
     }
     /* 转场遮罩 */
     .overlay {
@@ -383,7 +410,10 @@
         .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
         .title-area { grid-column: 1/3; grid-row: auto; min-height: 100px; }
         .back-area { grid-column: 1/3; grid-row: auto; min-height: 80px; }
-        .disclaimer-card { grid-column: 1/3; grid-row: auto; }
+        .email-display { grid-column: 1/3; grid-row: auto; }
+        .email-actions { grid-column: 1/3; grid-row: auto; }
+        .text-display { grid-column: 1/3; grid-row: auto; min-height: 250px; }
+        .image-display { grid-column: 1/3; grid-row: auto; min-height: 250px; }
     }
 
         /* ========== 手机端响应式适配（通用） ========== */
@@ -486,42 +516,45 @@
     <main>
         <div class="container">
             <div class="grid">
+                <!-- 标题区 -->
                 <div class="title-area">
-                    <h2>找乐子——免责声明</h2>
+                    <h2>找乐子——反馈渠道</h2>
                 </div>
+                <!-- 返回主页 -->
                 <a href="index.html" class="back-area" id="backHome">
                     <span style="font-size:32px;">🏠</span>
                     返回主页
                 </a>
 
-                <div class="disclaimer-card">
-                    <!-- 高级图片装饰 -->
-                    <div class="decorations">
-                        <div class="decor-circle c1"></div>
-                        <div class="decor-circle c2"></div>
-                        <div class="decor-circle c3"></div>
-                    </div>
-                    <h3>免责声明</h3>
-                    <div class="disclaimer-content">
-                        <p><strong>1. 使用许可</strong><br>
-                        本站所有工具均为学习与交流目的提供。用户可自由使用本站工具，但不得用于任何违法、侵权或商业用途。</p>
+                <!-- 邮箱展示框（3行1列） -->
+                <div class="email-display">
+                    <span class="label">网易邮箱地址：</span>
+                    <span class="address" id="emailAddr">w550w550c@163.com</span>
+                </div>
 
-                        <p><strong>2. 数据与隐私</strong><br>
-                        本站所有工具均在本地浏览器运行，不会收集、上传或存储您的任何个人数据。请放心使用。</p>
+                <!-- 邮箱操作框（3行2列） -->
+                <div class="email-actions">
+                    <button class="btn" id="copyEmail">复制</button>
+                    <button class="btn btn-secondary" id="gotoEmail" title="跳转网易邮箱官网">跳转</button>
+                </div>
 
-                        <p><strong>3. 准确性免责</strong><br>
-                        虽然我们力求提供准确的结果，但部分工具（如二维码生成、词频统计等）可能因输入内容、环境或算法限制而产生偏差。用户应自行判断并承担使用风险。</p>
+                <!-- 文本展示框（4-8行1-2列） -->
+                <div class="text-display" id="textDisplay">
+                    <p>找乐子官方会持续</p>
+                    <p>优化此网页。</p>
+                    <p>感谢您的浏览与使用，</p>
+                    <p>欢迎您提出</p>
+                    <p>您的方案与建议</p>
+                    <p>如：您希望增加的功能，</p>
+                    <p>本网站使用时的不足与漏洞。</p>
+                    <p></p>
+                    <p class="last-line">我们倾听您的声音！</p>
+                </div>
 
-                        <p><strong>4. 第三方链接</strong><br>
-                        本站部分工具若包含跳转到外部网站的链接。对于外部网站的内容和隐私政策，本站不承担任何责任。</p>
-
-                        <p><strong>5. 版权声明</strong><br>
-                        本站原创代码与设计受版权保护。未经允许，不得复制、修改或用于商业用途。</p>
-
-                        <div class="highlight-box">
-                            <p><strong>⚠️ 特别提示：</strong>使用本站即表示您已阅读并同意以上全部条款。如您不同意，请立即停止使用本站。对于因使用本站而产生的任何直接或间接损失，本站概不负责。——找乐子官方</p>
-                        </div>
-                    </div>
+                <!-- 图片展示框（3-8行3-6列，占满剩余空间） -->
+                <div class="image-display" id="imageDisplay">
+                    <!-- 修复问题 1：添加 alt 文本描述，并添加 onerror 回调防止图片缺失显示破损图标 -->
+                    <img src="abhafvg.jpg" alt="反馈渠道图片" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #f0f4ff, #fafbff)'; this.parentElement.innerHTML='<p style=\'color:#667eea; font-weight:bold;\'>反馈图片暂不可用</p>';">
                 </div>
             </div>
         </div>
@@ -536,7 +569,87 @@
     </div>
 
     <script>
-eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("Ci8qIOmYsuWwj+eZveS/neaKpOW8gOWniyAqLwooZnVuY3Rpb24oKXsKICAgIHZhciBfMHgxPWRvY3VtZW50OwogICAgXzB4MS5hZGRFdmVudExpc3RlbmVyKCdjb250ZXh0bWVudScsZnVuY3Rpb24oXzB4Mil7XzB4Mi5wcmV2ZW50RGVmYXVsdCgpO3JldHVybiBmYWxzZTt9KTsKICAgIF8weDEuYWRkRXZlbnRMaXN0ZW5lcigna2V5ZG93bicsZnVuY3Rpb24oXzB4Myl7CiAgICAgICAgdmFyIF8weDQ9XzB4My5rZXlDb2RlfHxfMHgzLndoaWNoOwogICAgICAgIGlmKF8weDQ9PT0xMjN8fChfMHgzLmN0cmxLZXkmJl8weDMuc2hpZnRLZXkmJihfMHg0PT09NzN8fF8weDQ9PT03NCkpfHwoXzB4My5jdHJsS2V5JiZfMHg0PT09ODUpfHwoXzB4My5jdHJsS2V5JiZfMHg0PT09ODMpfHwoXzB4My5jdHJsS2V5JiZfMHgzLnNoaWZ0S2V5JiZfMHg0PT09NjcpKXsKICAgICAgICAgICAgXzB4My5wcmV2ZW50RGVmYXVsdCgpO3JldHVybiBmYWxzZTsKICAgICAgICB9CiAgICB9KTsKICAgIC8vIOeugOWNleeahOW8gOWPkeiAheW3peWFt+ajgOa1i++8iOajgOa1i+eql+WPo+Wkp+Wwj+WPmOWMlu+8iQogICAgdmFyIF8weDU9d2luZG93LmlubmVyV2lkdGgsIF8weDY9d2luZG93LmlubmVySGVpZ2h0OwogICAgc2V0SW50ZXJ2YWwoZnVuY3Rpb24oKXsKICAgICAgICBpZihNYXRoLmFicyh3aW5kb3cuaW5uZXJXaWR0aC1fMHg1KT4xMDB8fE1hdGguYWJzKHdpbmRvdy5pbm5lckhlaWdodC1fMHg2KT4xMDApewogICAgICAgICAgICAvLyDlvIDlj5HogIXlt6XlhbfmiZPlvIDml7bnmoTlpITnkIbvvIjlj6/pgInvvJrliLfmlrDpobXpnaLmiJbmmL7npLrmj5DnpLrvvIkKICAgICAgICB9CiAgICB9LDEwMDApOwp9KSgpOwovKiDpmLLlsI/nmb3kv53miqTnu5PmnZ8gKi8KCg0KICAgICAgICAoZnVuY3Rpb24oKSB7DQogICAgICAgICAgICAndXNlIHN0cmljdCc7DQoNCiAgICAgICAgICAgIC8vIOi/lOWbnuS4u+mhtei9rOWcug0KICAgICAgICAgICAgdmFyIGJhY2tIb21lID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JhY2tIb21lJyk7DQogICAgICAgICAgICB2YXIgb3ZlcmxheSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdvdmVybGF5Jyk7DQogICAgICAgICAgICB2YXIgaXNUcmFuc2l0aW9uaW5nID0gZmFsc2U7DQoNCiAgICAgICAgICAgIGJhY2tIb21lLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oZSkgew0KICAgICAgICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsNCiAgICAgICAgICAgICAgICBpZiAoaXNUcmFuc2l0aW9uaW5nKSByZXR1cm47DQogICAgICAgICAgICAgICAgaXNUcmFuc2l0aW9uaW5nID0gdHJ1ZTsNCiAgICAgICAgICAgICAgICBvdmVybGF5LmNsYXNzTGlzdC5hZGQoJ2FjdGl2ZScpOw0KICAgICAgICAgICAgICAgIHNldFRpbWVvdXQoZnVuY3Rpb24oKSB7DQogICAgICAgICAgICAgICAgICAgIHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gJ2luZGV4Lmh0bWwnOw0KICAgICAgICAgICAgICAgIH0sIDEwMDApOw0KICAgICAgICAgICAgfSk7DQoNCiAgICAgICAgICAgIC8vIEVzYyDlhbPpl63ovazlnLrpga7nvakNCiAgICAgICAgICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbihlKSB7DQogICAgICAgICAgICAgICAgaWYgKGUua2V5ID09PSAnRXNjYXBlJyAmJiBvdmVybGF5LmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpIHsNCiAgICAgICAgICAgICAgICAgICAgb3ZlcmxheS5jbGFzc0xpc3QucmVtb3ZlKCdhY3RpdmUnKTsNCiAgICAgICAgICAgICAgICAgICAgaXNUcmFuc2l0aW9uaW5nID0gZmFsc2U7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfSk7DQogICAgICAgIH0pKCk7DQogICAg");
-</script>
+        (function() {
+            'use strict';
+
+            // 返回主页转场
+            var backHome = document.getElementById('backHome');
+            var overlay = document.getElementById('overlay');
+            var isTransitioning = false;
+
+            backHome.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isTransitioning) return;
+                isTransitioning = true;
+                overlay.classList.add('active');
+                setTimeout(function() {
+                    window.location.href = 'index.html';
+                }, 1000);
+            });
+
+            // Esc 关闭转场遮罩
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                    overlay.classList.remove('active');
+                    isTransitioning = false;
+                }
+            });
+
+            // 复制邮箱地址
+            var copyEmailBtn = document.getElementById('copyEmail');
+            copyEmailBtn.addEventListener('click', function() {
+                var email = document.getElementById('emailAddr').textContent;
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(email).then(function() {
+                        alert('邮箱地址已复制！');
+                    }).catch(function() {
+                        fallbackCopy(email);
+                    });
+                } else {
+                    fallbackCopy(email);
+                }
+            });
+
+            function fallbackCopy(text) {
+                var temp = document.createElement('textarea');
+                temp.value = text;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+                alert('邮箱地址已复制！');
+            }
+
+            // 跳转到网易邮箱官网
+            var gotoEmailBtn = document.getElementById('gotoEmail');
+            gotoEmailBtn.addEventListener('click', function() {
+                window.location.href = 'https://mail.163.com';
+            });
+
+            // 预留后期接口：设置文本内容
+            window.setFeedbackText = function(html) {
+                var el = document.getElementById('textDisplay');
+                if (el) el.innerHTML = html;
+            };
+
+            // 预留后期接口：设置图片
+            window.setFeedbackImage = function(src) {
+                var img = document.querySelector('.image-display img');
+                if (img && src) img.src = src;
+            };
+
+            // 预留后期接口：清空图片
+            window.clearFeedbackImage = function() {
+                var img = document.querySelector('.image-display img');
+                if (img) img.src = '';
+            };
+
+            // 预留后期接口：清空文本
+            window.clearFeedbackText = function() {
+                var el = document.getElementById('textDisplay');
+                if (el) el.innerHTML = '';
+            };
+        })();
+    </script>
 </body>
 </html>
