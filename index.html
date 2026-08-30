@@ -785,7 +785,17 @@
                 }
             }
         }
-    </style>
+    
+        /* 手机端标题换行标签：电脑端隐藏，手机端显示 */
+        .mobile-break {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .mobile-break {
+                display: block;
+            }
+        }
+</style>
 </head>
 <body>
 
@@ -983,7 +993,13 @@
 
             if (config && config.title) {
                 iconSpan.textContent = config.icon || '';
-                titleSpan.textContent = config.title;
+                var titleText = config.title;
+                var lastDashIdx = titleText.lastIndexOf('——');
+                if (lastDashIdx !== -1 && lastDashIdx + 2 < titleText.length) {
+                    titleSpan.innerHTML = titleText.substring(0, lastDashIdx + 2) + '<br class="mobile-break">' + titleText.substring(lastDashIdx + 2);
+                } else {
+                    titleSpan.textContent = titleText;
+                }
                 tooltipSpan.textContent = config.desc || '敬请期待～';
                 a.href = config.link || '#';
                 // 添加 ARIA 标签和 title 属性提升可访问性
