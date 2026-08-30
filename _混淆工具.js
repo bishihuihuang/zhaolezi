@@ -21,24 +21,52 @@ const TARGET_FILES = ['index.html', ...Array.from({length: 29}, (_, i) => `${i +
 const BACKUP_DIR = '_原始未混淆版';
 
 // 防小白保护代码（会被添加到每个JS开头，然后一起混淆）
+// 自定义右键菜单：只保留复制和刷新，其余禁止
 const ANTI_CHEAT_CODE = `
 /* 防小白保护开始 */
 (function(){
     var _0x1=document;
-    _0x1.addEventListener('contextmenu',function(_0x2){_0x2.preventDefault();return false;});
+    // 创建自定义右键菜单
+    var _0x2=_0x1.createElement('div');
+    _0x2.style.cssText='position:fixed;z-index:9999999;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:5px 0;min-width:90px;display:none;font-family:"Microsoft YaHei",sans-serif;font-size:14px;user-select:none;';
+    _0x2.innerHTML='<div data-a="copy" style="padding:8px 18px;cursor:pointer;color:#333;">复制</div><div data-a="refresh" style="padding:8px 18px;cursor:pointer;color:#333;">刷新</div>';
+    _0x1.body.appendChild(_0x2);
+    // 菜单项hover
+    _0x2.addEventListener('mouseover',function(e){if(e.target.getAttribute('data-a')){e.target.style.background='#f5f5f5';}});
+    _0x2.addEventListener('mouseout',function(e){if(e.target.getAttribute('data-a')){e.target.style.background='';}});
+    // 右键显示自定义菜单
+    _0x1.addEventListener('contextmenu',function(e){
+        e.preventDefault();
+        _0x2.style.display='block';
+        _0x2.style.left=e.clientX+'px';
+        _0x2.style.top=e.clientY+'px';
+        setTimeout(function(){var r=_0x2.getBoundingClientRect();if(r.right>window.innerWidth){_0x2.style.left=(window.innerWidth-r.width-5)+'px';}if(r.bottom>window.innerHeight){_0x2.style.top=(window.innerHeight-r.height-5)+'px';}},0);
+        return false;
+    });
+    // 隐藏菜单
+    _0x1.addEventListener('click',function(){_0x2.style.display='none';});
+    _0x1.addEventListener('scroll',function(){_0x2.style.display='none';});
+    _0x1.addEventListener('keydown',function(e){if(e.keyCode===27){_0x2.style.display='none';}});
+    // 菜单点击
+    _0x2.addEventListener('click',function(e){
+        var t=e.target;
+        var a=t.getAttribute('data-a');
+        if(!a){return;}
+        _0x2.style.display='none';
+        if(a==='copy'){
+            var s=window.getSelection().toString();
+            if(s){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s);}else{document.execCommand('copy');}}
+        }else if(a==='refresh'){
+            location.reload();
+        }
+    });
+    // 禁用F12等开发者工具快捷键（保留Ctrl+C复制）
     _0x1.addEventListener('keydown',function(_0x3){
         var _0x4=_0x3.keyCode||_0x3.which;
         if(_0x4===123||(_0x3.ctrlKey&&_0x3.shiftKey&&(_0x4===73||_0x4===74))||(_0x3.ctrlKey&&_0x4===85)||(_0x3.ctrlKey&&_0x4===83)||(_0x3.ctrlKey&&_0x3.shiftKey&&_0x4===67)){
             _0x3.preventDefault();return false;
         }
     });
-    // 简单的开发者工具检测（检测窗口大小变化）
-    var _0x5=window.innerWidth, _0x6=window.innerHeight;
-    setInterval(function(){
-        if(Math.abs(window.innerWidth-_0x5)>100||Math.abs(window.innerHeight-_0x6)>100){
-            // 开发者工具打开时的处理（可选：刷新页面或显示提示）
-        }
-    },1000);
 })();
 /* 防小白保护结束 */
 `;
