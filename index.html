@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——优质工具库</title>
+    <style>
+        /* ========== 全局重置 ========== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ========== 背景流光层（20秒无缝循环） ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(125deg,
+                    #0a0e27, #161a3d, #1f1652, #331d6e,
+                    #1d1b4b, #0f122f, #241a54);
+            background-size: 400% 400%;
+            animation: flowGradient 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%;
+            left: -40%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(ellipse at 30% 70%,
+                    rgba(255, 140, 100, .35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%,
+                    rgba(120, 180, 255, .3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%,
+                    rgba(220, 130, 250, .25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(255, 200, 130, .15), transparent 60%),
+                radial-gradient(circle at 20% 80%,
+                    rgba(80, 220, 200, .2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes flowGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+        }
+
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* ========== 悬浮球（透明、漂浮、旋转） ========== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                    rgba(255, 255, 255, .3),
+                    rgba(255, 255, 255, .1) 50%,
+                    transparent 70%);
+            box-shadow: 0 0 60px rgba(255, 255, 255, .08),
+                inset 0 0 30px rgba(255, 255, 255, .04);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        .orb-1 {
+            width: 260px;
+            height: 260px;
+            top: 12%;
+            left: 8%;
+            animation: orbFloatA 18s ease-in-out infinite,
+                orbSpin 40s linear infinite;
+        }
+
+        .orb-2 {
+            width: 160px;
+            height: 160px;
+            top: 55%;
+            left: 75%;
+            animation: orbFloatB 22s ease-in-out infinite,
+                orbSpin 55s linear infinite;
+        }
+
+        .orb-3 {
+            width: 110px;
+            height: 110px;
+            top: 68%;
+            left: 20%;
+            animation: orbFloatA 16s ease-in-out infinite reverse,
+                orbSpin 35s linear infinite;
+        }
+
+        .orb-4 {
+            width: 220px;
+            height: 220px;
+            top: 28%;
+            left: 60%;
+            animation: orbFloatB 20s ease-in-out infinite reverse,
+                orbSpin 50s linear infinite;
+        }
+
+        .orb-5 {
+            width: 80px;
+            height: 80px;
+            top: 80%;
+            left: 45%;
+            animation: orbFloatA 14s ease-in-out infinite,
+                orbSpin 30s linear infinite;
+        }
+
+        @keyframes orbFloatA {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: .6;
+            }
+            30% {
+                transform: translate(18px, -22px) scale(1.04);
+                opacity: .8;
+            }
+            60% {
+                transform: translate(-12px, 10px) scale(.96);
+                opacity: .5;
+            }
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: .6;
+            }
+        }
+
+        @keyframes orbFloatB {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: .5;
+            }
+            35% {
+                transform: translate(-20px, 12px) scale(1.06);
+                opacity: .7;
+            }
+            70% {
+                transform: translate(14px, -15px) scale(.94);
+                opacity: .4;
+            }
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: .5;
+            }
+        }
+
+        @keyframes orbSpin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ========== 头部 ========== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            text-align: center;
+            padding: 18px 20px;
+            background: linear-gradient(180deg,
+                    rgba(8, 10, 30, .9),
+                    rgba(10, 14, 39, .5),
+                    transparent);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            box-shadow: 0 4px 40px rgba(0, 0, 0, .3);
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(90deg,
+                    #f6d365, #fda085, #f6d365,
+                    #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 3s linear infinite;
+            display: inline-block;
+            text-shadow: 0 0 30px rgba(246, 211, 101, .3);
+        }
+
+        @keyframes textShine {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        /* ========== 主体布局 ========== */
+        main {
+            padding-top: 100px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-bottom: 50px;
+        }
+
+        /* ========== 白色容器（80%宽，可滚动） ========== */
+        .container {
+            width: 80%;
+            max-width: 1440px;
+            background: rgba(245, 247, 255, .96);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35),
+                0 0 0 1px rgba(255, 255, 255, .3),
+                inset 0 1px 0 rgba(255, 255, 255, .6);
+            max-height: calc(100vh - 130px);
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, .04);
+            border-radius: 12px;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, .4);
+        }
+
+        /* ========== 网格布局（6列） ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            padding: 6px;
+        }
+
+        /* 回退：不支持 grid 时使用 flex（兼容旧浏览器） */
+        @supports not (display: grid) {
+            .grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .title-area {
+                flex: 1 1 100%;
+                min-height: 100px;
+            }
+            .back-area {
+                flex: 1 1 100%;
+                min-height: 80px;
+            }
+            .tool-box {
+                flex: 1 1 calc(16.66% - 12px);
+                min-width: 120px;
+            }
+        }
+
+        /* ========== 标题区域（前2行前4列） ========== */
+        .title-area {
+            grid-column: 1 / 5;
+            grid-row: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg,
+                    #101430, #1a1a4e, #2d1b69, #1a1a4e);
+            background-size: 300% 300%;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(20, 15, 80, .45),
+                inset 0 1px 0 rgba(255, 255, 255, .12);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform .4s cubic-bezier(.34, 1.56, .64, 1),
+                box-shadow .4s ease;
+        }
+
+        .title-area:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 18px 60px rgba(30, 25, 100, .5),
+                0 0 50px rgba(102, 126, 234, .25);
+        }
+
+        .title-area:active {
+            transform: translateY(-2px) scale(.98);
+            transition-duration: .1s;
+        }
+
+        .title-area h2 {
+            font-size: 46px;
+            font-weight: 900;
+            text-align: center;
+            line-height: 1.3;
+            letter-spacing: 5px;
+            background: linear-gradient(90deg,
+                    #f6d365, #ffffff, #a78bfa, #f6d365);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+
+        .title-area::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                    transparent 30%,
+                    rgba(255, 255, 255, .12) 50%,
+                    transparent 70%);
+            animation: titleSweep 5s ease-in-out infinite;
+        }
+
+        @keyframes titleShine {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes titleSweep {
+            0% {
+                transform: translateX(-60%) rotate(0deg);
+            }
+            100% {
+                transform: translateX(60%) rotate(0deg);
+            }
+        }
+
+        /* ========== 工具框（超链接格子） ========== */
+        .tool-box {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            border-radius: 14px;
+            padding: 14px 10px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .18),
+                inset 0 1px 0 rgba(255, 255, 255, .15);
+            transition: transform .35s cubic-bezier(.34, 1.56, .64, 1),
+                box-shadow .35s ease;
+            cursor: pointer;
+            will-change: transform;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .tool-box::before {
+            content: '';
+            position: absolute;
+            top: -80%;
+            left: -80%;
+            width: 260%;
+            height: 260%;
+            background: linear-gradient(45deg,
+                    transparent 40%,
+                    rgba(255, 255, 255, .18) 50%,
+                    transparent 60%);
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform .6s ease;
+            z-index: 0;
+        }
+
+        .tool-box:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 14px 35px rgba(0, 0, 0, .25),
+                0 0 40px rgba(120, 150, 255, .2);
+        }
+
+        .tool-box:hover::before {
+            transform: rotate(45deg) translateX(100%);
+        }
+
+        .tool-box:active {
+            transform: translateY(-2px) scale(.94);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+            transition-duration: .1s;
+        }
+
+        /* 工具框颜色变体 */
+        .color-0 {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        }
+
+        .color-1 {
+            background: linear-gradient(135deg, #6d28d9, #a78bfa);
+        }
+
+        .color-2 {
+            background: linear-gradient(135deg, #0f766e, #2dd4bf);
+        }
+
+        .color-3 {
+            background: linear-gradient(135deg, #b45309, #fbbf24);
+        }
+
+        .color-4 {
+            background: linear-gradient(135deg, #be123c, #fb7185);
+        }
+
+        /* 工具框内容 */
+        .tool-box .tool-icon {
+            font-size: 24px;
+            line-height: 1;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 2;
+            display: block;
+        }
+
+        .tool-box .tool-icon:empty {
+            display: none;
+        }
+
+        .tool-box .tool-title {
+            position: relative;
+            z-index: 2;
+            display: block;
+            text-align: center;
+            line-height: 1.3;
+            font-size: 14px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+        }
+
+        /* ========== 悬停浮窗（tooltip） ========== */
+        .tool-box .tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(8px) scale(.9);
+            background: rgba(15, 18, 40, .95);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            line-height: 1.4;
+            white-space: nowrap;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .4),
+                0 0 0 1px rgba(255, 255, 255, .1);
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .3s ease, transform .3s ease, visibility .3s;
+            z-index: 9999;
+        }
+
+        .tool-box .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(15, 18, 40, .95);
+        }
+
+        .tool-box:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+
+        /* ========== 跳转覆盖层 ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* 转圈动画 */
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg,
+                    #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ========== 新增：响应式适配（不影响原有设计） ========== */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 12px;
+            }
+            .title-area h2 {
+                font-size: 28px;
+                letter-spacing: 3px;
+            }
+            .tool-box {
+                min-height: 80px;
+                padding: 10px 6px;
+            }
+            .tool-box .tool-icon {
+                font-size: 20px;
+            }
+            .tool-box .tool-title {
+                font-size: 12px;
+            }
+            .grid {
+                gap: 8px;
+            }
+            /* 在网格回退时，小屏改为单列 */
+            @supports not (display: grid) {
+                .grid {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .tool-box {
+                    flex: 1 1 100%;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景流光层 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <!-- 悬浮球 -->
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 头部 -->
+    <header>
+        <h1>找乐子——优质工具库</h1>
+    </header>
+
+    <!-- 主体内容 -->
+    <main>
+        <div class="container">
+            <div class="grid" id="grid"></div>
+        </div>
+    </main>
+
+    <!-- 跳转覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        /* ================================================================
+         * 工具配置数组（后期扩展）
+         * ================================================================ */
+        const toolsConfig = [
+ {
+                title: '——找乐子 (热门）——古今中外暗号大全',
+                desc: '极大扩宽您的知识面，对暗号，上下句，',
+                link: '17.html',
+                icon: '🌈'
+            },   
+ {
+                title: '——找乐子 （热门）——五子棋',
+                desc: '与AI对弈，提升您的下棋水平',
+                link: '20.html',
+                icon: '🔥'
+            },          
+ {
+                title: '——找乐子 （热门）——网页备忘录',
+                desc: '给予您想保留的网址作快捷打开方式',
+                link: '19.html',
+                icon: '📋'
+            },
+ {
+                title: '——找乐子（推荐）——二维码生成器',
+                desc: '全自动生成二维码码',
+                link: '26.html',
+                icon: '🌌'
+            },    
+ {
+                title: '————找乐子 ————虚拟消费系统',
+                desc: '享受虚拟消费的快乐',
+                link: '14.html',
+                icon: '🍒'
+            },                
+  {
+                title: '————找乐子 ————经典扫雷游戏',
+                desc: '经典扫雷游戏',
+                link: '22.html',
+                icon: '🎛️'
+            },
+  {
+                title: '————找乐子 ————记忆配对游戏',
+                desc: '考验您的记忆力',
+                link: '21.html',
+                icon: '🍰'
+            },
+  {
+                title: '————找乐子 ————基础计算器',
+                desc: '基础的数学运算',
+                link: '12.html',
+                icon: '🧮'
+            },
+ {
+                title: '————找乐子 ————黑客模拟器',
+                desc: '骗人的黑客技术',
+                link: '16.html',
+                icon: '⚠️'
+            },
+ {
+                title: '————找乐子 ————日期计算器',
+                desc: '推算日期，计算时间',
+                link: '13.html',
+                icon: '⏱️'
+            },
+ {
+                title: '————找乐子 ————单位换算器',
+                desc: '单位转化，快速使用。',
+                link: '18.html',
+                icon: '🔗'
+            },
+ {
+                title: '————找乐子 ————词频统计器',
+                desc: '全自动词频统计。',
+                link: '25.html',
+                icon: '🖼️'
+            },
+            {
+                title: '————找乐子 ————一键生成txt文本文档',
+                desc: '纯文本一键生成txt文本文档',
+                link: '9.html',
+                icon: '📝'
+            },
+ {
+                title: '————找乐子 ————强密码生成器',
+                desc: '全自动生成强密码',
+                link: '15.html',
+                icon: '📊'
+            },
+ {
+                title: '————找乐子 ————词云设计',
+                desc: '全自动词云分析',
+                link: '24.html',
+                icon: '🌧️'
+            },
+ {
+                title: '————找乐子 ————摩斯密码',
+                desc: '摩斯密码',
+                link: '27.html',
+                icon: '🔒'
+            },
+  {
+                title: '—找乐子 （开发中）——离线词典',
+                desc: '您的离线词典',
+                link: '',
+                icon: '🏫'
+            },
+  {
+                title: '—找乐子（开发中）—（影音娱乐）',
+                desc: '影音娱乐，目前由作者独自测试中',
+                link: '1.html',
+                icon: '📱'
+            },
+   {
+                title: '——后台修改程序 ——（开发者功能）',
+                desc: '开发者功能，用于作者开发网页',
+                link: '10.html',
+                icon: '🛠️'
+            },
+     {
+                title: '————找乐子————免责声明',
+                desc: '免责声明',
+                link: '28.html',
+                icon: '🛎️'
+            },
+  {
+                title: '————找乐子————反馈通道',
+                desc: '给予作者一些反馈',
+                link: '29.html',
+                icon: '✨'
+            },
+  {
+                title: '———一起来赞赏———给予作者一点支持',
+                desc: '给予作者一点支持与动力',
+                link: '11.html',
+                icon: '💖'
+            },
+
+        ];
+
+        /* ================================================================
+         * 创建单个工具框（增加可访问性优化）
+         * ================================================================ */
+        function createToolBox(index) {
+            const a = document.createElement('a');
+            a.className = 'tool-box color-' + (index % 5);
+            a.dataset.index = index;
+
+            const config = toolsConfig[index];
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'tool-icon';
+
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'tool-title';
+
+            const tooltipSpan = document.createElement('span');
+            tooltipSpan.className = 'tooltip';
+
+            if (config && config.title) {
+                iconSpan.textContent = config.icon || '';
+                titleSpan.textContent = config.title;
+                tooltipSpan.textContent = config.desc || '敬请期待～';
+                a.href = config.link || '#';
+                // 添加 ARIA 标签和 title 属性提升可访问性
+                a.setAttribute('aria-label', config.title + (config.desc ? ' - ' + config.desc : ''));
+                a.setAttribute('title', config.desc || config.title);
+            } else {
+                iconSpan.textContent = '';
+                titleSpan.textContent = '敬请期待～';
+                tooltipSpan.textContent = '敬请期待～';
+                a.href = '#';
+                a.setAttribute('aria-label', '敬请期待～');
+                a.setAttribute('title', '敬请期待～');
+            }
+
+            a.appendChild(iconSpan);
+            a.appendChild(titleSpan);
+            a.appendChild(tooltipSpan);
+
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = (config && config.link) ? config.link : '#';
+                showLoadingOverlay(url);
+            });
+
+            return a;
+        }
+
+        /* ================================================================
+         * 渲染主函数
+         * ================================================================ */
+        function renderTools() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            const titleArea = document.createElement('div');
+            titleArea.className = 'title-area';
+            titleArea.innerHTML = '<h2>找乐子——优质工具库</h2>';
+            grid.appendChild(titleArea);
+
+            for (let i = 0; i < 4; i++) {
+                grid.appendChild(createToolBox(i));
+            }
+
+            for (let i = 4; i < 4 + 62 * 6; i++) {
+                grid.appendChild(createToolBox(i));
+            }
+        }
+
+        /* ================================================================
+         * 跳转覆盖层动画
+         * ================================================================ */
+        let overlayTimer = null;
+
+        function showLoadingOverlay(url) {
+            const overlay = document.getElementById('overlay');
+
+            overlay.classList.add('active');
+
+            if (overlayTimer) {
+                clearTimeout(overlayTimer);
+            }
+
+            overlayTimer = setTimeout(() => {
+                overlay.classList.remove('active');
+                if (url && url !== '#') {
+                    window.location.href = url;
+                }
+            }, 1000);
+        }
+
+        /* ================================================================
+         * 初始化
+         * ================================================================ */
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTools();
+
+            window.refreshTools = function(newConfig) {
+                if (newConfig && Array.isArray(newConfig)) {
+                    toolsConfig.length = 0;
+                    toolsConfig.push(...newConfig);
+                }
+                renderTools();
+            };
+        });
+    </script>
+</body>
+</html>

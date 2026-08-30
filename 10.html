@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子—后台修改办法</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            overflow-x: hidden;
+        }
+
+        /* ===== 背景流光（20秒无缝循环） ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -150%;
+            left: -100%;
+            width: 350%;
+            height: 350%;
+            background: linear-gradient(125deg, #0a0e27, #1c1458, #32227a, #1a0f3e, #241a5e, #0e1233, #1d1652);
+            background-size: 400% 400%;
+            animation: flowGrad 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -80%;
+            left: -60%;
+            width: 260%;
+            height: 260%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%);
+            animation: flowSpin 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGrad {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        @keyframes flowDrift {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            50% {
+                transform: translate(5%, -3%) scale(1.08) rotate(6deg);
+            }
+            100% {
+                transform: translate(-2%, 4%) scale(.94) rotate(-6deg);
+            }
+        }
+        @keyframes flowSpin {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.06);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        /* ===== 悬浮球 ===== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), rgba(255,255,255,.12) 45%, transparent 75%);
+            box-shadow: 0 0 60px rgba(255,255,255,.1), inset 0 0 30px rgba(255,255,255,.05);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 {
+            width: 260px;
+            height: 260px;
+            top: 10%;
+            left: 5%;
+            animation: orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite;
+        }
+        .orb-2 {
+            width: 160px;
+            height: 160px;
+            top: 55%;
+            left: 78%;
+            animation: orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite;
+        }
+        .orb-3 {
+            width: 110px;
+            height: 110px;
+            top: 70%;
+            left: 18%;
+            animation: orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite;
+        }
+        .orb-4 {
+            width: 200px;
+            height: 200px;
+            top: 28%;
+            left: 62%;
+            animation: orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite;
+        }
+        .orb-5 {
+            width: 80px;
+            height: 80px;
+            top: 82%;
+            left: 45%;
+            animation: orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite;
+        }
+        @keyframes orbFloat1 {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: .5;
+            }
+            30% {
+                transform: translate(20px, -25px);
+                opacity: .8;
+            }
+            60% {
+                transform: translate(-12px, 15px);
+                opacity: .4;
+            }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: .6;
+            }
+            50% {
+                transform: translate(-18px, 14px);
+                opacity: .3;
+            }
+        }
+        @keyframes orbRotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== 主体容器 ===== */
+        main {
+            padding-top: 20px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background: rgba(245, 247, 255, .97);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px rgba(255, 255, 255, .3);
+            padding: 24px;
+            backdrop-filter: blur(4px);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* ===== 网格布局 ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 14px;
+            padding: 8px;
+        }
+
+        /* 通用格子样式 */
+        .cell {
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            transition: transform .3s, box-shadow .3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+        }
+        .cell:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
+        }
+
+        /* 标题区 */
+        .title-area {
+            grid-row: 1 / 3;
+            grid-column: 1 / 5;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500, #ffd700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+        }
+        .title-area h1 {
+            font-size: 42px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, .4);
+            letter-spacing: 4px;
+        }
+
+        /* 返回主页 */
+        .back-area {
+            grid-row: 1 / 3;
+            grid-column: 5 / 7;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            text-decoration: none;
+            color: #fff;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform .3s, box-shadow .3s;
+        }
+        .back-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(50, 220, 130, .4);
+        }
+
+        /* 内容区 */
+        .content-area {
+            grid-row: 3 / 9;
+            grid-column: 1 / 7;
+            background: rgba(255, 255, 255, .5);
+            border-radius: 14px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+        .content-section {
+            background: rgba(255, 255, 255, .92);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+            display: flex;
+            flex-direction: column;
+        }
+        .content-section h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .content-section p {
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .code-block {
+            position: relative;
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0 0;
+            overflow-x: auto;
+            flex: 1;
+        }
+        .code-block pre {
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        /* 【修复】复制按钮尺寸提升至44x44，确保触屏可点 */
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            border: none;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background .2s;
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        /* 图标网格 */
+        .icon-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .icon-card {
+            width: 56px;
+            height: 56px;
+            background: #f0f2f5;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: background .3s, transform .2s;
+            user-select: none;
+            border: 1px solid #ddd;
+        }
+        .icon-card:hover {
+            background: #e0e4e8;
+            transform: scale(1.1);
+        }
+        .icon-card:active {
+            transform: scale(.95);
+        }
+
+        /* ===== 响应式：窄屏时方法改为单列 ===== */
+        @media (max-width: 900px) {
+            .methods-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== 跳转覆盖层（沿用指定样式） ===== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* 转圈动画 */
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg,
+                    #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes textShine {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <!-- 标题区域 -->
+                <div class="cell title-area">
+                    <h1>找乐子—后台修改办法</h1>
+                </div>
+                <!-- 返回主页 -->
+                <a href="index.html" class="cell back-area" id="backHome" aria-label="返回主页">返回<br>主页</a>
+
+                <!-- 内容区 -->
+                <div class="cell content-area">
+                    <!-- 三个方法并排对齐 -->
+                    <div class="methods-grid">
+                        <!-- 方法一 -->
+                        <div class="content-section">
+                            <h2>📝 方法一：手动修改代码</h2>
+                            <p>打开 <code>index.html</code>，找到 <code>const toolsConfig = [];</code>，在方括号内添加对象。每个对象格式如下：</p>
+                            <div class="code-block" id="code-block-1">
+                                <button class="copy-btn" data-target="code-block-1" aria-label="复制代码">复制</button>
+                                <pre><code>toolsConfig.push({
+    title: '我的工具',
+    desc: '工具简介',
+    link: 'my-tool.html',
+    icon: '🎯'
+});
+toolsConfig.push({
+    title: '另一个工具',
+    desc: '工具简介2',
+    link: 'other-tool.html',
+    icon: '📝'
+});</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- 方法二 -->
+                        <div class="content-section">
+                            <h2>🖥️ 方法二：控制台添加</h2>
+                            <p>按F12打开控制台，执行以下命令，即可立即添加工具并刷新界面：</p>
+                            <div class="code-block" id="code-block-2">
+                                <button class="copy-btn" data-target="code-block-2" aria-label="复制代码">复制</button>
+                                <pre><code>toolsConfig.push({
+    title: '控制台添加',
+    desc: '通过控制台直接添加',
+    link: 'console.html',
+    icon: '✨'
+});
+renderTools();</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- 方法三 -->
+                        <div class="content-section">
+                            <h2>⚙️ 方法三：管理面板添加</h2>
+                            <p>页面右侧有“添加工具”面板，填写名称、简介、链接后点击“添加”按钮即可。</p>
+                            <div style="flex:1;display:flex;align-items:center;justify-content:center;margin-top:12px;padding:20px;background:rgba(240,242,245,.8);border-radius:12px;border:1px dashed #bbb;">
+                                <span style="font-size:48px;" role="img" aria-label="工具图标">🛠️</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 图标列表（700个emoji） -->
+                    <div class="content-section" style="margin-top:20px;">
+                        <h2>🎨 常用图标列表（点击复制）</h2>
+                        <div class="icon-grid" id="icon-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 跳转覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        // ===== 700个常用Emoji图标（丰富且实用） =====
+        const icons = [
+            // 原100个（保留）
+            '🔊','📱','✨','📝','🔗','🎯','🧮','📷','🖼️','🔒',
+            '🔑','📊','⚙️','🛠️','📁','🌐','💾','⏱️','🎨','🧪',
+            '💡','🔥','⭐','✅','❌','⚠️','🔄','📌','📎','📋',
+            '🗂️','📅','📆','⏰','⌛','🕐','🕑','🕒','🕓','🕔',
+            '🕕','🕖','🕗','🕘','🕙','🕚','🕛','🌙','☀️','🌧️',
+            '⚡','🌈','❄️','☃️','🌀','🌪️','🌊','💧','🍎','🍊',
+            '🍋','🍉','🍇','🍓','🍒','🍑','🥭','🍍','🥥','🍞',
+            '🧀','🍗','🍔','🍟','🍕','🌭','🥪','🌮','🌯','🍜',
+            '🍣','🍤','🍱','🍦','🍰','🎂','🍫','🍬','🍭','🍮',
+            '🍩','🍪','🌰','🥜','🍯','🥛','🍼','☕','🍵','🧃',
+
+            // 动物（120个）
+            '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯',
+            '🦁','🐮','🐷','🐸','🐵','🙈','🙉','🙊','🐒','🐔',
+            '🐧','🐦','🐤','🐣','🐥','🦆','🦅','🦉','🦇','🐺',
+            '🐗','🐴','🦄','🐝','🐛','🦋','🐌','🐞','🐜','🦟',
+            '🦗','🕷️','🕸️','🐢','🐍','🦎','🦖','🦕','🐙','🦑',
+            '🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈',
+            '🐊','🐅','🐆','🦓','🦍','🐘','🦛','🦏','🐪','🐫',
+            '🦒','🦘','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙',
+            '🐐','🦌','🐕','🐩','🐈','🐓','🦃','🕊️','🐇','🦝',
+            '🦨','🦡','🦫','🦦','🦥','🐁','🐀','🐿️','🦔','🐾',
+            '🐉','🐲','🌵','🎄','🌲','🌳','🌴','🌱','🌿','☘️',
+            '🍀','🎍','🎋','🍃','🍂','🍁','🍄','🌾','💐','🌷',
+
+            // 食物饮料（120个）
+            '🍈','🍉','🍊','🍋','🍌','🍍','🥭','🍎','🍏','🍐',
+            '🍑','🍒','🍓','🫐','🥝','🍅','🥥','🥑','🍆','🥔',
+            '🥕','🌽','🌶️','🫑','🥒','🥬','🥦','🍄','🥜','🌰',
+            '🍞','🥐','🥖','🥨','🥞','🧇','🧀','🍖','🍗','🥩',
+            '🥓','🍔','🍟','🍕','🌭','🥪','🌮','🌯','🫔','🥙',
+            '🧆','🥚','🍳','🥘','🍲','🫕','🥣','🥗','🍿','🧈',
+            '🧂','🥫','🍱','🍘','🍙','🍚','🍛','🍜','🍝','🍠',
+            '🍢','🍣','🍤','🍥','🥮','🍡','🥟','🥠','🥡','🦀',
+            '🦞','🦐','🦑','🦪','🍦','🍧','🍨','🍩','🍪','🎂',
+            '🍰','🧁','🥧','🍫','🍬','🍭','🍮','🍯','🥛','🍼',
+            '☕','🍵','🧃','🥤','🍶','🍺','🍻','🥂','🍷','🥃',
+            '🍸','🍹','🧉','🍾','🧊','🥄','🍴','🍽️','🥣','🧋',
+
+            // 交通建筑（100个）
+            '🚗','🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒','🚐',
+            '🛻','🚚','🚛','🚜','🦯','🦽','🦼','🛴','🚲','🛵',
+            '🏍️','🛺','🚨','🚔','🚍','🚘','🚖','🚡','🚠','🚟',
+            '🚃','🚋','🚞','🚝','🚄','🚅','🚈','🚂','🚆','🚇',
+            '🚊','🚉','✈️','🛫','🛬','🛩️','💺','🛰️','🚀','🛸',
+            '🚁','🛶','⛵','🚤','🛥️','🛳️','⛴️','🚢','⚓','🛟',
+            '🚧','🚦','🚥','🚸','🚏','🗺️','🗿','🗽','🗼','🏰',
+            '🏯','🏟️','🎡','🎢','🎠','⛲','⛱️','🏖️','🏝️','🏜️',
+            '🌋','⛰️','🏔️','🗻','🏕️','⛺','🏠','🏡','🏘️','🏚️',
+            '🏗️','🏭','🏢','🏬','🏣','🏤','🏥','🏦','🏨','🏪',
+
+            // 物品与工具（150个）
+            '🏫','🏩','💒','🏛️','⛪','🕌','🕍','🛕','🕋','⛩️',
+            '🛤️','🛣️','🗾','🎑','🏞️','🌅','🌄','🌠','🎇','🎆',
+            '🌇','🌆','🏙️','🌃','🌌','🌉','🌁','⌚','📱','📲',
+            '💻','⌨️','🖥️','🖨️','🖱️','🖲️','🕹️','🗜️','💽','💾',
+            '💿','📀','📼','📷','📸','📹','🎥','📽️','🎞️','📞',
+            '☎️','📟','📠','📺','📻','🎙️','🎚️','🎛️','🧭','⏱️',
+            '⏲️','⏰','🕰️','⌛','⏳','📡','🔋','🪫','🔌','💡',
+            '🔦','🕯️','🧯','🛢️','💸','💵','💴','💶','💷','🪙',
+            '💰','💳','💎','⚖️','🪜','🧰','🪛','🔧','🔨','⚒️',
+            '🛠️','⛏️','🪚','🔩','⚙️','🪤','🧱','⛓️','🧲','🔫',
+            '💣','🧨','🪓','🔪','🗡️','⚔️','🛡️','🚬','⚰️','🪦',
+            '⚱️','🏺','🔮','📿','🧿','💈','⚗️','🔭','🔬','🕳️',
+            '🩹','🩺','💊','💉','🩸','🧬','🦠','🧫','🧪','🌡️',
+            '🧹','🪠','🧺','🧻','🚽','🚰','🚿','🛁','🛀','🧼',
+            '🪥','🪒','🧽','🪣','🧴','🛎️','🔑','🗝️','🚪','🪑',
+            '🛋️','🛏️','🛌','🧸','🪆','🖼️','🪞','🪟','🛍️','🛒',
+            '🎁','🎈','🎏','🎀','🪄','🪅','🎊','🎉','🎎','🏮',
+            '🎐','🧧','✉️','📩','📨','📧','💌','📥','📤','📦',
+            '🏷️','🪧','📪','📫','📬','📭','📮','📯','📜','📃',
+            '📄','📑','🧾','📊','📈','📉','🗒️','🗓️','📆','📅',
+            '📇','🗃️','🗳️','🗄️','📋','📁','📂','🗂️','🗞️','📰',
+            '📓','📔','📒','📕','📗','📘','📙','📚','📖','🔖',
+            '🧷','🔗','📎','🖇️','📐','📏','🧮','📌','📍','✂️',
+            '🖊️','🖋️','✒️','🖌️','🖍️','📝','✏️','🔍','🔎','🔏',
+            '🔐','🔒','🔓',
+
+            // 符号与杂项（110个）
+            '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔',
+            '❣️','💕','💞','💓','💗','💖','💘','💝','💟','☮️',
+            '✝️','☪️','🕉️','☸️','✡️','🔯','🕎','☯️','☦️','🛐',
+            '⛎','♈','♉','♊','♋','♌','♍','♎','♏','♐',
+            '♑','♒','♓','🆔','⚛️','🉑','☢️','☣️','📴','📳',
+            '🈶','🈚','🈸','🈺','🈷️','✴️','🆚','💮','🉐','㊙️',
+            '㊗️','🈴','🈵','🈹','🈲','🅰️','🅱️','🆎','🆑','🅾️',
+            '🆘','❌','⭕','🛑','⛔','📛','🚫','💯','💢','♨️',
+            '🚷','🚯','🚳','🚱','🔞','📵','🚭','❗','❕','❓',
+            '❔','‼️','⁉️','🔅','🔆','〽️','⚠️','🚸','🔱','⚜️',
+            '🔰','♻️','✅','🈯','💹','❇️','✳️','❎','🌐','💠',
+            'Ⓜ️','🌀','💤','🏧','🚾','♿','🅿️','🛗','🈳','🈂️',
+            '🛂','🛃','🛄','🛅','🚹','🚺','🚼','⚧','🚻','🚮',
+            '🎦','📶','🈁','🔣','ℹ️','🔤','🔡','🔠','🆖','🆗',
+            '🆙','🆒','🆕','🆓','0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣',
+            '6️⃣','7️⃣','8️⃣','9️⃣','🔟','🔢','#️⃣','*️⃣','⏏️','▶️',
+            '⏸️','⏯️','⏹️','⏺️','⏭️','⏮️','⏩','⏪','⏫','⏬',
+            '◀️','🔼','🔽','➡️','⬅️','⬆️','⬇️','↗️','↘️','↙️',
+            '↖️','↕️','↔️','↪️','↩️','⤴️','⤵️','🔀','🔁','🔂',
+            '🔄','🔃','🎵','🎶','➕','➖','➗','✖️','🟰','♾️',
+            '💲','💱','™️','©️','®️','👁️','🗨️','💬','💭','🗯️',
+            '♠️','♣️','♥️','♦️','🃏','🎴','🀄'
+        ];
+
+        // ===== 复制功能（通用，支持剪贴板API和降级） =====
+        function copyText(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('已复制到剪贴板');
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.top = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('已复制（降级）');
+        }
+
+        // 提示消息
+        function showToast(msg) {
+            let toast = document.createElement('div');
+            toast.textContent = msg;
+            toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:30px;z-index:99999;font-size:14px;opacity:0;transition:opacity .3s;box-shadow:0 5px 20px rgba(0,0,0,0.3);';
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => { toast.style.opacity = '1'; });
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 1500);
+        }
+
+        // 绑定所有代码复制按钮
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const block = document.getElementById(targetId);
+                if (block) {
+                    const code = block.querySelector('code').innerText;
+                    copyText(code);
+                }
+            });
+        });
+
+        // 生成图标卡片（700个）
+        const iconGrid = document.getElementById('icon-grid');
+        icons.forEach(icon => {
+            const card = document.createElement('div');
+            card.className = 'icon-card';
+            card.textContent = icon;
+            card.title = '点击复制 ' + icon;
+            card.setAttribute('aria-label', '复制图标' + icon);
+            card.addEventListener('click', function() {
+                copyText(icon);
+            });
+            iconGrid.appendChild(card);
+        });
+
+        // 返回主页转场动画（使用指定的跳转覆盖层）
+        document.getElementById('backHome').addEventListener('click', function(e) {
+            e.preventDefault();
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

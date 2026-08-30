@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>密码登录</title>
+    <style>
+        /* === [CSS 区块] 视觉与动画 === */
+
+        /* 全局重置 */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: rgba(0,0,0,0); }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 高级感动态背景：流动的极光色 */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+        }
+
+        /* 背景流光动画 */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 浅绿色正方形容器 - 玻璃拟态风格 */
+        .login-square {
+            width: min(85vw, 450px);
+            aspect-ratio: 1 / 1; /* 强制保持正方形 */
+            background: rgba(255, 255, 255, 0.85); /* 半透明白底 */
+            backdrop-filter: blur(10px); /* 磨砂效果 */
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            animation: float 6s ease-in-out infinite; /* 悬浮呼吸感 */
+        }
+
+        /* 悬浮动画 */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* 标题样式 */
+        .title {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 40px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0px rgba(255,255,255,1);
+        }
+
+        /* 输入框区域 */
+        .input-group {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 3px solid #FF9800; /* 橙色边框 */
+            border-radius: 50px; /* 圆角矩形 */
+            background: white;
+            color: #333;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        input[type="password"]:hover {
+            transform: scale(1.02); /* 放大到 1.02 倍，比按钮稍微小一点，显得精致 */
+        }
+
+        input[type="password"]:focus {
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+            transform: scale(1.02);
+        }
+
+        /* 按钮组布局 - 核心修改点 */
+        .btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between; /* 两端对齐，中间留空 */
+            gap: 20px; /* 按钮间距 */
+        }
+
+        /* 统一按钮样式 - 确保一样大 */
+        .btn {
+            flex: 1;
+            padding: 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(to right, #FF9800, #FFB74D); /* 橙色渐变 */
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease; /* 让变化过程平滑，0.3秒完成 */
+            transform: scale(1);       /* 设定初始大小为 1倍 */
+            min-height: 50px;          /* 触摸目标最小高度（优化） */
+        }
+
+        .btn:hover {
+            transform: scale(1.05); /* 鼠标放上去放大 1.05 倍 */
+        }
+
+        /* 确定按钮交互 */
+        .btn-confirm:active {
+            transform: scale(0.95);
+            background: #F57C00;
+        }
+
+        /* 取消按钮交互 (稍微淡一点的橙色以示区分，但大小一致) */
+        .btn-cancel {
+            background: linear-gradient(to right, #FFCC80, #FFE0B2);
+            color: #E65100;
+        }
+        .btn-cancel:active {
+            transform: scale(0.95);
+            background: #FFB74D;
+        }
+
+        /* 错误时的抖动动画 */
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* ================= 新增：返回主程序按钮（左上角透明链接） ================= */
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            display: inline-block;
+            padding: 10px 16px;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            min-height: 44px; /* 触摸目标最小高度（优化） */
+            display: inline-flex;
+            align-items: center;
+        }
+        .back-home:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        }
+
+        /* ================= 转场遮罩层（替换为与 index.html 一致） ================= */
+        #transitionMask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(8, 10, 25, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s, visibility 0.4s;
+            pointer-events: none;
+            /* 可访问性优化 */
+            role: dialog;
+            aria-modal: true;
+        }
+        #transitionMask.show {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* 转圈动画：圆环 */
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin 0.8s linear infinite;
+            box-sizing: border-box;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* ========== 新增：移动端适配媒体查询 ========== */
+        @media (max-width: 768px) {
+            .login-square {
+                width: 90vw;
+                aspect-ratio: auto;
+                min-height: 400px;
+                padding: 30px 25px;
+                border-radius: 24px;
+            }
+            .title {
+                font-size: 26px;
+                margin-bottom: 30px;
+                letter-spacing: 1px;
+            }
+            .input-group {
+                margin-bottom: 30px;
+            }
+            input[type="password"] {
+                padding: 12px 16px;
+                font-size: 16px;
+            }
+            .btn {
+                padding: 12px 0;
+                font-size: 17px;
+                min-height: 44px;
+                border-radius: 40px;
+            }
+            .btn-container {
+                gap: 12px;
+            }
+            .back-home {
+                top: 15px;
+                left: 15px;
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 返回主程序按钮（透明，左上角） -->
+    <a href="index.html" class="back-home" id="backHome" aria-label="返回主程序" title="返回主程序">↩ 返回主程序</a>
+
+    <!-- 浅绿色正方形主体 -->
+    <div class="login-square" id="loginBox">
+        <div class="title" role="heading" aria-level="2">密码登录</div>
+
+        <div class="input-group">
+            <input type="password" id="pwdInput" placeholder="请输入密码" aria-label="密码输入框">
+        </div>
+
+        <div class="btn-container">
+            <!-- 确定按钮 (左) -->
+            <button class="btn btn-confirm" onclick="checkLogin()" aria-label="确定登录" title="确定登录">确定</button>
+
+            <!-- 取消按钮 (右) -->
+            <button class="btn btn-cancel" onclick="clearInput()" aria-label="取消" title="取消">取消</button>
+        </div>
+    </div>
+
+    <!-- 转场遮罩层 -->
+    <div id="transitionMask" role="dialog" aria-modal="true" aria-label="页面跳转中">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        // === [JS 区块] 逻辑控制 ===
+
+        let isTransitioning = false;   // 防止连点重复触发转场
+
+        function checkLogin() {
+            let pwd = document.getElementById('pwdInput').value;
+            let box = document.getElementById('loginBox');
+
+            // 验证密码
+            if (pwd === '403124') {
+                // 密码正确：触发转场动画
+                showTransition();
+            } else {
+                // 密码错误：添加抖动特效
+                box.classList.add('shake');
+                // 0.5秒后移除抖动类，以便下次还能触发
+                setTimeout(function(){
+                    box.classList.remove('shake');
+                }, 500);
+
+                // 清空输入框并聚焦
+                document.getElementById('pwdInput').value = '';
+                document.getElementById('pwdInput').focus();
+            }
+        }
+
+        // 返回主程序转场（复用同一个遮罩）
+        document.getElementById('backHome').addEventListener('click', function(e) {
+            e.preventDefault();  // 阻止默认跳转，先转场
+            showTransitionTo('index.html');
+        });
+
+        // 转场后跳转到指定页面
+        function showTransitionTo(url) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            document.getElementById('transitionMask').classList.add('show');
+            setTimeout(function () {
+                window.location.href = url;
+            }, 1000); // 1秒后跳转
+        }
+
+        // 登录成功后跳转到2.html
+        function showTransition() {
+            showTransitionTo('2.html');
+        }
+
+        function clearInput() {
+            // 点击取消：清空内容
+            document.getElementById('pwdInput').value = '';
+            document.getElementById('pwdInput').focus();
+        }
+
+        // 支持按回车键登录
+        document.getElementById('pwdInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkLogin();
+            }
+        });
+
+        // ========== 新增：按 Esc 键关闭转场覆盖层（仅关闭动画，不影响跳转逻辑） ==========
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                let mask = document.getElementById('transitionMask');
+                if (mask.classList.contains('show')) {
+                    mask.classList.remove('show');
+                    isTransitioning = false; // 重置转场状态，允许再次触发
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——纯文本一键生成txt文件</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* ========== 背景流光层 ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -150%;
+            left: -100%;
+            width: 350%;
+            height: 350%;
+            background: linear-gradient(125deg, #0a0e27, #1c1458, #32227a, #1a0f3e, #241a5e, #0e1233, #1d1652);
+            background-size: 400% 400%;
+            animation: flowGrad 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -80%;
+            left: -60%;
+            width: 260%;
+            height: 260%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%);
+            animation: flowSpin 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGrad {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes flowDrift {
+            0% { transform: translate(0,0) scale(1) rotate(0deg); }
+            50% { transform: translate(5%,-3%) scale(1.08) rotate(6deg); }
+            100% { transform: translate(-2%,4%) scale(.94) rotate(-6deg); }
+        }
+        @keyframes flowSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.06); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* 悬浮球 */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), rgba(255,255,255,.12) 45%, transparent 75%);
+            box-shadow: 0 0 60px rgba(255,255,255,.1), inset 0 0 30px rgba(255,255,255,.05);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 { width: 260px; height: 260px; top: 10%; left: 5%; animation: orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 78%; animation: orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 70%; left: 18%; animation: orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite; }
+        .orb-4 { width: 200px; height: 200px; top: 28%; left: 62%; animation: orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 82%; left: 45%; animation: orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite; }
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0,0); opacity:.5; }
+            30% { transform: translate(20px,-25px); opacity:.8; }
+            60% { transform: translate(-12px,15px); opacity:.4; }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0,0); opacity:.6; }
+            50% { transform: translate(-18px,14px); opacity:.3; }
+        }
+        @keyframes orbRotate { to { transform: rotate(360deg); } }
+
+        /* ========== 主容器 ========== */
+        main {
+            padding: 20px 0;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background: rgba(245, 247, 255, .96);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35);
+            padding: 24px;
+            margin-top: 30px;
+        }
+
+        /* ========== 6列8行网格 ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 14px;
+            padding: 8px;
+        }
+
+        .cell {
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            border: 3px solid transparent;
+        }
+
+        /* 彩色边框 */
+        .title-area { border-color: #f6d365; }
+        .back-area { border-color: #a78bfa; }
+        .input-area { border-color: #4fc3f7; }
+        .make-btn { border-color: #81c784; }
+        .output-area { border-color: #ff8a65; }
+        .rename-btn { border-color: #ffb74d; }
+        .export-btn { border-color: #ba68c8; }
+
+        /* 悬停效果 */
+        .cell:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 0 20px rgba(255, 255, 255, .15);
+            border-color: #fff;
+        }
+        .cell:active { transform: translateY(-2px) scale(.97); }
+
+        /* 标题区域 */
+        .title-area {
+            grid-row: 1 / 3;
+            grid-column: 1 / 5;
+            background: linear-gradient(135deg, #1a1a4e, #2d1b69, #1a1a4e);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+        }
+        .title-area h1 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            text-align: center;
+            line-height: 1.4;
+            background: linear-gradient(90deg, #f6d365, #fff, #a78bfa, #f6d365);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+        @keyframes titleShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 返回主页 */
+        .back-area {
+            grid-row: 1 / 3;
+            grid-column: 5 / 7;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            text-decoration: none;
+            color: #fff;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform .3s, box-shadow .3s;
+        }
+        .back-area:hover {
+            background: linear-gradient(135deg, #2b4a9e, #4b8ef6);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+        }
+
+        /* 输入区域（修改：占据1-3列，消除左侧空白） */
+        .input-area {
+            grid-row: 3 / 9;
+            grid-column: 1 / 4; /* 原来为3/4，现在改为1/4，吞并左侧 */
+            background: rgba(255, 255, 255, .97);
+            padding: 0;
+            overflow: hidden;
+            align-items: stretch;
+            justify-content: stretch;
+        }
+        .input-area textarea {
+            flex: 1;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            resize: none;
+            background: transparent;
+            outline: none;
+            color: #333;
+            font-size: 16px;
+            font-family: inherit;
+            line-height: 1.6;
+        }
+        .input-area textarea::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* 制作按钮 */
+        .make-btn {
+            grid-row: 3 / 4;
+            grid-column: 4 / 7;
+            background: #e0e0e0;
+            color: #999;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: not-allowed;
+            border: 3px solid #81c784;
+            border-radius: 14px;
+            user-select: none;
+            transition: all .3s ease;
+            letter-spacing: 2px;
+        }
+        .make-btn.active {
+            background: linear-gradient(135deg, #0f766e, #2dd4bf);
+            color: #fff;
+            cursor: pointer;
+            border-color: #2dd4bf;
+            box-shadow: 0 8px 25px rgba(45, 212, 191, .4);
+        }
+        .make-btn.active:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(45, 212, 191, .5);
+            border-color: #f6d365;
+        }
+        .make-btn.active:active { transform: translateY(-2px) scale(.96); }
+
+        /* 输出框 */
+        .output-area {
+            grid-row: 4 / 8;
+            grid-column: 4 / 7;
+            background: rgba(255, 255, 255, .97);
+            border: 3px solid #ff8a65;
+            border-radius: 14px;
+            padding: 14px;
+            overflow-y: auto;
+            color: #333;
+            cursor: default;
+            align-items: stretch;
+            justify-content: flex-start;
+        }
+        .output-area .file-label {
+            color: #d32f2f;
+            font-weight: 800;
+            font-size: 18px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+            display: block;
+            letter-spacing: 1px;
+        }
+        .output-area .content {
+            font-size: 15px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #444;
+        }
+
+        /* 改名按钮 */
+        .rename-btn {
+            grid-row: 8 / 9;
+            grid-column: 4 / 6;
+            background: #e0e0e0;
+            color: #999;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: not-allowed;
+            border: 3px solid #ffb74d;
+            border-radius: 14px;
+            user-select: none;
+            transition: all .3s ease;
+            text-align: center;
+            padding: 10px;
+            line-height: 1.4;
+        }
+        .rename-btn.active {
+            background: linear-gradient(135deg, #0f766e, #2dd4bf);
+            color: #fff;
+            cursor: pointer;
+            border-color: #2dd4bf;
+            box-shadow: 0 8px 20px rgba(45, 212, 191, .3);
+        }
+        .rename-btn.active:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(45, 212, 191, .4);
+            border-color: #f6d365;
+        }
+
+        /* 导出按钮 */
+        .export-btn {
+            grid-row: 8 / 9;
+            grid-column: 6 / 7;
+            background: #e0e0e0;
+            color: #999;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: not-allowed;
+            border: 3px solid #ba68c8;
+            border-radius: 14px;
+            user-select: none;
+            transition: all .3s ease;
+            text-align: center;
+            padding: 10px;
+        }
+        .export-btn.active {
+            background: linear-gradient(135deg, #b45309, #fbbf24);
+            color: #fff;
+            cursor: pointer;
+            border-color: #fbbf24;
+            box-shadow: 0 8px 20px rgba(251, 191, 36, .4);
+        }
+        .export-btn.active:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(251, 191, 36, .5);
+            border-color: #f6d365;
+        }
+
+        /* ========== 改名模态框 ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .5);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: rgba(255, 255, 255, .97);
+            border-radius: 18px;
+            padding: 24px;
+            width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+            border: 3px solid #a78bfa;
+        }
+        .modal-box h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .modal-box input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 15px;
+            transition: border-color .3s;
+            color: #333;
+        }
+        .modal-box input:focus { border-color: #a78bfa; }
+        .modal-btns {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .modal-btns button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all .2s;
+        }
+        .modal-btns button.ok {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: #fff;
+        }
+        .modal-btns button.cancel {
+            background: linear-gradient(135deg, #f44336, #c62828);
+            color: #fff;
+        }
+        .modal-btns button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .2);
+        }
+
+        /* ========== 跳转覆盖层（与主页一致） ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <!-- 标题区域 -->
+                <div class="cell title-area">
+                    <h1>找乐子——<br>优质工具箱</h1>
+                </div>
+
+                <!-- 返回主页 -->
+                <a href="index.html" class="cell back-area" id="backHome">返回<br>主页</a>
+
+                <!-- 输入区域（现在占1-3列） -->
+                <div class="cell input-area">
+                    <textarea id="textInput" placeholder="请复制文本" spellcheck="false"></textarea>
+                </div>
+
+                <!-- 制作按钮 -->
+                <div class="cell make-btn" id="makeBtn">请先输入文本</div>
+
+                <!-- 输出框 -->
+                <div class="cell output-area">
+                    <div class="file-label" id="fileNameLabel"></div>
+                    <div class="content" id="fileContent"></div>
+                </div>
+
+                <!-- 改名按钮 -->
+                <div class="cell rename-btn" id="renameBtn">改名（请先输入文本生成txt）</div>
+
+                <!-- 导出按钮 -->
+                <div class="cell export-btn" id="exportBtn">导出</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 改名模态框 -->
+    <div class="modal-overlay" id="renameModal">
+        <div class="modal-box">
+            <h3>✏️ 修改文件名</h3>
+            <input type="text" id="renameInput" placeholder="请输入文件名（不含后缀）">
+            <div class="modal-btns">
+                <button class="ok" id="confirmRename">确定</button>
+                <button class="cancel" id="cancelRename">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 转场覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 全局变量 ==========
+        let generatedFileName = '';
+        let generatedContent = '';
+        const baseNames = ['1899', '1299', '1599'];
+        let usedNames = [];
+
+        // 读取历史使用过的文件名（持久化）
+        try {
+            const stored = localStorage.getItem('usedTxtNames');
+            if (stored) usedNames = JSON.parse(stored);
+        } catch(e) { usedNames = []; }
+
+        // DOM 元素
+        const textInput = document.getElementById('textInput');
+        const makeBtn = document.getElementById('makeBtn');
+        const fileNameLabel = document.getElementById('fileNameLabel');
+        const fileContent = document.getElementById('fileContent');
+        const renameBtn = document.getElementById('renameBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const renameModal = document.getElementById('renameModal');
+        const renameInput = document.getElementById('renameInput');
+        const confirmRename = document.getElementById('confirmRename');
+        const cancelRename = document.getElementById('cancelRename');
+        const overlay = document.getElementById('overlay');
+        const backHome = document.getElementById('backHome');
+
+        // ========== 更新制作按钮状态 ==========
+        function updateMakeBtnState() {
+            if (textInput.value.trim() === '') {
+                makeBtn.classList.remove('active');
+                makeBtn.textContent = '请先输入文本';
+                makeBtn.style.pointerEvents = 'none';
+            } else {
+                makeBtn.classList.add('active');
+                makeBtn.textContent = '制作txt文件';
+                makeBtn.style.pointerEvents = 'auto';
+            }
+        }
+
+        textInput.addEventListener('input', updateMakeBtnState);
+        updateMakeBtnState();
+
+        // ========== 文件名生成 ==========
+        function generateFileName() {
+            const available = [];
+            for (const name of baseNames) {
+                if (!usedNames.includes(name + '.txt')) {
+                    available.push(name);
+                }
+            }
+            if (available.length > 0) {
+                const chosen = available[Math.floor(Math.random() * available.length)];
+                usedNames.push(chosen + '.txt');
+                localStorage.setItem('usedTxtNames', JSON.stringify(usedNames));
+                return chosen + '.txt';
+            } else {
+                let index = 1;
+                while (true) {
+                    const candidate = baseNames[0] + '_' + index + '.txt';
+                    if (!usedNames.includes(candidate)) {
+                        usedNames.push(candidate);
+                        localStorage.setItem('usedTxtNames', JSON.stringify(usedNames));
+                        return candidate;
+                    }
+                    index++;
+                }
+            }
+        }
+
+        // ========== 制作txt文件 ==========
+        function makeTxtFile() {
+            const text = textInput.value.trim();
+            if (text === '') return;
+
+            generatedFileName = generateFileName();
+            generatedContent = text;
+
+            fileNameLabel.textContent = generatedFileName;
+            fileContent.textContent = generatedContent;
+
+            renameBtn.classList.add('active');
+            renameBtn.style.pointerEvents = 'auto';
+            renameBtn.textContent = '改名';
+            exportBtn.classList.add('active');
+            exportBtn.style.pointerEvents = 'auto';
+        }
+
+        makeBtn.addEventListener('click', function() {
+            if (makeBtn.classList.contains('active')) {
+                makeTxtFile();
+            }
+        });
+
+        // ========== 导出txt文件 ==========
+        function exportTxt() {
+            if (generatedContent === '' || generatedFileName === '') return;
+
+            const blob = new Blob([generatedContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = generatedFileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        exportBtn.addEventListener('click', function() {
+            if (exportBtn.classList.contains('active')) {
+                exportTxt();
+            }
+        });
+
+        // ========== 改名功能 ==========
+        renameBtn.addEventListener('click', function() {
+            if (!renameBtn.classList.contains('active')) return;
+
+            const currentName = generatedFileName.replace(/\.txt$/i, '');
+            renameInput.value = currentName;
+            renameModal.classList.add('show');
+            renameInput.focus();
+        });
+
+        confirmRename.addEventListener('click', function() {
+            let newName = renameInput.value.trim();
+            if (newName === '') {
+                alert('文件名不能为空！');
+                return;
+            }
+            newName = newName.replace(/\.txt$/i, '');
+            if (!/^[\w\u4e00-\u9fa5-]+$/i.test(newName)) {
+                alert('文件名只能包含中文、字母、数字、下划线或中划线！');
+                return;
+            }
+            generatedFileName = newName + '.txt';
+            fileNameLabel.textContent = generatedFileName;
+
+            renameModal.classList.remove('show');
+        });
+
+        cancelRename.addEventListener('click', function() {
+            renameModal.classList.remove('show');
+        });
+
+        renameModal.addEventListener('click', function(e) {
+            if (e.target === renameModal) {
+                renameModal.classList.remove('show');
+            }
+        });
+
+        // ========== 返回主页转场 ==========
+        backHome.addEventListener('click', function(e) {
+            e.preventDefault();
+            overlay.classList.add('active');
+            setTimeout(function() {
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+
+        // 初始化
+        fileNameLabel.textContent = '';
+        fileContent.textContent = '';
+        renameBtn.classList.remove('active');
+        renameBtn.style.pointerEvents = 'none';
+        exportBtn.classList.remove('active');
+        exportBtn.style.pointerEvents = 'none';
+    </script>
+</body>
+</html>

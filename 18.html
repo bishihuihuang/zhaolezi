@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——单位换算</title>
+    <style>
+        /* ========== 全局重置 ========== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* ========== 背景流光层 ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(125deg,
+                    #0a0e27, #161a3d, #1f1652, #331d6e,
+                    #1d1b4b, #0f122f, #241a54);
+            background-size: 400% 400%;
+            animation: flowDriftLarge 20s ease-in-out infinite;
+            will-change: transform;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%;
+            left: -40%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(ellipse at 30% 70%,
+                    rgba(255, 140, 100, .35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%,
+                    rgba(120, 180, 255, .3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%,
+                    rgba(220, 130, 250, .25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(255, 200, 130, .15), transparent 60%),
+                radial-gradient(circle at 20% 80%,
+                    rgba(80, 220, 200, .2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowDriftLarge {
+            0% { transform: translate(0%, 0%) scale(1); }
+            50% { transform: translate(-2%, -2%) scale(1.05); }
+            100% { transform: translate(0%, 0%) scale(1); }
+        }
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+        }
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* 悬浮球 */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                    rgba(255, 255, 255, .3),
+                    rgba(255, 255, 255, .1) 50%,
+                    transparent 70%);
+            box-shadow: 0 0 60px rgba(255, 255, 255, .08),
+                inset 0 0 30px rgba(255, 255, 255, .04);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 {
+            width: 260px;
+            height: 260px;
+            top: 12%;
+            left: 8%;
+            animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite;
+        }
+        .orb-2 {
+            width: 160px;
+            height: 160px;
+            top: 55%;
+            left: 75%;
+            animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite;
+        }
+        .orb-3 {
+            width: 110px;
+            height: 110px;
+            top: 68%;
+            left: 20%;
+            animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite;
+        }
+        .orb-4 {
+            width: 220px;
+            height: 220px;
+            top: 28%;
+            left: 60%;
+            animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite;
+        }
+        .orb-5 {
+            width: 80px;
+            height: 80px;
+            top: 80%;
+            left: 45%;
+            animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite;
+        }
+        @keyframes orbFloatA {
+            0% { transform: translate(0,0) scale(1); opacity:.6; }
+            30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+            60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+            100% { transform: translate(0,0) scale(1); opacity:.6; }
+        }
+        @keyframes orbFloatB {
+            0% { transform: translate(0,0) scale(1); opacity:.5; }
+            35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+            70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+            100% { transform: translate(0,0) scale(1); opacity:.5; }
+        }
+        @keyframes orbSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== 白色容器 ========== */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 80%;
+            max-width: 1440px;
+            margin: 60px auto;
+            background: rgba(245, 247, 255, .96);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35),
+                0 0 0 1px rgba(255, 255, 255, .3),
+                inset 0 1px 0 rgba(255, 255, 255, .6);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container::-webkit-scrollbar {
+            width: 10px;
+        }
+        .container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, .04);
+            border-radius: 12px;
+        }
+        .container::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, .4);
+        }
+
+        /* ========== 网格布局 ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 12px;
+        }
+
+        /* 标题区 */
+        .title-area {
+            grid-column: 1 / 5;
+            grid-row: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #101430, #1a1a4e, #2d1b69, #1a1a4e);
+            background-size: 300% 300%;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(20, 15, 80, .45),
+                inset 0 1px 0 rgba(255, 255, 255, .12);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), box-shadow .4s ease;
+        }
+        .title-area:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 18px 60px rgba(30, 25, 100, .5), 0 0 50px rgba(102, 126, 234, .25);
+        }
+        .title-area h2 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #ffffff, #a78bfa, #f6d365);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+        @keyframes titleShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 返回主页 */
+        .back-area {
+            grid-column: 5 / 7;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(17, 153, 142, .4),
+                inset 0 1px 0 rgba(255, 255, 255, .2);
+            text-decoration: none;
+            color: #fff;
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), box-shadow .35s ease;
+            min-height: 44px;
+            min-width: 44px;
+        }
+        .back-area:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 18px 50px rgba(17, 153, 142, .5);
+        }
+        .back-area:active {
+            transform: translateY(-2px) scale(.96);
+        }
+        .back-area .back-icon {
+            font-size: 32px;
+            margin-bottom: 6px;
+        }
+
+        /* 输入区（3-8行1-3列） */
+        .input-panel {
+            grid-column: 1 / 4;
+            grid-row: 3 / 9;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+            border: 2px solid #e8e8e8;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            justify-content: center;
+        }
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .field-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+        }
+        .field-group select,
+        .field-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #d0d0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            background: #fafafe;
+            transition: all .3s;
+            outline: none;
+        }
+        .field-group select:focus,
+        .field-group input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, .15);
+        }
+
+        /* 输出区（3-8行4-6列） */
+        .output-panel {
+            grid-column: 4 / 7;
+            grid-row: 3 / 9;
+            background: linear-gradient(160deg, #f8f9ff, #f0f4fc, #fafbff);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(0, 180, 255, .1);
+            box-shadow: 0 6px 20px rgba(0,0,0,.05);
+        }
+        .output-content {
+            text-align: center;
+            width: 100%;
+        }
+        .output-label {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+        .output-value {
+            font-size: 46px;
+            font-weight: 900;
+            color: #1a1a2e;
+            line-height: 1.3;
+            word-break: break-all;
+        }
+        .output-value.small-text {
+            font-size: 28px;
+        }
+        .output-unit {
+            font-size: 16px;
+            color: #1e90ff;
+            margin-top: 8px;
+        }
+
+        /* 转圈覆盖层 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,.1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 12px; }
+            .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+            .title-area { grid-column: 1/3; grid-row: auto; min-height: 100px; }
+            .back-area { grid-column: 1/3; grid-row: auto; min-height: 80px; }
+            .input-panel { grid-column: 1/3; grid-row: auto; min-height: 200px; }
+            .output-panel { grid-column: 1/3; grid-row: auto; min-height: 200px; }
+        }
+        @media (max-width: 480px) {
+            .container { padding: 10px; }
+            .title-area h2 { font-size: 28px; }
+            .back-area { font-size: 16px; }
+            .field-group { gap: 4px; }
+            .field-group label { font-size: 12px; }
+            .field-group select,
+            .field-group input { padding: 8px 10px; font-size: 14px; }
+            .output-panel { padding: 16px; }
+            .output-value { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景 -->
+    <div class="bg-animation" aria-hidden="true">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 白色容器 -->
+    <div class="container">
+        <div class="grid">
+            <!-- 标题区 -->
+            <div class="title-area">
+                <h2>单位换算</h2>
+            </div>
+            <!-- 返回主页 -->
+            <a href="index.html" class="back-area" id="backHome" aria-label="返回主页">
+                <span class="back-icon">🏠</span>
+                返回主页
+            </a>
+            <!-- 输入区 -->
+            <div class="input-panel">
+                <div class="field-group">
+                    <label for="categorySelect">类别</label>
+                    <select id="categorySelect">
+                        <option value="length">长度</option>
+                        <option value="weight">重量</option>
+                        <option value="temperature">温度</option>
+                        <option value="area">面积</option>
+                        <option value="speed">速度</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="fromUnitSelect">从单位</label>
+                    <select id="fromUnitSelect"></select>
+                </div>
+                <div class="field-group">
+                    <label for="toUnitSelect">至单位</label>
+                    <select id="toUnitSelect"></select>
+                </div>
+                <div class="field-group">
+                    <label for="numberInput">数值</label>
+                    <!-- 已添加 inputmode="decimal" 优化移动端输入 -->
+                    <input type="number" id="numberInput" placeholder="请输入数值" step="any" value="1" inputmode="decimal" aria-label="输入换算数值">
+                </div>
+            </div>
+            <!-- 输出区 -->
+            <div class="output-panel">
+                <div class="output-content">
+                    <div class="output-label">换算结果</div>
+                    <div class="output-value" id="outputValue">—</div>
+                    <div class="output-unit" id="outputUnit"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 转圈覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        // 单位换算逻辑（保持原有）
+        const unitData = {
+            length: { label: '长度', units: { '米': 1, '千米': 1000, '厘米': 0.01, '毫米': 0.001, '英尺': 3.28084, '英寸': 39.3701, '英里': 0.000621371, '码': 1.09361, '海里': 0.000539957 } },
+            weight: { label: '重量', units: { '千克': 1, '克': 0.001, '毫克': 0.000001, '吨': 1000, '磅': 2.20462, '盎司': 35.274, '斤': 0.5, '两': 0.05 } },
+            temperature: { label: '温度', units: { '摄氏度': null, '华氏度': null, '开尔文': null } },
+            area: { label: '面积', units: { '平方米': 1, '平方千米': 1000000, '平方厘米': 0.0001, '公顷': 10000, '亩': 666.6667, '平方英尺': 10.7639, '平方英寸': 1550.0031, '平方码': 1.19599 } },
+            speed: { label: '速度', units: { '米/秒': 1, '千米/小时': 0.277778, '英里/小时': 2.23694, '节': 1.94384, '英尺/秒': 3.28084, '马赫': 0.00293858 } }
+        };
+
+        const categorySelect = document.getElementById('categorySelect');
+        const fromUnitSelect = document.getElementById('fromUnitSelect');
+        const toUnitSelect = document.getElementById('toUnitSelect');
+        const numberInput = document.getElementById('numberInput');
+        const outputValue = document.getElementById('outputValue');
+        const outputUnit = document.getElementById('outputUnit');
+        const backHome = document.getElementById('backHome');
+        const overlay = document.getElementById('overlay');
+
+        let currentCategory = 'length';
+        let isTransitioning = false;
+
+        function populateUnitSelects(category) {
+            const units = Object.keys(unitData[category].units);
+            fromUnitSelect.innerHTML = '';
+            toUnitSelect.innerHTML = '';
+            units.forEach(function(unit) {
+                const opt1 = document.createElement('option');
+                opt1.value = unit;
+                opt1.textContent = unit;
+                fromUnitSelect.appendChild(opt1);
+                const opt2 = document.createElement('option');
+                opt2.value = unit;
+                opt2.textContent = unit;
+                toUnitSelect.appendChild(opt2);
+            });
+            if (units.length >= 2) {
+                fromUnitSelect.value = units[0];
+                toUnitSelect.value = units[1];
+            } else {
+                fromUnitSelect.value = units[0];
+                toUnitSelect.value = units[0];
+            }
+        }
+
+        function convertTemperature(value, fromUnit, toUnit) {
+            let celsius;
+            switch (fromUnit) {
+                case '摄氏度': celsius = value; break;
+                case '华氏度': celsius = (value - 32) * 5 / 9; break;
+                case '开尔文': celsius = value - 273.15; break;
+                default: return NaN;
+            }
+            switch (toUnit) {
+                case '摄氏度': return celsius;
+                case '华氏度': return celsius * 9 / 5 + 32;
+                case '开尔文': return celsius + 273.15;
+                default: return NaN;
+            }
+        }
+
+        function performConversion() {
+            const category = currentCategory;
+            const fromUnit = fromUnitSelect.value;
+            const toUnit = toUnitSelect.value;
+            const rawValue = numberInput.value.trim();
+            if (rawValue === '' || rawValue === '-' || rawValue === '.') {
+                outputValue.textContent = '—';
+                outputValue.className = 'output-value';
+                outputUnit.textContent = '';
+                return;
+            }
+            const numValue = parseFloat(rawValue);
+            if (isNaN(numValue)) {
+                outputValue.textContent = '请输入有效数值';
+                outputValue.className = 'output-value small-text';
+                outputUnit.textContent = '';
+                return;
+            }
+            let result;
+            if (category === 'temperature') {
+                result = convertTemperature(numValue, fromUnit, toUnit);
+            } else {
+                const fromFactor = unitData[category].units[fromUnit];
+                const toFactor = unitData[category].units[toUnit];
+                if (fromFactor === undefined || toFactor === undefined) {
+                    outputValue.textContent = '—';
+                    outputValue.className = 'output-value';
+                    outputUnit.textContent = '';
+                    return;
+                }
+                const baseValue = numValue * fromFactor;
+                result = baseValue / toFactor;
+            }
+            if (isNaN(result) || !isFinite(result)) {
+                outputValue.textContent = '无法换算';
+                outputValue.className = 'output-value small-text';
+                outputUnit.textContent = '';
+                return;
+            }
+            let displayResult;
+            if (Math.abs(result) >= 1e9 || (Math.abs(result) < 1e-6 && result !== 0)) {
+                displayResult = result.toExponential(6);
+            } else {
+                displayResult = result.toPrecision(10).replace(/\.?0+$/, '');
+                if (displayResult.length > 14) {
+                    displayResult = result.toFixed(6).replace(/\.?0+$/, '');
+                }
+            }
+            outputValue.textContent = displayResult;
+            outputValue.className = 'output-value';
+            outputUnit.textContent = toUnit;
+        }
+
+        categorySelect.addEventListener('change', function() {
+            currentCategory = this.value;
+            populateUnitSelects(currentCategory);
+            performConversion();
+        });
+        fromUnitSelect.addEventListener('change', performConversion);
+        toUnitSelect.addEventListener('change', performConversion);
+        numberInput.addEventListener('input', performConversion);
+        numberInput.addEventListener('change', performConversion);
+
+        function init() {
+            currentCategory = categorySelect.value;
+            populateUnitSelects(currentCategory);
+            performConversion();
+        }
+        init();
+
+        // 返回主页转圈动画
+        backHome.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (isTransitioning) return;
+            isTransitioning = true;
+            overlay.classList.add('active');
+            setTimeout(function() {
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

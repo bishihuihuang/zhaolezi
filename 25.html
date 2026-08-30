@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 修复问题 5：添加 favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+    <title>字数统计 - 找乐子</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== 背景流光层（20秒无缝循环） ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(125deg,
+                    #0a0e27, #161a3d, #1f1652, #331d6e,
+                    #1d1b4b, #0f122f, #241a54);
+            background-size: 400% 400%;
+            animation: flowGradient 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%;
+            left: -40%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(ellipse at 30% 70%,
+                    rgba(255, 140, 100, .35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%,
+                    rgba(120, 180, 255, .3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%,
+                    rgba(220, 130, 250, .25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(255, 200, 130, .15), transparent 60%),
+                radial-gradient(circle at 20% 80%,
+                    rgba(80, 220, 200, .2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes flowGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+        }
+
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* 悬浮球 */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                    rgba(255, 255, 255, .3),
+                    rgba(255, 255, 255, .1) 50%,
+                    transparent 70%);
+            box-shadow: 0 0 60px rgba(255, 255, 255, .08),
+                inset 0 0 30px rgba(255, 255, 255, .04);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+        .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+
+        @keyframes orbFloatA {
+            0% { transform: translate(0,0) scale(1); opacity:.6; }
+            30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+            60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+            100% { transform: translate(0,0) scale(1); opacity:.6; }
+        }
+
+        @keyframes orbFloatB {
+            0% { transform: translate(0,0) scale(1); opacity:.5; }
+            35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+            70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+            100% { transform: translate(0,0) scale(1); opacity:.5; }
+        }
+
+        @keyframes orbSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== 主容器 ===== */
+        main {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 20px 40px;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1440px;
+            background: rgba(245, 247, 255, .96);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35),
+                0 0 0 1px rgba(255, 255, 255, .3),
+                inset 0 1px 0 rgba(255, 255, 255, .6);
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container::-webkit-scrollbar { width: 10px; }
+        .container::-webkit-scrollbar-track { background: rgba(0, 0, 0, .04); border-radius: 12px; }
+        .container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 12px; border: 2px solid rgba(255, 255, 255, .4); }
+
+        /* ===== 网格布局（6列8行） ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 12px;
+        }
+
+        /* 标题区 */
+        .title-area {
+            grid-column: 1 / 5;
+            grid-row: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+            background-size: 300% 300%;
+            animation: titleGradient 6s ease infinite;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(255, 150, 50, .35),
+                inset 0 1px 0 rgba(255, 255, 255, .2);
+        }
+
+        .title-area h2 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            color: #fff;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, .3);
+        }
+
+        @keyframes titleGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 返回主页 */
+        .back-area {
+            grid-column: 5 / 7;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(17, 153, 142, .4),
+                inset 0 1px 0 rgba(255, 255, 255, .2);
+            text-decoration: none;
+            color: #fff;
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform .3s, box-shadow .3s;
+        }
+
+        .back-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 50px rgba(17, 153, 142, .5);
+        }
+
+        .back-area:active {
+            transform: translateY(-2px) scale(.96);
+        }
+
+        /* ===== 输入区 ===== */
+        .input-area {
+            grid-column: 1 / 5;
+            grid-row: 3 / 9;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+            border: 2px solid #e8e8e8;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-area label {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        #textInput {
+            flex: 1;
+            width: 100%;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+            background: transparent;
+        }
+
+        /* ===== 统计面板 ===== */
+        .stats-panel {
+            grid-column: 5 / 7;
+            grid-row: 3 / 9;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+            border: 2px solid #e8e8e8;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stats-panel h3 {
+            font-size: 18px;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            transition: background .2s, transform .2s;
+        }
+
+        .stat-item:hover {
+            background: #f0f2ff;
+            transform: translateX(4px);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 900;
+            color: #667eea;
+            line-height: 1.2;
+        }
+
+        /* 按钮样式 */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .btn {
+            flex: 1;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+            color: #fff;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: scale(.95);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            box-shadow: 0 4px 12px rgba(17, 153, 142, .4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, .4);
+        }
+
+        /* ===== 模态框（说明） ===== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .6);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+            color: #333;
+        }
+
+        .modal-content h3 {
+            color: #333;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+
+        .modal-content p {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .modal-content p strong {
+            color: #667eea;
+        }
+
+        .modal-close {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        /* ===== 转圈覆盖层 ===== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 900px) {
+            .container { width: 95%; padding: 12px; }
+            .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+            .title-area { grid-column: 1/3; grid-row: auto; min-height: 100px; }
+            .back-area { grid-column: 1/3; grid-row: auto; min-height: 80px; }
+            .input-area { grid-column: 1/3; grid-row: auto; min-height: 250px; }
+            .stats-panel { grid-column: 1/3; grid-row: auto; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <div class="title-area">
+                    <h2>字数统计</h2>
+                </div>
+                <a href="index.html" class="back-area" id="backHome">
+                    <span style="font-size:32px;">🏠</span>
+                    返回主页
+                </a>
+
+                <div class="input-area">
+                    <label for="textInput">请输入文本：</label>
+                    <textarea id="textInput" aria-label="请输入文本内容" placeholder="在这里输入或粘贴文本，右侧会实时统计…" spellcheck="false"></textarea>
+                </div>
+
+                <div class="stats-panel">
+                    <h3>📊 字数统计</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">总字数（去空格含标点）</span>
+                        <span class="stat-value" id="totalCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">中文字数（纯汉字）</span>
+                        <span class="stat-value" id="cnCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">英文字数（A-Z a-z）</span>
+                        <span class="stat-value" id="enCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">总行数（含开头空行）</span>
+                        <span class="stat-value" id="lineCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">其他（标点/数字/符号）</span>
+                        <span class="stat-value" id="otherCount">0</span>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button id="resetBtn" class="btn btn-reset">重新识别</button>
+                        <button id="infoBtn" class="btn btn-info">查看逻辑</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 说明模态框 -->
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <h3>📖 统计逻辑说明</h3>
+            <p><strong>1. 总字数（去空格含标点）：</strong> 去除所有空格及换行符，识别所有英文、中文、数字、标点符号及占位字符（如 🎯），全部统计为字数。</p>
+            <p><strong>2. 中文字数：</strong> 仅统计纯汉字（不包含标点符号和英文）。</p>
+            <p><strong>3. 英文字数：</strong> 仅统计26个英文字母的大写或小写，不含数字、符号。</p>
+            <p><strong>4. 总行数：</strong> 从第一行（无论是否空行）开始，一直识别到有字的最后一行，中间的所有空行均计入。如果文本全为空，则行数为0。</p>
+            <p><strong>5. 其他：</strong> 用总字数减去中文字数和英文字数，得出的即是数字、标点或表情符号的数量。</p>
+            <p><strong>6. 重新识别：</strong> 手动点击后，将强制重新识别并修改后的新文本，刷新统计数据。</p>
+            <p><strong>7. 免责声明：</strong> 由于不同系统对字符编码（如Emoji、复杂组合）的统计方式存在差异，本网页生成的统计数据可能不准确，请以具体实际需求为准。</p>
+            <button class="modal-close" id="closeModal">关闭</button>
+        </div>
+    </div>
+
+    <!-- 转场遮罩 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // DOM元素
+            const textInput = document.getElementById('textInput');
+            const totalCount = document.getElementById('totalCount');
+            const cnCount = document.getElementById('cnCount');
+            const enCount = document.getElementById('enCount');
+            const lineCount = document.getElementById('lineCount');
+            const otherCount = document.getElementById('otherCount');
+            const resetBtn = document.getElementById('resetBtn');
+            const infoBtn = document.getElementById('infoBtn');
+            const infoModal = document.getElementById('infoModal');
+            const closeModal = document.getElementById('closeModal');
+            const backHome = document.getElementById('backHome');
+            const overlay = document.getElementById('overlay');
+
+            // 实时统计函数
+            function updateStats() {
+                const text = textInput.value;
+
+                // 1. 总字数（无空格，加标点）：使用Array.from统计完整的Unicode字符，包括Emoji，忽略所有空白字符（空格、换行等）
+                const total = Array.from(text).filter(char => char.trim() !== '').length;
+                totalCount.textContent = total;
+
+                // 2. 中文字数（纯汉字）
+                const cn = (text.match(/[\u4e00-\u9fff]/g) || []).length;
+                cnCount.textContent = cn;
+
+                // 3. 英文字数（A-Z a-z，共52个字符）
+                const en = (text.match(/[a-zA-Z]/g) || []).length;
+                enCount.textContent = en;
+
+                // 4. 总行数（修正：从第一行(索引0)开始，无论是否空行，直到最后一个非空行）
+                const lines = text.split('\n');
+                let end = lines.length - 1;
+                // 找到最后一个非空行的索引
+                while (end >= 0 && lines[end].trim() === '') {
+                    end--;
+                }
+                // 如果存在非空行，则行数 = 最后一个非空行的索引 + 1（因为从索引0开始算）
+                // 如果文本全为空，则行数为0
+                lineCount.textContent = (end >= 0) ? (end + 1) : 0;
+
+                // 5. 其他（总字数减去中文和英文数量）
+                otherCount.textContent = total - cn - en;
+            }
+
+            // 绑定输入事件（实时刷新）
+            textInput.addEventListener('input', updateStats);
+
+            // 6. 重新识别按钮
+            resetBtn.addEventListener('click', function() {
+                updateStats();
+                alert('已重新识别修改后的新文本！');
+            });
+
+            // 7. 说明按钮（模态框）
+            infoBtn.addEventListener('click', function() {
+                infoModal.classList.add('show');
+            });
+            closeModal.addEventListener('click', function() {
+                infoModal.classList.remove('show');
+            });
+            // 点击遮罩也可关闭
+            infoModal.addEventListener('click', function(e) {
+                if (e.target === infoModal) {
+                    infoModal.classList.remove('show');
+                }
+            });
+
+            // 初始统计
+            updateStats();
+
+            // 返回主页转场动画
+            let isTransitioning = false;
+            backHome.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (isTransitioning) return;
+                isTransitioning = true;
+                overlay.classList.add('active');
+                setTimeout(function () {
+                    window.location.href = 'index.html';
+                }, 1000);
+            });
+        })();
+    </script>
+</body>
+</html>

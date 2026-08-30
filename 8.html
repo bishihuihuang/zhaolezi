@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>找乐子 - 背包</title>
+<style>
+/* ========== 基础重置 ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* 【优化】移除触摸高亮 */
+}
+
+/* ========== 1. 流光溢彩动态背景（系列统一） ========== */
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ========== 背景漂浮光球 ========== */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    filter: blur(2px);
+    z-index: 1;
+    animation: orbFloat 8s ease-in-out infinite;
+}
+.orb1 { width: 120px; height: 120px; top: 15%; left: 12%; }
+.orb2 { width: 80px;  height: 80px;  bottom: 18%; right: 15%; animation-delay: -3s; }
+.orb3 { width: 50px;  height: 50px;  top: 65%; left: 22%; animation-delay: -5s; }
+@keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-25px) scale(1.08); }
+}
+
+/* ========== 2. 居中 19:10 横长方形 ========== */
+.stage-rect {
+    width: min(92vw, 167.2vh);   /* 167.2vh ≈ 92vh × 19 ÷ 10 */
+    aspect-ratio: 19 / 10;        /* 强制保持 19:10 比例 */
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(10px);      /* 磨砂玻璃效果 */
+    border-radius: 25px;              /* 大圆角 */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;                 /* 裁剪内容，保证线不出圆角 */
+    z-index: 10;
+    animation: cardEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* 顶部四色渐变装饰条（与系列一致） */
+.stage-rect::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 5px;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    z-index: 5;
+}
+
+/* 卡片入场动画（上浮淡入） */
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(40px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ========== 3. 四宫格：2×2 均等划分 ========== */
+.stage-grid {
+    position: absolute;
+    inset: 0;                         /* 铺满整个长方形 */
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* 左右两个等宽列 */
+    grid-template-rows: 1fr 1fr;      /* 上下两个等高行 */
+}
+
+/* 每个小长方形单元格 */
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.3s ease;
+    cursor: default;
+    min-width: 0;                     /* 防止内容撑破格子 */
+    min-height: 0;
+}
+/* 悬停时微微提亮 */
+.cell:hover {
+    background: rgba(255, 255, 255, 0.45);
+}
+
+/* 每格独立的主题渐变色 + 入场延迟（错峰出现，更灵动） */
+#cellTL { --g1: #ee7752; --g2: #e73c7e; --d: 0.15s; }  /* 橙 → 粉 */
+#cellTR { --g1: #23a6d5; --g2: #23d5ab; --d: 0.35s; }  /* 蓝 → 绿 */
+#cellBL { --g1: #e73c7e; --g2: #7873f5; --d: 0.55s; }  /* 粉 → 紫 */
+#cellBR { --g1: #ffd54f; --g2: #ff8c00; --d: 0.75s; }  /* 金 → 橙（呼应分割线） */
+
+/* ========== 4. 左上格：我的背包（自动读取 5.html 保存的乐子） ========== */
+.bag-box {
+    width: 88%;
+    height: 86%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* 背包标题（渐变流光艺术字，与系列风格统一） */
+.bag-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: clamp(16px, 2.2vmin, 22px);
+    font-weight: bold;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--g1), var(--g2), var(--g1));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shineFlow 3.5s linear infinite;
+    flex-shrink: 0;
+}
+
+/* 背包内容滚动区（乐子多时内部滚动） */
+.bag-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    margin-top: 10px;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+/* 滚动条美化 */
+.bag-list::-webkit-scrollbar { width: 6px; }
+.bag-list::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+    border-radius: 10px;
+}
+.bag-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 152, 0, 0.5);
+    border-radius: 10px;
+}
+
+/* 单条乐子卡片（橙边白底，与系列统一） */
+.bag-item {
+    background: #ffffff;
+    border: 2px solid #FF9800;
+    border-radius: 14px;
+    padding: 10px 14px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    animation: artIn 0.6s ease backwards;   /* 逐条错峰入场 */
+}
+.bag-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 152, 0, 0.3);
+}
+
+/* 条目头部：类型图标 + 文件名 + 保存时间 + 单条删除按钮 */
+.bag-item-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.bag-item-icon { font-size: 18px; }
+.bag-item-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #e65100;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.bag-item-time {
+    font-size: 11px;
+    color: #aaa;
+    flex-shrink: 0;
+}
+/* 单条删除小按钮（修复：增大尺寸至44x44） */
+.bag-del-btn {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: #ffebee;
+    color: #e53935;
+    font-size: 16px; /* 增大删除符号 */
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bag-del-btn:hover {
+    background: #e53935;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* 条体内的媒体：视频 / 图片自适应，音频为播放条 */
+.bag-item video,
+.bag-item img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    background: #000;
+    border-radius: 8px;
+    display: block;
+}
+.bag-item audio {
+    width: 100%;
+    height: 36px;
+    display: block;
+}
+
+/* 背包为空时的提示 */
+.bag-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: #b5b5b5;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.9;
+}
+.bag-empty-icon { font-size: 34px; opacity: 0.6; }
+
+/* ========== 5. 右上格：管理区（删除 / 操作步骤） ========== */
+.manage-box {
+    width: 88%;
+    height: 86%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(14px, 2.5vmin, 26px);
+    min-height: 0;
+}
+
+.manage-title {
+    font-size: clamp(16px, 2.2vmin, 22px);
+    font-weight: bold;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--g1), var(--g2), var(--g1));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shineFlow 3.5s linear infinite;
+    opacity: 0;
+    animation: artIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+               shineFlow 3.5s linear infinite;
+    animation-delay: var(--d, 0s), 0s;
+}
+
+.manage-btn {
+    width: 78%;
+    padding: clamp(10px, 1.6vmin, 16px) 0;
+    font-size: clamp(14px, 1.8vmin, 18px);
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 2px;
+    color: #e65100;
+    background: #ffffff;
+    border: 3px solid #FF9800;
+    border-radius: 50px;              /* 胶囊形，与 4.html 输入框同款 */
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: artIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    animation-delay: var(--d, 0s);
+    min-height: 44px;                 /* 确保触摸目标 ≥44px */
+}
+.manage-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(255, 152, 0, 0.4);
+    background: #FFF3E0;
+}
+.manage-btn:active { transform: scale(0.96); }
+
+/* 删除按钮用红色调以示区分 */
+#openDeleteBtn {
+    color: #c62828;
+    border-color: #ef5350;
+}
+#openDeleteBtn:hover {
+    background: #ffebee;
+    box-shadow: 0 4px 16px rgba(239, 83, 80, 0.35);
+}
+
+/* ========== 6. 艺术字占位："功能正在开发中 / 敬请期待~~" ========== */
+.art-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(8px, 1.4vmin, 16px);
+    text-align: center;
+    user-select: none;
+    opacity: 0;                       /* 初始隐藏，由入场动画带出 */
+    animation: artIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    animation-delay: var(--d, 0s);    /* 四格错峰入场 */
+}
+
+/* 入场：上浮 + 缩放淡入 */
+@keyframes artIn {
+    from { opacity: 0; transform: translateY(18px) scale(0.94); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 第一行：渐变流光艺术字 */
+.art-line1 {
+    font-size: clamp(20px, 3vmin, 32px);
+    font-weight: bold;
+    letter-spacing: clamp(2px, 0.5vmin, 5px);
+    background: linear-gradient(90deg, var(--g1), var(--g2), var(--g1));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
+    animation: shineFlow 3.5s linear infinite,
+               artBreath 3.2s ease-in-out infinite;
+}
+
+/* 中间小星光点缀 */
+.art-spark {
+    font-size: clamp(10px, 1.3vmin, 14px);
+    color: var(--g2);
+    letter-spacing: 8px;
+    animation: sparkTwinkle 1.8s ease-in-out infinite;
+}
+
+/* 第二行：轻盈俏皮的辅助文字 */
+.art-line2 {
+    font-size: clamp(13px, 1.8vmin, 18px);
+    font-weight: bold;
+    letter-spacing: clamp(3px, 0.8vmin, 7px);
+    color: #a89dbd;                   /* 柔和灰紫 */
+    animation: artBreath 3.2s ease-in-out infinite;
+    animation-delay: 0.4s;            /* 与第一行错开呼吸节奏 */
+}
+
+/* 渐变流光：高光缓缓扫过文字 */
+@keyframes shineFlow {
+    to { background-position: 200% center; }
+}
+
+/* 呼吸式上下轻浮 */
+@keyframes artBreath {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-5px); }
+}
+
+/* 星光闪烁 */
+@keyframes sparkTwinkle {
+    0%, 100% { opacity: 0.25; transform: scale(0.9); }
+    50%      { opacity: 0.9;  transform: scale(1.05); }
+}
+
+/* ========== 7. 四条鲜艳橙色分割线（不碰边框、不在中心相接） ========== */
+.divider {
+    position: absolute;
+    background: #FF8C00;              /* 鲜艳橙色 */
+    border-radius: 3px;               /* 线头圆润 */
+    pointer-events: none;             /* 不挡住格子的点击 */
+    z-index: 4;
+    animation: dividerGlow 3s ease-in-out infinite;  /* 光晕呼吸 */
+}
+
+/* 分割线光晕呼吸 */
+@keyframes dividerGlow {
+    0%, 100% { box-shadow: 0 0 6px rgba(255, 140, 0, 0.45); }
+    50%      { box-shadow: 0 0 14px rgba(255, 140, 0, 0.8); }
+}
+
+/* ① 左侧横线：分割 左上 与 左下 */
+.divider-left {
+    height: 3px;
+    top: 50%;
+    left: 22px;
+    right: calc(50% + 16px);
+    transform: translateY(-50%);
+}
+
+/* ② 底部竖线：分割 左下 与 右下 */
+.divider-bottom {
+    width: 3px;
+    left: 50%;
+    top: calc(50% + 16px);
+    bottom: 22px;
+    transform: translateX(-50%);
+}
+
+/* ③ 右侧横线：分割 右下 与 右上 */
+.divider-right {
+    height: 3px;
+    top: 50%;
+    left: calc(50% + 16px);
+    right: 22px;
+    transform: translateY(-50%);
+}
+
+/* ④ 顶部竖线：分割 右上 与 左上 */
+.divider-top {
+    width: 3px;
+    left: 50%;
+    top: 22px;
+    bottom: calc(50% + 16px);
+    transform: translateX(-50%);
+}
+
+/* ========== 8. 背景上的两个透明按钮 ========== */
+.ghost-btn {
+    position: fixed;
+    z-index: 100;
+    padding: 12px 26px;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.55);
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50px;
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 44px;                 /* 【优化】确保触摸目标 ≥44px */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.ghost-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+    transform: translateY(-2px);
+}
+.ghost-btn:active { transform: scale(0.95); }
+
+/* 左上角：返回按钮 */
+#backBtn {
+    top: 24px;
+    left: 24px;
+}
+
+/* 右下角：高级按钮 */
+#advancedBtn {
+    bottom: 24px;
+    right: 24px;
+}
+
+/* ========== 9. 弹窗通用遮罩 ========== */
+.modal-mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+    z-index: 9000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.modal-mask.show {
+    display: flex;
+    animation: maskFadeIn 0.3s ease;
+}
+
+/* 弹窗卡片（玻璃拟态） */
+.modal-card {
+    width: min(90vw, 460px);
+    max-height: 82vh;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 22px;
+    padding: 24px 26px 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: cardEnter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-title {
+    font-size: 21px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    letter-spacing: 2px;
+    flex-shrink: 0;
+}
+.modal-sub {
+    font-size: 13px;
+    color: #999;
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.6;
+    flex-shrink: 0;
+}
+
+/* 关闭按钮 */
+.modal-close {
+    margin-top: 16px;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 50px;
+    border: 2.5px solid #FF9800;
+    color: #e65100;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    min-height: 44px;                 /* 【优化】触摸目标 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-close:hover {
+    background: #FF9800;
+    color: #fff;
+}
+
+/* ========== 10. 删除弹窗内容 ========== */
+.del-body {
+    margin-top: 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+}
+.del-body::-webkit-scrollbar { width: 6px; }
+.del-body::-webkit-scrollbar-thumb {
+    background: rgba(239, 83, 80, 0.4);
+    border-radius: 10px;
+}
+
+/* 按类型分组标题 */
+.del-group-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #c62828;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* 单条待删记录 */
+.del-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border: 2px solid #ef9a9a;
+    border-radius: 12px;
+    padding: 8px 12px;
+    transition: all 0.25s ease;
+}
+.del-row:hover {
+    border-color: #ef5350;
+    box-shadow: 0 3px 10px rgba(239, 83, 80, 0.2);
+}
+.del-row-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: bold;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.del-row-time {
+    font-size: 11px;
+    color: #bbb;
+    flex-shrink: 0;
+}
+.del-row-btn {
+    flex-shrink: 0;
+    padding: 5px 16px;
+    border-radius: 50px;
+    border: none;
+    background: #ef5350;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    min-height: 44px;                 /* 【优化】触摸目标 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.del-row-btn:hover {
+    background: #c62828;
+    transform: scale(1.06);
+}
+
+/* 底部"清空全部"按钮 */
+.del-clear-all {
+    margin-top: 4px;
+    text-align: center;
+    padding: 10px 0;
+    border-radius: 50px;
+    background: linear-gradient(to right, #ef5350, #e53935);
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    min-height: 44px;                 /* 【优化】触摸目标 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.del-clear-all:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 14px rgba(229, 57, 53, 0.4);
+}
+
+/* ========== 11. 操作步骤弹窗内容（横版长框） ========== */
+.guide-card {
+    width: min(92vw, 760px);          /* 长方形长框，比删除弹窗更宽 */
+}
+.guide-body {
+    margin-top: 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+    padding-right: 6px;
+}
+.guide-body::-webkit-scrollbar { width: 6px; }
+.guide-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 152, 0, 0.5);
+    border-radius: 10px;
+}
+
+.guide-step {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #FFE0B2;
+    border-radius: 16px;
+    padding: 12px 14px;
+    transition: all 0.25s ease;
+}
+.guide-step:hover {
+    border-color: #FF9800;
+    box-shadow: 0 4px 14px rgba(255, 152, 0, 0.25);
+}
+.guide-step img {
+    width: 42%;
+    max-width: 220px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: block;
+}
+.guide-step-text {
+    flex: 1;
+    min-width: 0;
+}
+.guide-step-no {
+    display: inline-flex;
+    width: 26px;
+    height: 26px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF9800, #FFB74D);
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+.guide-step-text h4 {
+    font-size: 15px;
+    color: #e65100;
+    margin-bottom: 6px;
+}
+.guide-step-text p {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.7;
+}
+
+/* 提示气泡 */
+#toast {
+    position: fixed;
+    top: 18%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: rgba(46, 204, 113, 0.92);
+    color: #fff;
+    font-weight: bold;
+    padding: 12px 26px;
+    border-radius: 50px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 9500;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+#toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ========== 12. 转场遮罩层（系列统一"找乐子"转场） ========== */
+#transitionMask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    /* 【优化】无障碍角色 */
+    role: dialog;
+    aria-modal: true;
+}
+#transitionMask.show {
+    display: flex;
+    animation: maskFadeIn 0.3s ease;
+}
+@keyframes maskFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* 遮罩正中间的旋转小圆 */
+.spinner-circle {
+    width: 100px;
+    height: 100px;
+    border: 5px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: spinRotate 1.5s linear infinite;
+}
+.spinner-circle span {
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: spinReverse 1.5s linear infinite;
+}
+@keyframes spinRotate  { to { transform: rotate(360deg); } }
+@keyframes spinReverse { to { transform: rotate(-360deg); } }
+
+/* ========== 【优化】移动端适配 ========== */
+@media (max-width: 600px) {
+    .stage-rect {
+        width: 94vw;
+        aspect-ratio: 16 / 10; /* 小屏稍微调整比例，避免过大 */
+        border-radius: 16px;
+    }
+    .ghost-btn {
+        top: 12px;
+        left: 12px;
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    .bag-box,
+    .manage-box {
+        width: 92%;
+        height: 90%;
+    }
+    .bag-title,
+    .manage-title {
+        font-size: 16px;
+        letter-spacing: 2px;
+    }
+    .manage-btn {
+        width: 90%;
+        font-size: 14px;
+    }
+    .divider-left {
+        left: 10px;
+        right: calc(50% + 8px);
+    }
+    .divider-right {
+        left: calc(50% + 8px);
+        right: 10px;
+    }
+    .divider-top {
+        top: 10px;
+        bottom: calc(50% + 8px);
+    }
+    .divider-bottom {
+        top: calc(50% + 8px);
+        bottom: 10px;
+    }
+    .modal-card {
+        padding: 16px 16px 14px;
+        border-radius: 16px;
+    }
+    .guide-card {
+        width: 96vw;
+    }
+    .guide-step {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .guide-step img {
+        width: 100%;
+        max-width: none;
+        margin-bottom: 10px;
+    }
+}
+@media (max-width: 400px) {
+    .bag-item-head {
+        flex-wrap: wrap;
+    }
+    .bag-item-time {
+        margin-left: auto;
+    }
+    .del-row {
+        flex-wrap: wrap;
+    }
+    .del-row-btn {
+        width: 100%;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- 背景漂浮光球 -->
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+
+<!-- 背景左上角：透明返回按钮（随机跳 5.html 或 5.html） -->
+<a class="ghost-btn" id="backBtn" href="5.html" aria-label="返回上一页" title="返回">&larr; 返回</a>
+
+<!-- 居中 19:10 横长方形：2×2 四宫格 -->
+<div class="stage-rect" id="stageRect">
+
+    <!-- 四个相等的小长方形 -->
+    <div class="stage-grid">
+
+        <!-- 左上格：我的背包（自动读取 5.html 保存的视频/图片/音频） -->
+        <div class="cell" id="cellTL">
+            <div class="bag-box">
+                <div class="bag-title">🎒 我的背包</div>
+                <div class="bag-list" id="bagList">
+                    <div class="bag-empty">
+                        <div class="bag-empty-icon">🎒</div>
+                        <div>背包空空如也<br>去「找乐子」页面保存一些乐子吧~</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右上格：管理区（删除已保存 / 操作步骤） -->
+        <div class="cell" id="cellTR">
+            <div class="manage-box">
+                <div class="manage-title">🛠️ 背包管理</div>
+                <div class="manage-btn" id="openDeleteBtn" role="button" tabindex="0" aria-label="删除已保存的乐子">删除已保存的乐子</div>
+                <div class="manage-btn" id="openGuideBtn" role="button" tabindex="0" aria-label="查看操作步骤">操作步骤</div>
+            </div>
+        </div>
+
+        <!-- 左下格 -->
+        <div class="cell" id="cellBL">
+            <div class="art-text">
+                <div class="art-line1">功能正在开发中</div>
+                <div class="art-spark">✦ ✧ ✦</div>
+                <div class="art-line2">敬请期待~~</div>
+            </div>
+        </div>
+
+        <!-- 右下格 -->
+        <div class="cell" id="cellBR">
+            <div class="art-text">
+                <div class="art-line1">功能正在开发中</div>
+                <div class="art-spark">✦ ✧ ✦</div>
+                <div class="art-line2">敬请期待~~</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 四条橙色分割线：两两分隔相邻格子，均不碰边框、不在中心相接 -->
+    <div class="divider divider-left"></div>
+    <div class="divider divider-bottom"></div>
+    <div class="divider divider-right"></div>
+    <div class="divider divider-top"></div>
+
+</div>
+
+<!-- ================= 删除已保存弹窗 ================= -->
+<div class="modal-mask" id="deleteMask" role="dialog" aria-modal="true" aria-label="删除已保存的乐子">
+    <div class="modal-card">
+        <div class="modal-title">🗑️ 删除已保存的乐子</div>
+        <div class="modal-sub">点击右侧按钮，将对应乐子从背包中移除。<br>注意：此处只删除背包记录，磁盘上的文件需自行到下载文件夹删除。</div>
+        <div class="del-body" id="delBody"></div>
+        <div class="del-clear-all" id="clearAllBtn" role="button" tabindex="0">清空全部乐子</div>
+        <div class="modal-close" id="deleteClose" role="button" tabindex="0">关闭</div>
+    </div>
+</div>
+
+<!-- ================= 操作步骤弹窗（横版长框） ================= -->
+<div class="modal-mask" id="guideMask" role="dialog" aria-modal="true" aria-label="操作步骤">
+    <div class="modal-card guide-card">
+        <div class="modal-title">📖 找乐子 · 操作步骤</div>
+        <div class="modal-sub">三步学会抽取、保存和管理乐子</div>
+        <div class="guide-body">
+
+            <div class="guide-step">
+                <img src="step1.png" alt="抽取乐子"
+                     onerror="this.outerHTML='<div style=&quot;width:42%;max-width:220px;height:120px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border-radius:12px;color:#bbb;font-size:12px;&quot;>配图未找到：step1.png</div>';">
+                <div class="guide-step-text">
+                    <div class="guide-step-no">1</div>
+                    <h4>抽取乐子</h4>
+                    <p>在「找乐子」页面点击"抽取乐子"按钮，视频、文字、音频会一起随机刷新（每 5 秒可抽一次），找到喜欢的就停下。</p>
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <img src="step2.png" alt="保存乐子"
+                     onerror="this.outerHTML='<div style=&quot;width:42%;max-width:220px;height:120px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border-radius:12px;color:#bbb;font-size:12px;&quot;>配图未找到：step2.png</div>';">
+                <div class="guide-step-text">
+                    <div class="guide-step-no">2</div>
+                    <h4>保存乐子</h4>
+                    <p>点击"保存乐子"，弹窗里会实时显示当前抽到的视频、图片和音乐，点"保存"即可下载到本地，并自动放进背包。</p>
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <img src="step3.png" alt="背包查看与删除"
+                     onerror="this.outerHTML='<div style=&quot;width:42%;max-width:220px;height:120px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border-radius:12px;color:#bbb;font-size:12px;&quot;>配图未找到：step3.png</div>';">
+                <div class="guide-step-text">
+                    <div class="guide-step-no">3</div>
+                    <h4>查看与删除</h4>
+                    <p>点击"背包"按钮即可来到本页查看所有已保存的乐子。想清理时，点本页"删除已保存的乐子"按钮，可逐个或清空全部（文件本体仍需到下载文件夹手动删除）。</p>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-close" id="guideClose" role="button" tabindex="0">关闭</div>
+    </div>
+</div>
+
+<!-- 提示气泡 -->
+<div id="toast"></div>
+
+<!-- 转场遮罩层 -->
+<div id="transitionMask" role="dialog" aria-modal="true" aria-label="页面加载中">
+    <div class="spinner-circle"><span>找乐子</span></div>
+</div>
+
+<script>
+/* ==========================================================
+ * 一、背包记录的读取与写入（与 5.html 共用同一个本地记录）
+ * ========================================================== */
+const SAVE_KEY = 'zhaolezi_saved_items';
+
+/* 读取 5.html 保存过的乐子列表 */
+function loadSavedList() {
+    try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return [];
+        const list = JSON.parse(raw);
+        return Array.isArray(list) ? list : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+/* 把列表写回本地 */
+function writeSavedList(list) {
+    try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(list));
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+/* 类型对应的图标 */
+function iconOf(type) {
+    if (type === 'video') return '🎬';
+    if (type === 'image') return '🖼️';
+    if (type === 'audio') return '🎵';
+    return '📦';
+}
+
+/* 类型对应的中文名 */
+function nameOf(type) {
+    if (type === 'video') return '视频';
+    if (type === 'image') return '图片';
+    if (type === 'audio') return '音频';
+    return '文件';
+}
+
+/* 提示气泡 */
+let toastTimer = null;
+function showToast(msg, isError) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = isError ? 'rgba(229, 57, 53, 0.92)' : 'rgba(46, 204, 113, 0.92)';
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+        t.classList.remove('show');
+    }, 2000);
+}
+
+/* ==========================================================
+ * 二、背包渲染（每条带单条删除小按钮）
+ * ========================================================== */
+function buildItem(item, index) {
+    const div = document.createElement('div');
+    div.className = 'bag-item';
+    div.style.animationDelay = (index * 0.12) + 's';   /* 逐条错峰入场 */
+
+    /* 条目头部：图标 + 文件名 + 保存时间 + 删除按钮 */
+    const head = document.createElement('div');
+    head.className = 'bag-item-head';
+
+    const icon = document.createElement('span');
+    icon.className = 'bag-item-icon';
+    icon.textContent = iconOf(item.type);
+
+    const name = document.createElement('span');
+    name.className = 'bag-item-name';
+    name.textContent = item.file;
+    name.title = item.file;
+
+    const time = document.createElement('span');
+    time.className = 'bag-item-time';
+    time.textContent = item.time || '';
+
+    /* 单条删除按钮 */
+    const del = document.createElement('button');
+    del.className = 'bag-del-btn';
+    del.textContent = '✕';
+    del.title = '从背包删除';
+    del.setAttribute('aria-label', '删除 ' + item.file);
+    del.addEventListener('click', function () {
+        removeSavedItem(item.type, item.file);
+        showToast('已从背包删除：' + item.file);
+    });
+
+    head.appendChild(icon);
+    head.appendChild(name);
+    head.appendChild(time);
+    head.appendChild(del);
+    div.appendChild(head);
+
+    /* 媒体内容：只有保存过的文件才会显示 */
+    let media = null;
+    if (item.type === 'video') {
+        media = document.createElement('video');
+        media.src = item.file;
+        media.controls = true;
+        media.preload = 'metadata';
+    } else if (item.type === 'image') {
+        media = document.createElement('img');
+        media.src = item.file;
+        media.alt = item.file;
+    } else if (item.type === 'audio') {
+        media = document.createElement('audio');
+        media.src = item.file;
+        media.controls = true;
+    }
+
+    /* 文件被移动 / 删除时给出提示 */
+    if (media) {
+        media.onerror = function () {
+            div.innerHTML = '';
+            const tip = document.createElement('div');
+            tip.style.cssText = 'font-size:12px;color:#b5b5b5;text-align:center;padding:8px 0;';
+            tip.textContent = '未找到文件：' + item.file + '（请确认它与网页在同一文件夹）';
+            div.appendChild(tip);
+        };
+        div.appendChild(media);
+    }
+    return div;
+}
+
+/* 渲染整个背包 */
+function renderBag() {
+    const listEl = document.getElementById('bagList');
+    const list = loadSavedList();
+
+    if (list.length === 0) {
+        /* 没保存过：显示默认空提示 */
+        listEl.innerHTML = '';
+        const empty = document.createElement('div');
+        empty.className = 'bag-empty';
+        empty.innerHTML = '<div class="bag-empty-icon">🎒</div><div>背包空空如也<br>去「找乐子」页面保存一些乐子吧~</div>';
+        listEl.appendChild(empty);
+        return;
+    }
+
+    /* 有保存记录：清空空提示，逐条渲染（按保存时间倒序，新的在前） */
+    listEl.innerHTML = '';
+    list.slice().reverse().forEach(function (item, i) {
+        listEl.appendChild(buildItem(item, i));
+    });
+}
+renderBag();
+
+/* ==========================================================
+ * 三、删除操作（只删背包记录，磁盘文件需手动删除）
+ * ========================================================== */
+
+/* 删除某一条记录并刷新背包 */
+function removeSavedItem(type, file) {
+    const list = loadSavedList();
+    const next = [];
+    for (let i = 0; i < list.length; i++) {
+        if (!(list[i].type === type && list[i].file === file)) {
+            next.push(list[i]);
+        }
+    }
+    writeSavedList(next);
+    renderBag();
+}
+
+/* 清空全部记录并刷新背包 */
+function clearAllSaved() {
+    writeSavedList([]);
+    renderBag();
+}
+
+/* ==========================================================
+ * 四、删除弹窗：按类型分组列出，可逐个删 / 一键清空
+ * ========================================================== */
+function renderDeleteBody() {
+    const body = document.getElementById('delBody');
+    const list = loadSavedList();
+    body.innerHTML = '';
+
+    if (list.length === 0) {
+        body.innerHTML = '<div style="text-align:center;color:#b5b5b5;font-size:14px;padding:20px 0;">背包是空的，没有可删除的乐子~</div>';
+        return;
+    }
+
+    /* 按 视频 → 图片 → 音频 分组展示 */
+    const groups = ['video', 'image', 'audio'];
+    groups.forEach(function (type) {
+        const items = [];
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].type === type) items.push(list[i]);
+        }
+        if (items.length === 0) return;
+
+        const title = document.createElement('div');
+        title.className = 'del-group-title';
+        title.textContent = iconOf(type) + ' ' + nameOf(type) + '（' + items.length + '）';
+        body.appendChild(title);
+
+        items.forEach(function (item) {
+            const row = document.createElement('div');
+            row.className = 'del-row';
+
+            const name = document.createElement('span');
+            name.className = 'del-row-name';
+            name.textContent = item.file;
+            name.title = item.file;
+
+            const time = document.createElement('span');
+            time.className = 'del-row-time';
+            time.textContent = item.time || '';
+
+            const btn = document.createElement('button');
+            btn.className = 'del-row-btn';
+            btn.textContent = '删除';
+            btn.setAttribute('aria-label', '删除 ' + item.file);
+            btn.addEventListener('click', function () {
+                removeSavedItem(item.type, item.file);
+                showToast('已删除：' + item.file);
+                renderDeleteBody();      /* 刷新弹窗内的列表 */
+            });
+
+            row.appendChild(name);
+            row.appendChild(time);
+            row.appendChild(btn);
+            body.appendChild(row);
+        });
+    });
+}
+
+/* 打开删除弹窗 */
+document.getElementById('openDeleteBtn').addEventListener('click', function () {
+    renderDeleteBody();
+    document.getElementById('deleteMask').classList.add('show');
+});
+document.getElementById('deleteClose').addEventListener('click', function () {
+    document.getElementById('deleteMask').classList.remove('show');
+});
+document.getElementById('deleteMask').addEventListener('click', function (e) {
+    if (e.target === this) this.classList.remove('show');
+});
+
+/* 一键清空 */
+document.getElementById('clearAllBtn').addEventListener('click', function () {
+    const list = loadSavedList();
+    if (list.length === 0) {
+        showToast('背包已经是空的啦', true);
+        return;
+    }
+    clearAllSaved();
+    renderDeleteBody();
+    showToast('已清空全部背包记录');
+});
+
+/* ==========================================================
+ * 五、操作步骤弹窗
+ * ========================================================== */
+document.getElementById('openGuideBtn').addEventListener('click', function () {
+    document.getElementById('guideMask').classList.add('show');
+});
+document.getElementById('guideClose').addEventListener('click', function () {
+    document.getElementById('guideMask').classList.remove('show');
+});
+document.getElementById('guideMask').addEventListener('click', function (e) {
+    if (e.target === this) this.classList.remove('show');
+});
+
+/* ==========================================================
+ * 六、转场动画控制（"找乐子"遮罩，1 秒后跳转）
+ * ========================================================== */
+let isTransitioning = false;           /* 防止连点重复触发 */
+
+function showTransition(targetUrl) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+
+    document.getElementById('transitionMask').classList.add('show');
+
+    setTimeout(function () {
+        window.location.href = targetUrl;
+    }, 1000);                          /* 1 秒（1000 毫秒）后跳转 */
+}
+
+/* ==========================================================
+ * 七、返回按钮：固定跳转到 5.html
+ * ========================================================== */
+document.getElementById('backBtn').addEventListener('click', function (e) {
+    e.preventDefault();                /* 拦截默认跳转 */
+    showTransition('5.html');
+});
+
+/* ==========================================================
+ * 八、按 Esc 关闭转场遮罩（仅关闭动画，不改变跳转逻辑）
+ * ========================================================== */
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        const mask = document.getElementById('transitionMask');
+        if (mask.classList.contains('show')) {
+            mask.classList.remove('show');
+            isTransitioning = false;
+        }
+    }
+});
+
+/* ==========================================================
+ * 九、键盘可访问性支持（Enter / Space 触发点击）
+ * ========================================================== */
+function bindKeyAccessibility(elementId, handler) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handler(e);
+        }
+    });
+}
+
+bindKeyAccessibility('openDeleteBtn', function () { document.getElementById('openDeleteBtn').click(); });
+bindKeyAccessibility('openGuideBtn', function () { document.getElementById('openGuideBtn').click(); });
+bindKeyAccessibility('clearAllBtn', function () { document.getElementById('clearAllBtn').click(); });
+bindKeyAccessibility('deleteClose', function () { document.getElementById('deleteClose').click(); });
+bindKeyAccessibility('guideClose', function () { document.getElementById('guideClose').click(); });
+</script>
+
+</body>
+</html>

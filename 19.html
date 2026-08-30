@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——网页备忘录</title>
+    <style>
+        /* ========== 全局重置 ========== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ========== 背景流光层 ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(125deg,
+                    #0a0e27, #161a3d, #1f1652, #331d6e,
+                    #1d1b4b, #0f122f, #241a54);
+            background-size: 400% 400%;
+            animation: flowDriftLarge 20s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%;
+            left: -40%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(ellipse at 30% 70%,
+                    rgba(255, 140, 100, .35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%,
+                    rgba(120, 180, 255, .3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%,
+                    rgba(220, 130, 250, .25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(255, 200, 130, .15), transparent 60%),
+                radial-gradient(circle at 20% 80%,
+                    rgba(80, 220, 200, .2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes flowDriftLarge {
+            0% { transform: translate(0%, 0%) scale(1); }
+            50% { transform: translate(-2%, -2%) scale(1.05); }
+            100% { transform: translate(0%, 0%) scale(1); }
+        }
+
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+        }
+
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* ========== 透明悬浮球 ========== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                    rgba(255, 255, 255, .3),
+                    rgba(255, 255, 255, .1) 50%,
+                    transparent 70%);
+            box-shadow: 0 0 60px rgba(255, 255, 255, .08),
+                inset 0 0 30px rgba(255, 255, 255, .04);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+        .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+
+        @keyframes orbFloatA {
+            0% { transform: translate(0, 0) scale(1); opacity: .6; }
+            30% { transform: translate(18px, -22px) scale(1.04); opacity: .8; }
+            60% { transform: translate(-12px, 10px) scale(.96); opacity: .5; }
+            100% { transform: translate(0, 0) scale(1); opacity: .6; }
+        }
+
+        @keyframes orbFloatB {
+            0% { transform: translate(0, 0) scale(1); opacity: .5; }
+            35% { transform: translate(-20px, 12px) scale(1.06); opacity: .7; }
+            70% { transform: translate(14px, -15px) scale(.94); opacity: .4; }
+            100% { transform: translate(0, 0) scale(1); opacity: .5; }
+        }
+
+        @keyframes orbSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== 主容器布局 ========== */
+        main {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px 20px;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1440px;
+            background: rgba(245, 247, 255, .96);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35),
+                0 0 0 1px rgba(255, 255, 255, .3),
+                inset 0 1px 0 rgba(255, 255, 255, .6);
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+            color: #333;
+        }
+
+        .container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, .04);
+            border-radius: 12px;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, .4);
+        }
+
+        /* ========== 网格布局 ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 12px;
+        }
+
+        /* ========== 标题区域 ========== */
+        .title-area {
+            grid-column: 1 / 5;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg,
+                    #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+            background-size: 300% 300%;
+            animation: titleGradient 6s ease infinite;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(255, 150, 50, .35),
+                inset 0 1px 0 rgba(255, 255, 255, .2);
+            position: relative;
+            overflow: hidden;
+            transition: transform .4s cubic-bezier(.34, 1.56, .64, 1),
+                box-shadow .4s ease;
+        }
+
+        .title-area:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 18px 50px rgba(255, 150, 50, .4);
+        }
+
+        .title-area h2 {
+            font-size: 42px;
+            font-weight: 900;
+            text-align: center;
+            line-height: 1.3;
+            letter-spacing: 4px;
+            color: #fff;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, .3);
+        }
+
+        .title-sub {
+            font-size: 14px;
+            color: rgba(255, 255, 255, .85);
+            margin-top: 8px;
+            text-align: center;
+            letter-spacing: 1px;
+            font-weight: 400;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+        }
+
+        @keyframes titleGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ========== 返回主页区域 ========== */
+        .back-area {
+            grid-column: 5 / 7;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(17, 153, 142, .4),
+                inset 0 1px 0 rgba(255, 255, 255, .2);
+            text-decoration: none;
+            color: #fff;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: transform .35s cubic-bezier(.34, 1.56, .64, 1),
+                box-shadow .35s ease;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .back-area:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 18px 50px rgba(17, 153, 142, .5);
+        }
+
+        .back-area:active {
+            transform: translateY(-2px) scale(.96);
+            transition-duration: .1s;
+        }
+
+        .back-area .back-icon {
+            font-size: 36px;
+            margin-bottom: 6px;
+        }
+
+        /* ========== 输入文本框 ========== */
+        .input-area {
+            grid-column: 1 / 4;
+            grid-row: 3 / 9;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+            border: 2px solid #e8e8e8;
+            transition: border-color .3s ease, box-shadow .3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-area:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 6px 30px rgba(102, 126, 234, .2);
+        }
+
+        .input-area label {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #333;
+            display: block;
+        }
+
+        .input-area textarea {
+            width: 100%;
+            flex: 1;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            background: transparent;
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+        }
+
+        .input-area textarea::placeholder {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        /* ========== 保存按钮 ========== */
+        .save-area {
+            grid-column: 4 / 7;
+            grid-row: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .save-btn {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #ccc, #ddd);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .1);
+            transition: all .3s ease;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            min-height: 44px;
+        }
+
+        .save-btn.active {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, .4);
+            cursor: pointer;
+        }
+
+        .save-btn.active:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, .5);
+        }
+
+        .save-btn.active:active {
+            transform: translateY(-1px) scale(.97);
+        }
+
+        .save-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, .3) 50%, transparent 60%);
+            transform: translateX(-100%);
+            transition: transform .5s ease;
+        }
+
+        .save-btn.active:hover::before {
+            transform: translateX(100%);
+        }
+
+        /* ========== 保存框区域 ========== */
+        .saved-box {
+            grid-column: 4 / 7;
+            grid-row: 4 / 9;
+            background: #fff;
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+            border: 2px solid #e8e8e8;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .saved-box-header {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .saved-box-header .count {
+            background: #667eea;
+            color: #fff;
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 13px;
+        }
+
+        .saved-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* 保存项卡片 */
+        .saved-item {
+            background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform .3s ease, box-shadow .3s ease;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .saved-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .1);
+            border-color: #667eea;
+        }
+
+        .saved-item:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, .2);
+        }
+
+        .saved-item:active {
+            transform: scale(.98);
+        }
+
+        .saved-item .item-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(102, 126, 234, .1);
+            border-radius: 8px;
+        }
+
+        .saved-item .item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .saved-item .item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .saved-item .item-url {
+            font-size: 11px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .saved-item .item-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .saved-item .action-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .2s ease, transform .2s ease;
+            background: transparent;
+        }
+
+        .saved-item .action-btn:hover {
+            background: rgba(0, 0, 0, .08);
+            transform: scale(1.1);
+        }
+
+        .saved-item .copy-btn {
+            color: #28a745;
+        }
+
+        .saved-item .edit-btn {
+            color: #ff9800;
+        }
+
+        .saved-item .delete-btn {
+            color: #dc3545;
+        }
+
+        /* 空状态提示 */
+        .empty-state {
+            text-align: center;
+            color: #aaa;
+            font-size: 14px;
+            padding: 40px 10px;
+            font-style: italic;
+        }
+
+        /* ========== Toast 提示 ========== */
+        .toast-msg {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 18, 40, .95);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 9999999;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .4);
+            transition: opacity .3s ease, transform .3s ease;
+            pointer-events: none;
+            role: status;
+            aria-live: polite;
+        }
+
+        /* ========== 加载覆盖层 ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg,
+                    #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* ========== 响应式适配 ========== */
+        @media (max-width: 900px) {
+            .container {
+                width: 95%;
+                padding: 12px;
+            }
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto;
+            }
+            .title-area { grid-column: 1/3; grid-row: auto; min-height: 100px; }
+            .back-area { grid-column: 1/3; grid-row: auto; min-height: 80px; }
+            .input-area { grid-column: 1/3; grid-row: auto; min-height: 250px; }
+            .save-area { grid-column: 1/3; grid-row: auto; min-height: 60px; }
+            .saved-box { grid-column: 1/3; grid-row: auto; max-height: 400px; }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .title-area h2 { font-size: 28px; }
+            .title-sub { font-size: 12px; }
+            .back-area { font-size: 18px; }
+            .saved-item { flex-direction: column; align-items: flex-start; }
+            .saved-item .item-actions { margin-top: 6px; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 8px; }
+            .title-area h2 { font-size: 22px; }
+            .title-sub { font-size: 11px; }
+            .back-area { font-size: 14px; }
+            .input-area { padding: 14px; }
+            .save-btn { font-size: 14px; }
+            .saved-box { padding: 10px; }
+            .saved-item { padding: 8px; }
+            .action-btn { width: 40px; height: 40px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景流光层（已添加 aria-hidden） -->
+    <div class="bg-animation" aria-hidden="true">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 主体内容 -->
+    <main>
+        <div class="container">
+            <div class="grid">
+
+                <!-- 标题区 -->
+                <div class="title-area">
+                    <h2>网页备忘录</h2>
+                    <p class="title-sub">点击已保存网址即可跳转网页，方便快捷。</p>
+                </div>
+
+                <!-- 返回主页 -->
+                <a href="index.html" class="back-area" id="backHome" aria-label="返回主页">
+                    <span class="back-icon">🏠</span>
+                    <span>返回主页</span>
+                </a>
+
+                <!-- 输入文本框 -->
+                <div class="input-area">
+                    <label for="urlInput">输入或粘贴网址</label>
+                    <textarea id="urlInput" placeholder="在此输入网址，如：https://example.com" spellcheck="false" aria-label="输入网址"></textarea>
+                </div>
+
+                <!-- 保存按钮 -->
+                <div class="save-area">
+                    <button id="saveBtn" class="save-btn" disabled aria-label="保存网址">请输入网址</button>
+                </div>
+
+                <!-- 保存框区域 -->
+                <div class="saved-box">
+                    <div class="saved-box-header">
+                        <span>📌 已保存网址</span>
+                        <span class="count" id="countLabel">0</span>
+                    </div>
+                    <div class="saved-list" id="savedList">
+                        <div class="empty-state">暂无保存的网址</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- 加载覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        /* ================================================================
+         * 网页备忘录逻辑
+         * 功能：保存网址到 localStorage，可编辑备注名、复制、跳转、删除
+         * ================================================================ */
+
+        // 数据存储键名
+        const STORAGE_KEY = 'webMemo_links';
+
+        // 初始化数据
+        let linksData = [];
+
+        // DOM 元素
+        const urlInput = document.getElementById('urlInput');
+        const saveBtn = document.getElementById('saveBtn');
+        const savedList = document.getElementById('savedList');
+        const countLabel = document.getElementById('countLabel');
+        const overlay = document.getElementById('overlay');
+        const backHome = document.getElementById('backHome');
+
+        /* ---------- 存储操作 ---------- */
+        // 从 localStorage 读取
+        function loadLinks() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                linksData = raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                linksData = [];
+            }
+            renderSavedList();
+        }
+
+        // 保存到 localStorage
+        function saveLinks() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(linksData));
+            } catch (e) {
+                console.warn('保存失败：存储空间可能已满');
+            }
+            renderSavedList();
+        }
+
+        /* ---------- 辅助函数 ---------- */
+        // 判断是否为有效网址（已添加协议白名单校验）
+        function isValidUrl(str) {
+            const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/i;
+            if (!urlPattern.test(str.trim())) return false;
+            try {
+                const url = new URL(normalizeUrl(str));
+                // 仅允许 http 和 https 协议
+                return ['http:', 'https:'].includes(url.protocol);
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // 自动补充协议（如无则加 https://）
+        function normalizeUrl(url) {
+            let trimmed = url.trim();
+            if (!trimmed) return '';
+            if (!/^https?:\/\//i.test(trimmed)) {
+                trimmed = 'https://' + trimmed;
+            }
+            return trimmed;
+        }
+
+        // 生成默认备注名（基于域名）
+        function generateDefaultName(url) {
+            try {
+                const host = new URL(url).hostname;
+                return host.replace('www.', '');
+            } catch (e) {
+                return url.substring(0, 20) + '...';
+            }
+        }
+
+        /* ---------- 渲染保存列表 ---------- */
+        function renderSavedList() {
+            countLabel.textContent = linksData.length;
+
+            if (linksData.length === 0) {
+                savedList.innerHTML = '<div class="empty-state">暂无保存的网址</div>';
+                return;
+            }
+
+            savedList.innerHTML = '';
+
+            linksData.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'saved-item';
+                // 键盘操作支持
+                div.tabIndex = 0;
+                div.setAttribute('role', 'button');
+                div.setAttribute('aria-label', '打开网址：' + item.name);
+
+                // 图标（根据域名首字母）
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'item-icon';
+                const hostname = item.url.replace(/^https?:\/\//, '').split('/')[0];
+                iconSpan.textContent = hostname.charAt(0).toUpperCase() || '🔗';
+
+                // 信息区
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'item-info';
+
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'item-name';
+                nameDiv.textContent = item.name || generateDefaultName(item.url);
+
+                const urlDiv = document.createElement('div');
+                urlDiv.className = 'item-url';
+                urlDiv.textContent = item.url;
+
+                infoDiv.appendChild(nameDiv);
+                infoDiv.appendChild(urlDiv);
+
+                // 操作按钮区
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'item-actions';
+
+                // 复制按钮（已添加 aria-label）
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'action-btn copy-btn';
+                copyBtn.textContent = '📋';
+                copyBtn.title = '复制网址';
+                copyBtn.setAttribute('aria-label', '复制网址');
+                copyBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(item.url).then(() => {
+                        showToast('网址已复制！');
+                    }).catch(() => {
+                        const temp = document.createElement('textarea');
+                        temp.value = item.url;
+                        document.body.appendChild(temp);
+                        temp.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(temp);
+                        showToast('网址已复制！');
+                    });
+                });
+
+                // 编辑备注按钮（已添加 aria-label）
+                const editBtn = document.createElement('button');
+                editBtn.className = 'action-btn edit-btn';
+                editBtn.textContent = '✏️';
+                editBtn.title = '修改备注名';
+                editBtn.setAttribute('aria-label', '修改备注名');
+                editBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    editItemName(index);
+                });
+
+                // 删除按钮（已添加 aria-label）
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'action-btn delete-btn';
+                deleteBtn.textContent = '🗑️';
+                deleteBtn.title = '删除';
+                deleteBtn.setAttribute('aria-label', '删除网址');
+                deleteBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    linksData.splice(index, 1);
+                    saveLinks();
+                    showToast('已删除！');
+                });
+
+                actionsDiv.appendChild(copyBtn);
+                actionsDiv.appendChild(editBtn);
+                actionsDiv.appendChild(deleteBtn);
+
+                // 点击整个卡片跳转
+                div.addEventListener('click', function() {
+                    window.open(item.url, '_blank');
+                });
+
+                // 键盘操作支持（Enter 或 Space 触发跳转）
+                div.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        window.open(item.url, '_blank');
+                    }
+                });
+
+                // 组装
+                div.appendChild(iconSpan);
+                div.appendChild(infoDiv);
+                div.appendChild(actionsDiv);
+
+                savedList.appendChild(div);
+            });
+        }
+
+        /* ---------- 编辑备注名 ---------- */
+        function editItemName(index) {
+            const item = linksData[index];
+            if (!item) return;
+
+            const newName = prompt('请输入新的备注名：', item.name || generateDefaultName(item.url));
+            if (newName === null) return;
+
+            const trimmed = newName.trim();
+            if (!trimmed) {
+                showToast('备注名不能为空！');
+                return;
+            }
+
+            item.name = trimmed;
+            saveLinks();
+            showToast('备注名已修改！');
+        }
+
+        /* ---------- 提示消息（Toast） ---------- */
+        function showToast(message) {
+            const oldToast = document.querySelector('.toast-msg');
+            if (oldToast) oldToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast-msg';
+            toast.setAttribute('role', 'status');
+            toast.setAttribute('aria-live', 'polite');
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(15, 18, 40, .95);
+                color: #fff;
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-size: 14px;
+                z-index: 9999999;
+                box-shadow: 0 8px 30px rgba(0, 0, 0, .4);
+                transition: opacity .3s ease, transform .3s ease;
+                pointer-events: none;
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        /* ---------- 输入框监听（识别网址，激活保存按钮） ---------- */
+        urlInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            if (isValidUrl(value)) {
+                saveBtn.classList.add('active');
+                saveBtn.disabled = false;
+                saveBtn.textContent = '保存网址';
+            } else {
+                saveBtn.classList.remove('active');
+                saveBtn.disabled = true;
+                saveBtn.textContent = '请输入网址';
+            }
+        });
+
+        /* ---------- 保存按钮点击 ---------- */
+        saveBtn.addEventListener('click', function() {
+            const rawValue = urlInput.value.trim();
+            if (!rawValue) {
+                showToast('请输入网址！');
+                return;
+            }
+
+            // 规范化网址
+            const normalizedUrl = normalizeUrl(rawValue);
+            if (!isValidUrl(normalizedUrl)) {
+                showToast('网址格式不正确或不支持的协议！');
+                return;
+            }
+
+            // 生成默认备注名
+            const defaultName = generateDefaultName(normalizedUrl);
+
+            // 添加数据
+            linksData.push({
+                id: Date.now(),
+                name: defaultName,
+                url: normalizedUrl,
+                createdAt: new Date().toISOString()
+            });
+
+            // 保存并刷新
+            saveLinks();
+
+            // 清空输入框
+            urlInput.value = '';
+            saveBtn.classList.remove('active');
+            saveBtn.disabled = true;
+            saveBtn.textContent = '请输入网址';
+
+            showToast('网址已保存！');
+        });
+
+        /* ---------- 返回主页（转圈动画） ---------- */
+        backHome.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // 显示覆盖层
+            overlay.classList.add('active');
+
+            // 1秒后跳转
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+
+        /* ---------- 初始化 ---------- */
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLinks();
+        });
+
+        // 也支持直接调用（防止脚本在DOMContentLoaded之前执行）
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            loadLinks();
+        }
+    </script>
+</body>
+</html>

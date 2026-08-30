@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>选择您的IP以登录</title>
+    <style>
+        /* ========== 基础重置 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* 【优化】移除触摸高亮 */
+        }
+
+        /* ========== 1. 柔和粉紫 / 红橙渐变背景（缓慢流动） ========== */
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+            background: linear-gradient(
+                -45deg,
+                #ffb6c1, #c39bd3, #a8d8ea, #ffd1a4, #ff9a8b, #ffb6c1
+            );
+            background-size: 400% 400%;
+            animation: flowLight 12s ease infinite;
+        }
+
+        /* 背景流动动画 */
+        @keyframes flowLight {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ========== 2. 中央白色卡片：大圆角 + 柔和阴影 ========== */
+        .card {
+            position: relative;
+            width: 460px;
+            height: 480px;                    /* 略加高，优化空间 */
+            background: #ffffff;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(160, 100, 160, 0.25);
+            padding: 30px 32px 40px;
+            display: flex;
+            flex-direction: column;
+            animation: cardEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* 卡片入场动画 */
+        @keyframes cardEnter {
+            from { opacity: 0; transform: translateY(40px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* 小屏幕适配（优化） */
+        @media (max-width: 480px) {
+            .card { width: 92vw; height: auto; min-height: 420px; padding: 24px 20px 30px; }
+            /* 调整标题上下间距，避免过于拥挤 */
+            .title-bar { margin-top: 40px; margin-bottom: 16px; }
+            /* 输入框内边距和字号微调，保证可读性 */
+            .form-area input {
+                height: 46px;
+                padding: 0 18px;
+                font-size: 15px;
+            }
+            .ip-row {
+                gap: 8px;
+            }
+            #refreshBtn {
+                height: 46px;
+                padding: 0 16px;
+                font-size: 14px;
+            }
+            #confirmBtn {
+                height: 48px;
+                font-size: 16px;
+            }
+        }
+
+        /* ========== 3. 背景上的两个固定按钮 ========== */
+        /* 左上角 "返回" 按钮（原卡片内移出） */
+        .back-link {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 1000;
+            font-size: 14px;
+            font-weight: bold;
+            color: #4e4376;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #4e4376;
+            padding: 8px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            /* 【优化】确保触摸目标尺寸不小于44×44 */
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-link:hover {
+            background: #4e4376;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* 右上角 "主程序" 按钮（原返回主程序） */
+        .back-main {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1000;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2b5876;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #008080;
+            padding: 8px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            /* 【优化】确保触摸目标尺寸不小于44×44 */
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-main:hover {
+            background: #008080;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* ========== 4. 标题 ========== */
+        .title-bar {
+            margin-top: 20px;
+            background: transparent;
+            color: #333;
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            padding: 10px 0 20px;
+            border-bottom: 2px dashed #e0c3f0;
+            margin-bottom: 20px;
+        }
+
+        /* ========== 5. 输入区 ========== */
+        .form-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 22px;
+            padding-bottom: 20px;
+        }
+
+        /* 输入框：橙色边框，胶囊形 */
+        .form-area input {
+            height: 50px;
+            padding: 0 24px;
+            border: 2.5px solid #FF9800;
+            border-radius: 50px;
+            font-size: 16px;
+            outline: none;
+            background: #fff;
+            color: #333;
+            text-align: center;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .form-area input:focus {
+            box-shadow: 0 0 14px rgba(255, 152, 0, 0.4);
+            transform: scale(1.01);
+        }
+        .form-area input::placeholder {
+            color: #b8b8b8;
+        }
+        .form-area input[readonly] {
+            background: #fffaf2;
+        }
+
+        /* 第二行：IP输入框 + 刷新按钮 */
+        .ip-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        #ipInput {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* 刷新按钮：浅黄色胶囊 */
+        #refreshBtn {
+            height: 50px;
+            min-height: 44px; /* 【修复】确保触摸目标 ≥44px */
+            padding: 0 22px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(to right, #FFE082, #FFD54F);
+            color: #8a6d00;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(255, 200, 60, 0.35);
+            transition: all 0.3s ease;
+        }
+        #refreshBtn:hover {
+            background: linear-gradient(to right, #FFD54F, #FFC107);
+            transform: translateY(-2px);
+        }
+        #refreshBtn:active { transform: scale(0.97); }
+
+        /* ========== 6. 确定按钮 ========== */
+        #confirmBtn {
+            width: 100%;
+            height: 52px;
+            min-height: 44px; /* 【修复】确保触摸目标 ≥44px */
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: #fff;
+            background: #c8c8c8;
+            cursor: not-allowed;
+            transition: all 0.3s ease;
+        }
+        #confirmBtn:hover:not(:disabled) {
+            background: linear-gradient(to right, #FFC107, #FFD54F);
+            transform: translateY(-2px);
+        }
+        #confirmBtn:disabled {
+            background: #c8c8c8;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        #confirmBtn:not(:disabled) {
+            background: linear-gradient(to right, #FFC107, #FFEB3B);
+            color: #7a5c00;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(255, 193, 7, 0.45);
+        }
+
+        /* ========== 7. 转场遮罩层（index.html 通用圆环样式） ========== */
+        #transitionMask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(8, 10, 25, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            /* 【优化】为遮罩添加无障碍角色 */
+            role: dialog;
+            aria-modal: true;
+        }
+        #transitionMask.show {
+            display: flex;
+            animation: maskFadeIn 0.3s ease;
+        }
+        @keyframes maskFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* 圆环转圈动画 */
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* 移动端适配优化（补充小屏尺寸） */
+        @media (max-width: 480px) {
+            .back-link, .back-main {
+                padding: 6px 14px;
+                font-size: 13px;
+                top: 16px;
+                min-height: 40px; /* 稍微缩小但保持可点击性 */
+            }
+            .back-link { left: 16px; }
+            .back-main { right: 16px; }
+            .card { padding: 20px 18px 26px; }
+            .title-bar { margin-top: 40px; margin-bottom: 14px; padding-bottom: 14px; font-size: 22px; }
+            .form-area { gap: 16px; }
+            .form-area input { height: 44px; font-size: 14px; padding: 0 16px; }
+            .ip-row { gap: 6px; }
+            #refreshBtn { height: 44px; padding: 0 14px; font-size: 13px; }
+            #confirmBtn { height: 46px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景左上角"返回"按钮（跳转3.html） -->
+    <a href="3.html" class="back-link" id="backLink" aria-label="返回上一页" title="返回">&larr; 返回</a>
+
+    <!-- 背景右上角"主程序"按钮（跳转index.html） -->
+    <a href="index.html" class="back-main" id="backMain" aria-label="返回主程序" title="主程序">主程序</a>
+
+    <!-- 中央白色卡片 -->
+    <div class="card">
+        <!-- 标题 -->
+        <div class="title-bar" role="heading" aria-level="2">选择您的IP以登录</div>
+
+        <!-- 输入区 -->
+        <div class="form-area">
+            <!-- 第一行：真实姓名 -->
+            <input type="text" id="nameInput" placeholder="您的真实姓名（选填）" aria-label="您的真实姓名" />
+
+            <!-- 第二行：虚拟IP输入框 + 刷新按钮 -->
+            <div class="ip-row">
+                <input type="text" id="ipInput" placeholder="虚拟IP（必选）" readonly aria-label="虚拟IP" />
+                <button type="button" id="refreshBtn" aria-label="刷新IP">刷新</button>
+            </div>
+
+            <!-- 底部：确定按钮 -->
+            <button type="button" id="confirmBtn" disabled aria-label="确定">确定</button>
+        </div>
+    </div>
+
+    <!-- 转场遮罩层 -->
+    <div id="transitionMask" role="dialog" aria-modal="true" aria-label="页面加载中">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================
+         * IP 池定义（与原文件保持一致）
+         * ========================================================== */
+        const ipPool = [
+            '玩围棋的阿尔法狗',
+            '门外的扫地僧',
+            '东邪（黄老邪）',
+            '西毒（欧阳锋）',
+            '南帝（射雕英雄传）',
+            '北丐（洪七公）',
+            '独孤求败',
+            '张无忌',
+            '杨过',
+            '小龙女',
+            '灭绝师太',
+            '火云邪神（电影：功夫）',
+            '善良的冥龙',
+            '呆傻的光之子',
+            '云巢',
+            '晨岛',
+            '云野',
+            '雨林',
+            '霞谷',
+            '暮土',
+            '禁阁',
+            '郭靖（射雕英雄传）',
+            '没鼻子的汤姆.里德尔',
+            '邪恶的贝拉特里克斯',
+            '优雅的马尔福',
+            '邋遢的阿布思.邓布利多',
+            '白人斯内普',
+            '搞事的哈利波特',
+            '百岁的麦格教授',
+            '港潮奶奶',
+            '天才威'
+        ];
+
+        /* 已使用过的 IP 记录 */
+        const usedIps = [];
+
+        /* 获取页面元素 */
+        let nameInput  = document.getElementById('nameInput');
+        let ipInput    = document.getElementById('ipInput');
+        let refreshBtn = document.getElementById('refreshBtn');
+        let confirmBtn = document.getElementById('confirmBtn');
+
+        /* ==========================================================
+         * "刷新"按钮：从 IP 池中取出一个未用过的 IP
+         * ========================================================== */
+        refreshBtn.addEventListener('click', function () {
+            const availableIps = ipPool.filter(function (ip) {
+                return usedIps.indexOf(ip) === -1;
+            });
+
+            if (availableIps.length === 0) {
+                alert('提示：IP池已耗尽，暂无可用的虚拟IP！');
+                ipInput.value = '';
+                confirmBtn.disabled = true;
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * availableIps.length);
+            const newIp = availableIps[randomIndex];
+            usedIps.push(newIp);
+            ipInput.value = newIp;
+            confirmBtn.disabled = false;
+        });
+
+        /* ==========================================================
+         * 转场动画控制（使用 index.html 通用样式）
+         * ========================================================== */
+        let isTransitioning = false;
+
+        function showTransition(targetUrl) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            document.getElementById('transitionMask').classList.add('show');
+            setTimeout(function () {
+                window.location.href = targetUrl;
+            }, 1000);
+        }
+
+        /* ==========================================================
+         * "返回"按钮（背景左上角）跳转 3.html
+         * ========================================================== */
+        document.getElementById('backLink').addEventListener('click', function (e) {
+            e.preventDefault();
+            showTransition('3.html');
+        });
+
+        /* ==========================================================
+         * "主程序"按钮（背景右上角）跳转 index.html
+         * ========================================================== */
+        document.getElementById('backMain').addEventListener('click', function (e) {
+            e.preventDefault();
+            showTransition('index.html');
+        });
+
+        /* ==========================================================
+         * "确定"按钮：下载信息文本 + 播放转场 + 跳转 5.html
+         * ========================================================== */
+        confirmBtn.addEventListener('click', function () {
+            const realName  = nameInput.value.trim() || '未填写';
+            const virtualIp = ipInput.value;
+
+            const now = new Date();
+            const pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+            const timeStr = now.getFullYear() + '-' +
+                            pad(now.getMonth() + 1) + '-' +
+                            pad(now.getDate()) + ' ' +
+                            pad(now.getHours()) + ':' +
+                            pad(now.getMinutes()) + ':' +
+                            pad(now.getSeconds());
+
+            const content = '真实姓名：' + realName + '\r\n' +
+                            '虚拟IP：' + virtualIp + '\r\n' +
+                            '时间：' + timeStr;
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url  = URL.createObjectURL(blob);
+            const aTag = document.createElement('a');
+            aTag.href = url;
+            aTag.download = 'IP登录信息_' + timeStr.replace(/[: ]/g, '-') + '.txt';
+            document.body.appendChild(aTag);
+            aTag.click();
+            document.body.removeChild(aTag);
+            URL.revokeObjectURL(url);
+
+            showTransition('5.html');
+        });
+
+        /* ==========================================================
+         * 【新增】按 Esc 关闭转场遮罩（不改变跳转逻辑）
+         * ========================================================== */
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                let mask = document.getElementById('transitionMask');
+                if (mask.classList.contains('show')) {
+                    mask.classList.remove('show');
+                    // 重置转场状态，允许再次触发
+                    isTransitioning = false;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

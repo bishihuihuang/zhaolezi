@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>作者介绍 - 找乐子</title>
+<style>
+/* ========== 基础重置 ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* 【优化】移除触摸高亮 */
+}
+
+/* ========== 1. 流光溢彩动态背景（与系列页面一致） ========== */
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ========== 背景漂浮光球 ========== */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    filter: blur(2px);
+    z-index: 1;
+    animation: orbFloat 8s ease-in-out infinite;
+}
+.orb1 { width: 120px; height: 120px; top: 15%; left: 12%; }
+.orb2 { width: 80px;  height: 80px;  bottom: 18%; right: 15%; animation-delay: -3s; }
+.orb3 { width: 50px;  height: 50px;  top: 65%; left: 22%; animation-delay: -5s; }
+@keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-25px) scale(1.08); }
+}
+
+/* ========== 2. 中央白色正方形卡片 ========== */
+.card {
+    position: relative;
+    width: 440px;
+    height: 440px;                    /* 宽高相等 => 正方形 */
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(10px);      /* 磨砂玻璃效果 */
+    border-radius: 25px;              /* 大圆角 */
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;          /* 内容整体垂直居中 */
+    align-items: center;
+    gap: 22px;
+    z-index: 10;
+    animation: cardEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    /* 顶部四色装饰条 */
+    border-top: none;
+}
+/* 卡片顶部四色渐变装饰条 */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55%;
+    height: 5px;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+}
+
+/* 卡片入场动画（上浮淡入） */
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(40px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 小屏幕适配：整体等比缩小，仍保持正方形 */
+@media (max-width: 480px) {
+    .card { width: 92vw; height: 92vw; }
+    .card { padding: 20px; } /* 【优化】增加内边距，避免内容贴边 */
+    .author-name { font-size: 20px; } /* 【优化】缩字号保证可读性 */
+    .intro-text { font-size: 13px; }  /* 【优化】缩字号 */
+}
+
+/* ========== 3. 左上角"返回"胶囊按钮 ========== */
+.back-link {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #e73c7e;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(231, 60, 126, 0.25);
+    padding: 7px 18px;
+    border-radius: 50px;              /* 胶囊形 */
+    transition: all 0.3s ease;
+    z-index: 20;
+    /* 【优化】确保触摸目标尺寸不小于44×44 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+}
+.back-link:hover {
+    background: #e73c7e;
+    color: #fff;
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px rgba(231, 60, 126, 0.35);
+}
+
+/* ========== 4. 头像小正方形（内放 1.jpg） ========== */
+.avatar-box {
+    width: 140px;
+    height: 140px;                    /* 小正方形 */
+    border-radius: 18px;
+    padding: 6px;
+    background: #fff;                 /* 白色相框边 */
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+    transform: rotate(-3deg);         /* 轻微歪头，俏皮感 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.avatar-box:hover {
+    transform: rotate(0deg) scale(1.06);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+.avatar-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;                /* 图片铺满小方块，不变形 */
+    border-radius: 12px;
+    display: block;
+}
+/* 图片缺失时的占位提示 */
+.avatar-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ffe3ec, #e3ecff);
+    color: #999;
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* ========== 5. 作者署名（楷体 + 香槟金渐变，与 3.html 一致） ========== */
+.author-name {
+    font-family: "KaiTi", "STKaiti", "FangSong", "Microsoft YaHei", serif;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #b8860b, #ffd700, #daa520, #b8860b);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 5px rgba(255, 215, 0, 0.3));
+    animation: goldFlow 4s linear infinite;   /* 金光缓缓流转 */
+}
+@keyframes goldFlow {
+    to { background-position: 200% center; }
+}
+
+/* 两侧细金线 + 菱形点缀 */
+.author-deco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.author-deco .line {
+    width: 46px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #daa520, transparent);
+}
+.author-deco .diamond {
+    width: 6px;
+    height: 6px;
+    background: #daa520;
+    transform: rotate(45deg);
+    opacity: 0.8;
+}
+
+/* ========== 6. 简介文字 ========== */
+.intro-text {
+    font-size: 14px;
+    color: #9a9a9a;
+    letter-spacing: 1px;
+}
+
+/* ========== 7. 转场遮罩层（与 1/2/3.html 一致） ========== */
+#transitionMask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    /* 【优化】无障碍角色 */
+    role: dialog;
+    aria-modal: true;
+}
+#transitionMask.show {
+    display: flex;
+    animation: maskFadeIn 0.3s ease;
+}
+@keyframes maskFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* 遮罩正中间的旋转小圆 */
+.spinner-circle {
+    width: 100px;
+    height: 100px;
+    border: 5px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: spinRotate 1.5s linear infinite;
+}
+.spinner-circle span {
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: spinReverse 1.5s linear infinite;
+}
+@keyframes spinRotate  { to { transform: rotate(360deg); } }
+@keyframes spinReverse { to { transform: rotate(-360deg); } }
+</style>
+</head>
+<body>
+
+<!-- 背景漂浮光球 -->
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+
+<!-- 中央白色正方形卡片 -->
+<div class="card">
+
+    <!-- 左上角返回按钮：点击跳转回 3.html -->
+    <a class="back-link" id="backLink" href="3.html" aria-label="返回上一页" title="返回">&larr; 返回</a>
+
+    <!-- 小正方形：头像图片 1.jpg -->
+    <div class="avatar-box">
+        <img src="fake_qrcode.png" alt="作者头像"
+             onerror="this.outerHTML='<div class=&quot;avatar-fallback&quot;>图片未找到</div>';">
+    </div>
+
+    <!-- 作者署名 -->
+    <div class="author-name">作者：碧世辉煌</div>
+    <div class="author-deco">
+        <span class="line"></span>
+        <span class="diamond"></span>
+        <span class="line"></span>
+    </div>
+
+    <!-- 笔名 -->
+    <div class="intro-text" style="color:#a08c5b; font-family:'KaiTi','STKaiti',serif;">啥也没有</div>
+
+    <!-- 简介 -->
+    <div class="intro-text">你的简介空空如也。</div>
+
+</div>
+
+<!-- 转场遮罩层 -->
+<div id="transitionMask" role="dialog" aria-modal="true" aria-label="页面加载中">
+    <div class="spinner-circle"><span>找乐子</span></div>
+</div>
+
+<script>
+/* ========== 返回按钮：播放"找乐子"转场后跳转 3.html ========== */
+(function () {
+    let isTransitioning = false; // 防止连点重复触发
+
+    function showTransition(targetUrl) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        document.getElementById('transitionMask').classList.add('show');
+
+        setTimeout(function () {
+            window.location.href = targetUrl;
+        }, 1000); // 1 秒后跳转
+    }
+
+    let backLink = document.getElementById('backLink');
+    backLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        showTransition('3.html');
+    });
+
+    // ===== 【新增】按 Esc 关闭转场遮罩（仅关闭动画，不改变跳转逻辑） =====
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            let mask = document.getElementById('transitionMask');
+            if (mask.classList.contains('show')) {
+                mask.classList.remove('show');
+                // 重置转场状态，允许再次触发
+                isTransitioning = false;
+            }
+        }
+    });
+})();
+</script>
+
+</body>
+</html>

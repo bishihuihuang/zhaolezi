@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 修复问题 5：添加 favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+<title>找乐子——免责声明</title>
+<style>
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+        min-height: 100vh;
+        background: #0a0e27;
+        color: #fff;
+        overflow-x: hidden;
+        position: relative;
+    }
+    /* 背景流光层（20秒无缝循环） */
+    .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .bg-flow-1 {
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 300%;
+        height: 300%;
+        background: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
+        background-size: 400% 400%;
+        animation: flowGradient 20s ease-in-out infinite;
+        will-change: background-position;
+    }
+    .bg-flow-2 {
+        position: absolute;
+        top: -60%;
+        left: -40%;
+        width: 220%;
+        height: 220%;
+        background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.35), transparent 50%),
+            radial-gradient(ellipse at 65% 35%, rgba(120,180,255,.3), transparent 45%),
+            radial-gradient(ellipse at 80% 80%, rgba(220,130,250,.25), transparent 40%);
+        animation: flowDrift 20s ease-in-out infinite alternate;
+        will-change: transform;
+    }
+    .bg-flow-3 {
+        position: absolute;
+        top: -30%;
+        left: -20%;
+        width: 180%;
+        height: 180%;
+        background: radial-gradient(circle at 50% 50%, rgba(255,200,130,.15), transparent 60%),
+            radial-gradient(circle at 20% 80%, rgba(80,220,200,.2), transparent 50%);
+        animation: flowRotate 20s linear infinite;
+        will-change: transform;
+    }
+    @keyframes flowGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes flowDrift {
+        0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+        50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+        100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+    }
+    @keyframes flowRotate {
+        0% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.08); }
+        100% { transform: rotate(360deg) scale(1); }
+    }
+    /* 透明悬浮球 */
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.3), rgba(255,255,255,.1) 50%, transparent 70%);
+        box-shadow: 0 0 60px rgba(255,255,255,.08), inset 0 0 30px rgba(255,255,255,.04);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        pointer-events: none;
+        will-change: transform, opacity;
+    }
+    .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+    .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+    .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+    .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+    .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+    @keyframes orbFloatA {
+        0% { transform: translate(0,0) scale(1); opacity:.6; }
+        30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+        60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+        100% { transform: translate(0,0) scale(1); opacity:.6; }
+    }
+    @keyframes orbFloatB {
+        0% { transform: translate(0,0) scale(1); opacity:.5; }
+        35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+        70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+        100% { transform: translate(0,0) scale(1); opacity:.5; }
+    }
+    @keyframes orbSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    /* 主体容器 */
+    main {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 60px 20px 40px;
+    }
+    .container {
+        width: 80%;
+        max-width: 1200px;
+        background: rgba(245,247,255,.96);
+        border-radius: 24px;
+        box-shadow: 0 25px 70px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.3), inset 0 1px 0 rgba(255,255,255,.6);
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        padding: 20px;
+        color: #333;
+    }
+    .container::-webkit-scrollbar { width: 10px; }
+    .container::-webkit-scrollbar-track { background: rgba(0,0,0,.04); border-radius: 12px; }
+    .container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 12px; border: 2px solid rgba(255,255,255,.4); }
+    /* 网格布局 */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: repeat(8, minmax(80px, auto));
+        gap: 12px;
+    }
+    /* 标题区 */
+    .title-area {
+        grid-column: 1 / 5;
+        grid-row: 1 / 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+        background-size: 300% 300%;
+        animation: titleGradient 6s ease infinite;
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(255,150,50,.35), inset 0 1px 0 rgba(255,255,255,.2);
+    }
+    .title-area h2 {
+        font-size: 42px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        color: #fff;
+        text-shadow: 2px 2px 10px rgba(0,0,0,.3);
+    }
+    @keyframes titleGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    /* 返回主页 */
+    .back-area {
+        grid-column: 5 / 7;
+        grid-row: 1 / 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #11998e, #38ef7d);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(17,153,142,.4), inset 0 1px 0 rgba(255,255,255,.2);
+        text-decoration: none;
+        color: #fff;
+        font-size: 22px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform .3s, box-shadow .3s;
+    }
+    .back-area:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 50px rgba(17,153,142,.5);
+    }
+    .back-area:active {
+        transform: translateY(-2px) scale(.96);
+    }
+    /* 内容区 */
+    .disclaimer-card {
+        grid-column: 1 / 7;
+        grid-row: 3 / 9;
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(0,0,0,.1);
+        border: 2px solid #e8e8e8;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        transition: transform .2s, box-shadow .2s;
+    }
+    .disclaimer-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0,0,0,.15);
+    }
+    .disclaimer-card h3 {
+        font-size: 26px;
+        color: #333;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 10px;
+        letter-spacing: 2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .disclaimer-card h3::before {
+        content: '⚠️';
+        font-size: 28px;
+    }
+    .disclaimer-content {
+        line-height: 1.9;
+        color: #555;
+        font-size: 15px;
+    }
+    .disclaimer-content p {
+        margin-bottom: 12px;
+    }
+    .disclaimer-content strong {
+        color: #333;
+    }
+    .highlight-box {
+        background: #fff3cd;
+        border: 1px solid #ffeeba;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 10px 0;
+    }
+    .highlight-box p {
+        margin: 0;
+        color: #856404;
+    }
+    /* 高级图片装饰 */
+    .decorations {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+        border-radius: 16px;
+    }
+    .decor-circle {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(102,126,234,.2), transparent 70%);
+        animation: pulse 6s ease-in-out infinite;
+    }
+    .decor-circle.c1 {
+        width: 180px;
+        height: 180px;
+        top: 10%;
+        right: 10%;
+    }
+    .decor-circle.c2 {
+        width: 120px;
+        height: 120px;
+        bottom: 20%;
+        left: 5%;
+        animation-delay: 2s;
+    }
+    .decor-circle.c3 {
+        width: 80px;
+        height: 80px;
+        top: 60%;
+        right: 40%;
+        animation-delay: 4s;
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: .5; }
+        50% { transform: scale(1.2); opacity: .9; }
+    }
+    /* 转场遮罩 */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(8,10,25,.72);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .4s ease, visibility .4s ease;
+        pointer-events: none;
+    }
+    .overlay.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+    .loader-wrap {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .loader-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 3px solid rgba(255,255,255,.1);
+        border-top-color: #f6d365;
+        border-right-color: #fda085;
+        animation: ringSpin .8s linear infinite;
+    }
+    .loader-ring::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-bottom-color: #a78bfa;
+        border-left-color: #667eea;
+        animation: ringSpin 1.4s linear infinite reverse;
+    }
+    .loader-ring::after {
+        content: '';
+        position: absolute;
+        top: 28px;
+        left: 28px;
+        right: 28px;
+        bottom: 28px;
+        border-radius: 50%;
+        border: 1px solid transparent;
+        border-top-color: #fb7185;
+        border-right-color: #2dd4bf;
+        animation: ringSpin 2s linear infinite;
+    }
+    .loader-text {
+        position: relative;
+        z-index: 5;
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: textShine 1.5s linear infinite;
+    }
+    @keyframes ringSpin { to { transform: rotate(360deg); } }
+    @keyframes textShine {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+    /* 响应式 */
+    @media (max-width: 900px) {
+        .container { width: 95%; padding: 12px; }
+        .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+        .title-area { grid-column: 1/3; grid-row: auto; min-height: 100px; }
+        .back-area { grid-column: 1/3; grid-row: auto; min-height: 80px; }
+        .disclaimer-card { grid-column: 1/3; grid-row: auto; }
+    }
+</style>
+</head>
+<body>
+    <!-- 背景 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <div class="title-area">
+                    <h2>找乐子——免责声明</h2>
+                </div>
+                <a href="index.html" class="back-area" id="backHome">
+                    <span style="font-size:32px;">🏠</span>
+                    返回主页
+                </a>
+
+                <div class="disclaimer-card">
+                    <!-- 高级图片装饰 -->
+                    <div class="decorations">
+                        <div class="decor-circle c1"></div>
+                        <div class="decor-circle c2"></div>
+                        <div class="decor-circle c3"></div>
+                    </div>
+                    <h3>免责声明</h3>
+                    <div class="disclaimer-content">
+                        <p><strong>1. 使用许可</strong><br>
+                        本站所有工具均为学习与交流目的提供。用户可自由使用本站工具，但不得用于任何违法、侵权或商业用途。</p>
+
+                        <p><strong>2. 数据与隐私</strong><br>
+                        本站所有工具均在本地浏览器运行，不会收集、上传或存储您的任何个人数据。请放心使用。</p>
+
+                        <p><strong>3. 准确性免责</strong><br>
+                        虽然我们力求提供准确的结果，但部分工具（如二维码生成、词频统计等）可能因输入内容、环境或算法限制而产生偏差。用户应自行判断并承担使用风险。</p>
+
+                        <p><strong>4. 第三方链接</strong><br>
+                        本站部分工具若包含跳转到外部网站的链接。对于外部网站的内容和隐私政策，本站不承担任何责任。</p>
+
+                        <p><strong>5. 版权声明</strong><br>
+                        本站原创代码与设计受版权保护。未经允许，不得复制、修改或用于商业用途。</p>
+
+                        <div class="highlight-box">
+                            <p><strong>⚠️ 特别提示：</strong>使用本站即表示您已阅读并同意以上全部条款。如您不同意，请立即停止使用本站。对于因使用本站而产生的任何直接或间接损失，本站概不负责。——找乐子官方</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 转场遮罩 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // 返回主页转场
+            var backHome = document.getElementById('backHome');
+            var overlay = document.getElementById('overlay');
+            var isTransitioning = false;
+
+            backHome.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isTransitioning) return;
+                isTransitioning = true;
+                overlay.classList.add('active');
+                setTimeout(function() {
+                    window.location.href = 'index.html';
+                }, 1000);
+            });
+
+            // Esc 关闭转场遮罩
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                    overlay.classList.remove('active');
+                    isTransitioning = false;
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

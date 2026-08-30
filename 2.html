@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第三方信息授权协议</title>
+    <style>
+        /* --- 全局设置 --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; 
+            -webkit-tap-highlight-color: transparent; /* 【优化】移除触摸高亮 */
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 高级感动态背景：流动的极光色 */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+        }
+
+        /* 背景流光动画 */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- 主卡片容器 (玻璃拟态) --- */
+        .main-card {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            height: 85vh;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* --- 顶部导航栏 --- */
+        .nav-header {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        /* --- 按钮通用样式 --- */
+        .btn-link {
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 10px 24px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            cursor: pointer;
+            min-height: 44px; /* 【优化】确保触摸目标 ≥44px */
+        }
+
+        .btn-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn-link:active {
+            transform: scale(0.95);
+        }
+
+        /* --- 左上角：蓝色框 (返回) --- */
+        .btn-back {
+            color: #2b5876;
+            border: 2px solid #4e4376; /* 深蓝紫色边框 */
+        }
+        .btn-back:hover {
+            background: #4e4376;
+            color: white;
+        }
+
+        /* --- 右上角：青色框 (下一步) --- */
+        .btn-next {
+            color: #008080;
+            border: 2px solid #00ced1; /* 亮青色边框 */
+        }
+        .btn-next:hover {
+            background: #00ced1;
+            color: white;
+        }
+
+        /* --- 中间内容区 (可滚动) --- */
+        .content-area {
+            margin-top: 60px; /* 给顶部导航留位置 */
+            height: 100%;
+            overflow-y: auto; /* 允许垂直滚动 */
+            padding-right: 10px;
+            color: #444;
+            line-height: 1.8;
+            font-size: 15px;
+            text-align: justify;
+        }
+
+        /* --- 滚动条美化 --- */
+        .content-area::-webkit-scrollbar {
+            width: 6px;
+        }
+        .content-area::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+        .content-area::-webkit-scrollbar-thumb {
+            background: rgba(161, 140, 209, 0.6);
+            border-radius: 10px;
+        }
+
+        /* --- 协议标题 --- */
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        h3 {
+            font-size: 18px;
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            border-left: 4px solid #a18cd1; /* 紫色小竖线 */
+            padding-left: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* --- 动画定义 --- */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ================= 转场遮罩层样式（与 1.html 一致） ================= */
+        #transitionMask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        #transitionMask.show {
+            display: flex;
+            animation: maskFadeIn 0.3s ease;
+        }
+        @keyframes maskFadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* 遮罩正中间的旋转小圆 */
+        .spinner-circle {
+            width: 100px;
+            height: 100px;
+            border: 5px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: spinRotate 1.5s linear infinite;
+        }
+        .spinner-circle span {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            animation: spinReverse 1.5s linear infinite;
+        }
+        @keyframes spinRotate  { to { transform: rotate(360deg); } }
+        @keyframes spinReverse { to { transform: rotate(-360deg); } }
+
+        /* --- 移动端适配 --- */
+        @media (max-width: 600px) {
+            .main-card { width: 95%; padding: 20px; height: 90vh; }
+            .nav-header { top: 20px; left: 20px; right: 20px; }
+            .btn-link { padding: 8px 16px; font-size: 14px; min-height: 44px; }
+            h1 { font-size: 20px; }
+            .content-area { margin-top: 50px; font-size: 14px; line-height: 1.6; }
+        }
+
+        /* 额外窄屏适配 */
+        @media (max-width: 400px) {
+            .main-card { padding: 15px; }
+            .btn-link { padding: 6px 12px; font-size: 13px; }
+            h3 { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-card" id="mainCard">
+
+        <!-- 顶部导航栏 -->
+        <div class="nav-header">
+            <!-- 左上角：蓝色框返回 -->
+            <a href="1.html" class="btn-link btn-back" id="btnBack" aria-label="返回上一页" title="返回">&lt; 返回</a>
+
+            <!-- 右上角：青色框下一步 -->
+            <a href="3.html" class="btn-link btn-next" id="btnNext" aria-label="进入下一步" title="下一步">下一步 &gt;</a>
+        </div>
+
+        <!-- 协议内容区域 -->
+        <div class="content-area">
+            <h1>第三方信息授权协议</h1>
+
+            <p><strong>重要提示：</strong> 在您继续使用本网站服务前，请务必仔细阅读并充分理解本《第三方信息授权协议》（以下简称"本协议"）。本协议涉及您的个人信息处理及授权条款，特别是加粗或下划线部分，您应重点阅读。如不同意本协议内容，请立即停止使用本服务。继续使用即视为无条件接受本协议全部条款。</p>
+
+            <h3>1. 授权范围与目的</h3>
+            <p>为向您提供更优质的服务（如精准推荐、支付结算、消息推送等），您同意授权本网站向合作第三方共享您的必要信息。信息类型包括：设备信息（设备型号、操作系统、唯一标识符）、网络日志（IP地址、访问时间）、操作行为数据等。我们承诺：信息共享遵循"最小必要"原则；未经单独同意，不会向无关第三方出售或非法提供个人信息；第三方仅能基于约定用途处理数据，不得他用。</p>
+
+            <h3>2. 信息安全保障</h3>
+            <p>第三方合作伙伴均签署严格保密协议，并接受我方安全审计；采用SSL加密传输、AES加密存储、数据去标识化等技术手段；定期评估第三方安全风险，违规者将终止合作并承担法律责任。</p>
+
+            <h3>3. 用户权益与撤回授权</h3>
+            <p>您有权随时撤回授权：撤回方式：通过网站设置或联系客服；撤回影响：相关功能可能受限（如无法使用第三方支付）；数据删除：我们将在15个工作日内通知第三方删除已共享数据（法律要求保留的除外）；其他权利：您可查询、更正或删除个人信息，我们将及时响应。</p>
+
+            <h3>4. 隐私保护承诺</h3>
+            <p>非经法律许可或用户同意，绝不出售或公开个人隐私信息；敏感信息（生物识别、健康数据等）需单独授权，并进行风险评估；数据分类分级保护，严格限制访问权限。</p>
+
+            <h3>5. 未成年人保护</h3>
+            <p>若您未满14周岁，须由监护人同意并陪同阅读本协议。儿童信息仅用于法律允许或保护儿童必要场景，未经监护人同意不得处理。若发现违规收集，将立即删除数据。</p>
+
+            <h3>6. 协议更新与通知</h3>
+            <p>本协议可能因业务或法律变更而更新，更新内容将通过网站公告、站内信或邮件通知。重大变更将通过显著方式（如弹窗）提醒，若继续使用视为接受新协议。</p>
+
+            <h3>7. 法律责任与争议解决</h3>
+            <p>因本协议产生的争议，优先协商；协商不成，可向本网站所在地法院起诉；因第三方导致的信息泄露或损害，我们将协助追责，并在法律范围内承担相应责任；调整合作第三方时，将确保新合作伙伴符合同等安全标准。</p>
+
+            <h3>8. 联系我们</h3>
+            <p>如有疑问或需行使权利，请联系：官方客服：[XXX-XXX-XXXXX]（电话）；隐私专员邮箱：[https:www.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.com]；地址：[XXX省XXX市XXX区XXX路XXX号]。</p>
+
+            <h3>特别声明：</h3>
+            <p>本协议自您勾选同意并继续使用服务时生效；本协议与《用户服务协议》《隐私政策》共同构成完整法律文件；本协议解释权归本网站所有，但涉及用户权益的条款将以有利于用户的方式解释。</p>
+
+            <p style="text-align: center; color: #999; margin-top: 50px;">--- 协议内容结束 ---</p>
+            <br><br>
+        </div>
+
+    </div>
+
+    <!-- ================= 转场遮罩层 ================= -->
+    <div id="transitionMask" role="dialog" aria-modal="true" aria-label="页面加载中">
+        <div class="spinner-circle"><span>找乐子</span></div>
+    </div>
+
+    <script>
+        // === [JS 区块] 转场逻辑 ===
+
+        let isTransitioning = false; // 防止连点重复触发
+
+        // 通用转场：显示"找乐子"遮罩，1 秒（1000 毫秒）后跳转到目标页面
+        function showTransition(targetUrl) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            // 显示全屏遮罩（流光背景 + 旋转小圆）
+            document.getElementById('transitionMask').classList.add('show');
+
+            // 1 秒后跳转
+            setTimeout(function () {
+                window.location.href = targetUrl;
+            }, 1000);
+        }
+
+        // 返回按钮：拦截默认跳转，先播转场动画再去 1.html
+        document.getElementById('btnBack').addEventListener('click', function (e) {
+            e.preventDefault();
+            showTransition('1.html');
+        });
+
+        // 下一步按钮：拦截默认跳转，先播转场动画再去 3.html
+        document.getElementById('btnNext').addEventListener('click', function (e) {
+            e.preventDefault();
+            showTransition('3.html');
+        });
+
+        // 移除了原本对 backMain 的引用，该元素在页面中不存在，会导致脚本中断
+    </script>
+</body>
+</html>

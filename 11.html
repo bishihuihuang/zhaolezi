@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——优质工具库</title>
+    <style>
+        /* ===== 全局重置 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            overflow-x: hidden;
+        }
+
+        /* ===== 背景流光（20秒无缝循环） ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -150%;
+            left: -100%;
+            width: 350%;
+            height: 350%;
+            background: linear-gradient(125deg, #0a0e27, #1c1458, #32227a, #1a0f3e, #241a5e, #0e1233, #1d1652);
+            background-size: 400% 400%;
+            animation: flowGrad 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -80%;
+            left: -60%;
+            width: 260%;
+            height: 260%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%);
+            animation: flowSpin 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGrad {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(5%, -3%) scale(1.08) rotate(6deg); }
+            100% { transform: translate(-2%, 4%) scale(.94) rotate(-6deg); }
+        }
+        @keyframes flowSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.06); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* ===== 悬浮球 ===== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), rgba(255,255,255,.12) 45%, transparent 75%);
+            box-shadow: 0 0 60px rgba(255,255,255,.1), inset 0 0 30px rgba(255,255,255,.05);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 { width: 260px; height: 260px; top: 10%; left: 5%; animation: orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 78%; animation: orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 70%; left: 18%; animation: orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite; }
+        .orb-4 { width: 200px; height: 200px; top: 28%; left: 62%; animation: orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 82%; left: 45%; animation: orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite; }
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0, 0); opacity: .5; }
+            30% { transform: translate(20px, -25px); opacity: .8; }
+            60% { transform: translate(-12px, 15px); opacity: .4; }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0, 0); opacity: .6; }
+            50% { transform: translate(-18px, 14px); opacity: .3; }
+        }
+        @keyframes orbRotate { to { transform: rotate(360deg); } }
+
+        /* ===== 主体容器 ===== */
+        main {
+            padding: 20px 0;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background: rgba(245, 247, 255, .97);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35);
+            padding: 24px;
+            margin-top: 30px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ===== 网格布局 ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 14px;
+            padding: 8px;
+        }
+
+        /* 通用格子 */
+        .cell {
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            transition: transform .3s, box-shadow .3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+            border: 3px solid transparent;
+        }
+        .cell:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 0 20px rgba(255, 255, 255, .15);
+        }
+
+        /* ===== 标题区 ===== */
+        .title-area {
+            grid-row: 1 / 3;
+            grid-column: 1 / 5;
+            background: linear-gradient(135deg, #1a1a4e, #2d1b69, #1a1a4e);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-color: #f6d365;
+            cursor: default;
+        }
+        .title-area h1 {
+            font-size: 46px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            background: linear-gradient(90deg, #f6d365, #fff, #a78bfa, #f6d365);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+        .title-area p {
+            font-size: 22px;
+            color: #f6d365;
+            letter-spacing: 4px;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        @keyframes titleShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ===== 返回主页 ===== */
+        .back-area {
+            grid-row: 1 / 3;
+            grid-column: 5 / 7;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: #fff;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 3px;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-color: #a78bfa;
+        }
+        .back-area:hover {
+            background: linear-gradient(135deg, #2b4a9e, #4b8ef6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+            transform: translateY(-5px);
+        }
+
+        /* ===== 捐赠文本区（3-8行，1-3列） ===== */
+        .donation-text {
+            grid-row: 3 / 9;
+            grid-column: 1 / 4;
+            background: #ffffff;
+            border: 3px solid #ff9800;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .donation-text::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,152,0,.05), transparent 50%, rgba(255,152,0,.05));
+            animation: textSweep 4s ease-in-out infinite;
+        }
+        @keyframes textSweep {
+            0% { transform: translateX(-30%) rotate(0deg); }
+            100% { transform: translateX(30%) rotate(0deg); }
+        }
+        .donation-text .heart {
+            font-size: 60px;
+            display: block;
+            margin-bottom: 20px;
+            animation: heartBeat 1.5s ease-in-out infinite;
+        }
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.2); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+        .donation-text p {
+            font-size: 26px;
+            color: #333;
+            text-align: center;
+            line-height: 1.9;
+            font-weight: 600;
+            letter-spacing: 3px;
+            max-width: 85%;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, .05);
+            position: relative;
+            z-index: 2;
+        }
+        .donation-text .sub-line {
+            font-size: 16px;
+            color: #888;
+            margin-top: 20px;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== 赞赏码区（3-8行，4-6列） ===== */
+        .donation-qr {
+            grid-row: 3 / 9;
+            grid-column: 4 / 7;
+            border: 3px solid #4CAF50;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #87CEEB 0%, #B0E0E6 30%, #90EE90 70%, #2E8B57 100%);
+        }
+        /* 树林草原SVG背景（装饰性，无障碍隐藏） */
+        .forest-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 中间藤蔓正方形 */
+        .qr-frame {
+            position: relative;
+            z-index: 10;
+            width: 240px;
+            height: 240px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .2), 0 0 30px rgba(76, 175, 80, .4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 20px;
+        }
+        .qr-frame img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+            border-radius: 12px;
+            z-index: 2;
+            position: relative;
+        }
+        /* 藤蔓SVG覆盖层（装饰性，无障碍隐藏） */
+        .vine-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 900px) {
+            .container {
+                width: 95%;
+                padding: 12px;
+            }
+            .grid {
+                gap: 8px;
+            }
+            .donation-text p {
+                font-size: 18px;
+            }
+            .qr-frame {
+                width: 200px;
+                height: 200px;
+            }
+            .title-area h1 {
+                font-size: 28px;
+            }
+        }
+
+        /* ===== 转场覆盖层（与index一致） ===== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景流光层（无障碍隐藏装饰） -->
+    <div class="bg-animation" aria-hidden="true">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 主容器 -->
+    <main>
+        <div class="container">
+            <div class="grid">
+
+                <!-- 标题区（1-2行，1-4列） -->
+                <div class="cell title-area">
+                    <h1>找乐子</h1>
+                    <p>优质工具库</p>
+                </div>
+
+                <!-- 返回主页（1-2行，5-6列） -->
+                <a href="index.html" class="cell back-area" id="backHome" aria-label="返回主页">返回<br>主页</a>
+
+                <!-- 赞赏文本区（3-8行，1-3列） -->
+                <div class="cell donation-text">
+                    <span class="heart" role="img" aria-label="爱心">❤️</span>
+                    <p>您可以自由赞赏，<br>您的支持是<br>我们前进的动力，<br>谢谢支持。</p>
+                    <span class="sub-line" aria-hidden="true">— 找乐子团队</span>
+                </div>
+
+                <!-- 收款码区（3-8行，4-6列） -->
+                <div class="cell donation-qr">
+                    <!-- 树林草原背景SVG（装饰性，隐藏） -->
+                    <svg class="forest-bg" aria-hidden="true" viewBox="0 0 550 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 天空 -->
+                        <rect x="0" y="0" width="550" height="600" fill="#87CEEB"/>
+                        <!-- 云朵 -->
+                        <ellipse cx="120" cy="80" rx="60" ry="30" fill="rgba(255,255,255,.7)"/>
+                        <ellipse cx="180" cy="70" rx="45" ry="25" fill="rgba(255,255,255,.5)"/>
+                        <ellipse cx="380" cy="100" rx="55" ry="20" fill="rgba(255,255,255,.6)"/>
+                        <!-- 草地 -->
+                        <rect x="0" y="300" width="550" height="300" fill="#4CAF50"/>
+                        <!-- 草地纹理 -->
+                        <path d="M0,340 Q100,310 200,360 Q300,380 400,330 Q500,300 550,350" fill="none" stroke="#2E7D32" stroke-width="4"/>
+                        <!-- 树木 -->
+                        <rect x="60" y="220" width="25" height="100" fill="#8B4513"/>
+                        <circle cx="72" cy="200" r="45" fill="#2E7D32"/>
+                        <circle cx="45" cy="215" r="30" fill="#228B22"/>
+                        <rect x="250" y="240" width="22" height="85" fill="#8B4513"/>
+                        <circle cx="261" cy="220" r="40" fill="#228B22"/>
+                        <circle cx="240" cy="235" r="28" fill="#1B5E20"/>
+                        <rect x="420" y="260" width="18" height="60" fill="#8B4513"/>
+                        <circle cx="429" cy="245" r="32" fill="#2E7D32"/>
+                        <!-- 花朵 -->
+                        <circle cx="150" cy="320" r="8" fill="#FFD700"/>
+                        <circle cx="320" cy="310" r="10" fill="#FF69B4"/>
+                        <circle cx="480" cy="330" r="6" fill="#FF6347"/>
+                        <circle cx="200" cy="340" r="7" fill="#FFB6C1"/>
+                        <!-- 小草 -->
+                        <path d="M50,350 Q55,330 60,350" fill="none" stroke="#228B22" stroke-width="2"/>
+                        <path d="M130,360 Q135,340 140,360" fill="none" stroke="#228B22" stroke-width="2"/>
+                        <path d="M300,350 Q305,330 310,350" fill="none" stroke="#228B22" stroke-width="2"/>
+                        <path d="M450,350 Q455,330 460,350" fill="none" stroke="#228B22" stroke-width="2"/>
+                    </svg>
+
+                    <!-- 藤蔓框住的正方形 -->
+                    <div class="qr-frame">
+                        <img src="赞赏码.jpg" alt="收款码">
+                        <!-- 藤蔓SVG覆盖层（装饰性，隐藏） -->
+                        <svg class="vine-svg" aria-hidden="true" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                            <!-- 藤蔓边框 -->
+                            <rect x="10" y="10" width="220" height="220" rx="18" fill="none" stroke="#2E7D32" stroke-width="6"/>
+                            <!-- 藤蔓曲线 - 上 -->
+                            <path d="M10,50 Q35,25 60,50 Q85,75 110,50 Q135,25 160,55 Q185,75 220,50" fill="none" stroke="#4CAF50" stroke-width="3"/>
+                            <!-- 藤蔓曲线 - 下 -->
+                            <path d="M10,190 Q35,215 65,190 Q90,165 120,195 Q145,220 180,190 Q200,175 220,195" fill="none" stroke="#388E3C" stroke-width="3"/>
+                            <!-- 叶子 -->
+                            <ellipse cx="30" cy="40" rx="12" ry="5" fill="#4CAF50" transform="rotate(-30 30 40)"/>
+                            <ellipse cx="110" cy="45" rx="14" ry="6" fill="#66BB6A" transform="rotate(20 110 45)"/>
+                            <ellipse cx="195" cy="42" rx="11" ry="5" fill="#43A047" transform="rotate(-40 195 42)"/>
+                            <ellipse cx="45" cy="200" rx="10" ry="5" fill="#4CAF50" transform="rotate(30 45 200)"/>
+                            <ellipse cx="140" cy="210" rx="12" ry="6" fill="#388E3C" transform="rotate(-20 140 210)"/>
+                            <!-- 小芽装饰 -->
+                            <ellipse cx="180" cy="55" rx="8" ry="4" fill="#2E7D32" transform="rotate(-15 180 55)"/>
+                            <ellipse cx="120" cy="195" rx="9" ry="4" fill="#4CAF50" transform="rotate(25 120 195)"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 转场覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        // ===== 返回主页转场动画 =====
+        document.getElementById('backHome').addEventListener('click', function(e) {
+            e.preventDefault();
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+            setTimeout(function() {
+                window.location.href = 'index.html';
+            }, 1000);
+        });
+
+        // 初始化
+        console.log('找乐子——优质工具库已加载');
+    </script>
+</body>
+</html>

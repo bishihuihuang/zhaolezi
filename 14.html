@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>找乐子——虚拟消费系统</title>
+<style>
+/* ===== 基础重置与样式 ===== */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif; background:#0a0e27; color:#fff; overflow-x:hidden; }
+
+/* 背景流光（与index一致） */
+.bg-animation { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; overflow:hidden; }
+.bg-flow-1 { position:absolute; top:-150%; left:-100%; width:350%; height:350%; background:linear-gradient(125deg,#0a0e27,#1c1458,#32227a,#1a0f3e,#241a5e,#0e1233,#1d1652); background-size:400% 400%; animation:flowGrad 20s ease-in-out infinite; }
+.bg-flow-2 { position:absolute; top:-80%; left:-60%; width:260%; height:260%; background:radial-gradient(ellipse at 30% 70%,rgba(255,140,100,.4),transparent 60%),radial-gradient(ellipse at 70% 30%,rgba(90,180,255,.35),transparent 50%); animation:flowDrift 20s ease-in-out infinite alternate; }
+.bg-flow-3 { position:absolute; top:-40%; left:-20%; width:200%; height:200%; background:radial-gradient(circle at 60% 40%,rgba(220,140,255,.25),transparent 55%); animation:flowSpin 20s linear infinite; }
+@keyframes flowGrad {0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes flowDrift {0%{transform:translate(0,0) scale(1) rotate(0deg);}50%{transform:translate(5%,-3%) scale(1.08) rotate(6deg);}100%{transform:translate(-2%,4%) scale(.94) rotate(-6deg);}}
+@keyframes flowSpin {0%{transform:rotate(0deg) scale(1);}50%{transform:rotate(180deg) scale(1.06);}100%{transform:rotate(360deg) scale(1);}}
+.orb { position:absolute; border-radius:50%; background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.32),rgba(255,255,255,.12) 45%,transparent 75%); box-shadow:0 0 60px rgba(255,255,255,.1),inset 0 0 30px rgba(255,255,255,.05); pointer-events:none; will-change:transform,opacity; }
+.orb-1{width:260px;height:260px;top:10%;left:5%;animation:orbFloat1 18s ease-in-out infinite,orbRotate 40s linear infinite;}
+.orb-2{width:160px;height:160px;top:55%;left:78%;animation:orbFloat2 22s ease-in-out infinite,orbRotate 55s linear infinite;}
+.orb-3{width:110px;height:110px;top:70%;left:18%;animation:orbFloat1 16s ease-in-out infinite reverse,orbRotate 35s linear infinite;}
+.orb-4{width:200px;height:200px;top:28%;left:62%;animation:orbFloat2 20s ease-in-out infinite,orbRotate 45s linear infinite;}
+.orb-5{width:80px;height:80px;top:82%;left:45%;animation:orbFloat1 14s ease-in-out infinite,orbRotate 30s linear infinite;}
+@keyframes orbFloat1{0%,100%{transform:translate(0,0);opacity:.5;}30%{transform:translate(20px,-25px);opacity:.8;}60%{transform:translate(-12px,15px);opacity:.4;}}
+@keyframes orbFloat2{0%,100%{transform:translate(0,0);opacity:.6;}50%{transform:translate(-18px,14px);opacity:.3;}}
+@keyframes orbRotate{to{transform:rotate(360deg);}}
+
+/* 头部栏 */
+header { position:fixed; top:0; left:0; width:100%; z-index:1000; display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:rgba(0,0,0,.4); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,.1); }
+header h1 { font-size:24px; background:linear-gradient(90deg,#f6d365,#fda085,#f6d365); -webkit-background-clip:text; background-clip:text; color:transparent; letter-spacing:3px; }
+.header-user { display:flex; gap:15px; align-items:center; font-size:14px; }
+.header-user #points { color:#ffd700; font-weight:bold; }
+
+/* 主容器 */
+main { position:relative; z-index:10; padding-top:80px; display:flex; justify-content:center; align-items:flex-start; min-height:100vh; }
+.container { width:90%; max-width:1400px; background:rgba(245,247,255,.96); border-radius:24px; box-shadow:0 25px 70px rgba(0,0,0,.4); overflow:hidden; margin-top:20px; }
+
+/* 标题区域 */
+.title-area { display:flex; justify-content:space-between; align-items:center; padding:20px 30px; background:linear-gradient(135deg,#1a1a4e,#2d1b69); }
+.title-area h2 { font-size:36px; font-weight:900; background:linear-gradient(90deg,#f6d365,#fff,#a78bfa,#f6d365); -webkit-background-clip:text; background-clip:text; color:transparent; letter-spacing:3px; }
+.title-actions { display:flex; gap:12px; align-items:center; }
+.title-actions a.btn-main { padding:10px 24px; background:linear-gradient(135deg,#4e4376,#6b5b95); color:#fff; text-decoration:none; border-radius:50px; font-weight:bold; transition:.3s; box-shadow:0 4px 15px rgba(0,0,0,.2); }
+.title-actions a.btn-main:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,.3); }
+
+/* 工具栏 */
+.toolbar { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background:#f5f6fa; border-bottom:1px solid #e0e0e0; flex-wrap:wrap; gap:10px; }
+.toolbar-left { display:flex; gap:10px; }
+.refresh-btn, .coupon-btn {
+  border:none; border-radius:20px; padding:8px 18px; cursor:pointer; font-size:14px; font-weight:bold;
+}
+.refresh-btn { background:#4a6cf7; color:#fff; }
+.coupon-btn { background:#ff9800; color:#fff; }
+.category-filters { display:flex; gap:8px; flex-wrap:wrap; }
+.category-filters .cat-btn { border:none; background:#e0e0e0; border-radius:20px; padding:8px 15px; cursor:pointer; font-size:13px; transition:.2s; }
+.category-filters .cat-btn.active { background:#667eea; color:#fff; }
+
+/* 商品网格 */
+.shop-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:15px; padding:20px; max-height:calc(100vh - 250px); overflow-y:auto; }
+.product-card { background:#fff; color:#333; border-radius:14px; padding:12px; box-shadow:0 6px 20px rgba(0,0,0,.08); display:flex; flex-direction:column; transition:.3s; border:1px solid #eee; position:relative; }
+.product-card:hover { transform:translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,.15); }
+.product-card .prod-icon { font-size:40px; text-align:center; margin-bottom:8px; }
+.product-card .prod-name { font-weight:700; font-size:15px; min-height:42px; cursor:pointer; }
+.product-card .prod-desc { font-size:12px; color:#777; margin-bottom:6px; min-height:34px; }
+.product-card .prod-price { color:#e65100; font-weight:800; font-size:18px; margin-bottom:10px; }
+.product-card .add-to-cart { background:#ff9800; color:#fff; border:none; border-radius:30px; padding:8px; cursor:pointer; font-weight:bold; transition:.2s; min-height:44px; }
+.product-card .add-to-cart:hover { background:#f57c00; }
+.product-card .add-to-cart.added { background:#4caf50; }
+.product-card .fav-btn { position:absolute; top:8px; right:8px; background:transparent; border:none; font-size:20px; cursor:pointer; opacity:.5; transition:.2s; min-width:44px; min-height:44px; }
+.product-card .fav-btn.fav { opacity:1; color:#ff2eb9; }
+
+/* 购物车 */
+.cart-wrapper { position:fixed; top:90px; right:20px; z-index:999; }
+.cart-icon { width:50px; height:50px; background:#1e1e2f; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 15px rgba(0,0,0,.4); cursor:pointer; font-size:24px; transition:transform .2s; }
+.cart-icon:hover { transform:scale(1.1); }
+.cart-panel { position:absolute; right:0; top:60px; width:340px; max-height:75vh; background:#1e1e2f; border-radius:20px; padding:15px; box-shadow:0 10px 30px rgba(0,0,0,.5); opacity:0; visibility:hidden; transform:translateX(20px); transition:opacity .3s,transform .3s,visibility .3s; }
+.cart-wrapper:hover .cart-panel, .cart-wrapper:focus-within .cart-panel { opacity:1; visibility:visible; transform:translateX(0); }
+.cart-panel h3 { color:#f6d365; font-size:20px; margin-bottom:10px; border-bottom:1px solid #ffffff22; padding-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+.cart-panel h3 .clear-cart { background:none; border:none; color:#ff6b6b; cursor:pointer; font-size:13px; min-height:44px; }
+.cart-list { flex:1; overflow-y:auto; max-height:400px; }
+.cart-item { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #ffffff10; font-size:14px; gap:5px; }
+.cart-item .ci-info { flex:1; display:flex; flex-direction:column; }
+.cart-item .ci-name { color:#fff; }
+.cart-item .ci-price { color:#ffaa33; font-size:13px; }
+.cart-item .ci-qty { display:flex; align-items:center; gap:5px; }
+/* 【修复】调整数量按钮和删除按钮尺寸 */
+.ci-qty button {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    border: none;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ci-qty span { min-width:20px; text-align:center; }
+.cart-item .ci-remove {
+    width: 44px;
+    height: 44px;
+    background:#ff6b6b;
+    border:none;
+    color:#fff;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.cart-total { display:flex; justify-content:space-between; font-size:18px; font-weight:bold; margin:12px 0; color:#fff; }
+.coupon-section { display:flex; gap:8px; margin-bottom:10px; }
+.coupon-section button { background:#667eea; color:#fff; border:none; border-radius:8px; padding:8px 12px; cursor:pointer; font-weight:bold; min-height:44px; }
+.checkout-btn { width:100%; padding:12px; background:linear-gradient(135deg,#ff2eb9,#be2edd); border:none; border-radius:50px; color:#fff; font-weight:900; font-size:17px; cursor:pointer; transition:.3s; margin-bottom:8px; min-height:44px; }
+.checkout-btn:hover { transform:translateY(-3px); box-shadow:0 8px 20px #be2edd88; }
+.checkout-btn:disabled { opacity:.5; cursor:not-allowed; }
+.jump-to-shop { width:100%; padding:8px; background:#333; border:none; border-radius:20px; color:#f6d365; font-size:14px; font-weight:bold; cursor:pointer; transition:.2s; min-height:44px; }
+.jump-to-shop:hover { background:#555; }
+
+/* 支付模态 */
+.overlay-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.7); z-index:99999; display:none; align-items:center; justify-content:center; }
+.overlay-modal.show { display:flex; }
+.modal-box { background:#fff; color:#333; border-radius:25px; padding:30px; width:400px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.4); }
+.modal-box h2 { margin-bottom:20px; color:#e65100; }
+.modal-box .pay-methods { display:flex; gap:10px; justify-content:center; margin-bottom:20px; }
+.pay-method { padding:10px 20px; border-radius:20px; border:2px solid #ddd; cursor:pointer; font-weight:bold; transition:.2s; min-height:44px; display:flex; align-items:center; justify-content:center; }
+.pay-method:hover { border-color:#ff9800; }
+.pay-method.active { background:#ff9800; color:#fff; border-color:#ff9800; }
+.modal-box .modal-actions { display:flex; gap:10px; justify-content:center; }
+.btn-confirm { background:#4caf50; color:#fff; border:none; padding:10px 30px; border-radius:50px; cursor:pointer; font-size:16px; font-weight:bold; min-height:44px; }
+.btn-cancel { background:#ddd; border:none; padding:10px 30px; border-radius:50px; cursor:pointer; font-size:16px; font-weight:bold; min-height:44px; }
+
+/* 支付成功 */
+.success-modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#1e1e2f; color:#fff; padding:40px 60px; border-radius:30px; box-shadow:0 0 100px rgba(76,175,80,.5); z-index:99998; display:none; text-align:center; }
+.success-modal.show { display:block; }
+.success-modal .icon { font-size:80px; }
+.success-modal h3 { margin:20px 0 10px; }
+.success-modal button { margin-top:20px; background:#4caf50; border:none; color:#fff; padding:10px 40px; border-radius:50px; cursor:pointer; font-size:18px; font-weight:bold; min-height:44px; }
+
+/* 商品详情弹窗 */
+.detail-modal { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#fff; color:#333; border-radius:25px; padding:30px; width:500px; box-shadow:0 30px 80px rgba(0,0,0,.5); z-index:99997; display:none; }
+.detail-modal.show { display:block; }
+.detail-modal .close-detail { position:absolute; top:15px; right:15px; border:none; background:#f0f0f0; width:30px; height:30px; border-radius:50%; cursor:pointer; font-size:16px; font-weight:bold; min-width:44px; min-height:44px; }
+.detail-modal .detail-icon { font-size:80px; text-align:center; margin-bottom:15px; }
+.detail-modal h3 { text-align:center; margin-bottom:15px; }
+.detail-modal p { margin-bottom:15px; }
+.detail-modal .price { font-size:24px; color:#e65100; font-weight:bold; }
+.detail-modal button.add-from-detail { display:block; width:100%; padding:12px; background:#ff9800; border:none; color:#fff; border-radius:30px; cursor:pointer; font-size:16px; font-weight:bold; margin-top:15px; min-height:44px; }
+
+/* 分页控件 */
+.pagination { grid-column:1/-1; display:flex; gap:10px; justify-content:center; margin:20px 0; }
+.page-btn { border:2px solid #667eea; background:#fff; color:#333; border-radius:20px; padding:8px 18px; cursor:pointer; font-size:14px; font-weight:bold; transition:all .2s; box-shadow:0 2px 6px rgba(0,0,0,.1); min-height:44px; }
+.page-btn:hover:not(:disabled) { background:#667eea; color:#fff; transform:translateY(-2px); }
+.page-btn:disabled { opacity:.5; cursor:not-allowed; }
+.page-info { display:flex; align-items:center; font-size:14px; color:#555; padding:0 10px; }
+
+/* 滚动条 */
+.shop-grid::-webkit-scrollbar { width:8px; }
+.shop-grid::-webkit-scrollbar-track { background:#e0e0e0; }
+.shop-grid::-webkit-scrollbar-thumb { background:#888; border-radius:10px; }
+.cart-list::-webkit-scrollbar { width:6px; }
+.cart-list::-webkit-scrollbar-thumb { background:#555; }
+
+/* 响应式 */
+@media (max-width:1200px){ .shop-grid{grid-template-columns:repeat(4,1fr);} .cart-panel{width:300px;} }
+@media (max-width:900px){ .shop-grid{grid-template-columns:repeat(3,1fr);} .cart-panel{width:260px;} header{padding:10px 15px;} .toolbar{flex-direction:column;} }
+@media (max-width:600px){ .shop-grid{grid-template-columns:repeat(2,1fr);} .cart-panel{width:230px;} .title-area h2{font-size:26px;} .container{width:95%;} }
+
+/* ========== 新转场动画（高级图转，文字不动） ========== */
+#transitionOverlay {
+    position:fixed; top:0; left:0; width:100%; height:100%; z-index:999999;
+    background:rgba(0,0,0,0); display:flex; align-items:center; justify-content:center;
+    opacity:0; visibility:hidden; transition:opacity .4s, visibility .4s;
+}
+#transitionOverlay.active { opacity:1; visibility:visible; background:rgba(8,10,25,.85); }
+#transitionOverlay::before {
+    content:''; position:absolute; top:50%; left:50%; width:600px; height:600px; margin:-300px 0 0 -300px;
+    background:radial-gradient(circle,rgba(246,211,101,.3),transparent 60%);
+    animation:centerPulse 1s ease-in-out infinite;
+}
+@keyframes centerPulse { 0%,100%{transform:scale(.8);opacity:.8;} 50%{transform:scale(1.2);opacity:.5;} }
+.trans-geo {
+    position:absolute; top:50%; left:50%; width:0; height:0;
+    transform-style:preserve-3d;
+    animation:geoRotate 2s linear infinite;
+}
+.trans-geo .cube {
+    position:absolute; width:80px; height:80px; margin:-40px 0 0 -40px;
+    background:linear-gradient(135deg,#f6d365,#fda085); border:2px solid #fff;
+    transform:rotateX(45deg) rotateY(45deg);
+    animation:cubeSpin 3s linear infinite;
+}
+@keyframes cubeSpin { 0%{transform:rotateX(0) rotateY(0);} 100%{transform:rotateX(360deg) rotateY(360deg);} }
+.trans-particles { position:absolute; inset:0; overflow:hidden; }
+.trans-particle {
+    position:absolute; width:6px; height:6px; border-radius:50%;
+    background:linear-gradient(90deg,#f6d365,#fda085);
+    animation:flyToCenter 1.2s ease-in-out infinite;
+}
+@keyframes flyToCenter {
+    0% { transform:translate(var(--start-x),var(--start-y)) scale(1); opacity:1; }
+    100% { transform:translate(0,0) scale(0); opacity:0; }
+}
+.trans-text {
+    position:relative; z-index:5; font-size:36px; font-weight:900; letter-spacing:6px;
+    background:linear-gradient(90deg,#f6d365,#fff,#a78bfa,#f6d365);
+    background-size:200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:textShine 1.5s linear infinite;
+    text-align:center; line-height:1.3;
+    padding:20px 40px; border-radius:20px;
+    background-color:rgba(0,0,0,.5);
+}
+@keyframes textShine { 0%{background-position:0% 50%;} 100%{background-position:200% 50%;} }
+
+/* 优惠券弹窗 */
+.coupon-modal {
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:#fff; color:#333; border-radius:20px; padding:25px; width:400px;
+    box-shadow:0 20px 50px rgba(0,0,0,.4); z-index:99999; display:none; 
+}
+.coupon-modal.show { display:block; }
+.coupon-modal h3 { text-align:center; margin-bottom:15px; }
+.coupon-list { max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+.coupon-item {
+    border:2px solid #ddd; border-radius:10px; padding:10px; cursor:pointer; transition:.2s;
+}
+.coupon-item:hover { border-color:#ff9800; background:#fff3e0; }
+.coupon-close {
+    display:block; width:100%; margin-top:15px; padding:8px; background:#ddd; border:none; border-radius:20px; cursor:pointer; font-weight:bold; min-height:44px;
+}
+</style>
+</head>
+<body>
+<!-- 背景 -->
+<div class="bg-animation">
+  <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+  <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+<!-- 头部 -->
+<header>
+  <h1>🛍️ 找乐子虚拟消费系统</h1>
+  <div class="header-user"><span>👤 游客</span><span id="points">积分：0</span></div>
+</header>
+<!-- 主体 -->
+<main>
+  <div class="container">
+    <div class="title-area">
+      <h2>找乐子——虚拟消费系统</h2>
+      <div class="title-actions"><a href="index.html" class="btn-main" id="mainHome" aria-label="返回主程序">主程序</a></div>
+    </div>
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button id="refreshBtn" class="refresh-btn" aria-label="刷新商品">🔄 刷新商品</button>
+        <button id="couponBtn" class="coupon-btn" aria-label="选择优惠券">🎟️ 优惠券</button>
+      </div>
+      <div class="category-filters" id="categoryFilters">
+        <button class="cat-btn active" data-cat="全部">全部</button>
+        <button class="cat-btn" data-cat="电子产品">电子产品</button>
+        <button class="cat-btn" data-cat="美食">美食</button>
+        <button class="cat-btn" data-cat="饮料">饮料</button>
+        <button class="cat-btn" data-cat="拼豆">拼豆</button>
+        <button class="cat-btn" data-cat="日用">日用</button>
+        <button class="cat-btn" data-cat="娱乐">娱乐</button>
+        <button class="cat-btn" data-cat="玩具">玩具</button>
+      </div>
+    </div>
+    <div class="shop-grid" id="shopGrid"></div>
+  </div>
+</main>
+<!-- 购物车悬浮 -->
+<div class="cart-wrapper">
+  <div class="cart-icon" aria-label="购物车">🛒</div>
+  <div class="cart-panel">
+    <h3>🛒 我的购物车 <button class="clear-cart" id="clearCartBtn" aria-label="清空购物车">清空</button></h3>
+    <div class="cart-list" id="cartList"></div>
+    <div class="cart-total"><span>合计</span><span id="cartTotal">￥0.00</span></div>
+    <div class="coupon-section">
+      <button id="applyCouponBtn" class="coupon-btn" aria-label="选择优惠券">选择优惠券</button>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" aria-label="立即支付" disabled>立即支付</button>
+    <button class="jump-to-shop" id="jumpToShop" aria-label="去逛逛商品">➕ 去逛逛商品</button>
+  </div>
+</div>
+<!-- 支付模态 -->
+<div class="overlay-modal" id="payModal" role="dialog" aria-modal="true" aria-label="支付确认">
+  <div class="modal-box">
+    <h2>确认支付</h2>
+    <p id="payAmount" style="font-size:24px; margin-bottom:20px; font-weight:bold;"></p>
+    <div class="pay-methods">
+      <div class="pay-method active" data-method="balance" aria-label="余额支付">余额支付</div>
+      <div class="pay-method" data-method="card" aria-label="银行卡">银行卡</div>
+      <div class="pay-method" data-method="wechat" aria-label="微信支付">微信</div>
+      <div class="pay-method" data-method="alipay" aria-label="支付宝">支付宝</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelPay" aria-label="取消支付">取消</button>
+      <button class="btn-confirm" id="confirmPay" aria-label="确认支付">确认支付</button>
+    </div>
+  </div>
+</div>
+<!-- 成功弹窗 -->
+<div class="success-modal" id="successModal" role="dialog" aria-modal="true" aria-label="支付成功">
+  <div class="icon">✅</div><h3>支付成功！</h3><p id="successMsg"></p>
+  <button id="closeSuccess" aria-label="关闭">确定</button>
+</div>
+<!-- 商品详情弹窗 -->
+<div class="detail-modal" id="detailModal" role="dialog" aria-modal="true" aria-label="商品详情">
+  <button class="close-detail" id="closeDetail" aria-label="关闭">×</button>
+  <div class="detail-icon" id="detailIcon"></div><h3 id="detailName"></h3><p id="detailDesc"></p>
+  <p class="price" id="detailPrice"></p>
+  <button class="add-from-detail" id="addFromDetail" aria-label="加入购物车">加入购物车</button>
+</div>
+<!-- 优惠券选择弹窗 -->
+<div class="coupon-modal" id="couponModal" role="dialog" aria-modal="true" aria-label="选择优惠券">
+  <h3>选择优惠券</h3>
+  <div class="coupon-list" id="couponList"></div>
+  <button class="coupon-close" id="closeCoupon" aria-label="关闭">关闭</button>
+</div>
+
+<!-- 转场覆盖层 -->
+<div id="transitionOverlay" role="dialog" aria-modal="true" aria-label="页面跳转中">
+  <div class="trans-geo"><div class="cube"></div></div>
+  <div class="trans-particles" id="transParticles"></div>
+  <div class="trans-text">找乐子<br>高级工具箱</div>
+</div>
+
+<script>
+// ========== 商品生成（价格浮动优化） ==========
+function generateProducts() {
+  const products = [];
+  // 核心商品列表（价格会浮动±10%）
+  const coreItems = [
+    ['i3-12100', '电子产品', '🖥️', 899, '入门处理器'], ['i5-14600KF','电子产品','🖥️',2499,'性能处理器'],
+    ['i9-14900K','电子产品','🖥️',4999,'顶级处理器'], ['R7 7800X3D','电子产品','🧠',3299,'游戏处理器'],
+    ['RTX 5090','电子产品','🎮',19999,'顶级显卡'], ['RTX 5070','电子产品','🎮',5999,'高端显卡'],
+    ['金士顿 DDR5 32G 6400','电子产品','💾',1099,'高频内存'], ['三星 990Pro 1TB','电子产品','💽',999,'PCIe4.0 SSD'],
+    ['华硕 B760M','电子产品','🔧',899,'主流主板'], ['海盗船 RM850x','电子产品','🔌',899,'金牌电源'],
+    ['利民 PA120','电子产品','❄️',249,'双塔散热'], ['联力包豪斯 O11D','电子产品','🖥️',899,'海景房机箱'],
+    ['大疆 Action 5 Pro','电子产品','📷',2999,'运动相机'], ['AirPods Pro 2','电子产品','🎧',1899,'降噪耳机'],
+    ['Apple Watch S9','电子产品','⌚',3999,'智能手表'], ['Switch OLED','电子产品','🎮',2599,'游戏掌机'],
+    ['罗技 G502','电子产品','🖱️',399,'游戏鼠标'], ['雷蛇黑寡妇','电子产品','⌨️',699,'机械键盘'],
+    ['奶皮子蛋糕','美食','🍰',39,'特色甜品'], ['自热火锅','美食','🍲',45,'方便速食'],
+    ['三只松鼠坚果','美食','🥜',69,'每日坚果'], ['乐事薯片','美食','🍟',12,'休闲零食'],
+    ['红油钵钵鸡','美食','🌶️',29,'四川小吃'], ['榴莲酥','美食','🥐',35,'烘焙点心'],
+    ['喜茶多肉葡萄','饮料','🥤',29,'奶茶饮品'], ['元气森林气泡水','饮料','🫧',6,'无糖气泡'],
+    ['三顿半咖啡','饮料','☕',89,'精品咖啡'], ['霸王茶姬','饮料','🧋',19,'新式茶饮'],
+    ['拼豆套装1000粒','拼豆','🧩',39,'手工材料'], ['奶油胶DIY','拼豆','🎨',25,'创意手工'],
+    ['超轻黏土24色','拼豆','🖍️',19,'无毒黏土'], ['水晶滴胶','拼豆','💎',35,'树脂饰品'],
+    ['戴森吹风机','日用','💨',2499,'高速吹风机'], ['石头扫地机器人','日用','🤖',3999,'智能扫地'],
+    ['乳胶枕','日用','🛏️',199,'睡眠用品'], ['收纳箱','日用','📦',39,'储物必备'],
+    ['乐高粉玫瑰','娱乐','🌹',399,'浪漫积木'], ['泡泡玛特盲盒','娱乐','🎁',69,'潮流玩具'],
+    ['三国杀','娱乐','🃏',49,'桌游经典'], ['Switch游戏卡带','娱乐','🎮',399,'游戏软件'],
+    ['手办模型','玩具','🤖',299,'动漫周边'], ['高达模型','玩具','⚙️',199,'拼装模型'],
+    ['解压捏捏乐','玩具','🧸',19,'发泄神器'], ['盲盒公仔','玩具','🎁',59,'随机惊喜']
+  ];
+  coreItems.forEach(item => {
+    // 价格随机浮动±10%
+    let basePrice = item[3];
+    let price = basePrice * (0.9 + Math.random() * 0.2);
+    price = Math.round(price * 100) / 100;
+    products.push({name:item[0],cat:item[1],icon:item[2],price:price,desc:item[4],core:true});
+  });
+
+  // 扩充商品（价格固定，不浮动）
+  const categories = ['电子产品','美食','饮料','拼豆','日用','娱乐','玩具'];
+  const extras = ['多功能充电线','便携小风扇','发光手账本','桌面盆栽','小夜灯','香薰蜡烛','手机支架','运动手环','可爱发夹','潮流袜子','运动水壶','电脑清洁套装','机械键盘帽','迷你风扇','防晒喷雾','护手霜','洗衣凝珠','自热米饭','拉面说','茶颜悦色','喜茶联名','无线充电板','充电宝','拼豆图案','立体拼图','数字油画','乐高小人','车载香薰','钥匙扣','手机挂绳','拖鞋','浴巾','牙刷','牙膏','洗发水','沐浴露','润肤乳','眼罩','耳塞','旅行装','桌游扩展包','卡牌','桌垫','骰子','扑克牌','棋类','魔方','九连环','孔明锁','鲁班锁','手账本','笔','文具','书籍','杂志'];
+  for(let i=0; i<1000; i++){
+    const cat = categories[i % categories.length];
+    const name = extras[i % extras.length] + ' ('+(i+1)+')';
+    let icon='📦', price=10+(i%80), desc='现代年轻人喜爱的商品';
+    if(cat==='电子产品'){icon='🔌';price=50+(i%200)+50;desc='智能设备';}
+    else if(cat==='美食'){icon='🍔';price=10+(i%60)+5;desc='美食诱惑';}
+    else if(cat==='饮料'){icon='🥤';price=3+(i%20)+2;desc='饮品精选';}
+    else if(cat==='拼豆'){icon='🧩';price=15+(i%40)+5;desc='手工创意';}
+    else if(cat==='日用'){icon='🧺';price=5+(i%50)+3;desc='生活好物';}
+    else if(cat==='娱乐'){icon='🎮';price=20+(i%80)+10;desc='休闲娱乐';}
+    else{icon='🧸';price=10+(i%70)+5;desc='解压玩具';}
+    if(!products.find(p=>p.name===name)) products.push({name,cat,icon,price,desc,core:false});
+  }
+  return products;
+}
+let baseProducts = generateProducts(); // 初始化
+
+// ========== 状态数据 ==========
+let cart=[],favorites=new Set(),points=0,coupon=null,totalPrice=0,currentCategory='全部',searchQuery='',currentPage=1;
+const pageSize=30;
+// 15种优惠券定义
+const coupons = [
+  {id:'SAVE5', name:'满50减5', minSpend:50, discount:5},
+  {id:'SAVE10', name:'满100减10', minSpend:100, discount:10},
+  {id:'SAVE15', name:'满150减15', minSpend:150, discount:15},
+  {id:'SAVE20', name:'满200减20', minSpend:200, discount:20},
+  {id:'SAVE30', name:'满300减30', minSpend:300, discount:30},
+  {id:'SAVE50', name:'满500减50', minSpend:500, discount:50},
+  {id:'SAVE80', name:'满800减80', minSpend:800, discount:80},
+  {id:'SAVE100', name:'满1000减100', minSpend:1000, discount:100},
+  {id:'SAVE150', name:'满1500减150', minSpend:1500, discount:150},
+  {id:'SAVE200', name:'满2000减200', minSpend:2000, discount:200},
+  {id:'DISCOUNT10%', name:'9折优惠', minSpend:0, discountRate:0.1},
+  {id:'DISCOUNT15%', name:'85折优惠', minSpend:0, discountRate:0.15},
+  {id:'DISCOUNT20%', name:'8折优惠', minSpend:0, discountRate:0.2},
+  {id:'FREESHIP', name:'免运费', minSpend:100, shipping:true},
+  {id:'VIP', name:'VIP专属95折', minSpend:500, discountRate:0.05}
+];
+
+// ========== 渲染商品 ==========
+function renderProducts(){
+  const grid=document.getElementById('shopGrid'); grid.innerHTML='';
+  let filtered=baseProducts.filter(p=>{
+    if(currentCategory!=='全部'&&p.cat!==currentCategory)return false;
+    if(searchQuery&&!p.name.toLowerCase().includes(searchQuery.toLowerCase()))return false;
+    return true;
+  });
+  // 如果点击了刷新，会随机打乱顺序
+  const totalPages=Math.ceil(filtered.length/pageSize);
+  if(currentPage>totalPages)currentPage=totalPages||1;
+  const start=(currentPage-1)*pageSize, pageItems=filtered.slice(start,start+pageSize);
+  pageItems.forEach(item=>{
+    const card=document.createElement('div'); card.className='product-card';
+    const fav=favorites.has(item.name)?'fav':'';
+    card.innerHTML=`
+      <button class="fav-btn ${fav}" data-name="${item.name}" aria-label="收藏${item.name}" role="button" tabindex="0">${favorites.has(item.name)?'❤️':'🤍'}</button>
+      <div class="prod-icon">${item.icon}</div>
+      <div class="prod-name" data-detail="${item.name}" tabindex="0" role="button" aria-label="查看${item.name}详情">${item.name}</div>
+      <div class="prod-desc">${item.desc}</div>
+      <div class="prod-price">￥${item.price.toFixed(2)}</div>
+      <button class="add-to-cart" data-name="${item.name}" data-icon="${item.icon}" data-price="${item.price}" data-cat="${item.cat}" aria-label="加入购物车" role="button" tabindex="0">加入购物车</button>
+    `;
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll('.prod-name').forEach(el=>el.addEventListener('click',()=>showDetail(el.dataset.detail)));
+  grid.querySelectorAll('.fav-btn').forEach(btn=>btn.addEventListener('click',e=>{
+    const name=btn.dataset.name;
+    if(favorites.has(name)){favorites.delete(name);btn.textContent='🤍';btn.classList.remove('fav');}
+    else{favorites.add(name);btn.textContent='❤️';btn.classList.add('fav');}
+  }));
+  grid.querySelectorAll('.add-to-cart').forEach(btn=>btn.addEventListener('click',e=>{
+    const {name,icon,price,cat}=btn.dataset;
+    addToCart(name,icon,Number(price),cat);
+    btn.textContent='已加入 ✔';btn.classList.add('added');
+    setTimeout(()=>{btn.textContent='加入购物车';btn.classList.remove('added');},1000);
+  }));
+  // 键盘支持
+  grid.querySelectorAll('.fav-btn, .add-to-cart, .prod-name').forEach(el=>{
+    el.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}
+    });
+  });
+  if(filtered.length>pageSize){
+    const pagination=document.createElement('div'); pagination.className='pagination';
+    pagination.innerHTML=`<button class="page-btn" id="prevPage" ${currentPage===1?'disabled':''} aria-label="上一页">上一页</button><span class="page-info">第 ${currentPage} / ${totalPages} 页</span><button class="page-btn" id="nextPage" ${currentPage===totalPages?'disabled':''} aria-label="下一页">下一页</button>`;
+    grid.appendChild(pagination);
+    pagination.querySelector('#prevPage').addEventListener('click',()=>{currentPage--;renderProducts();});
+    pagination.querySelector('#nextPage').addEventListener('click',()=>{currentPage++;renderProducts();});
+  }
+}
+
+// 刷新商品：打乱顺序并重新渲染
+document.getElementById('refreshBtn').addEventListener('click',()=>{
+  // 对核心商品重新随机价格
+  baseProducts.forEach(p => {
+    if (p.core) {
+      let base = 0;
+      p.price = p.price * (0.9 + Math.random() * 0.2); // 基于当前价格再浮动
+      p.price = Math.round(p.price * 100) / 100;
+    }
+  });
+  // 随机打乱顺序
+  baseProducts.sort(() => Math.random() - 0.5);
+  currentPage = 1;
+  renderProducts();
+});
+
+// 优惠券选择弹窗
+const couponModal = document.getElementById('couponModal');
+document.getElementById('couponBtn').addEventListener('click',()=>{
+  renderCouponList();
+  couponModal.classList.add('show');
+});
+document.getElementById('applyCouponBtn').addEventListener('click',()=>{
+  renderCouponList();
+  couponModal.classList.add('show');
+});
+document.getElementById('closeCoupon').addEventListener('click',()=>couponModal.classList.remove('show'));
+function renderCouponList(){
+  const list=document.getElementById('couponList');
+  list.innerHTML='';
+  coupons.forEach(c=>{
+    const item=document.createElement('div');
+    item.className='coupon-item';
+    item.textContent=c.name;
+    item.dataset.id=c.id;
+    item.addEventListener('click',()=>{
+      coupon=c;
+      updateCartUI();
+      couponModal.classList.remove('show');
+      alert(`已选择优惠券：${c.name}`);
+    });
+    list.appendChild(item);
+  });
+}
+// 计算优惠后价格
+function calculateAfterCoupon(price){
+  if(!coupon)return price;
+  let result=price;
+  if(coupon.discount){ // 满减
+    if(price>=coupon.minSpend) result-=coupon.discount;
+  }else if(coupon.discountRate){ // 折扣
+    result = price*(1-coupon.discountRate);
+  }
+  return Math.max(0,result);
+}
+// 购物车操作（不变）
+function addToCart(name,icon,price,cat){const existing=cart.find(i=>i.name===name);if(existing)existing.qty++;else cart.push({name,icon,price,cat,qty:1});updateCartUI();flyToCart(name);}
+function removeFromCart(name){cart=cart.filter(i=>i.name!==name);updateCartUI();}
+function updateQty(name,delta){const item=cart.find(i=>i.name===name);if(item){item.qty+=delta;if(item.qty<=0)removeFromCart(name);else updateCartUI();}}
+window.updateQty=updateQty;window.removeFromCart=removeFromCart;
+document.getElementById('clearCartBtn').addEventListener('click',()=>{if(cart.length>0&&confirm('确定清空购物车？')){cart=[];coupon=null;updateCartUI();}});
+function updateCartUI(){const list=document.getElementById('cartList');list.innerHTML='';totalPrice=0;cart.forEach(item=>{totalPrice+=item.price*item.qty;const row=document.createElement('div');row.className='cart-item';row.innerHTML=`<div class="ci-info"><span class="ci-name">${item.icon} ${item.name}</span><span class="ci-price">￥${item.price.toFixed(2)} × ${item.qty} = ￥${(item.price*item.qty).toFixed(2)}</span></div><div class="ci-qty"><button onclick="updateQty('${item.name}',-1)" aria-label="减少数量" role="button" tabindex="0">-</button><span>${item.qty}</span><button onclick="updateQty('${item.name}',1)" aria-label="增加数量" role="button" tabindex="0">+</button><button class="ci-remove" onclick="removeFromCart('${item.name}')" aria-label="移除商品" role="button" tabindex="0">✕</button></div>`;list.appendChild(row);});const afterDiscount=calculateAfterCoupon(totalPrice);document.getElementById('cartTotal').textContent=`￥${afterDiscount.toFixed(2)}`;document.getElementById('checkoutBtn').disabled=cart.length===0;}
+// 支付流程
+const payModal=document.getElementById('payModal');
+document.getElementById('checkoutBtn').addEventListener('click',()=>{if(cart.length===0)return;const after=calculateAfterCoupon(totalPrice);document.getElementById('payAmount').textContent=`￥${after.toFixed(2)}`;payModal.classList.add('show');});
+document.getElementById('cancelPay').addEventListener('click',()=>payModal.classList.remove('show'));
+document.querySelectorAll('.pay-method').forEach(el=>el.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(m=>m.classList.remove('active'));el.classList.add('active');}));
+document.getElementById('confirmPay').addEventListener('click',()=>{payModal.classList.remove('show');const amount=calculateAfterCoupon(totalPrice);points+=Math.floor(amount);localStorage.setItem('userPoints',points);document.getElementById('points').textContent=`积分：${points}`;document.getElementById('successMsg').textContent=`消费￥${amount.toFixed(2)}，获得${Math.floor(amount)}积分！`;document.getElementById('successModal').classList.add('show');cart=[];coupon=null;updateCartUI();});
+document.getElementById('closeSuccess').addEventListener('click',()=>document.getElementById('successModal').classList.remove('show'));
+// 跳转商品区
+document.getElementById('jumpToShop').addEventListener('click',()=>document.querySelector('.shop-grid').scrollIntoView({behavior:'smooth'}));
+// 积分
+points=Number(localStorage.getItem('userPoints')||0);document.getElementById('points').textContent=`积分：${points}`;
+// 分类
+document.querySelectorAll('.cat-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentCategory=btn.dataset.cat;currentPage=1;renderProducts();}));
+// 飞行动画
+function flyToCart(name){const fly=document.createElement('div');fly.className='fly-animation';fly.textContent='🛒';fly.style.left=Math.random()*50+'vw';fly.style.top='50vh';document.body.appendChild(fly);fly.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate(300px,200px) scale(0.2)',opacity:0}],{duration:900,easing:'ease-in-out'});setTimeout(()=>fly.remove(),950);}
+// 转场动画（跳转主程序）
+const transitionOverlay=document.getElementById('transitionOverlay');
+function goHomeWithTransition(){
+  if(transitionOverlay.classList.contains('active'))return;
+  transitionOverlay.classList.add('active');
+  const particlesContainer=document.getElementById('transParticles');
+  particlesContainer.innerHTML='';
+  for(let i=0;i<40;i++){const p=document.createElement('div');p.className='trans-particle';const angle=Math.random()*Math.PI*2;const distance=200+Math.random()*300;p.style.setProperty('--start-x',(Math.cos(angle)*distance)+'px');p.style.setProperty('--start-y',(Math.sin(angle)*distance)+'px');p.style.animationDelay=(Math.random()*0.5)+'s';particlesContainer.appendChild(p);}
+  setTimeout(()=>{window.location.href='index.html';},1500);
+}
+document.getElementById('mainHome').addEventListener('click',(e)=>{e.preventDefault();goHomeWithTransition();});
+
+// 初始化
+renderProducts();
+updateCartUI();
+
+// ===== 新增：按 Esc 关闭所有弹窗 =====
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        // 关闭支付模态
+        if (document.getElementById('payModal').classList.contains('show')) {
+            document.getElementById('payModal').classList.remove('show');
+        }
+        // 关闭成功弹窗
+        if (document.getElementById('successModal').classList.contains('show')) {
+            document.getElementById('successModal').classList.remove('show');
+        }
+        // 关闭商品详情
+        if (document.getElementById('detailModal').classList.contains('show')) {
+            document.getElementById('detailModal').classList.remove('show');
+        }
+        // 关闭优惠券
+        if (document.getElementById('couponModal').classList.contains('show')) {
+            document.getElementById('couponModal').classList.remove('show');
+        }
+        // 关闭转场覆盖层（不跳转）
+        if (transitionOverlay.classList.contains('active')) {
+            transitionOverlay.classList.remove('active');
+        }
+    }
+});
+</script>
+</body>
+</html>

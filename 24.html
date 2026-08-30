@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>词频统计——找乐子工具库</title>
+<style>
+    /* ========== SECTION: reset 全局重置 ========== */
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+        min-height: 100vh;
+        color: #fff;
+        overflow-x: hidden;
+        position: relative;
+        background: linear-gradient(-45deg,
+            #0a0e27, #1e1b4b, #3b2a6e, #16324f, #241a54, #0a0e27);
+        background-size: 600% 600%;
+        animation: bgFlow 20s ease-in-out infinite;
+        will-change: background-position;
+    }
+
+    @keyframes bgFlow {
+        0%   { background-position: 0% 50%; }
+        50%  { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* ========== SECTION: bg-glyphs 主题漂浮字符（已添加 aria-hidden） ========== */
+    .bg-layer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .float-char {
+        position: absolute;
+        font-weight: 900;
+        color: rgba(255, 255, 255, .06);
+        user-select: none;
+        will-change: transform, opacity;
+        animation: charFloat 16s ease-in-out infinite;
+    }
+
+    .fc-1 { font-size: 150px; top: 8%;  left: 6%;  animation-duration: 18s; }
+    .fc-2 { font-size: 110px; top: 62%; left: 12%; animation-duration: 22s; animation-delay: -6s; }
+    .fc-3 { font-size: 170px; top: 18%; left: 82%; animation-duration: 20s; animation-delay: -3s; }
+    .fc-4 { font-size: 90px;  top: 74%; left: 78%; animation-duration: 15s; animation-delay: -9s; }
+    .fc-5 { font-size: 70px;  top: 45%; left: 48%; animation-duration: 24s; animation-delay: -12s; }
+
+    @keyframes charFloat {
+        0%   { transform: translate(0, 0) rotate(0deg);   opacity: .5; }
+        33%  { transform: translate(24px, -30px) rotate(8deg);  opacity: .9; }
+        66%  { transform: translate(-18px, 16px) rotate(-6deg); opacity: .4; }
+        100% { transform: translate(0, 0) rotate(0deg);   opacity: .5; }
+    }
+
+    /* ========== SECTION: orbs 透明悬浮球 ========== */
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%,
+            rgba(255, 255, 255, .28),
+            rgba(255, 255, 255, .08) 55%,
+            transparent 75%);
+        border: 1px solid rgba(255, 255, 255, .14);
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
+        box-shadow: 0 0 60px rgba(255, 255, 255, .08),
+            inset 0 0 30px rgba(255, 255, 255, .05);
+        pointer-events: none;
+        will-change: transform, opacity;
+    }
+
+    .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%;
+        animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+    .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%;
+        animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+    .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%;
+        animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+    .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%;
+        animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+    .orb-5 { width: 80px;  height: 80px;  top: 80%; left: 45%;
+        animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+
+    @keyframes orbFloatA {
+        0%   { transform: translate(0, 0) scale(1);        opacity: .6; }
+        30%  { transform: translate(18px, -22px) scale(1.04); opacity: .85; }
+        60%  { transform: translate(-12px, 10px) scale(.96);  opacity: .45; }
+        100% { transform: translate(0, 0) scale(1);        opacity: .6; }
+    }
+
+    @keyframes orbFloatB {
+        0%   { transform: translate(0, 0) scale(1);        opacity: .5; }
+        35%  { transform: translate(-20px, 12px) scale(1.06); opacity: .75; }
+        70%  { transform: translate(14px, -15px) scale(.94);  opacity: .4; }
+        100% { transform: translate(0, 0) scale(1);        opacity: .5; }
+    }
+
+    @keyframes orbSpin {
+        0%   { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* ========== SECTION: layout 主体布局 ========== */
+    main {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 42px 0 60px;
+    }
+
+    .container {
+        width: 80%;
+        max-width: 1440px;
+        background: rgba(245, 247, 255, .96);
+        border-radius: 24px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, .35),
+            0 0 0 1px rgba(255, 255, 255, .3),
+            inset 0 1px 0 rgba(255, 255, 255, .6);
+        max-height: calc(100vh - 90px);
+        overflow-y: auto;
+        padding: 20px;
+        scroll-behavior: smooth;
+    }
+
+    .container::-webkit-scrollbar { width: 10px; }
+    .container::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, .04);
+        border-radius: 12px;
+    }
+    .container::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #667eea, #764ba2);
+        border-radius: 12px;
+        border: 2px solid rgba(255, 255, 255, .4);
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-auto-rows: minmax(80px, auto);
+        gap: 12px;
+        padding: 6px;
+    }
+
+    /* ========== SECTION: title 标题区（前2行前4列） ========== */
+    .title-area {
+        grid-column: 1 / 5;
+        grid-row: 1 / 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: linear-gradient(45deg, #ff6b6b, #ffa500, #ffd700);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(255, 120, 60, .35),
+            inset 0 1px 0 rgba(255, 255, 255, .4);
+        position: relative;
+        overflow: hidden;
+        transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), box-shadow .4s ease;
+    }
+
+    .title-area:hover {
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 18px 60px rgba(255, 120, 60, .45),
+            0 0 50px rgba(255, 200, 100, .3);
+    }
+
+    .title-area::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg,
+            transparent 30%,
+            rgba(255, 255, 255, .22) 50%,
+            transparent 70%);
+        animation: titleSweep 5s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    @keyframes titleSweep {
+        0%   { transform: translateX(-60%); }
+        100% { transform: translateX(60%); }
+    }
+
+    .title-area h2 {
+        font-size: 52px;
+        font-weight: 900;
+        letter-spacing: 10px;
+        color: #fff;
+        text-shadow: 0 2px 14px rgba(140, 50, 0, .35), 0 0 30px rgba(255, 255, 255, .35);
+        position: relative;
+        z-index: 2;
+    }
+
+    .title-area .sub {
+        font-size: 14px;
+        letter-spacing: 5px;
+        color: rgba(255, 255, 255, .92);
+        text-shadow: 0 1px 6px rgba(140, 50, 0, .3);
+        position: relative;
+        z-index: 2;
+    }
+
+    /* ========== SECTION: home 返回主页（前2行第5-6列） ========== */
+    .home-link {
+        grid-column: 5 / 7;
+        grid-row: 1 / 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        background: linear-gradient(135deg, #101430, #1a1a4e, #2d1b69, #1a1a4e);
+        background-size: 300% 300%;
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(20, 15, 80, .45),
+            inset 0 1px 0 rgba(255, 255, 255, .12);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), box-shadow .4s ease;
+    }
+
+    .home-link::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg,
+            transparent 30%,
+            rgba(255, 255, 255, .12) 50%,
+            transparent 70%);
+        animation: titleSweep 4s ease-in-out infinite reverse;
+        pointer-events: none;
+    }
+
+    .home-link:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 18px 60px rgba(30, 25, 100, .5),
+            0 0 50px rgba(246, 211, 101, .25);
+    }
+
+    .home-link:active {
+        transform: translateY(-2px) scale(.97);
+        transition-duration: .1s;
+    }
+
+    .home-icon {
+        font-size: 30px;
+        line-height: 1;
+        position: relative;
+        z-index: 2;
+        animation: iconBob 2.6s ease-in-out infinite;
+    }
+
+    @keyframes iconBob {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-6px); }
+    }
+
+    .home-text {
+        font-size: 26px;
+        font-weight: 900;
+        letter-spacing: 5px;
+        background: linear-gradient(90deg, #f6d365, #ffffff, #fda085, #f6d365);
+        background-size: 300% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: textShine 3s linear infinite;
+        position: relative;
+        z-index: 2;
+    }
+
+    .home-sub {
+        font-size: 12px;
+        letter-spacing: 3px;
+        color: rgba(255, 255, 255, .6);
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .home-sub .arrow {
+        display: inline-block;
+        transition: transform .3s ease;
+    }
+
+    .home-link:hover .home-sub .arrow {
+        transform: translateX(-6px);
+    }
+
+    @keyframes textShine {
+        0%   { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
+    }
+
+    /* ========== SECTION: cards 通用卡片 ========== */
+    .card {
+        background: linear-gradient(180deg, #ffffff, #f7f8ff);
+        border-radius: 16px;
+        border: 1px solid rgba(102, 126, 234, .14);
+        box-shadow: 0 6px 18px rgba(30, 30, 80, .08);
+        padding: 16px;
+        transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), box-shadow .35s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 34px rgba(30, 30, 80, .14),
+            0 0 30px rgba(102, 126, 234, .12);
+    }
+
+    .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .card-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: #2a2d4a;
+        letter-spacing: 2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .card-title::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #ff6b6b, #ffa500, #ffd700);
+        box-shadow: 0 0 8px rgba(255, 165, 0, .6);
+    }
+
+    .card-hint {
+        font-size: 12px;
+        color: #8a8fb0;
+        letter-spacing: 1px;
+    }
+
+    /* ========== SECTION: input 文章输入区（第3-4行 前4列） ========== */
+    .input-card {
+        grid-column: 1 / 5;
+        grid-row: 3 / 5;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #articleInput {
+        flex: 1;
+        min-height: 170px;
+        width: 100%;
+        border: 2px solid #e5e7f5;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 14px;
+        line-height: 1.9;
+        color: #2a2d4a;
+        font-family: inherit;
+        resize: none;
+        background: #fff;
+        transition: border-color .25s ease, box-shadow .25s ease;
+    }
+
+    #articleInput:focus {
+        outline: none;
+        border-color: #ffa500;
+        box-shadow: 0 0 0 4px rgba(255, 165, 0, .15);
+    }
+
+    #articleInput.shake {
+        animation: shakeX .45s ease;
+        border-color: #fb7185;
+        box-shadow: 0 0 0 4px rgba(251, 113, 133, .18);
+    }
+
+    @keyframes shakeX {
+        0%, 100% { transform: translateX(0); }
+        20%      { transform: translateX(-8px); }
+        40%      { transform: translateX(8px); }
+        60%      { transform: translateX(-5px); }
+        80%      { transform: translateX(5px); }
+    }
+
+    /* ========== SECTION: control 控制面板（第3-4行 第5-6列） ========== */
+    .control-card {
+        grid-column: 5 / 7;
+        grid-row: 3 / 5;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .opt-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .opt-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #4c4f6e;
+        white-space: nowrap;
+    }
+
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+        padding: 7px 26px 7px 12px;
+        border-radius: 10px;
+        border: 2px solid #e5e7f5;
+        font-size: 13px;
+        color: #2a2d4a;
+        font-family: inherit;
+        cursor: pointer;
+        transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+        background: linear-gradient(45deg, transparent 49%, #8a8fb0 50%) calc(100% - 16px) 55% / 6px 6px no-repeat,
+            linear-gradient(-45deg, transparent 49%, #8a8fb0 50%) calc(100% - 10px) 55% / 6px 6px no-repeat,
+            #fff;
+        min-height: 44px;
+    }
+
+    select:hover {
+        border-color: #a78bfa;
+        transform: translateY(-1px);
+    }
+
+    select:focus {
+        outline: none;
+        border-color: #ffa500;
+        box-shadow: 0 0 0 3px rgba(255, 165, 0, .15);
+    }
+
+    /* 纯 CSS 开关 */
+    .switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex: none;
+        cursor: pointer;
+    }
+
+    .switch input {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .switch .slider {
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        background: #dcdfee;
+        transition: background .3s ease;
+    }
+
+    .switch .slider::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+        transition: transform .3s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .switch input:checked + .slider {
+        background: linear-gradient(45deg, #ff6b6b, #ffa500, #ffd700);
+    }
+
+    .switch input:checked + .slider::after {
+        transform: translateX(20px);
+    }
+
+    /* 按钮体系 */
+    .btn {
+        border: none;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        font-family: inherit;
+        cursor: pointer;
+        transition: transform .25s cubic-bezier(.34, 1.56, .64, 1),
+            box-shadow .25s ease, filter .25s ease;
+        will-change: transform;
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .btn:hover { transform: translateY(-3px); }
+    .btn:active { transform: translateY(0) scale(.94); transition-duration: .1s; }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700);
+        color: #fff;
+        text-shadow: 0 1px 4px rgba(140, 50, 0, .3);
+        box-shadow: 0 8px 20px rgba(255, 140, 60, .35);
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 12px 30px rgba(255, 140, 60, .5),
+            0 0 26px rgba(255, 200, 100, .4);
+        filter: brightness(1.05);
+    }
+
+    .btn-ghost {
+        background: #fff;
+        color: #4c4f6e;
+        border: 2px solid #e2e4f0;
+        box-shadow: 0 4px 12px rgba(30, 30, 80, .06);
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+
+    .btn-ghost:hover {
+        border-color: #ffa500;
+        color: #ff8f3c;
+        box-shadow: 0 8px 20px rgba(255, 165, 0, .18);
+    }
+
+    .btn-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-row .btn { flex: 1; }
+
+    .status-msg {
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: #8a8fb0;
+        min-height: 18px;
+        text-align: center;
+        transition: color .3s ease;
+    }
+
+    .status-msg.ok  { color: #0f766e; }
+    .status-msg.err { color: #be123c; }
+
+    /* ========== SECTION: cloud 词云区（第5-8行 通栏） ========== */
+    .cloud-card {
+        grid-column: 1 / 7;
+        grid-row: 5 / 9;
+        min-height: 460px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .canvas-wrap {
+        position: relative;
+        flex: 1;
+        min-height: 380px;
+        border-radius: 12px;
+        background:
+            radial-gradient(circle at 20% 30%, rgba(255, 165, 0, .05), transparent 40%),
+            radial-gradient(circle at 80% 70%, rgba(102, 126, 234, .06), transparent 40%),
+            #fbfbff;
+        border: 1px dashed rgba(102, 126, 234, .25);
+        overflow: hidden;
+    }
+
+    #cloudCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: default;
+    }
+
+    .cloud-empty {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        color: #9aa0c0;
+        pointer-events: none;
+        transition: opacity .5s ease, visibility .5s ease;
+    }
+
+    .cloud-empty.hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .empty-bubble {
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        border: 2px dashed rgba(102, 126, 234, .4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-weight: 900;
+        color: rgba(102, 126, 234, .55);
+        animation: bubbleBob 3s ease-in-out infinite;
+    }
+
+    @keyframes bubbleBob {
+        0%, 100% { transform: translateY(0) rotate(-3deg); }
+        50%      { transform: translateY(-10px) rotate(3deg); }
+    }
+
+    .cloud-empty p {
+        font-size: 13px;
+        letter-spacing: 2px;
+    }
+
+    .cloud-tip {
+        position: absolute;
+        z-index: 30;
+        background: rgba(15, 18, 40, .95);
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 12px;
+        font-size: 12px;
+        line-height: 1.6;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, .4),
+            0 0 0 1px rgba(255, 255, 255, .1);
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(8px) scale(.9);
+        transition: opacity .25s ease, transform .25s ease, visibility .25s;
+        white-space: nowrap;
+    }
+
+    .cloud-tip.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+
+    .cloud-tip b {
+        font-size: 14px;
+        color: #f6d365;
+        letter-spacing: 1px;
+    }
+
+    /* ========== SECTION: stats 统计概览（第9行 通栏） ========== */
+    .stats-card {
+        grid-column: 1 / 7;
+        grid-row: 9 / 10;
+        display: flex;
+        align-items: stretch;
+        gap: 12px;
+        padding: 14px 16px;
+    }
+
+    .stat-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 6px 10px;
+        border-radius: 12px;
+        background: rgba(102, 126, 234, .05);
+        transition: transform .3s ease, background .3s ease;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-3px);
+        background: rgba(255, 165, 0, .08);
+    }
+
+    .stat-num {
+        font-size: 26px;
+        font-weight: 900;
+        background: linear-gradient(45deg, #ff6b6b, #ffa500, #b45309);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #8a8fb0;
+        letter-spacing: 2px;
+    }
+
+    /* ========== SECTION: rank 词频排行榜（第10-13行 前4列） ========== */
+    .rank-card {
+        grid-column: 1 / 5;
+        grid-row: 10 / 14;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .rank-list {
+        flex: 1;
+        overflow-y: auto;
+        max-height: 340px;
+        padding-right: 6px;
+    }
+
+    .rank-list::-webkit-scrollbar { width: 8px; }
+    .rank-list::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #fda085, #a78bfa);
+        border-radius: 8px;
+    }
+    .rank-list::-webkit-scrollbar-track { background: rgba(0, 0, 0, .04); }
+
+    .rank-empty {
+        text-align: center;
+        color: #9aa0c0;
+        font-size: 13px;
+        letter-spacing: 2px;
+        padding: 40px 0;
+    }
+
+    .rank-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background .2s ease, transform .2s ease;
+        outline: none;
+    }
+
+    .rank-row:hover {
+        background: #f3f4ff;
+        transform: translateX(4px);
+    }
+
+    .rank-row:focus-visible {
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, .4);
+    }
+
+    .rank-row.active {
+        background: linear-gradient(90deg, rgba(255, 165, 0, .14), rgba(255, 107, 107, .1));
+        box-shadow: inset 0 0 0 1px rgba(255, 165, 0, .35);
+    }
+
+    .rank-num {
+        flex: none;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+        color: #fff;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .rank-row:nth-child(1) .rank-num { background: linear-gradient(135deg, #ffd700, #ff8c00); }
+    .rank-row:nth-child(2) .rank-num { background: linear-gradient(135deg, #cbd5e1, #64748b); }
+    .rank-row:nth-child(3) .rank-num { background: linear-gradient(135deg, #fda085, #b45309); }
+
+    .rank-word {
+        flex: none;
+        min-width: 84px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #2a2d4a;
+        word-break: break-all;
+    }
+
+    .rank-bar {
+        flex: 1;
+        height: 8px;
+        border-radius: 999px;
+        background: #eef0fa;
+        overflow: hidden;
+    }
+
+    .rank-bar span {
+        display: block;
+        height: 100%;
+        width: 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #ff6b6b, #ffa500, #ffd700);
+        transition: width .8s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .rank-count {
+        flex: none;
+        font-size: 12px;
+        color: #8a8fb0;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* ========== SECTION: help 使用说明（第10-13行 第5-6列） ========== */
+    .help-card {
+        grid-column: 5 / 7;
+        grid-row: 10 / 14;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .step-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        flex: 1;
+    }
+
+    .step-list li {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        font-size: 13px;
+        line-height: 1.7;
+        color: #4c4f6e;
+        padding: 8px;
+        border-radius: 10px;
+        transition: background .25s ease, transform .25s ease;
+    }
+
+    .step-list li:hover {
+        background: #f3f4ff;
+        transform: translateX(4px);
+    }
+
+    .step-badge {
+        flex: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        background: linear-gradient(45deg, #ff6b6b, #ffa500, #ffd700);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 8px rgba(255, 140, 60, .35);
+    }
+
+    .help-note {
+        margin-top: 12px;
+        font-size: 12px;
+        color: #8a8fb0;
+        text-align: center;
+        letter-spacing: 1px;
+        padding: 8px;
+        border-radius: 10px;
+        background: rgba(45, 212, 191, .08);
+    }
+
+    /* ========== SECTION: overlay 转场遮罩 ========== */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(8, 10, 25, .72);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .4s ease, visibility .4s ease;
+        pointer-events: none;
+    }
+
+    .overlay.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .loader-wrap {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loader-ring {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, .1);
+        border-top-color: #f6d365;
+        border-right-color: #fda085;
+        animation: ringSpin .8s linear infinite;
+        box-sizing: border-box;
+    }
+
+    .loader-ring::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-bottom-color: #a78bfa;
+        border-left-color: #667eea;
+        animation: ringSpin 1.4s linear infinite reverse;
+    }
+
+    .loader-ring::after {
+        content: '';
+        position: absolute;
+        top: 28px;
+        left: 28px;
+        right: 28px;
+        bottom: 28px;
+        border-radius: 50%;
+        border: 1px solid transparent;
+        border-top-color: #fb7185;
+        border-right-color: #2dd4bf;
+        animation: ringSpin 2s linear infinite;
+    }
+
+    .loader-text {
+        position: relative;
+        z-index: 5;
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: textShine 1.5s linear infinite;
+    }
+
+    @keyframes ringSpin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* ========== SECTION: responsive 响应式 ========== */
+    @media (max-width: 900px) {
+        .container { width: 95%; padding: 12px; }
+
+        .grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .title-area,
+        .home-link,
+        .input-card,
+        .control-card,
+        .cloud-card,
+        .stats-card,
+        .rank-card,
+        .help-card {
+            grid-column: 1 / -1;
+            grid-row: auto;
+        }
+
+        .title-area { min-height: 150px; }
+        .title-area h2 { font-size: 34px; letter-spacing: 6px; }
+        .home-link { min-height: 120px; }
+        .cloud-card { min-height: 380px; }
+        .canvas-wrap { min-height: 300px; }
+        .stats-card { flex-wrap: wrap; }
+        .stat-item { flex: 1 1 40%; }
+        .rank-list { max-height: 300px; }
+    }
+    
+    @media (max-width: 480px) {
+        .title-area h2 { font-size: 26px; letter-spacing: 4px; }
+        .home-text { font-size: 20px; letter-spacing: 3px; }
+        .btn-row { flex-direction: column; }
+        .status-msg { font-size: 11px; }
+        .stat-item { flex: 1 1 100%; }
+        .rank-row { flex-wrap: wrap; }
+        .rank-word { min-width: 60px; }
+        .step-list li { font-size: 12px; }
+    }
+</style>
+</head>
+<body>
+
+    <!-- SECTION: background 背景层（已添加 aria-hidden） -->
+    <div class="bg-layer" aria-hidden="true">
+        <span class="float-char fc-1">词</span>
+        <span class="float-char fc-2">频</span>
+        <span class="float-char fc-3">云</span>
+        <span class="float-char fc-4">文</span>
+        <span class="float-char fc-5">章</span>
+
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- SECTION: main 主体 -->
+    <main>
+        <div class="container">
+            <div class="grid">
+
+                <!-- 标题区：前2行前4列 -->
+                <div class="title-area">
+                    <h2>词云统计</h2>
+                    <span class="sub">把一篇文章，变成一朵词云</span>
+                </div>
+
+                <!-- 返回主页：前2行第5-6列 -->
+                <a class="home-link" id="homeLink" href="index.html" aria-label="返回主页" title="返回主页">
+                    <span class="home-icon" aria-hidden="true">🏠</span>
+                    <span class="home-text">返回主页</span>
+                    <span class="home-sub"><span class="arrow">←</span> 回到找乐子工具库</span>
+                </a>
+
+                <!-- 文章输入区：第3-4行前4列 -->
+                <div class="card input-card">
+                    <div class="card-head">
+                        <span class="card-title">文章输入</span>
+                        <span class="card-hint" id="charCount">已输入 0 字</span>
+                    </div>
+                    <textarea id="articleInput" placeholder="在这里输入或粘贴一篇文章（支持中英文混合），然后点击「开始分析」……" aria-label="文章输入区域"></textarea>
+                </div>
+
+                <!-- 控制面板：第3-4行第5-6列 -->
+                <div class="card control-card">
+                    <div class="card-head">
+                        <span class="card-title">统计参数</span>
+                    </div>
+
+                    <div class="opt-row">
+                        <span class="opt-label">词云词数</span>
+                        <select id="topNSelect" aria-label="词云词数选择">
+                            <option value="30">前 30 词</option>
+                            <option value="60" selected>前 60 词</option>
+                            <option value="100">前 100 词</option>
+                            <option value="150">前 150 词</option>
+                        </select>
+                    </div>
+
+                    <div class="opt-row">
+                        <span class="opt-label">分词模式</span>
+                        <select id="modeSelect" aria-label="分词模式选择">
+                            <option value="bi" selected>二字词（精准）</option>
+                            <option value="rich">二字 + 三字词</option>
+                        </select>
+                    </div>
+
+                    <div class="opt-row">
+                        <span class="opt-label">过滤常用词</span>
+                        <label class="switch">
+                            <input type="checkbox" id="stopToggle" checked aria-label="过滤常用词开关">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <button class="btn btn-primary" id="analyzeBtn" aria-label="开始分析">开始分析</button>
+
+                    <div class="btn-row">
+                        <button class="btn btn-ghost" id="sampleBtn" aria-label="填入示例文本">示例文本</button>
+                        <button class="btn btn-ghost" id="clearBtn" aria-label="清空输入">清空</button>
+                    </div>
+
+                    <div class="status-msg" id="statusMsg">等待输入，随时开始～</div>
+                </div>
+
+                <!-- 词云画布：第5-8行通栏 -->
+                <div class="card cloud-card">
+                    <div class="card-head">
+                        <span class="card-title">词云 · Word Cloud</span>
+                        <span class="card-hint">悬停查看详情 · 点击定位排行榜</span>
+                    </div>
+                    <div class="canvas-wrap" id="canvasWrap">
+                        <canvas id="cloudCanvas" role="img" aria-label="词云图"></canvas>
+                        <div class="cloud-tip" id="cloudTip" role="tooltip"></div>
+                        <div class="cloud-empty" id="cloudEmpty">
+                            <div class="empty-bubble">词</div>
+                            <p>词云将在这里绽放</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计概览：第9行通栏 -->
+                <div class="card stats-card">
+                    <div class="stat-item">
+                        <span class="stat-num" id="statTotal">—</span>
+                        <span class="stat-label">总词次</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="statUnique">—</span>
+                        <span class="stat-label">唯一词数</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="statCn">—</span>
+                        <span class="stat-label">中文字数</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="statTop">—</span>
+                        <span class="stat-label">高频词 TOP1</span>
+                    </div>
+                </div>
+
+                <!-- 词频排行榜：第10-13行前4列 -->
+                <div class="card rank-card">
+                    <div class="card-head">
+                        <span class="card-title">词频排行榜</span>
+                        <button class="btn btn-ghost" id="exportBtn" aria-label="导出词表">导出词表</button>
+                    </div>
+                    <div class="rank-list" id="rankList">
+                        <div class="rank-empty">分析完成后，这里会展示词语频率排行</div>
+                    </div>
+                </div>
+
+                <!-- 使用说明：第10-13行第5-6列 -->
+                <div class="card help-card">
+                    <div class="card-head">
+                        <span class="card-title">使用说明</span>
+                    </div>
+                    <ul class="step-list">
+                        <li><span class="step-badge">1</span><span>输入或粘贴一篇想分析的文章，支持中英文混合文本。</span></li>
+                        <li><span class="step-badge">2</span><span>按需调整词云词数与分词模式，可勾选过滤「的、了、是」等常用词。</span></li>
+                        <li><span class="step-badge">3</span><span>点击「开始分析」，出现次数越多的词，在词云中越大。</span></li>
+                        <li><span class="step-badge">4</span><span>悬停词云查看次数与占比；点击排行榜可在词云中高亮定位，还能一键导出词表。</span></li>
+                    </ul>
+                    <div class="help-note">全部统计均在本地浏览器完成，文章内容不会被上传。</div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- SECTION: overlay 转场遮罩 -->
+    <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="页面跳转中">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+<script>
+/* ================================================================
+ * SECTION: config 全局配置与状态
+ * ================================================================ */
+const CONFIG = {
+    maxInputLen: 20000,
+    rankShowMax: 30,
+    exportMax: 100,
+    colors: ['#ff6b6b', '#ffa500', '#e55039', '#f6b93b', '#a78bfa',
+             '#667eea', '#2dd4bf', '#fb7185', '#38bdf8', '#4ade80'],
+    stopWords: new Set(['我们', '你们', '他们', '她们', '它们', '自己', '什么',
+        '这个', '那个', '一个', '这些', '那些', '这样', '那样', '没有', '不是',
+        '就是', '还是', '因为', '所以', '但是', '如果', '虽然', '然后', '时候',
+        '现在', '知道', '觉得', '非常', '可能', '已经', '一些', '一种', '进行',
+        '通过', '对于', '关于', '以及', '或者', '而且', '不过', '只是', '只有',
+        '不能', '不会', '可以', '需要', '应该', '成为', '作为', '直到', '甚至',
+        '几乎', '忽然', '突然']),
+    stopChars: new Set('的了是在有和就不也都很还但要与及或这那他她它你我又才被把被从到向于之乎者已么呢吗吧啊呀嘛啦哦嗯着过个一为对可由会能应该己此其再让使给因所'.split('')),
+    enStop: new Set(['the', 'a', 'an', 'and', 'or', 'but', 'of', 'to', 'in', 'on',
+        'is', 'are', 'was', 'were', 'it', 'its', 'this', 'that', 'these', 'those',
+        'for', 'with', 'as', 'by', 'at', 'be', 'from', 'have', 'has', 'had', 'i',
+        'you', 'he', 'she', 'they', 'we', 'not', 'no', 'do', 'does', 'did', 'will',
+        'would', 'can', 'could', 'my', 'your', 'his', 'her', 'their', 'our',
+        'what', 'which', 'who', 'when', 'where', 'why', 'how', 'all', 'any',
+        'some', 'so', 'if', 'then', 'than', 'too', 'very', 'just', 'about',
+        'into', 'over', 'after', 'before', 'between', 'out', 'up', 'down',
+        'there', 'here', 'am', 'also', 'more', 'most', 'other', 'such', 'only',
+        'own', 'same', 'now']),
+    sampleText: '找乐子是一件简单又快乐的事情。有人在工具库里找乐子，有人在文字里找乐子。词频统计可以把一篇长长的文章变成一张漂亮的词云，让重要的词一眼可见。输入一段文字，点击开始分析，词频统计就会帮你数一数每个词出现了多少次：出现的次数越多，词云里的字就越大。找乐子工具库里有五子棋、扫雷、备忘录、词典和各种各样的小工具，每一个工具都是一份小小的快乐。快乐不需要很复杂，一个有趣的词云，一次好奇的统计，都是生活里的找乐子时刻。把文章交给词频统计，把关键词交给词云，把快乐留给自己。愿你在每一次点击里都能找到乐趣，在每一个词语里都能发现惊喜。找乐子，让文字更好玩，让统计更有趣。'
+};
+
+const state = {
+    lastWords: null,
+    cloudWords: null,
+    placements: [],
+    totalTokens: 0,
+    hoverWord: null,
+    selectedWord: null,
+    animating: false,
+    w: 0,
+    h: 0
+};
+
+const dom = {};
+
+document.addEventListener('DOMContentLoaded', function () {
+    dom.input      = document.getElementById('articleInput');
+    dom.charCount  = document.getElementById('charCount');
+    dom.topN       = document.getElementById('topNSelect');
+    dom.mode       = document.getElementById('modeSelect');
+    dom.stopToggle = document.getElementById('stopToggle');
+    dom.analyzeBtn = document.getElementById('analyzeBtn');
+    dom.sampleBtn  = document.getElementById('sampleBtn');
+    dom.clearBtn   = document.getElementById('clearBtn');
+    dom.statusMsg  = document.getElementById('statusMsg');
+    dom.wrap       = document.getElementById('canvasWrap');
+    dom.canvas     = document.getElementById('cloudCanvas');
+    dom.tip        = document.getElementById('cloudTip');
+    dom.empty      = document.getElementById('cloudEmpty');
+    dom.rankList   = document.getElementById('rankList');
+    dom.exportBtn  = document.getElementById('exportBtn');
+    dom.overlay    = document.getElementById('overlay');
+    dom.homeLink   = document.getElementById('homeLink');
+    dom.statTotal  = document.getElementById('statTotal');
+    dom.statUnique = document.getElementById('statUnique');
+    dom.statCn     = document.getElementById('statCn');
+    dom.statTop    = document.getElementById('statTop');
+    dom.ctx        = dom.canvas.getContext('2d');
+
+    bindEvents();
+    fitCanvas();
+});
+
+function bindEvents() {
+    dom.input.addEventListener('input', updateCharCount);
+    dom.analyzeBtn.addEventListener('click', handleAnalyze);
+    dom.sampleBtn.addEventListener('click', fillSample);
+    dom.clearBtn.addEventListener('click', handleClear);
+    dom.exportBtn.addEventListener('click', exportList);
+
+    dom.canvas.addEventListener('mousemove', handleCanvasMove);
+    dom.canvas.addEventListener('mouseleave', handleCanvasLeave);
+    dom.canvas.addEventListener('click', handleCanvasClick);
+
+    dom.homeLink.addEventListener('click', goHome);
+
+    let resizeTimer = null;
+    const ro = new ResizeObserver(function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            fitCanvas();
+            if (state.cloudWords) {
+                layoutCloud(state.cloudWords);
+                staticDraw();
+            }
+        }, 150);
+    });
+    ro.observe(dom.wrap);
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && dom.overlay.classList.contains('active')) {
+            dom.overlay.classList.remove('active');
+            isTransitioning = false;
+        }
+    });
+}
+
+let isTransitioning = false;
+
+function goHome(e) {
+    e.preventDefault();
+    if (isTransitioning) return;
+    isTransitioning = true;
+
+    dom.overlay.classList.add('active');
+
+    setTimeout(function () {
+        window.location.href = 'index.html';
+    }, 1000);
+}
+
+function updateCharCount() {
+    dom.charCount.textContent = '已输入 ' + dom.input.value.length + ' 字';
+}
+
+function fillSample() {
+    dom.input.value = CONFIG.sampleText;
+    updateCharCount();
+    setStatus('已填入示例文章，点击「开始分析」试试吧', '');
+    dom.input.classList.remove('shake');
+}
+
+function handleClear() {
+    dom.input.value = '';
+    updateCharCount();
+    state.lastWords = null;
+    state.cloudWords = null;
+    state.placements = [];
+    state.totalTokens = 0;
+    state.hoverWord = null;
+    state.selectedWord = null;
+
+    dom.ctx.clearRect(0, 0, state.w, state.h);
+    dom.empty.classList.remove('hidden');
+    dom.rankList.innerHTML = '<div class="rank-empty">分析完成后，这里会展示词语频率排行</div>';
+    dom.statTotal.textContent = '—';
+    dom.statUnique.textContent = '—';
+    dom.statCn.textContent = '—';
+    dom.statTop.textContent = '—';
+    setStatus('已清空，等待输入，随时开始～', '');
+}
+
+function handleAnalyze() {
+    let text = dom.input.value.trim();
+
+    if (!text) {
+        dom.input.classList.remove('shake');
+        void dom.input.offsetWidth;
+        dom.input.classList.add('shake');
+        setStatus('请先输入或粘贴一篇文章哦', 'err');
+        return;
+    }
+
+    let truncated = false;
+    if (text.length > CONFIG.maxInputLen) {
+        text = text.slice(0, CONFIG.maxInputLen);
+        truncated = true;
+    }
+
+    const opts = {
+        topN: parseInt(dom.topN.value, 10),
+        mode: dom.mode.value,
+        filter: dom.stopToggle.checked
+    };
+
+    dom.analyzeBtn.disabled = true;
+    setStatus('正在统计词频…', '');
+
+    setTimeout(function () {
+        try {
+            const result = tokenize(text, opts);
+            if (!result.list.length) {
+                setStatus('未统计到有效词语，换段文本试试', 'err');
+                return;
+            }
+
+            state.lastWords = result.list;
+            state.totalTokens = result.totalTokens;
+            state.cloudWords = result.list.slice(0, opts.topN);
+            state.selectedWord = null;
+            state.hoverWord = null;
+
+            dom.empty.classList.add('hidden');
+            layoutCloud(state.cloudWords);
+            animateCloud();
+            renderRankList(result.list);
+            updateStats(result);
+
+            let msg = '分析完成：共 ' + result.totalTokens + ' 个词次，词云展示前 ' +
+                state.cloudWords.length + ' 个词';
+            if (truncated) msg += '（文本较长，已截取前 ' + CONFIG.maxInputLen + ' 字）';
+            setStatus(msg, 'ok');
+        } finally {
+            dom.analyzeBtn.disabled = false;
+        }
+    }, 260);
+}
+
+function setStatus(msg, type) {
+    dom.statusMsg.textContent = msg;
+    dom.statusMsg.className = 'status-msg' + (type ? ' ' + type : '');
+}
+
+/* ================================================================
+ * SECTION: token 分词与词频统计
+ * ================================================================ */
+function isStopBigram(bi) {
+    return CONFIG.stopWords.has(bi) ||
+        (CONFIG.stopChars.has(bi[0]) && CONFIG.stopChars.has(bi[1]));
+}
+
+function isStopTrigram(tri) {
+    return CONFIG.stopChars.has(tri[0]) &&
+        CONFIG.stopChars.has(tri[1]) &&
+        CONFIG.stopChars.has(tri[2]);
+}
+
+function tokenize(text, opts) {
+    const freq = new Map();
+    let totalTokens = 0;
+    let cnChars = 0;
+
+    function add(w) {
+        freq.set(w, (freq.get(w) || 0) + 1);
+        totalTokens++;
+    }
+
+    const cnRuns = text.match(/[\u4e00-\u9fff]+/g) || [];
+    const grams = opts.mode === 'rich' ? [2, 3] : [2];
+
+    for (const run of cnRuns) {
+        cnChars += run.length;
+        for (const n of grams) {
+            if (run.length < n) continue;
+            for (let i = 0; i + n <= run.length; i++) {
+                const g = run.slice(i, i + n);
+                if (opts.filter) {
+                    if (n === 2 && isStopBigram(g)) continue;
+                    if (n === 3 && isStopTrigram(g)) continue;
+                }
+                add(g);
+            }
+        }
+    }
+
+    const enWords = text.match(/[A-Za-z]+(?:['-][A-Za-z]+)*/g) || [];
+    for (let w of enWords) {
+        w = w.toLowerCase();
+        if (w.length < 2) continue;
+        if (opts.filter && CONFIG.enStop.has(w)) continue;
+        add(w);
+    }
+
+    const list = [];
+    for (const [word, count] of freq) {
+        list.push({ word: word, count: count });
+    }
+    list.sort(function (a, b) {
+        if (b.count !== a.count) return b.count - a.count;
+        if (a.word.length !== b.word.length) return a.word.length - b.word.length;
+        return a.word.localeCompare(b.word, 'zh-CN');
+    });
+
+    return {
+        list: list,
+        totalTokens: totalTokens,
+        cnChars: cnChars,
+        uniqueCount: freq.size
+    };
+}
+
+/* ================================================================
+ * SECTION: cloud-layout 词云螺旋布局
+ * ================================================================ */
+function fitCanvas() {
+    const rect = dom.wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    state.w = Math.max(60, rect.width);
+    state.h = Math.max(60, rect.height);
+    dom.canvas.width = state.w * dpr;
+    dom.canvas.height = state.h * dpr;
+    dom.canvas.style.width = state.w + 'px';
+    dom.canvas.style.height = state.h + 'px';
+    dom.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function fontStr(size) {
+    return '700 ' + size + 'px "Microsoft YaHei", "PingFang SC", sans-serif';
+}
+
+function layoutCloud(words) {
+    const w = state.w, h = state.h;
+    const cx = w / 2, cy = h / 2;
+    const ctx = dom.ctx;
+
+    const placed = [];
+    const CELL = 48;
+    const gridIndex = new Map();
+
+    function cellRange(b) {
+        return {
+            x0: Math.floor(b.x / CELL),
+            x1: Math.floor((b.x + b.w) / CELL),
+            y0: Math.floor(b.y / CELL),
+            y1: Math.floor((b.y + b.h) / CELL)
+        };
+    }
+
+    function collides(box) {
+        const r = cellRange(box);
+        for (let gx = r.x0; gx <= r.x1; gx++) {
+            for (let gy = r.y0; gy <= r.y1; gy++) {
+                const arr = gridIndex.get(gx + '_' + gy);
+                if (!arr) continue;
+                for (const idx of arr) {
+                    const p = placed[idx].box;
+                    if (box.x < p.x + p.w + 2 && box.x + box.w + 2 > p.x &&
+                        box.y < p.y + p.h + 2 && box.y + box.h + 2 > p.y) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    function register(index) {
+        const r = cellRange(placed[index].box);
+        for (let gx = r.x0; gx <= r.x1; gx++) {
+            for (let gy = r.y0; gy <= r.y1; gy++) {
+                const key = gx + '_' + gy;
+                if (!gridIndex.has(key)) gridIndex.set(key, []);
+                gridIndex.get(key).push(index);
+            }
+        }
+    }
+
+    function inBounds(box) {
+        return box.x >= 4 && box.y >= 4 &&
+            box.x + box.w <= w - 4 && box.y + box.h <= h - 4;
+    }
+
+    const maxFreq = words[0].count;
+    const maxFont = Math.max(30, Math.min(62, w / 16));
+    const minFont = 13;
+
+    words.forEach(function (item, i) {
+        let size = minFont + (maxFont - minFont) * Math.pow(item.count / maxFreq, 0.65);
+        const vertical = Math.random() < 0.22;
+        const color = CONFIG.colors[i % CONFIG.colors.length];
+        const startAngle = i * 2.399963;
+
+        for (let shrink = 0; shrink < 2; shrink++) {
+            ctx.font = fontStr(size);
+            const tw = ctx.measureText(item.word).width;
+            let bw = tw + 8;
+            let bh = size * 1.2 + 6;
+            if (vertical) { const t = bw; bw = bh; bh = t; }
+
+            let ok = false;
+            const maxT = shrink === 0 ? 900 : 400;
+            for (let t = 0; t < maxT; t++) {
+                const ang = startAngle + t * 0.33;
+                const r = 2.1 * ang;
+                const x = cx + r * Math.cos(ang) * 1.16;
+                const y = cy + r * Math.sin(ang) * 0.76;
+                const box = { x: x - bw / 2, y: y - bh / 2, w: bw, h: bh };
+                if (inBounds(box) && !collides(box)) {
+                    placed.push({
+                        word: item.word,
+                        count: item.count,
+                        size: size,
+                        color: color,
+                        x: x,
+                        y: y,
+                        box: box,
+                        vertical: vertical,
+                        spawn: i * 26
+                    });
+                    register(placed.length - 1);
+                    ok = true;
+                    break;
+                }
+            }
+            if (ok) break;
+            size = Math.max(11, size * 0.85);
+        }
+    });
+
+    state.placements = placed;
+}
+
+function drawWord(p, alpha, hot) {
+    const ctx = dom.ctx;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    if (p.vertical) ctx.rotate(-Math.PI / 2);
+    ctx.globalAlpha = alpha;
+    ctx.font = fontStr(p.size);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    if (hot) {
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 18;
+    }
+
+    ctx.fillStyle = p.color;
+    ctx.fillText(p.word, 0, 0);
+
+    if (hot) {
+        ctx.shadowBlur = 0;
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(42, 45, 74, .8)';
+        ctx.strokeText(p.word, 0, 0);
+    }
+    ctx.restore();
+}
+
+function animateCloud() {
+    if (state.animating) return;
+    state.animating = true;
+    let start = null;
+
+    function frame(ts) {
+        if (start === null) start = ts;
+        const elapsed = ts - start;
+        const ctx = dom.ctx;
+        ctx.clearRect(0, 0, state.w, state.h);
+
+        let done = true;
+        for (const p of state.placements) {
+            let a = (elapsed - p.spawn) / 420;
+            if (a < 1) done = false;
+            a = Math.max(0, Math.min(1, a));
+            if (a > 0) drawWord(p, a, false);
+        }
+
+        if (!done) {
+            requestAnimationFrame(frame);
+        } else {
+            state.animating = false;
+            staticDraw();
+        }
+    }
+    requestAnimationFrame(frame);
+}
+
+function staticDraw() {
+    if (state.animating) return;
+    const ctx = dom.ctx;
+    ctx.clearRect(0, 0, state.w, state.h);
+    for (const p of state.placements) {
+        const hot = p.word === state.hoverWord || p.word === state.selectedWord;
+        drawWord(p, hot ? 1 : 0.92, hot);
+    }
+}
+
+function wordAt(mx, my) {
+    for (let i = state.placements.length - 1; i >= 0; i--) {
+        const b = state.placements[i].box;
+        if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
+            return state.placements[i];
+        }
+    }
+    return null;
+}
+
+function handleCanvasMove(e) {
+    if (!state.placements.length) return;
+    const rect = dom.canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const hit = wordAt(mx, my);
+
+    if (hit) {
+        dom.canvas.style.cursor = 'pointer';
+        if (state.hoverWord !== hit.word) {
+            state.hoverWord = hit.word;
+            staticDraw();
+        }
+        const pct = state.totalTokens
+            ? (hit.count / state.totalTokens * 100).toFixed(1)
+            : '0.0';
+        dom.tip.innerHTML = '<b>' + hit.word + '</b><br>出现 ' +
+            hit.count + ' 次 · 占比 ' + pct + '%';
+        let tx = mx + 16, ty = my + 12;
+        const tw = dom.tip.offsetWidth, th = dom.tip.offsetHeight;
+        if (tx + tw > state.w - 6) tx = mx - tw - 12;
+        if (ty + th > state.h - 6) ty = my - th - 12;
+        dom.tip.style.left = tx + 'px';
+        dom.tip.style.top = ty + 'px';
+        dom.tip.classList.add('show');
+    } else {
+        if (state.hoverWord !== null) {
+            state.hoverWord = null;
+            staticDraw();
+        }
+        dom.canvas.style.cursor = 'default';
+        dom.tip.classList.remove('show');
+    }
+}
+
+function handleCanvasLeave() {
+    state.hoverWord = null;
+    dom.tip.classList.remove('show');
+    dom.canvas.style.cursor = 'default';
+    staticDraw();
+}
+
+function handleCanvasClick(e) {
+    if (!state.placements.length) return;
+    const rect = dom.canvas.getBoundingClientRect();
+    const hit = wordAt(e.clientX - rect.left, e.clientY - rect.top);
+    if (hit) {
+        selectWord(hit.word, true);
+    } else {
+        state.selectedWord = null;
+        staticDraw();
+        clearRankActive();
+    }
+}
+
+function selectWord(word, fromCloud) {
+    state.selectedWord = word;
+    staticDraw();
+
+    clearRankActive();
+    const row = dom.rankList.querySelector('.rank-row[data-word="' + cssEscape(word) + '"]');
+    if (row) {
+        row.classList.add('active');
+        row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else if (fromCloud) {
+        setStatus('「' + word + '」未进入排行榜前 ' + CONFIG.rankShowMax + ' 名', '');
+    }
+}
+
+function clearRankActive() {
+    const actives = dom.rankList.querySelectorAll('.rank-row.active');
+    actives.forEach(function (el) { el.classList.remove('active'); });
+}
+
+function cssEscape(s) {
+    return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+function renderRankList(list) {
+    const show = list.slice(0, CONFIG.rankShowMax);
+    const maxCount = show[0].count;
+    dom.rankList.innerHTML = '';
+
+    show.forEach(function (item, i) {
+        const row = document.createElement('div');
+        row.className = 'rank-row';
+        row.dataset.word = item.word;
+        row.tabIndex = 0;
+        row.setAttribute('role', 'button');
+        row.setAttribute('aria-label', '第' + (i + 1) + '名，' + item.word + '，出现' + item.count + '次');
+
+        const num = document.createElement('span');
+        num.className = 'rank-num';
+        num.textContent = i + 1;
+
+        const word = document.createElement('span');
+        word.className = 'rank-word';
+        word.textContent = item.word;
+
+        const bar = document.createElement('span');
+        bar.className = 'rank-bar';
+        const inner = document.createElement('span');
+        bar.appendChild(inner);
+
+        const count = document.createElement('span');
+        count.className = 'rank-count';
+        count.textContent = item.count + ' 次';
+
+        row.appendChild(num);
+        row.appendChild(word);
+        row.appendChild(bar);
+        row.appendChild(count);
+
+        row.addEventListener('click', function () {
+            selectWord(item.word, false);
+        });
+
+        row.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectWord(item.word, false);
+            }
+        });
+
+        dom.rankList.appendChild(row);
+
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                inner.style.width = (item.count / maxCount * 100).toFixed(1) + '%';
+            });
+        });
+    });
+}
+
+function updateStats(result) {
+    dom.statTotal.textContent = result.totalTokens;
+    dom.statUnique.textContent = result.uniqueCount;
+    dom.statCn.textContent = result.cnChars;
+    dom.statTop.textContent = result.list[0].word + ' ×' + result.list[0].count;
+}
+
+function exportList() {
+    if (!state.lastWords || !state.lastWords.length) {
+        setStatus('还没有分析结果，先分析一篇文章吧', 'err');
+        return;
+    }
+
+    const lines = ['排名,词语,频次,占比'];
+    const top = state.lastWords.slice(0, CONFIG.exportMax);
+    top.forEach(function (item, i) {
+        const pct = state.totalTokens
+            ? (item.count / state.totalTokens * 100).toFixed(2) + '%'
+            : '0%';
+        lines.push((i + 1) + ',' + item.word + ',' + item.count + ',' + pct);
+    });
+
+    const blob = new Blob(['\uFEFF' + lines.join('\r\n')], {
+        type: 'text/plain;charset=utf-8'
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '词频统计结果.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 800);
+
+    setStatus('词表已导出（前 ' + top.length + ' 个词）', 'ok');
+}
+</script>
+</body>
+</html>

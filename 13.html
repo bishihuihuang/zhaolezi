@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日期计算器 - 找乐子</title>
+    <style>
+        /* ========== 全局重置（采用index.html风格） ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            overflow-x: hidden;
+        }
+
+        /* ========== 背景流光（20秒无缝循环，与index.html完全一致） ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -150%;
+            left: -100%;
+            width: 350%;
+            height: 350%;
+            background: linear-gradient(125deg, #0a0e27, #1c1458, #32227a, #1a0f3e, #241a5e, #0e1233, #1d1652);
+            background-size: 400% 400%;
+            animation: flowGrad 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -80%;
+            left: -60%;
+            width: 260%;
+            height: 260%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), 
+                        radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%);
+            animation: flowSpin 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGrad {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(5%, -3%) scale(1.08) rotate(6deg); }
+            100% { transform: translate(-2%, 4%) scale(.94) rotate(-6deg); }
+        }
+        @keyframes flowSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.06); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* ========== 悬浮球（与index.html完全一致） ========== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), rgba(255,255,255,.12) 45%, transparent 75%);
+            box-shadow: 0 0 60px rgba(255,255,255,.1), inset 0 0 30px rgba(255,255,255,.05);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 { width: 260px; height: 260px; top: 10%; left: 5%; animation: orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 78%; animation: orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 70%; left: 18%; animation: orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite; }
+        .orb-4 { width: 200px; height: 200px; top: 28%; left: 62%; animation: orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 82%; left: 45%; animation: orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite; }
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0,0); opacity:.5; }
+            30% { transform: translate(20px,-25px); opacity:.8; }
+            60% { transform: translate(-12px,15px); opacity:.4; }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0,0); opacity:.6; }
+            50% { transform: translate(-18px,14px); opacity:.3; }
+        }
+        @keyframes orbRotate { to { transform: rotate(360deg); } }
+
+        /* ========== 主体容器（采用index.html的大长方形样式） ========== */
+        main {
+            padding-top: 20px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background: rgba(245, 247, 255, .97);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px rgba(255, 255, 255, .3);
+            padding: 24px;
+            backdrop-filter: blur(4px);
+            margin-top: 30px;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        /* ========== 网格布局（6列8行） ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 14px;
+            padding: 8px;
+        }
+
+        /* 通用格子样式 */
+        .cell {
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            transition: transform .3s, box-shadow .3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+            border: 3px solid transparent;
+        }
+        .cell:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 0 20px rgba(255, 255, 255, .15);
+        }
+
+        /* ===== 标题区（1-2行，1-4列） ===== */
+        .title-area {
+            grid-row: 1 / 3;
+            grid-column: 1 / 5;
+            background: linear-gradient(135deg, #1a1a4e, #2d1b69, #1a1a4e);
+            border-color: #f6d365;
+            cursor: default;
+        }
+        .title-area h1 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            background: linear-gradient(90deg, #f6d365, #fff, #a78bfa, #f6d365);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+        @keyframes titleShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ===== 返回主页（1-2行，5-6列） ===== */
+        .back-area {
+            grid-row: 1 / 3;
+            grid-column: 5 / 7;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: #fff;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 3px;
+            text-decoration: none;
+            border-color: #a78bfa;
+            cursor: pointer;
+        }
+        .back-area:hover {
+            background: linear-gradient(135deg, #2b4a9e, #4b8ef6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+        }
+
+        /* ===== 计算器主体区（第3-8行，全部6列） ===== */
+        .calculator-body {
+            grid-row: 3 / 9;
+            grid-column: 1 / 7;
+            background: rgba(255, 255, 255, .95);
+            border-radius: 14px;
+            border: 3px solid #81c784;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+        /* 左侧输入区 */
+        .input-panel {
+            flex: 1 1 45%;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+        }
+        .input-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #5a5a72;
+            letter-spacing: 0.5px;
+        }
+        .date-input,
+        .number-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid #e8e0f0;
+            background: #fafafc;
+            font-size: 15px;
+            color: #1a1a2e;
+            outline: none;
+            transition: all .3s ease;
+        }
+        .date-input:focus,
+        .number-input:focus {
+            border-color: #be2edd;
+            box-shadow: 0 0 0 4px rgba(190, 46, 221, 0.12);
+        }
+        .date-input::-webkit-calendar-picker-indicator { cursor: pointer; }
+        .number-input::-webkit-inner-spin-button,
+        .number-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .capsule-btn {
+            padding: 10px 16px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            transition: all .28s ease;
+            flex: 1 1 auto;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            min-height: 44px; /* 修复：确保触摸目标 ≥44px */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .capsule-btn:hover { transform: translateY(-2px); }
+        .capsule-btn:active { transform: scale(0.96); }
+        .btn-blue { background: linear-gradient(145deg, #4a6cf7, #3b5ce0); }
+        .btn-green { background: linear-gradient(145deg, #10b981, #0d9668); }
+        .btn-purple { background: linear-gradient(145deg, #8b5cf6, #7c3aed); }
+
+        /* 右侧输出区 */
+        .output-panel {
+            flex: 1 1 45%;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(160deg, #fdf8fe, #f8f2fc);
+            border-radius: 18px;
+            padding: 20px;
+            border: 2px solid rgba(224, 86, 253, 0.1);
+        }
+        .output-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #5a5a72;
+            letter-spacing: 1.5px;
+        }
+        .result-display {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+            word-break: break-all;
+            text-align: center;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: #fff;
+            border: 2px solid #e8e0f0;
+            min-height: 60px;
+            line-height: 1.6;
+            user-select: text;
+        }
+        .result-display.placeholder {
+            color: #b0a8c0;
+            font-weight: 500;
+        }
+        .result-display.highlight {
+            border-color: #d4b8e0;
+            box-shadow: 0 0 20px rgba(224, 86, 253, 0.12);
+        }
+
+        /* ========== 转场覆盖层（index.html通用样式） ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 16px; }
+            .calculator-body { flex-direction: column; }
+            .title-area h1 { font-size: 28px; }
+            .back-area { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景流光层 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 主体 -->
+    <main>
+        <div class="container">
+            <div class="grid">
+                <!-- 标题区 -->
+                <div class="cell title-area">
+                    <h1>日期计算器</h1>
+                </div>
+                <!-- 返回主页 -->
+                <a href="index.html" class="cell back-area" id="backHome">返回<br>主页</a>
+                
+                <!-- 计算器主体 -->
+                <div class="calculator-body">
+                    <!-- 左侧输入面板 -->
+                    <div class="input-panel">
+                        <label class="input-label" for="dateStart">起始日期</label>
+                        <input type="date" id="dateStart" class="date-input" aria-label="起始日期">
+                        <label class="input-label" for="dateEnd">结束日期</label>
+                        <input type="date" id="dateEnd" class="date-input" aria-label="结束日期">
+                        <label class="input-label" for="daysInput">推算天数（可正负）</label>
+                        <input type="number" id="daysInput" class="number-input" placeholder="输入天数" step="1" aria-label="推算天数">
+                        <div class="button-row">
+                            <button class="capsule-btn btn-blue" id="diffBtn">📅 相差天数</button>
+                            <button class="capsule-btn btn-green" id="targetBtn">🎯 目标日期</button>
+                            <button class="capsule-btn btn-purple" id="timestampBtn">⏰ 时间戳</button>
+                        </div>
+                    </div>
+                    <!-- 右侧输出面板 -->
+                    <div class="output-panel">
+                        <div class="output-label">计算结果</div>
+                        <div class="result-display placeholder" id="resultDisplay">请选择日期后点击按钮</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 转场遮罩 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+            const dateStart = document.getElementById('dateStart');
+            const dateEnd = document.getElementById('dateEnd');
+            const daysInput = document.getElementById('daysInput');
+            const diffBtn = document.getElementById('diffBtn');
+            const targetBtn = document.getElementById('targetBtn');
+            const timestampBtn = document.getElementById('timestampBtn');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const backHome = document.getElementById('backHome');
+            const overlay = document.getElementById('overlay');
+            let transitionTimer = null;
+
+            // 解析日期字符串为本地日期
+            function parseDate(str) {
+                if (!str) return null;
+                const parts = str.split('-');
+                if (parts.length !== 3) return null;
+                return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            }
+
+            // 格式化日期
+            function formatDate(date) {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                return y + '-' + m + '-' + d;
+            }
+
+            // 设置结果
+            function setResult(text, placeholder = false) {
+                resultDisplay.textContent = text;
+                resultDisplay.classList.toggle('placeholder', placeholder);
+                if (!placeholder) {
+                    resultDisplay.classList.add('highlight');
+                } else {
+                    resultDisplay.classList.remove('highlight');
+                }
+            }
+
+            // 功能1：计算相差天数
+            function calcDiff() {
+                const start = parseDate(dateStart.value);
+                const end = parseDate(dateEnd.value);
+                if (!start || !end) {
+                    setResult('请先选择起始和结束日期', true);
+                    return;
+                }
+                const diff = Math.floor((end.getTime() - start.getTime()) / 86400000);
+                const abs = Math.abs(diff);
+                const dir = diff >= 0 ? '之后' : '之前';
+                setResult(`相差 ${abs} 天\n（结束日期在起始日期${dir}）`);
+            }
+
+            // 功能2：推算目标日期
+            function calcTarget() {
+                const base = parseDate(dateStart.value);
+                const days = parseInt(daysInput.value, 10);
+                if (!base) {
+                    setResult('请先选择起始日期', true);
+                    return;
+                }
+                if (isNaN(days)) {
+                    setResult('请输入推算天数（可正可负）', true);
+                    return;
+                }
+                const target = new Date(base.getTime() + days * 86400000);
+                setResult(`目标日期：${formatDate(target)}\n（${base.getFullYear()}年${base.getMonth()+1}月${base.getDate()}日 ${days >= 0 ? '+' : ''}${days} 天）`);
+            }
+
+            // 功能3：时间戳转换
+            function convertTs() {
+                const ts = daysInput.value.trim();
+                if (!ts) {
+                    setResult('请在推算天数输入框中输入时间戳（毫秒）', true);
+                    return;
+                }
+                const num = Number(ts);
+                if (isNaN(num)) {
+                    setResult('请输入有效的数字时间戳', true);
+                    return;
+                }
+                const date = new Date(num);
+                if (isNaN(date.getTime())) {
+                    setResult('无效的时间戳', true);
+                    return;
+                }
+                setResult(date.toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
+            }
+
+            // 返回主页转场（index.html通用）
+            function goHome() {
+                if (overlay.classList.contains('active')) return;
+                overlay.classList.add('active');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+
+            // 绑定事件
+            diffBtn.addEventListener('click', calcDiff);
+            targetBtn.addEventListener('click', calcTarget);
+            timestampBtn.addEventListener('click', convertTs);
+            backHome.addEventListener('click', function(e) {
+                e.preventDefault();
+                goHome();
+            });
+
+            // 初始化日期为今天
+            const today = new Date();
+            const todayStr = formatDate(today);
+            dateStart.value = todayStr;
+            dateEnd.value = todayStr;
+            daysInput.value = '';
+
+            // 键盘支持ESC返回
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    goHome();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
