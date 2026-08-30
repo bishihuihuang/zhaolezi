@@ -47,10 +47,10 @@ const ANTI_CHEAT_CODE = `
         _0x1.addEventListener('DOMNodeInserted',function(){setTimeout(_0xBlockNative,100);});
     }
     
-    // 创建自定义右键菜单（v5：黑色主题，flex布局上下对齐）
+    // 创建自定义右键菜单（v6：黑色主题，与Firefox原生菜单大小完全一致，上下对齐）
     var _0x3=_0x1.createElement('div');
-    _0x3.style.cssText='position:fixed;z-index:2147483647;background:#1e1e1e;border:1px solid #3a3a3a;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);padding:6px 0;min-width:220px;display:none;font-family:"Microsoft YaHei","Segoe UI",sans-serif;font-size:14px;user-select:none;';
-    _0x3.innerHTML='<div data-a="paste" style="display:flex;justify-content:space-between;align-items:center;padding:8px 20px;cursor:pointer;color:#fff;line-height:1.4;">粘贴<span style="color:#888;font-size:12px;margin-left:30px;">Ctrl+V</span></div><div data-a="cut" style="display:flex;justify-content:space-between;align-items:center;padding:8px 20px;cursor:pointer;color:#fff;line-height:1.4;">剪切<span style="color:#888;font-size:12px;margin-left:30px;">Ctrl+X</span></div><div data-a="copy" style="display:flex;justify-content:space-between;align-items:center;padding:8px 20px;cursor:pointer;color:#fff;line-height:1.4;">复制<span style="color:#888;font-size:12px;margin-left:30px;">Ctrl+C</span></div><div data-a="refresh" style="display:flex;justify-content:space-between;align-items:center;padding:8px 20px;cursor:pointer;color:#fff;line-height:1.4;">刷新<span style="color:#888;font-size:12px;margin-left:30px;">F5</span></div>';
+    _0x3.style.cssText='position:fixed;z-index:2147483647;background:#1e1e1e;border:1px solid #3a3a3a;border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,.5);padding:4px 0;min-width:200px;display:none;font-family:"Microsoft YaHei","Segoe UI",sans-serif;font-size:13px;user-select:none;';
+    _0x3.innerHTML='<div data-a="paste" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">粘贴<span style="color:#888;font-size:12px;">Ctrl+P</span></div><div data-a="cut" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">剪切<span style="color:#888;font-size:12px;">Ctrl+X</span></div><div data-a="copy" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">复制<span style="color:#888;font-size:12px;">Ctrl+C</span></div><div data-a="refresh" style="display:flex;justify-content:space-between;align-items:center;height:28px;padding:0 20px;cursor:pointer;color:#fff;line-height:28px;">刷新<span style="color:#888;font-size:12px;">F5</span></div>';
     _0x1.body.appendChild(_0x3);
     // 菜单项hover（黑色主题深灰色背景）
     _0x3.addEventListener('mouseover',function(e){if(e.target.getAttribute('data-a')||e.target.closest('[data-a]')){var t=e.target.closest('[data-a]');if(t)t.style.background='#3a3a3a';}});
@@ -152,14 +152,27 @@ const ANTI_CHEAT_CODE = `
             if(txt){_0x4(txt);}
         }else if(a==='paste'){
             if(isInput||isEditable){
+                // 确保输入框获得焦点
                 el.focus();
-                // 优先使用右键时预读取的缓存（同步，立即生效）
-                if(_0x6){
+                // 方法1：优先使用浏览器原生execCommand('paste')（最可靠，直接调用系统粘贴）
+                var pasted=false;
+                try{
+                    pasted=_0x1.execCommand('paste');
+                }catch(err){pasted=false;}
+                // 方法2：如果execCommand失败，使用右键时预读取的缓存（同步，立即生效）
+                if(!pasted&&_0x6){
                     _0x7(el,_0x6);
-                }else{
-                    // 缓存为空，实时读取（异步）
+                    pasted=true;
+                }
+                // 方法3：如果缓存也为空，实时读取剪贴板（异步）
+                if(!pasted){
                     if(navigator.clipboard&&navigator.clipboard.readText){
-                        navigator.clipboard.readText().then(function(txt){_0x7(el,txt);}).catch(function(){try{_0x1.execCommand('paste');}catch(err){}});
+                        navigator.clipboard.readText().then(function(txt){
+                            if(txt){_0x7(el,txt);}
+                        }).catch(function(){
+                            // 最后回退：再次尝试execCommand
+                            try{_0x1.execCommand('paste');}catch(e){}
+                        });
                     }else{
                         try{_0x1.execCommand('paste');}catch(err){}
                     }
