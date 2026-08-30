@@ -645,37 +645,143 @@
             }
         }
 
-        /* ========== 新增：响应式适配（不影响原有设计） ========== */
-        @media (max-width: 768px) {
+        /* ========== 响应式适配：平板端（3列） ========== */
+        @media (max-width: 1024px) {
             .container {
-                width: 95%;
-                padding: 12px;
+                width: 92%;
+                padding: 14px;
+            }
+            .grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+            .title-area {
+                grid-column: 1 / -1;
+                grid-row: auto;
+                min-height: 120px;
             }
             .title-area h2 {
-                font-size: 28px;
+                font-size: 32px;
                 letter-spacing: 3px;
             }
+        }
+
+        /* ========== 响应式适配：手机大屏（3列） ========== */
+        @media (max-width: 768px) {
+            header {
+                padding: 14px 16px;
+            }
+            header h1 {
+                font-size: 20px;
+                letter-spacing: 2px;
+            }
+            main {
+                padding-top: 80px;
+            }
+            .container {
+                width: 94%;
+                max-width: 100%;
+                padding: 12px;
+                max-height: none;
+                border-radius: 18px;
+            }
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                padding: 4px;
+            }
+            .title-area {
+                grid-column: 1 / -1;
+                grid-row: auto;
+                min-height: 100px;
+                border-radius: 16px;
+            }
+            .title-area h2 {
+                font-size: 26px;
+                letter-spacing: 2px;
+            }
             .tool-box {
-                min-height: 80px;
+                min-height: 96px;
+                height: auto;
                 padding: 10px 6px;
+                border-radius: 12px;
             }
             .tool-box .tool-icon {
-                font-size: 20px;
+                font-size: 22px;
+                margin-bottom: 4px;
             }
             .tool-box .tool-title {
                 font-size: 12px;
+                line-height: 1.35;
+                min-height: auto;
+                letter-spacing: 0.5px;
+            }
+            .tool-box .tooltip {
+                display: none;
+            }
+        }
+
+        /* ========== 响应式适配：手机小屏（2列） ========== */
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 18px;
+                letter-spacing: 1px;
+            }
+            .container {
+                width: 96%;
+                padding: 10px;
             }
             .grid {
+                grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
             }
-            /* 在网格回退时，小屏改为单列 */
-            @supports not (display: grid) {
+            .title-area {
+                min-height: 90px;
+            }
+            .title-area h2 {
+                font-size: 22px;
+                letter-spacing: 1px;
+            }
+            .tool-box {
+                min-height: 100px;
+                padding: 12px 8px;
+            }
+            .tool-box .tool-icon {
+                font-size: 24px;
+            }
+            .tool-box .tool-title {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+        }
+
+        /* ========== 网格回退：不支持grid的旧浏览器 ========== */
+        @supports not (display: grid) {
+            .grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .title-area {
+                flex: 1 1 100%;
+                min-height: 100px;
+            }
+            .tool-box {
+                flex: 1 1 calc(16.66% - 12px);
+                min-width: 120px;
+            }
+            @media (max-width: 768px) {
                 .grid {
-                    display: flex;
-                    flex-direction: column;
+                    flex-direction: row;
                 }
                 .tool-box {
-                    flex: 1 1 100%;
+                    flex: 1 1 calc(33.33% - 8px);
+                    min-width: 0;
+                }
+            }
+            @media (max-width: 480px) {
+                .tool-box {
+                    flex: 1 1 calc(50% - 8px);
                 }
             }
         }
