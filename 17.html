@@ -292,13 +292,15 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
-            visibility: hidden;
-            transition: opacity .4s, visibility .4s;
+            -webkit-opacity: 0;
+            -webkit-transition: opacity .4s ease;
+            transition: opacity .4s ease;
             pointer-events: none;
+            will-change: opacity;
         }
         .transition-overlay.active {
             opacity: 1;
-            visibility: visible;
+            -webkit-opacity: 1;
             pointer-events: auto;
         }
         .transition-overlay .gold-ring {
@@ -10539,6 +10541,7 @@
         backHome.addEventListener('click', function(e) {
             e.preventDefault();
             transitionOverlay.classList.add('active');
+            void transitionOverlay.offsetWidth;
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 1500);
