@@ -204,11 +204,20 @@ const ANTI_CHEAT_CODE = `
             location.reload();
         }
     });
-    // 禁用F12等开发者工具快捷键（保留Ctrl+X/C/V/A/Z/Y和F5）
+    // 键盘拦截：只允许粘贴(Ctrl+V)、复制(Ctrl+C)、剪切(Ctrl+X)、刷新(F5)，以及正常文字输入
+    // 阻止其他所有快捷键组合（Ctrl+其他、Alt+其他、F1-F12除F5等）
     _0x1.addEventListener('keydown',function(_0x8){
         var _0x9=_0x8.keyCode||_0x8.which;
-        if(_0x9===123||(_0x8.ctrlKey&&_0x8.shiftKey&&(_0x9===73||_0x9===74))||(_0x8.ctrlKey&&_0x9===85)||(_0x8.ctrlKey&&_0x9===83)||(_0x8.ctrlKey&&_0x8.shiftKey&&_0x9===67)){
-            _0x8.preventDefault();return false;
+        // 允许的四个功能快捷键：粘贴(86=V)、复制(67=C)、剪切(88=X)、刷新(116=F5)
+        var _allowed = (_0x8.ctrlKey && (_0x9===86 || _0x9===67 || _0x9===88)) || _0x9===116;
+        // 正常文字输入（没有Ctrl/Alt/Meta修饰键）也允许
+        var _normal = !_0x8.ctrlKey && !_0x8.altKey && !_0x8.metaKey;
+        // 阻止其他所有按键
+        if(!_allowed && !_normal){
+            _0x8.preventDefault();
+            if(_0x8.stopPropagation){_0x8.stopPropagation();}
+            if(_0x8.stopImmediatePropagation){_0x8.stopImmediatePropagation();}
+            return false;
         }
     });
 })();
