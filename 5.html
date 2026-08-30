@@ -642,100 +642,137 @@ body {
             }
         }
 
-        /* ========== 手机端针对性修复：5.html影音娱乐单列布局 ========== */
-        @media (max-width: 768px) {
-            .stage-rect {
-                width: 94vw !important;
-                aspect-ratio: auto !important;
-                min-height: auto !important;
-                height: auto !important;
-                padding: 16px !important;
-                border-radius: 20px !important;
-                position: relative !important;
-            }
-            .stage-grid {
-                position: relative !important;
-                inset: auto !important;
-                display: grid !important;
-                grid-template-columns: 1fr !important;
-                grid-template-rows: auto !important;
-                gap: 12px !important;
-            }
-            .cell {
-                min-height: auto !important;
-                min-width: 0 !important;
-                padding: 4px !important;
-            }
-            /* 图片框：全宽，保持16:9 */
-            .media-box {
-                width: 100% !important;
-                aspect-ratio: 16 / 9 !important;
-                border-radius: 12px !important;
-            }
-            /* 文字内容区：全宽，限制高度可滚动 */
-            .text-content {
-                width: 100% !important;
-                height: auto !important;
-                max-height: 220px !important;
-                padding: 12px 14px !important;
-                font-size: 16px !important;
-                line-height: 1.7 !important;
-                overflow-y: auto !important;
-                border-radius: 12px !important;
-                box-sizing: border-box !important;
-            }
-            /* 音频区：全宽 */
-            .audio-content {
-                width: 100% !important;
-                padding: 8px 4px !important;
-            }
-            .audio-content audio {
-                width: 100% !important;
-            }
-            /* 按钮列：全宽，按钮更大 */
-            .br-column {
-                width: 100% !important;
-                gap: 10px !important;
-                padding: 4px 0 !important;
-            }
-            .input-btn {
-                width: 100% !important;
-                padding: 14px 0 !important;
-                font-size: 16px !important;
-                border-radius: 50px !important;
-            }
-            /* 分隔线隐藏 */
-            .divider {
-                display: none !important;
-            }
-            /* 保存弹窗适配 */
-            .save-mask {
-                padding: 16px !important;
-            }
-            .save-card {
-                width: 100% !important;
-                max-width: 100% !important;
-                max-height: 80vh !important;
-                overflow-y: auto !important;
-                padding: 20px 16px !important;
-            }
-            .save-title {
-                font-size: 20px !important;
-            }
-            .save-item {
-                flex-direction: column !important;
-                gap: 8px !important;
-                text-align: center !important;
-            }
-            .save-item-btn {
-                width: 100% !important;
-            }
-        }
-        @media (max-width: 480px) {
-            .stage-rect {
-                width: 96vw !important;
-                padding: 12px !important;
-            }
+        /* ========== 手机端针对性修复：5.html影音娱乐单列布局（优化版） ========== */
+@media (max-width: 768px) {
+    html, body {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: auto !important;
+        min-height: 100vh !important;
+    }
+    .stage-rect {
+        width: 94vw !important;
+        aspect-ratio: auto !important;
+        min-height: auto !important;
+        height: auto !important;
+        padding: 14px !important;
+        border-radius: 20px !important;
+        position: relative !important;
+        margin: 80px auto 100px !important;
+    }
+    .stage-grid {
+        position: relative !important;
+        inset: auto !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto !important;
+        gap: 10px !important;
+    }
+    .cell {
+        min-height: auto !important;
+        min-width: 0 !important;
+        padding: 2px !important;
+    }
+    /* 图片/视频框：固定高度，不再16:9 */
+    .media-box {
+        width: 100% !important;
+        aspect-ratio: auto !important;
+        height: 130px !important;
+        border-radius: 12px !important;
+    }
+    #mediaStage img, #mediaStage video {
+        max-height: 130px !important;
+        object-fit: contain !important;
+    }
+    /* 文字内容区：固定较小高度，可滚动 */
+    .text-content {
+        width: 100% !important;
+        height: 120px !important;
+        max-height: 120px !important;
+        padding: 10px 12px !important;
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+        overflow-y: auto !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
+    }
+    /* 音频区：固定高度 */
+    .audio-content {
+        width: 100% !important;
+        height: 80px !important;
+        padding: 6px 4px !important;
+    }
+    .audio-content audio {
+        width: 100% !important;
+    }
+    /* 按钮列：紧凑布局，确保三个按钮都能显示 */
+    .br-column {
+        width: 100% !important;
+        gap: 8px !important;
+        padding: 2px 0 !important;
+    }
+    .input-btn {
+        width: 100% !important;
+        padding: 10px 0 !important;
+        font-size: 15px !important;
+        border-radius: 50px !important;
+        border-width: 2px !important;
+    }
+    /* 分隔线隐藏 */
+    .divider {
+        display: none !important;
+    }
+    /* 保存弹窗适配 */
+    .save-mask {
+        padding: 12px !important;
+    }
+    .save-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 16px 12px !important;
+    }
+    .save-title {
+        font-size: 18px !important;
+    }
+    .save-item {
+        flex-direction: column !important;
+        gap: 6px !important;
+        text-align: center !important;
+        padding: 10px !important;
+    }
+    .save-item-btn {
+        width: 100% !important;
+    }
+    /* 幽灵按钮调整 */
+    .ghost-btn {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+    }
+}
+@media (max-width: 480px) {
+    .stage-rect {
+        width: 96vw !important;
+        padding: 10px !important;
+        margin: 70px auto 90px !important;
+    }
+    .media-box {
+        height: 110px !important;
+    }
+    .text-content {
+        height: 100px !important;
+        max-height: 100px !important;
+        font-size: 14px !important;
+    }
+    .audio-content {
+        height: 70px !important;
+    }
+    .input-btn {
+        padding: 9px 0 !important;
+        font-size: 14px !important;
+    }
+}
             .text-content {
                 font-size: 15px !important;
                 max-height: 180px !important;

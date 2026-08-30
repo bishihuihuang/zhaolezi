@@ -952,6 +952,138 @@ body {
                 padding: 8px 12px !important;
             }
         }
+
+        /* ========== 手机端针对性修复：8.html背包管理单列布局 ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                height: auto !important;
+                min-height: 100vh !important;
+            }
+            .stage-rect {
+                width: 94vw !important;
+                aspect-ratio: auto !important;
+                min-height: auto !important;
+                height: auto !important;
+                padding: 16px !important;
+                border-radius: 20px !important;
+                position: relative !important;
+                margin: 80px auto 40px !important;
+            }
+            .stage-grid {
+                position: relative !important;
+                inset: auto !important;
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                grid-template-rows: auto !important;
+                gap: 12px !important;
+            }
+            .cell {
+                min-height: auto !important;
+                min-width: 0 !important;
+                padding: 4px !important;
+            }
+            /* 背包区域：全宽 */
+            .bag-box {
+                width: 100% !important;
+                padding: 14px !important;
+            }
+            .bag-title {
+                font-size: 20px !important;
+                margin-bottom: 10px !important;
+            }
+            .bag-list {
+                max-height: 200px !important;
+                overflow-y: auto !important;
+            }
+            .bag-empty {
+                padding: 20px !important;
+            }
+            .bag-empty-icon {
+                font-size: 48px !important;
+            }
+            /* 管理区域：全宽 */
+            .manage-box {
+                width: 100% !important;
+                padding: 14px !important;
+            }
+            .manage-title {
+                font-size: 20px !important;
+                margin-bottom: 12px !important;
+            }
+            .manage-btn {
+                width: 100% !important;
+                padding: 12px 0 !important;
+                font-size: 15px !important;
+                margin-bottom: 8px !important;
+            }
+            /* 功能开发中区域：全宽，紧凑 */
+            .art-text {
+                width: 100% !important;
+                padding: 16px !important;
+                min-height: auto !important;
+            }
+            .art-line1 {
+                font-size: 18px !important;
+            }
+            .art-line2 {
+                font-size: 14px !important;
+            }
+            .art-spark {
+                font-size: 14px !important;
+                margin: 6px 0 !important;
+            }
+            /* 分隔线隐藏 */
+            .divider {
+                display: none !important;
+            }
+            /* 弹窗适配 */
+            .modal-mask {
+                padding: 12px !important;
+            }
+            .modal-card {
+                width: 100% !important;
+                max-width: 100% !important;
+                max-height: 85vh !important;
+                overflow-y: auto !important;
+                padding: 20px 14px !important;
+            }
+            .modal-title {
+                font-size: 20px !important;
+            }
+            .guide-step {
+                flex-direction: column !important;
+                gap: 8px !important;
+                text-align: center !important;
+            }
+            .guide-step-no {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 14px !important;
+            }
+            /* 幽灵按钮 */
+            .ghost-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .stage-rect {
+                width: 96vw !important;
+                padding: 12px !important;
+            }
+            .bag-title, .manage-title {
+                font-size: 18px !important;
+            }
+            .art-line1 {
+                font-size: 16px !important;
+            }
+            .manage-btn {
+                padding: 10px 0 !important;
+                font-size: 14px !important;
+            }
+        }
 </style>
 </head>
 <body>
