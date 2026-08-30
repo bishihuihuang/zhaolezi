@@ -21,16 +21,35 @@ const TARGET_FILES = ['index.html', ...Array.from({length: 29}, (_, i) => `${i +
 const BACKUP_DIR = '_原始未混淆版';
 
 // 防小白保护代码（会被添加到每个JS开头，然后一起混淆）
-// 自定义右键菜单：保留剪切、复制、粘贴、刷新，其余禁止（功能可靠版v2）
+// 自定义右键菜单：保留剪切、复制、粘贴、刷新，其余禁止（功能可靠版v3 - 彻底阻止原生菜单）
 const ANTI_CHEAT_CODE = `
 /* 防小白保护开始 */
 (function(){
     var _0x1=document;
     var _0x2=null; // 记录右键时的焦点元素
     var _0x6=''; // 剪贴板缓存（右键时预读取，点击粘贴时同步使用）
-    // 创建自定义右键菜单
+    
+    // ===== 彻底阻止原生右键菜单（多层防护） =====
+    // 1. body上设置oncontextmenu返回false
+    if(_0x1.body){
+        _0x1.body.setAttribute('oncontextmenu','return false');
+    }
+    // 2. 给所有输入框设置oncontextmenu返回false（防止Firefox在输入框上显示原生菜单）
+    function _0xBlockNative(){
+        var els=_0x1.querySelectorAll('input,textarea,[contenteditable="true"],select');
+        for(var i=0;i<els.length;i++){
+            els[i].setAttribute('oncontextmenu','return false');
+        }
+    }
+    _0xBlockNative();
+    // DOM变化时重新设置
+    if(_0x1.addEventListener){
+        _0x1.addEventListener('DOMNodeInserted',function(){setTimeout(_0xBlockNative,100);});
+    }
+    
+    // 创建自定义右键菜单（z-index设为最高，确保盖在原生菜单上面）
     var _0x3=_0x1.createElement('div');
-    _0x3.style.cssText='position:fixed;z-index:9999999;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:5px 0;min-width:170px;display:none;font-family:"Microsoft YaHei",sans-serif;font-size:14px;user-select:none;';
+    _0x3.style.cssText='position:fixed;z-index:2147483647;background:#fff;border:1px solid #d0d0d0;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);padding:5px 0;min-width:170px;display:none;font-family:"Microsoft YaHei",sans-serif;font-size:14px;user-select:none;';
     _0x3.innerHTML='<div data-a="cut" style="padding:8px 18px;cursor:pointer;color:#333;">剪切<span style="float:right;color:#999;font-size:12px;">Ctrl+X</span></div><div data-a="copy" style="padding:8px 18px;cursor:pointer;color:#333;">复制<span style="float:right;color:#999;font-size:12px;">Ctrl+C</span></div><div data-a="paste" style="padding:8px 18px;cursor:pointer;color:#333;">粘贴<span style="float:right;color:#999;font-size:12px;">Ctrl+V</span></div><div data-a="refresh" style="padding:8px 18px;cursor:pointer;color:#333;">刷新<span style="float:right;color:#999;font-size:12px;">F5</span></div>';
     _0x1.body.appendChild(_0x3);
     // 菜单项hover
@@ -72,8 +91,11 @@ const ANTI_CHEAT_CODE = `
         }
     }
     // 右键显示自定义菜单，记录焦点元素，并预读取剪贴板
-    _0x1.addEventListener('contextmenu',function(e){
+    // 使用capture:true在捕获阶段阻止，确保原生菜单无法触发
+    function _0xContextHandler(e){
         e.preventDefault();
+        e.stopPropagation();
+        if(e.stopImmediatePropagation){e.stopImmediatePropagation();}
         var t=e.target;
         if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)){
             t.focus();
@@ -91,7 +113,14 @@ const ANTI_CHEAT_CODE = `
         _0x3.style.top=e.clientY+'px';
         setTimeout(function(){var r=_0x3.getBoundingClientRect();if(r.right>window.innerWidth){_0x3.style.left=(window.innerWidth-r.width-5)+'px';}if(r.bottom>window.innerHeight){_0x3.style.top=(window.innerHeight-r.height-5)+'px';}},0);
         return false;
-    });
+    }
+    // 多层监听：document捕获阶段 + window捕获阶段 + document冒泡阶段
+    _0x1.addEventListener('contextmenu',_0xContextHandler,true);
+    _0x1.addEventListener('contextmenu',_0xContextHandler,false);
+    if(window.addEventListener){
+        window.addEventListener('contextmenu',_0xContextHandler,true);
+        window.addEventListener('contextmenu',_0xContextHandler,false);
+    }
     // 隐藏菜单
     _0x1.addEventListener('click',function(){_0x3.style.display='none';});
     _0x1.addEventListener('scroll',function(){_0x3.style.display='none';});
