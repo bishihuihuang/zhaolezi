@@ -1,0 +1,965 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>找乐子</title>
+<style>
+/* ========== 基础重置 ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ========== 1. 流光溢彩动态背景（系列统一） ========== */
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ========== 背景漂浮光球 ========== */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    filter: blur(2px);
+    z-index: 1;
+    animation: orbFloat 8s ease-in-out infinite;
+}
+.orb1 { width: 120px; height: 120px; top: 15%; left: 12%; }
+.orb2 { width: 80px;  height: 80px;  bottom: 18%; right: 15%; animation-delay: -3s; }
+.orb3 { width: 50px;  height: 50px;  top: 65%; left: 22%; animation-delay: -5s; }
+@keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-25px) scale(1.08); }
+}
+
+/* ========== 2. 居中 19:10 横长方形 ========== */
+.stage-rect {
+    width: min(92vw, 167.2vh);   /* 167.2vh ≈ 92vh × 19 ÷ 10 */
+    aspect-ratio: 19 / 10;        /* 强制保持 19:10 比例 */
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(10px);      /* 磨砂玻璃效果 */
+    border-radius: 25px;              /* 大圆角 */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;                 /* 裁剪内容，保证线不出圆角 */
+    z-index: 10;
+    animation: cardEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* 顶部四色渐变装饰条（与系列一致） */
+.stage-rect::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 5px;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    z-index: 5;
+}
+
+/* 卡片入场动画（上浮淡入） */
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(40px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ========== 3. 四宫格：2×2 均等划分 ========== */
+.stage-grid {
+    position: absolute;
+    inset: 0;                         /* 铺满整个长方形 */
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* 左右两个等宽列 */
+    grid-template-rows: 1fr 1fr;      /* 上下两个等高行 */
+}
+
+/* 每个小长方形单元格 */
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #999;
+    transition: background 0.3s ease;
+    cursor: default;
+    min-width: 0;                     /* 防止内容撑破格子 */
+    min-height: 0;
+}
+/* 悬停时微微提亮，增加精致感 */
+.cell:hover {
+    background: rgba(255, 255, 255, 0.45);
+}
+
+/* ========== 4. 三条同款媒体框：16:9，三格大小一致 ========== */
+.media-box {
+    width: 84%;                       /* 占格子宽度的 84%，"小的"框 */
+    aspect-ratio: 16 / 9;             /* 强制 16:9 比例 */
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 视频 / 图片铺满播放框 */
+.media-box video,
+.media-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;              /* 完整显示，不变形 */
+    background: #000;
+    display: block;
+}
+
+/* 文本框：内容自适应 + 超出可滚动 */
+.text-content {
+    width: 100%;
+    height: 100%;
+    padding: 14px 18px;
+    overflow-y: auto;                 /* 文字太多时内部滚动 */
+    color: #444;
+    line-height: 1.8;
+    text-align: justify;
+    word-break: break-all;
+    font-size: 18px;                  /* 默认字号，JS 会按文字多少自适应 */
+}
+
+/* 音频播放框 */
+.audio-content {
+    width: 100%;
+    padding: 0 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.audio-content audio {
+    width: 100%;
+}
+
+/* 框内空状态提示（未抽取 / 池为空时显示） */
+.empty-tip {
+    font-size: 14px;
+    color: #b5b5b5;
+    text-align: center;
+    line-height: 1.8;
+    padding: 0 16px;
+}
+
+/* ========== 5. 右下格：三个橙边白底"输入框样式"按钮 ========== */
+.br-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    width: 84%;
+}
+
+.input-btn {
+    width: 100%;
+    padding: 11px 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: #e65100;
+    background: #ffffff;              /* 白底 */
+    border: 3px solid #FF9800;        /* 橙色边框 */
+    border-radius: 50px;              /* 胶囊形，与 4.html 输入框同款 */
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+    min-height: 44px;                 /* 【修复】确保触摸目标 ≥44x44 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.input-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 4px 14px rgba(255, 152, 0, 0.4);
+}
+.input-btn:active {
+    transform: scale(0.96);
+}
+
+/* 冷却中的禁用样式 */
+.input-btn.disabled {
+    background: #f0f0f0;
+    border-color: #c8c8c8;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* ========== 6. 四条鲜艳橙色分割线（不碰边框、不在中心相接） ========== */
+.divider {
+    position: absolute;
+    background: #FF8C00;              /* 鲜艳橙色 */
+    box-shadow: 0 0 8px rgba(255, 140, 0, 0.5); /* 橙色柔光，更醒目 */
+    border-radius: 3px;               /* 线头圆润 */
+    pointer-events: none;             /* 不挡住格子的点击 */
+    z-index: 4;
+}
+
+/* ① 左侧横线：分割 左上 与 左下 */
+.divider-left {
+    height: 3px;
+    top: 50%;
+    left: 22px;
+    right: calc(50% + 16px);
+    transform: translateY(-50%);
+}
+
+/* ② 底部竖线：分割 左下 与 右下 */
+.divider-bottom {
+    width: 3px;
+    left: 50%;
+    top: calc(50% + 16px);
+    bottom: 22px;
+    transform: translateX(-50%);
+}
+
+/* ③ 右侧横线：分割 右下 与 右上 */
+.divider-right {
+    height: 3px;
+    top: 50%;
+    left: calc(50% + 16px);
+    right: 22px;
+    transform: translateY(-50%);
+}
+
+/* ④ 顶部竖线：分割 右上 与 左上 */
+.divider-top {
+    width: 3px;
+    left: 50%;
+    top: 22px;
+    bottom: calc(50% + 16px);
+    transform: translateX(-50%);
+}
+
+/* ========== 7. 背景上的透明按钮（提高不透明度，且确保不碰大长方形） ========== */
+.ghost-btn {
+    position: fixed;
+    z-index: 100;
+    padding: 12px 26px;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-decoration: none;
+    /* 提高不透明度：背景从0.18提升至0.35，文字从0.55提升至0.85，边框从0.35提升至0.7 */
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.35);
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50px;
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 44px;                 /* 【优化】确保触摸目标 ≥44px */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.ghost-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+    transform: translateY(-2px);
+}
+.ghost-btn:active { transform: scale(0.95); }
+
+/* 左上角：返回按钮 */
+#backBtn {
+    top: 24px;
+    left: 24px;
+}
+
+/* 右上角：返回主程序按钮 */
+#backMain {
+    top: 24px;
+    right: 24px;
+}
+
+/* 右下角：高级按钮 */
+#advancedBtn {
+    bottom: 24px;
+    right: 24px;
+}
+
+/* ========== 8. 保存乐子弹窗 ========== */
+.save-mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+    z-index: 9000;
+    display: none;                    /* 默认隐藏，点击"保存乐子"后显示 */
+    justify-content: center;
+    align-items: center;
+}
+.save-mask.show {
+    display: flex;
+    animation: maskFadeIn 0.3s ease;
+}
+
+/* 弹窗卡片（玻璃拟态） */
+.save-card {
+    width: min(90vw, 440px);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(12px);
+    border-radius: 22px;
+    padding: 26px 26px 22px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: cardEnter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.save-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    letter-spacing: 2px;
+}
+.save-sub {
+    font-size: 13px;
+    color: #999;
+    text-align: center;
+    margin-top: 8px;
+}
+
+/* 三项保存项列表 */
+.save-list {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.save-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 2.5px solid #FF9800;      /* 橙色边框，与按钮呼应 */
+    border-radius: 16px;
+    padding: 12px 14px;
+    transition: all 0.3s ease;
+}
+.save-item:hover {
+    box-shadow: 0 4px 14px rgba(255, 152, 0, 0.3);
+}
+/* 无内容时的禁用外观 */
+.save-item.disabled {
+    border-color: #ddd;
+    background: #f7f7f7;
+}
+
+.save-item-icon { font-size: 24px; }
+.save-item-info { flex: 1; min-width: 0; }
+.save-item-name { font-size: 15px; font-weight: bold; color: #e65100; }
+.save-item.disabled .save-item-name { color: #999; }
+.save-item-file {
+    font-size: 12px;
+    color: #888;
+    margin-top: 3px;
+    word-break: break-all;
+}
+
+/* 单项保存按钮（黄色胶囊，与 4.html 确定按钮呼应） */
+.save-item-btn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: bold;
+    background: linear-gradient(to right, #FFC107, #FFEB3B);
+    color: #7a5c00;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.35);
+    min-height: 44px;                 /* 【优化】确保触摸目标 ≥44px */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.save-item-btn:hover { transform: scale(1.06); }
+.save-item.disabled .save-item-btn {
+    background: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* 弹窗关闭按钮 */
+.save-close {
+    margin-top: 18px;
+    text-align: center;
+    padding: 11px 0;
+    border-radius: 50px;
+    border: 2.5px solid #FF9800;
+    color: #e65100;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 44px;                 /* 【优化】确保触摸目标 ≥44px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.save-close:hover {
+    background: #FF9800;
+    color: #fff;
+}
+
+/* ========== 9. 保存成功提示气泡 ========== */
+#toast {
+    position: fixed;
+    top: 18%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: rgba(46, 204, 113, 0.92);
+    color: #fff;
+    font-weight: bold;
+    padding: 12px 26px;
+    border-radius: 50px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 9500;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+#toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ========== 10. 转场遮罩层（index.html 通用圆环样式） ========== */
+#transitionMask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(8, 10, 25, 0.72);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+#transitionMask.show {
+    display: flex;
+    animation: maskFadeIn 0.3s ease;
+}
+@keyframes maskFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* 转圈动画结构 */
+.loader-wrap {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loader-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, .1);
+    border-top-color: #f6d365;
+    border-right-color: #fda085;
+    animation: ringSpin .8s linear infinite;
+    box-sizing: border-box;
+}
+.loader-ring::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-bottom-color: #a78bfa;
+    border-left-color: #667eea;
+    animation: ringSpin 1.4s linear infinite reverse;
+}
+.loader-ring::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    right: 28px;
+    bottom: 28px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    border-top-color: #fb7185;
+    border-right-color: #2dd4bf;
+    animation: ringSpin 2s linear infinite;
+}
+.loader-text {
+    position: relative;
+    z-index: 5;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: textShine 1.5s linear infinite;
+}
+@keyframes ringSpin {
+    to { transform: rotate(360deg); }
+}
+@keyframes textShine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+    .ghost-btn { padding: 8px 16px; font-size: 13px; }
+    #backBtn { top: 16px; left: 16px; }
+    #backMain { top: 16px; right: 16px; }
+    #advancedBtn { bottom: 16px; right: 16px; }
+}
+
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+
+        /* ========== 手机端针对性修复：5.html影音娱乐单列布局（优化版） ========== */
+@media (max-width: 768px) {
+    html, body {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: auto !important;
+        min-height: 100vh !important;
+    }
+    .stage-rect {
+        width: 94vw !important;
+        aspect-ratio: auto !important;
+        min-height: auto !important;
+        height: auto !important;
+        padding: 14px !important;
+        border-radius: 20px !important;
+        position: relative !important;
+        margin: 80px auto 100px !important;
+    }
+    .stage-grid {
+        position: relative !important;
+        inset: auto !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto !important;
+        gap: 10px !important;
+    }
+    .cell {
+        min-height: auto !important;
+        min-width: 0 !important;
+        padding: 2px !important;
+    }
+    /* 图片/视频框：固定高度，不再16:9 */
+    .media-box {
+        width: 100% !important;
+        aspect-ratio: auto !important;
+        height: 130px !important;
+        border-radius: 12px !important;
+    }
+    #mediaStage img, #mediaStage video {
+        max-height: 130px !important;
+        object-fit: contain !important;
+    }
+    /* 文字内容区：固定较小高度，可滚动 */
+    .text-content {
+        width: 100% !important;
+        height: 120px !important;
+        max-height: 120px !important;
+        padding: 10px 12px !important;
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+        overflow-y: auto !important;
+        border-radius: 12px !important;
+        box-sizing: border-box !important;
+    }
+    /* 音频区：固定高度 */
+    .audio-content {
+        width: 100% !important;
+        height: 80px !important;
+        padding: 6px 4px !important;
+    }
+    .audio-content audio {
+        width: 100% !important;
+    }
+    /* 按钮列：紧凑布局，确保三个按钮都能显示 */
+    .br-column {
+        width: 100% !important;
+        gap: 8px !important;
+        padding: 2px 0 !important;
+    }
+    .input-btn {
+        width: 100% !important;
+        padding: 10px 0 !important;
+        font-size: 15px !important;
+        border-radius: 50px !important;
+        border-width: 2px !important;
+    }
+    /* 分隔线隐藏 */
+    .divider {
+        display: none !important;
+    }
+    /* 保存弹窗适配 */
+    .save-mask {
+        padding: 12px !important;
+    }
+    .save-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        padding: 16px 12px !important;
+    }
+    .save-title {
+        font-size: 18px !important;
+    }
+    .save-item {
+        flex-direction: column !important;
+        gap: 6px !important;
+        text-align: center !important;
+        padding: 10px !important;
+    }
+    .save-item-btn {
+        width: 100% !important;
+    }
+    /* 幽灵按钮调整 */
+    .ghost-btn {
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+    }
+}
+@media (max-width: 480px) {
+    .stage-rect {
+        width: 96vw !important;
+        padding: 10px !important;
+        margin: 70px auto 90px !important;
+    }
+    .media-box {
+        height: 110px !important;
+    }
+    .text-content {
+        height: 100px !important;
+        max-height: 100px !important;
+        font-size: 14px !important;
+    }
+    .audio-content {
+        height: 70px !important;
+    }
+    .input-btn {
+        padding: 9px 0 !important;
+        font-size: 14px !important;
+    }
+}
+            .text-content {
+                font-size: 15px !important;
+                max-height: 180px !important;
+            }
+            .input-btn {
+                padding: 12px 0 !important;
+                font-size: 15px !important;
+            }
+        }
+</style>
+
+<!-- 多设备适配改进 v1.0 -->
+<style>
+/* 6. 全局box-sizing reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* 3. 刘海屏安全区域适配 */
+body {
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
+             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+
+/* 2. 触摸设备优化：禁用hover残留效果 */
+@media (hover: none) {
+    .tool-box:hover, .card:hover, .box:hover, button:hover, a:hover {
+        transform: none !important;
+        box-shadow: inherit !important;
+    }
+    .tooltip, [class*="tooltip"], [class*="tip"] {
+        display: none !important;
+    }
+}
+
+/* 4. 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+}
+</style>
+
+<!-- 游戏页面触摸优化 -->
+<style>
+/* 7. 游戏按钮触摸目标增大到44px */
+button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
+    min-width: 44px !important;
+    min-height: 44px !important;
+}
+
+/* 小屏幕游戏页面优化 */
+@media (max-width: 768px) {
+    canvas, .game-container, .board, .grid-board {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+</style>
+
+</head>
+<body>
+
+<!-- 背景漂浮光球 -->
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+
+<!-- 背景左上角：返回按钮（原有，跳转4.html） -->
+<a class="ghost-btn" id="backBtn" href="4.html">&larr; 返回</a>
+
+<!-- 背景右上角：主程序按钮（跳转index.html） -->
+<a class="ghost-btn" id="backMain" href="index.html">主程序</a>
+
+<!-- 背景右下角：高级按钮 -> 7.html -->
+<a class="ghost-btn" id="advancedBtn" href="7.html">高级</a>
+
+<!-- 居中 19:10 横长方形：2×2 四宫格 -->
+<div class="stage-rect" id="stageRect">
+
+    <!-- 四个相等的小长方形（左上 / 右上 / 左下 / 右下） -->
+    <div class="stage-grid">
+
+        <!-- 左上格：视频 / 图片播放框（16:9） -->
+        <div class="cell" id="cellTL">
+            <div class="media-box" id="mediaBox">
+                <div id="mediaStage" style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;">
+                    <div class="empty-tip">视频 / 图片播放区</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右上格：文本显示框（同款大小，文字多少自适应） -->
+        <div class="cell" id="cellTR">
+            <div class="media-box" id="textBox">
+                <div class="text-content" id="textStage">
+                    <div class="empty-tip" style="display:flex;justify-content:center;align-items:center;height:100%;">文本展示区</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 左下格：音频播放框（同款大小） -->
+        <div class="cell" id="cellBL">
+            <div class="media-box" id="audioBox">
+                <div class="audio-content" id="audioStage" style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;">
+                    <div class="empty-tip">音频播放区</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右下格：三个橙边白底输入框样式按钮 -->
+        <div class="cell" id="cellBR">
+            <div class="br-column">
+                <!-- 修复：添加 role/tabindex/aria-label -->
+                <div class="input-btn" id="drawBtn" role="button" tabindex="0" aria-label="抽取乐子">抽取乐子</div>
+                <div class="input-btn" id="saveBtn" role="button" tabindex="0" aria-label="保存乐子">保存乐子</div>
+                <div class="input-btn" id="bagBtn" role="button" tabindex="0" aria-label="背包">背包</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 四条橙色分割线：两两分隔相邻格子，均不碰边框、不在中心相接 -->
+    <div class="divider divider-left"></div>
+    <div class="divider divider-bottom"></div>
+    <div class="divider divider-right"></div>
+    <div class="divider divider-top"></div>
+
+</div>
+
+<!-- ================= 保存乐子弹窗 ================= -->
+<div class="save-mask" id="saveMask">
+    <div class="save-card">
+        <div class="save-title">保存乐子</div>
+        <div class="save-sub">以下为当前抽取到的乐子，点击保存即可下载到本地并放入背包</div>
+
+        <div class="save-list">
+            <!-- 视频保存项 -->
+            <div class="save-item" id="saveVideoRow">
+                <div class="save-item-icon">🎬</div>
+                <div class="save-item-info">
+                    <div class="save-item-name">视频</div>
+                    <div class="save-item-file" id="saveVideoFile">暂无内容（请先抽取）</div>
+                </div>
+                <div class="save-item-btn" id="saveVideoBtn" role="button" tabindex="0" aria-label="保存视频">保存</div>
+            </div>
+
+            <!-- 图片保存项 -->
+            <div class="save-item" id="saveImageRow">
+                <div class="save-item-icon">🖼️</div>
+                <div class="save-item-info">
+                    <div class="save-item-name">图片</div>
+                    <div class="save-item-file" id="saveImageFile">暂无内容（请先抽取）</div>
+                </div>
+                <div class="save-item-btn" id="saveImageBtn" role="button" tabindex="0" aria-label="保存图片">保存</div>
+            </div>
+
+            <!-- 音乐保存项 -->
+            <div class="save-item" id="saveAudioRow">
+                <div class="save-item-icon">🎵</div>
+                <div class="save-item-info">
+                    <div class="save-item-name">音乐</div>
+                    <div class="save-item-file" id="saveAudioFile">暂无内容（请先抽取）</div>
+                </div>
+                <div class="save-item-btn" id="saveAudioBtn" role="button" tabindex="0" aria-label="保存音乐">保存</div>
+            </div>
+        </div>
+
+        <div class="save-close" id="saveClose" role="button" tabindex="0" aria-label="关闭弹窗">关闭</div>
+    </div>
+</div>
+
+<!-- 保存成功提示气泡 -->
+<div id="toast"></div>
+
+<!-- 转场遮罩层 -->
+<div id="transitionMask">
+    <div class="loader-wrap">
+        <div class="loader-ring"></div>
+        <div class="loader-text">找乐子～</div>
+    </div>
+</div>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQovKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQogKiDimIXimIXimIUg5Yi35paw5rGg6YWN572u5Yy6IOKYheKYheKYhQ0KICogLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KICog44CQ5aaC5L2V5re75Yqg5paH5Lu244CRDQogKiAgIDEuIOaKiuinhumikSAvIOWbvueJhyAvIOmfs+mikSAvIHR4dCDmlofku7bmlL7liLDkuI4gNS5odG1sIOWQjOS4gOS4quaWh+S7tuWkue+8mw0KICogICAyLiDlnKjkuIvpnaLlr7nlupTmlbDnu4TkuK3ov73liqDmlofku7blkI3vvIjlkKvmianlsZXlkI3vvInvvIwNCiAqICAgICAg5q+P5Liq5paH5Lu25ZCN55So6Iux5paH5Y2V5byV5Y+35YyF6KO577yM55u46YK75Lik5Liq55So6Iux5paH6YCX5Y+35YiG6ZqU77ybDQogKiAgIDMuIOS+i++8mg0KICogICAgICBjb25zdCB2aWRlb1Bvb2wgPSBbJ+aQnueskTEubXA0JywgJ+WQjeWcuumdoi5tcDQnXTsNCiAqID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8NCmNvbnN0IHZpZGVvUG9vbCA9IFsNCg0KXTsNCg0KY29uc3QgaW1hZ2VQb29sID0gWw0KJ+WbvemjjuWbvueJhzEuanBnJywNCiflm73po47lm77niYcyLmpwZycsDQon5Zu96aOO5Zu+54mHMy5qcGcnLA0KJ+WbvemjjuWbvueJhzQuanBnJywNCiflm73po47lm77niYc1LmpwZycsDQon5Zu96aOO5Zu+54mHNi5qcGcnLA0KJzE3ODc3MTM3OTMyMTVfMjU5NGEyMDgtNDg4Mi00OWViLWI5MWEtMGY0ZWI0MTFlZWI2LmpwZycsDQonMTc4NzcxNDAwMDY0Ml9lZGl0XzEwMjI4ODQzMjE4OTE2LnBuZycsDQonQ2FtZXJhXzEwNDBnM2swMzIyanJxbmFrN3U2ZzVuc2trbTNnOGlrdGVmbzcwZ29fZWRpdF8xMDYwOTUzNjE5OTc4NS5qcGcnLA0KJ1NjcmVlbnNob3RfMjAyNjA4MjZfMTExNjQwX2NvbS54aW5naW4ueGhzX2VkaXRfMTA0MzQwOTczNzAwMDUuanBnJywNCidTY3JlZW5zaG90XzIwMjYwODI2XzExMTY0MF9jb20ueGluZ2luLnhoc19lZGl0XzEwNDYxMjMwNTc5ODUzLmpwZycsDQonMTc4NzczMTY0NDkwOF9lZGl0XzI1Mzc2NjU3OTkyNDM1LnBuZycsDQonMTc4NzczMTY1MDY0OF9lZGl0XzI1NDM2MDE2OTU0MzYxLnBuZycsDQonMTc4NzczMzE0NDI3NF9lZGl0XzI2OTM2NTU1NzU0NjgxLnBuZycsDQonMTc4NzczMzI0NTEwMF9lZGl0XzI2OTQ4NTYwNDk1NjgyLnBuZycsDQonMTc4NzczMzM0OTA2Ml9lZGl0XzI3MDY1NDY3Mjc0MDc0LnBuZycsDQonMTc4NzczMzQyMjkxN19lZGl0XzI3MTE2MDM4NTEyOTIzLnBuZycsDQonQ2FtZXJhXzEwNDBnM2s4MzIxbTBqaTduN3U3ZzVxM3BxYWpuZ2poaDVkdm1iNThfZWRpdF8yNjg1MDgwODQxNTA2MS5qcGcnLA0KJ0NhbWVyYV8xMDQwZzNrODMyMW0wamk3bjd1OGc1cTNwcWFqbmdqaGh0dTQ0dDIwX2VkaXRfMjY4Njk3MzA0NzE5ODUuanBnJywNCidDYW1lcmFfMTA0MGczazgzMjFtMGppN243dTcwNXEzcHFham5namhocGo2OHVmZ19lZGl0XzI2ODM3NDEzNjUxOTA2LmpwZycsDQonQ2FtZXJhXzEwNDBnM2s4MzIxbTBqaTduN3U4MDVxM3BxYWpuZ2poaGV2NHY3OGdfZWRpdF8yNjg2MzM2MjAwNTgzMS5qcGcnLA0KJ0NhbWVyYV8xMDQwZzNrODMyMW0wamk3bjd1OTA1cTNwcWFqbmdqaGhscW4xczZvX2VkaXRfMjY4NDQwMzU2MDk0NDUuanBnJywNCidDYW1lcmFfMTA0MGczazgzMjFtMGppN243dWEwNXEzcHFham5namhobzFqc2NmZ19lZGl0XzI2ODc1OTY3MTI2Njc4LmpwZycsDQonQ2FtZXJhXzEwNDBnM2s4MzIxbTBqaTduN3VhZzVxM3BxYWpuZ2poaHBwbWUzaTBfZWRpdF8yNjg4MDc1Mjg0MjY3OC5qcGcnLA0KJ0NhbWVyYV8xMDQwZzNrODMyMW0wamk3bjd1YjA1cTNwcWFqbmdqaGgydnZ2ZmIwX2VkaXRfMjY4ODU4MTM4ODg5MDkuanBnJywNCidDYW1lcmFfMTA0MGczazgzMjFtMGppN243dWJnNXEzcHFham5namhobDBpYnA5b19lZGl0XzI2ODkwNDU0MjQ4MjE3LmpwZycsDQonQ2FtZXJhXzEwNDBnM2s4MzIxbTBqaTduN3VjMDVxM3BxYWpuZ2poaGJhMHVpYjBfZWRpdF8yNjg5NTQxNzExMDY3OS5qcGcnDQpdOw0KDQpjb25zdCBhdWRpb1Bvb2wgPSBbDQogJ+OAikJHTeS4sueDp+OAi+KAlOKAlDEubXAzJywNCifjgIpJSUnjgIsubXAzJywNCifjgIpLb21vcmJp44CL4oCU4oCU57qv6Z+z5LmQLm1wMycsDQon44CKVGFrZSBhIFdhbGvjgIvigJTigJTnuq/pn7PkuZAubXAzJywNCifjgIrmva7msZDjgIsubXAzJywNCifjgIrotaTkvLbjgIvigJTigJRISVRBLm1wMycsDQon44CK6L6e5Lmd6Zeo5Zue5b+G44CL4oCU4oCU6Kej5b+n6I2JLm1wMycsDQon44CK5rWu5YWJ44CL4oCU4oCU57qv6Z+z5LmQLm1wMycsDQon44CK5rW36ZiU5aSp56m644CL4oCU4oCU6buE5a626am5Lm1wMycsDQon44CK6K+A5Yir5Lmm44CL4oCU4oCU57qv6Z+z5LmQLm1wMycsDQon44CK5piO5aSp5Lya5pu05aW944CL4oCU4oCU5Y2O6K+t576k5pifLm1wMycsDQon44CK5L2g55yL77yM5aSp6buR5LqG44CLLm1wMycsDQon44CK5bm06L2u44CL4oCU4oCU5byg56Kn5pmoLm1wMycsDQon44CK6LW36aOO5LqG44CL4oCU4oCU5Lmw6L6j5qSS5Lmf55So5Y23Lm1wMycsDQon44CK5aSx5L2Z5bm044CL4oCU4oCU5bC55piU55ygLm1wMycsDQon44CK5Y2B5bm05Lq66Ze044CL4oCU4oCU5p2O6LaF5bi4Lm1wMycsDQon44CK5Y2B5bm05Lq66Ze06ZKi55C044CL4oCU4oCU6ZKi55C057qv6Z+z5LmQLm1wMycsDQon44CK6Jme5YWu5Y+544CL4oCU4oCU6Ze75Lq65ZCs5LmmLm1wMycsDQon44CK6LSm5Y+35bey5rOo6ZSA44CLLm1wMycsDQpdOw0KDQpjb25zdCB0ZXh0UG9vbCA9IFsNCi8vICfmlofmnKwxLnR4dCcsDQovLyAn5paH5pysMi50eHQnDQpdOw0KDQovKiDlhoXnva7mloflrZfmsaDvvJrkuI3kvp3otZbmlofku7bvvIzku7vkvZXmiZPlvIDmlrnlvI/pg73og73nqLPlrprmmL7npLogKi8NCmNvbnN0IGlubGluZVRleHRzID0gWw0KJ+asoui/juadpeWIsOaJvuS5kOWtkO+8geeCueWHu+WPs+S4i+inkuOAjOaKveWPluS5kOWtkOOAje+8jOinhumikeOAgeaWh+Wtl+OAgemfs+mikeS8muS4gOi1t+WIt+aWsO+9nicsDQon5L2g55qE6IOG5a2Q55yf5piv6IKl5Zif5Zif55qE44CCJywNCifpl67vvJrmnInlj6rlsI/osaHmr4/lpKnkuIrnj63pg73nlJ/msJTvvIzor7fpl67kuLrku4DkuYjvvJ/nrZTvvJrlm6DkuLrlroPlnKjmsJTosaHlsYDkuIrnj63jgIInLA0KJ+mXrjrnqb/ku4DkuYjoo6TlrZDmmL7lubTovbvvvJ/nrZTvvJrvvJrnurjlsL/oo6TjgIInLA0KJ+mXru+8mumTgeaUvuWcqOWklumdouS8mueUn+mUiO+8jOmCo+mHkeWtkOWRou+8n+etlO+8muS8muiiq+WBt+i1sOOAgicsDQon6Zeu77ya5Zub5Liq5Lq65Zyo5bGL6YeM5omT6bq75bCG77yM57uT5p6c6K2m5a+f5bim6LWw5LqU5Liq6K+36Zeu5Li65LuA5LmI77yf562U77ya5Zug5Li65LuW5Lus5omT55qE6YKj5Liq5Lq677yM5ZCN5a2X5bCx5Y+r6bq75bCG44CCJywNCifpl67vvJrpmpTlpJznmoTlvIDmsLTkuI3og73llp3vvIzlm6DkuLrlroPmnInmr5LvvIzkvaDnn6XpgZPku4DkuYjmr5LlkJfvvJ/nrZTvvJrmg7PkvaDnmoTlpJzlpb3lraTni6zjgIInLA0KJ+mXru+8muS9oOefpemBk+S4uuS7gOS5iOacieaXtuWAmeS4jeW8gOW/g+S4jeiDveeUqOS4reiNr+imgeeUqOilv+iNr+WQl++8n+etlO+8muWboOS4uuilv+iNr+eskeOAgicsDQon6Zeu77ya5Li65LuA5LmI5Y+k5Luj5Lq65pyA5aSa5Y+q6IO95ZCDNuS4quiYkeiPh++8n+etlO+8muWboOS4uuWGjeWQg+S8mueKr+S4i+S4g+iPjOS5i+e9quOAgicsDQon6Zeu77ya5L2g55+l6YGT5LuA5LmI5Yqo54mp5Y+v5Lul6LS05Zyo5aKZ5LiK5ZCX77yf562U77ya5rW36LG544CCJywNCifpl67vvJrku4DkuYjmlbDlrZfmnIDniLHllp3phZLvvJ/nrZTvvJrmmK8x77yM5Zug5Li65LiA6YaJ5pa55LyR44CCJywNCifpl67vvJrnq5nnnYDnmoToj6DokJ3lkozourrnnYDnmoToj6DokJ3lk6rkuKrmr5TovoPphbjvvJ/nrZTvvJrnq5nnnYDnmoTvvIzlm6DkuLrnq5nkuYXkuobkvJrphbjjgIInLA0KJ+mXru+8muS4gOajteagkeaWreS6hu+8jOeUqOiLseivreaAjuS5iOivtO+8n+etlO+8muWYjuWYo3RyZWUnLA0KJ+mXru+8muWbm+S4quWRqOadsOS8puetieS6juS7gOS5iO+8nyDnrZTvvJrnrYnkuo7kuIDkuKrmnIjmnbDkvKYnLA0KJ+mXru+8muS4uuS7gOS5iOi3r+aYk+WNgeWFreS4jeiDveS4iumrmOmAn++8nyDnrZTvvJrlm6DkuLrpq5jpgJ/npoHmraLosIPlpLQnLA0KJ+mXru+8mui3r+aYk+WNgeWFreS4uuS7gOS5iOaYr+e7heWjq++8nyDnrZTvvJrlm6DkuLrku5bmmK/mkZjlpLRtYW4oZ2VudGxlbWFuKScsDQon6Zeu77ya5LuA5LmI5rC05p6c5pyA6IOG5bCP77yfIOetlO+8muaYr+acqOeTnO+8jOWboOS4uuWug3BhcGF5Ye+8iOaAleaAleWRgO+8iScsDQon6Zeu77ya5LiA5Y+q6Z2S6JuZ5ZeT5a2Q5Y+R54KO5Lya5Y+Y5oiQ5LuA5LmI77yfIOetlO+8muWNl+eTnO+8iOmavuWRse+8iScsDQon6Zeu77ya5bCP546L5Ymq5LqG5Liq5Lit5YiG5LuW5Y+Y5oiQ5LqG5LuA5LmI77yfIOetlO+8muWwj+WFqCcsDQon6Zeu77ya6YaL5ZKM6YWx5rK55omT5p6277yM55yL54Ot6Ze555qE6Lev5Lq65Lya5biu6LCB77yfIOetlO+8muW4rumGi++8jOWboOS4uuWkp+WutumDveaYr+adpeaJk+mFseayueeahCcsDQon6Zeu77ya5omT55S16K+d5ZaK6LWk5qmZ6buE57u/6Z2S6JOd57Sr5Ye65p2l546p77yM6LCB5rKh5pyJ5p2l77yfIOetlO+8mumdkum7hOayoeadpe+8jOWboOS4uuaJk+eUteivneeahOaXtuWAmemdkum7hOS4jeaOpScsDQon6Zeu77ya5pWW5LiZ55qE54i454i45q275LqG5LuW5Lya5Y+Y5oiQ5LuA5LmI77yfIOetlO+8mueIuOS6oem+mScsDQon6Zeu77ya5pyo5YWw5LuO5Yab5Li65L2V5LuO5pyq6KKr5o+t56m/77yfIOetlO+8muWboOS4uuKAnOacqOWFsOaXoOmVv+WFhOKAnScsDQon6Zeu77ya5Li65LuA5LmI55im5a2Q5ZKM6IOW5a2Q5o6J6L+b5rKz6YeM77yM55im5a2Q5re55q275LqG77yM6IOW5a2Q5rKh5pyJ77yfIOetlO+8muWboOS4uuiCpeiAjOS4jeiFuyjmuropJywNCifpl67vvJrlgYflpoLnlJ/mtLvmrLrpqpfkuobkvaDvvIzmiJHlu7rorq7kvaDlkIPmiqvokKjjgILkuLrku4DkuYjvvJ8g562U77ya5Zug5Li65oqr6JCo5pyJNueJh+WSjDjniYfvvIzmsqHmnIk354mHJywNCifpl67vvJrpq5jkuKrlrZDlkoznn67kuKrlrZDosIHmm7TllpzmrKLmuLjms7PvvJ8g562U77ya55+u5Liq5a2Q77yM55+uTE9WRea4uCcsDQon6Zeu77ya6Zi/5aeo5Y675YiS6Ii577yM6Ii557+75LqG77yM5Li65LuA5LmI77yfIOetlO+8muWboOS4uuacieWnqOeahOWwj+iIueivtOe/u+Wwsee/uycsDQon6Zeu77ya5pGE5YOP5py65Z2P5LqG77yM54yc5LiA5Liq5Yqo54mp77yfIOetlO+8muaiheiKsem5vyjmsqHms5XlvZUpJywNCifpl67vvJrni67lrZDlkoznhorosIHnmoTkvr/kvr/mr5TovoPljonlrrPvvJ8g562U77ya5piv54uu5a2Q77yM5Zug5Li654uu5bGO6IOc5LqO54aK5L6/JywNCifpl67vvJrmnInkuIDljLnpqazlj6rmnInkvaDog73pqpHvvIzkuLrku4DkuYjvvJ8g562U77ya5Zug5Li65bCP54yq6YWN6aqRJywNCifpl67vvJrlpoLmnpzlnKjph47lpJbpgYfliLDogIHomY7vvIzmgI7kuYjmiY3og73lhY3pmaTkuIDmrbvvvJ8g562U77ya6Leq5LiL5p2l5Y+r54i577yM5Zug5Li66JmO5q+S5LiN6aOf5a2QJywNCifpl67vvJrkuLrku4DkuYjpsqjpsbzmi43nhaflkI7nqoHnhLbmmZXlgJLkuobvvJ8g562U77ya5Zug5Li65a6D5ouN55qE5piv5amaKOaYjynnurEo6bKoKeeFpycsDQon6Zeu77ya6JyY6Jub5L6g6KKr6K2m5a+f5oqT6LWw5LqG77yM6K+36Zeu5LuW54qv5LqG5LuA5LmI572q77yfIOetlO+8mui1sOengSjkuJ0p572qJywNCifpl67vvJrljZbmsLTmnpznmoTlpKfniLfkuLrku4DkuYjog73lqLbliLDpu4Tph5HlupfnmoTnvo7lpbPplIDllK7lkZjvvJ8g562U77ya5Zug5Li65aSn54i35b2T5pe26Zeu6buE6YeR4oCc6L+Z546p5oSP5aSa5bCR6ZKx5LiA5pak4oCdLOe7k+aenOe7k+WpmuWQjuS4gOWQteaetuWkp+WmiOWwsemqguWkp+eIt+aYr+mql+WtkCcsDQon6Zeu77ya6Zmq5bKz54i26YGb5byv5pe2LOWys+eItuS4uuS7gOS5iOWvueWls+WEv+iEvuawlOW3rueahOS6huino+WmguatpOmAj+W9u++8nyDnrZTvvJrlm6DkuLrlsrPniLbor7TlpbPlhL/nroDnm7Tot5/lpbnlpojkuIDmqKHkuIDmoLcnLA0KJ+mXru+8muWkp+WTpeWOu+WMu+mZoueci+eXheW+l+S6huS7gOS5iOeXhe+8nyDnrZTvvJrpl7TmjqXmgKflpLHlv4bnl4cs5LiA55yL5Yiw5ryC5Lqu5aeR5aiY5bCx5b+Y6K6w57uT5ama5LqGLOWMu+eUn+ivtOi/meeXheS7luiHquW3semDveayoeayu+WlvScsDQon6Zeu77ya5Lul5ZCO5YaZ5paH56ug5LiN55So56yULOS4jeiDveWPq+eslOiAhemCo+ivpeWPq+S7gOS5iO+8nyDnrZTvvJrnlKjplK7nm5jnmoTlj6vlgZrplK7kuros55So6byg5qCH55qE5Y+r5YGa6byg6L6ILOeUqOinpuaRuOWxj+eahOWPq+WBmuinpueUnycsDQon6Zeu77ya5aSn5ZOl5Y675Yy76Zmi55yL55eF5b6X5LqG5LuA5LmI55eF77yfIOetlO+8mumXtOaOpeaAp+WkseW/hueXhyzkuIDnnIvliLDmvILkuq7lp5HlqJjlsLHlv5jorrDnu5PlqZrkuoYs5Yy755Sf6K+06L+Z55eF5LuW6Ieq5bex6YO95rKh5rK75aW9Jw0KXTsNCg0KLyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KICog5LiA44CB6YCa55So5bel5YW35Ye95pWwDQogKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICovDQoNCi8qIOS7juaVsOe7hOS4remaj+acuuWPluS4gOS4quWFg+e0oOOAgg0KICog6YeN5aSN5py65Yi277ya5pyJIDIwJSDnmoTmpoLnjofph43lpI3kuIrkuIDmrKHnmoTkuZDlrZDvvIhjdXJyZW5077yJ77yMDQogKiDlhbbkvZkgODAlIOaKveWPluS4gOS4quS4juS4iuS4gOasoeS4jeWQjOeahOaWsOS5kOWtkOOAgiAqLw0KZnVuY3Rpb24gcmFuZG9tUGljayhhcnIsIGN1cnJlbnQpIHsNCiAgICBpZiAoIWFyciB8fCBhcnIubGVuZ3RoID09PSAwKSByZXR1cm4gbnVsbDsNCiAgICBpZiAoYXJyLmxlbmd0aCA9PT0gMSkgcmV0dXJuIGFyclswXTsNCg0KICAgIC8qIDIwJSDmpoLnjofvvJrnm7TmjqXph43lpI3kuIrkuIDmrKEgKi8NCiAgICBpZiAoY3VycmVudCAmJiBhcnIuaW5kZXhPZihjdXJyZW50KSAhPT0gLTEgJiYgTWF0aC5yYW5kb20oKSA8IDAuMikgew0KICAgICAgICByZXR1cm4gY3VycmVudDsNCiAgICB9DQoNCiAgICAvKiA4MCUg5qaC546H77ya5oq95LiA5Liq5LiN6YeN5aSN55qE5paw5LmQ5a2QICovDQogICAgbGV0IHBpY2s7DQogICAgbGV0IGd1YXJkID0gMDsgICAgICAgICAgICAgICAgICAgICAvKiDpmLLmraLmnoHnq6/mg4XlhrXmrbvlvqrnjq8gKi8NCiAgICBkbyB7DQogICAgICAgIHBpY2sgPSBhcnJbTWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpICogYXJyLmxlbmd0aCldOw0KICAgICAgICBndWFyZCsrOw0KICAgIH0gd2hpbGUgKHBpY2sgPT09IGN1cnJlbnQgJiYgZ3VhcmQgPCAyMCk7DQogICAgcmV0dXJuIHBpY2s7DQp9DQoNCi8qIOeUn+aIkOaXtumXtOWtl+espuS4su+8mllZWVktTU0tREQgSEg6bW0gKi8NCmZ1bmN0aW9uIG5vd1N0cigpIHsNCiAgICBjb25zdCBuID0gbmV3IERhdGUoKTsNCiAgICBjb25zdCBwYWQgPSBmdW5jdGlvbiAoeCkgeyByZXR1cm4geCA8IDEwID8gJzAnICsgeCA6ICcnICsgeDsgfTsNCiAgICByZXR1cm4gbi5nZXRGdWxsWWVhcigpICsgJy0nICsgcGFkKG4uZ2V0TW9udGgoKSArIDEpICsgJy0nICsgcGFkKG4uZ2V0RGF0ZSgpKSArDQogICAgICAgICAgICcgJyArIHBhZChuLmdldEhvdXJzKCkpICsgJzonICsgcGFkKG4uZ2V0TWludXRlcygpKTsNCn0NCg0KLyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KICog5LqM44CB5bem5LiK5qC877ya6KeG6aKRIC8g5Zu+54mH5pKt5pS+DQogKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICovDQpsZXQgY3VycmVudE1lZGlhID0gbnVsbDsgICAgICAgICAgICAgICAvKiDorrDlvZXlvZPliY3mlofku7bvvIzpgb/lhY3ov57nu63ph43lpI0gKi8NCmxldCBjdXJyZW50TWVkaWFUeXBlID0gbnVsbDsgICAgICAgICAgIC8qIOW9k+WJjeaSreaUvueahOaYryAndmlkZW8nIOi/mOaYryAnaW1hZ2UnICovDQoNCmZ1bmN0aW9uIHJlZnJlc2hNZWRpYSgpIHsNCiAgICBjb25zdCBzdGFnZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtZWRpYVN0YWdlJyk7DQogICAgY29uc3QgdHlwZXMgPSBbXTsNCiAgICBpZiAodmlkZW9Qb29sLmxlbmd0aCA+IDApIHR5cGVzLnB1c2goJ3ZpZGVvJyk7DQogICAgaWYgKGltYWdlUG9vbC5sZW5ndGggPiAwKSB0eXBlcy5wdXNoKCdpbWFnZScpOw0KDQogICAgLyog5Lik5Liq5rGg6YO95Li656m677ya5o+Q56S655So5oi35re75Yqg5paH5Lu2ICovDQogICAgaWYgKHR5cGVzLmxlbmd0aCA9PT0gMCkgew0KICAgICAgICBzdGFnZS5pbm5lckhUTUwgPSAnPGRpdiBjbGFzcz0iZW1wdHktdGlwIj7op4bpopEv5Zu+54mH5rGg5Li656m6PGJyPuivt+WFiOWcqOS7o+eggemhtumDqOa3u+WKoOaWh+S7tjwvZGl2Pic7DQogICAgICAgIGN1cnJlbnRNZWRpYSA9IG51bGw7DQogICAgICAgIGN1cnJlbnRNZWRpYVR5cGUgPSBudWxsOw0KICAgICAgICByZXR1cm47DQogICAgfQ0KDQogICAgLyog6ZqP5py65Yaz5a6a5pys5qyh5pS+6KeG6aKR6L+Y5piv5Zu+54mH77yM5YaN5LuO5a+55bqU5rGg6ZqP5py65Y+W5paH5Lu277yIMjAlIOWPr+mHjeWkje+8iSAqLw0KICAgIGNvbnN0IHR5cGUgPSB0eXBlc1tNYXRoLmZsb29yKE1hdGgucmFuZG9tKCkgKiB0eXBlcy5sZW5ndGgpXTsNCiAgICBjb25zdCBwb29sID0gKHR5cGUgPT09ICd2aWRlbycpID8gdmlkZW9Qb29sIDogaW1hZ2VQb29sOw0KICAgIGNvbnN0IGZpbGUgPSByYW5kb21QaWNrKHBvb2wsIGN1cnJlbnRNZWRpYSk7DQogICAgY3VycmVudE1lZGlhID0gZmlsZTsNCiAgICBjdXJyZW50TWVkaWFUeXBlID0gdHlwZTsNCg0KICAgIGlmICh0eXBlID09PSAndmlkZW8nKSB7DQogICAgICAgIHN0YWdlLmlubmVySFRNTCA9ICc8dmlkZW8gc3JjPSInICsgZmlsZSArICciIGNvbnRyb2xzIHBsYXlzaW5saW5lPjwvdmlkZW8+JzsNCiAgICB9IGVsc2Ugew0KICAgICAgICBzdGFnZS5pbm5lckhUTUwgPSAnPGltZyBzcmM9IicgKyBmaWxlICsgJyIgYWx0PSLkuZDlrZDlm77niYciPic7DQogICAgfQ0KDQogICAgLyog5paH5Lu25LiN5a2Y5Zyo5pe257uZ5Ye65o+Q56S6ICovDQogICAgY29uc3QgZWwgPSBzdGFnZS5maXJzdENoaWxkOw0KICAgIGlmIChlbCkgew0KICAgICAgICBlbC5vbmVycm9yID0gZnVuY3Rpb24gKCkgew0KICAgICAgICAgICAgc3RhZ2UuaW5uZXJIVE1MID0gJzxkaXYgY2xhc3M9ImVtcHR5LXRpcCI+5pyq5om+5Yiw5paH5Lu277yaPGJyPicgKyBmaWxlICsgJzwvZGl2Pic7DQogICAgICAgIH07DQogICAgfQ0KfQ0KDQovKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQogKiDkuInjgIHlj7PkuIrmoLzvvJrmlofmnKzmmL7npLrvvIjmjInmloflrZflpJrlsJHoh6rpgILlupTlrZflj7fvvIkNCiAqID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8NCmxldCBjdXJyZW50VGV4dEZpbGUgPSBudWxsOw0KDQovKiDmjInmloflrZfplb/luqboh6rpgILlupTlrZflj7fvvJvlho3plb/lsLHlnKjmoYblhoXmu5rliqggKi8NCmZ1bmN0aW9uIGZpdFRleHQoZWwsIHRleHQpIHsNCiAgICBjb25zdCBsZW4gPSB0ZXh0Lmxlbmd0aDsNCiAgICBsZXQgc2l6ZTsNCiAgICBpZiAobGVuIDw9IDE1KSAgICAgICBzaXplID0gMjY7DQogICAgZWxzZSBpZiAobGVuIDw9IDQwKSAgc2l6ZSA9IDIxOw0KICAgIGVsc2UgaWYgKGxlbiA8PSA5MCkgIHNpemUgPSAxNzsNCiAgICBlbHNlIGlmIChsZW4gPD0gMTgwKSBzaXplID0gMTU7DQogICAgZWxzZSAgICAgICAgICAgICAgICAgc2l6ZSA9IDEzOw0KICAgIGVsLnN0eWxlLmZvbnRTaXplID0gc2l6ZSArICdweCc7DQogICAgZWwudGV4dENvbnRlbnQgPSB0ZXh0Ow0KfQ0KDQovKiDlsJ3or5Xor7vlj5bmnKzlnLAgdHh077yIZmlsZTovLyDkuIvlj6/og73ooqvmtY/op4jlmajmi6bmiKrvvIzlpLHotKXov5Tlm54gbnVsbO+8iSAqLw0KZnVuY3Rpb24gbG9hZFR4dChmaWxlTmFtZSwgY2FsbGJhY2spIHsNCiAgICB0cnkgew0KICAgICAgICBjb25zdCB4aHIgPSBuZXcgWE1MSHR0cFJlcXVlc3QoKTsNCiAgICAgICAgeGhyLm9wZW4oJ0dFVCcsIGZpbGVOYW1lLCB0cnVlKTsNCiAgICAgICAgeGhyLm9ucmVhZHlzdGF0ZWNoYW5nZSA9IGZ1bmN0aW9uICgpIHsNCiAgICAgICAgICAgIGlmICh4aHIucmVhZHlTdGF0ZSA9PT0gNCkgew0KICAgICAgICAgICAgICAgIGlmICgoeGhyLnN0YXR1cyA9PT0gMjAwIHx8IHhoci5zdGF0dXMgPT09IDApICYmIHhoci5yZXNwb25zZVRleHQpIHsNCiAgICAgICAgICAgICAgICAgICAgY2FsbGJhY2soeGhyLnJlc3BvbnNlVGV4dCk7DQogICAgICAgICAgICAgICAgfSBlbHNlIHsNCiAgICAgICAgICAgICAgICAgICAgY2FsbGJhY2sobnVsbCk7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfQ0KICAgICAgICB9Ow0KICAgICAgICB4aHIub25lcnJvciA9IGZ1bmN0aW9uICgpIHsgY2FsbGJhY2sobnVsbCk7IH07DQogICAgICAgIHhoci5zZW5kKCk7DQogICAgfSBjYXRjaCAoZSkgew0KICAgICAgICBjYWxsYmFjayhudWxsKTsNCiAgICB9DQp9DQoNCmZ1bmN0aW9uIHJlZnJlc2hUZXh0KCkgew0KICAgIGNvbnN0IHN0YWdlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RleHRTdGFnZScpOw0KDQogICAgLyog5YCZ6YCJID0gdHh0IOaWh+S7tiArIOWGhee9ruaWh+WtlyAqLw0KICAgIGNvbnN0IGNhbmRpZGF0ZXMgPSB0ZXh0UG9vbC5jb25jYXQoaW5saW5lVGV4dHMpOw0KICAgIGlmIChjYW5kaWRhdGVzLmxlbmd0aCA9PT0gMCkgew0KICAgICAgICBzdGFnZS5pbm5lckhUTUwgPSAnPGRpdiBjbGFzcz0iZW1wdHktdGlwIj7mlofmnKzmsaDkuLrnqbo8L2Rpdj4nOw0KICAgICAgICByZXR1cm47DQogICAgfQ0KDQogICAgY29uc3QgcGljayA9IHJhbmRvbVBpY2soY2FuZGlkYXRlcywgY3VycmVudFRleHRGaWxlKTsNCiAgICBjdXJyZW50VGV4dEZpbGUgPSBwaWNrOw0KDQogICAgLyog5LulIC50eHQg57uT5bC+77ya5bCd6K+V6K+75Y+W5paH5Lu277yM5aSx6LSl5YiZ5Zue6YCA5Yiw5YaF572u5paH5a2XICovDQogICAgaWYgKC9cLnR4dCQvaS50ZXN0KHBpY2spKSB7DQogICAgICAgIGxvYWRUeHQocGljaywgZnVuY3Rpb24gKGNvbnRlbnQpIHsNCiAgICAgICAgICAgIGlmIChjb250ZW50ICYmIGNvbnRlbnQudHJpbSgpKSB7DQogICAgICAgICAgICAgICAgZml0VGV4dChzdGFnZSwgY29udGVudC50cmltKCkpOw0KICAgICAgICAgICAgfSBlbHNlIHsNCiAgICAgICAgICAgICAgICBjb25zdCBmYWxsYmFjayA9IHJhbmRvbVBpY2soaW5saW5lVGV4dHMpOw0KICAgICAgICAgICAgICAgIGZpdFRleHQoc3RhZ2UsIGZhbGxiYWNrIHx8ICfvvIh0eHQg6K+75Y+W5Y+X6ZmQ77yM6K+35ZyoIGlubGluZVRleHRzIOS4rea3u+WKoOaWh+Wtl++8iScpOw0KICAgICAgICAgICAgfQ0KICAgICAgICB9KTsNCiAgICB9IGVsc2Ugew0KICAgICAgICAvKiDlhoXnva7mloflrZfvvJrnm7TmjqXmmL7npLogKi8NCiAgICAgICAgZml0VGV4dChzdGFnZSwgcGljayk7DQogICAgfQ0KfQ0KDQovKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQogKiDlm5vjgIHlt6bkuIvmoLzvvJrpn7PpopHmkq3mlL4NCiAqID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8NCmxldCBjdXJyZW50QXVkaW8gPSBudWxsOw0KDQpmdW5jdGlvbiByZWZyZXNoQXVkaW8oKSB7DQogICAgY29uc3Qgc3RhZ2UgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYXVkaW9TdGFnZScpOw0KDQogICAgaWYgKGF1ZGlvUG9vbC5sZW5ndGggPT09IDApIHsNCiAgICAgICAgc3RhZ2UuaW5uZXJIVE1MID0gJzxkaXYgY2xhc3M9ImVtcHR5LXRpcCI+6Z+z6aKR5rGg5Li656m6PGJyPuivt+WFiOWcqOS7o+eggemhtumDqOa3u+WKoOaWh+S7tjwvZGl2Pic7DQogICAgICAgIGN1cnJlbnRBdWRpbyA9IG51bGw7DQogICAgICAgIHJldHVybjsNCiAgICB9DQoNCiAgICBjb25zdCBmaWxlID0gcmFuZG9tUGljayhhdWRpb1Bvb2wsIGN1cnJlbnRBdWRpbyk7DQogICAgY3VycmVudEF1ZGlvID0gZmlsZTsNCg0KICAgIHN0YWdlLmlubmVySFRNTCA9ICc8YXVkaW8gc3JjPSInICsgZmlsZSArICciIGNvbnRyb2xzIHN0eWxlPSJ3aWR0aDo5MiU7Ij48L2F1ZGlvPic7DQoNCiAgICBjb25zdCBlbCA9IHN0YWdlLmZpcnN0Q2hpbGQ7DQogICAgaWYgKGVsKSB7DQogICAgICAgIGVsLm9uZXJyb3IgPSBmdW5jdGlvbiAoKSB7DQogICAgICAgICAgICBzdGFnZS5pbm5lckhUTUwgPSAnPGRpdiBjbGFzcz0iZW1wdHktdGlwIj7mnKrmib7liLDmlofku7bvvJo8YnI+JyArIGZpbGUgKyAnPC9kaXY+JzsNCiAgICAgICAgfTsNCiAgICB9DQp9DQoNCi8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCiAqIOS6lOOAgeiDjOWMheacrOWcsOiusOW9le+8iOa1j+iniOWZqCBsb2NhbFN0b3JhZ2XvvIzkvpsgOC5odG1sIOivu+WPlu+8iQ0KICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLw0KY29uc3QgU0FWRV9LRVkgPSAnemhhb2xlemlfc2F2ZWRfaXRlbXMnOw0KDQovKiDor7vlj5blt7Lkv53lrZjnmoTkuZDlrZDliJfooaggKi8NCmZ1bmN0aW9uIGxvYWRTYXZlZExpc3QoKSB7DQogICAgdHJ5IHsNCiAgICAgICAgY29uc3QgcmF3ID0gbG9jYWxTdG9yYWdlLmdldEl0ZW0oU0FWRV9LRVkpOw0KICAgICAgICBpZiAoIXJhdykgcmV0dXJuIFtdOw0KICAgICAgICBjb25zdCBsaXN0ID0gSlNPTi5wYXJzZShyYXcpOw0KICAgICAgICByZXR1cm4gQXJyYXkuaXNBcnJheShsaXN0KSA/IGxpc3QgOiBbXTsNCiAgICB9IGNhdGNoIChlKSB7DQogICAgICAgIHJldHVybiBbXTsNCiAgICB9DQp9DQoNCi8qIOaKiuS4gOadoeS5kOWtkOiusOW9leWGmeWFpeacrOWcsO+8iOWQjOexu+Wei+WQjOaWh+S7tuWPquS/neeVmeS4gOadoe+8jOabtOaWsOaXtumXtO+8iSAqLw0KZnVuY3Rpb24gc2F2ZVRvQmFnKHR5cGUsIGZpbGUpIHsNCiAgICB0cnkgew0KICAgICAgICBjb25zdCBsaXN0ID0gbG9hZFNhdmVkTGlzdCgpOw0KICAgICAgICBsZXQgZm91bmQgPSBmYWxzZTsNCiAgICAgICAgZm9yIChsZXQgaSA9IDA7IGkgPCBsaXN0Lmxlbmd0aDsgaSsrKSB7DQogICAgICAgICAgICBpZiAobGlzdFtpXS50eXBlID09PSB0eXBlICYmIGxpc3RbaV0uZmlsZSA9PT0gZmlsZSkgew0KICAgICAgICAgICAgICAgIGxpc3RbaV0udGltZSA9IG5vd1N0cigpOw0KICAgICAgICAgICAgICAgIGZvdW5kID0gdHJ1ZTsNCiAgICAgICAgICAgICAgICBicmVhazsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KICAgICAgICBpZiAoIWZvdW5kKSB7DQogICAgICAgICAgICBsaXN0LnB1c2goeyB0eXBlOiB0eXBlLCBmaWxlOiBmaWxlLCB0aW1lOiBub3dTdHIoKSB9KTsNCiAgICAgICAgfQ0KICAgICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbShTQVZFX0tFWSwgSlNPTi5zdHJpbmdpZnkobGlzdCkpOw0KICAgICAgICByZXR1cm4gdHJ1ZTsNCiAgICB9IGNhdGNoIChlKSB7DQogICAgICAgIHJldHVybiBmYWxzZTsgICAgICAgICAgICAgICAgICAvKiDmtY/op4jlmajkuI3mlK/mjIHmnKzlnLDorrDlvZUgKi8NCiAgICB9DQp9DQoNCi8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCiAqIOWFreOAgeS/neWtmOS5kOWtkOW8ueeql+mAu+i+kQ0KICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLw0KDQovKiDmj5DnpLrmsJTms6EgKi8NCmxldCB0b2FzdFRpbWVyID0gbnVsbDsNCmZ1bmN0aW9uIHNob3dUb2FzdChtc2cpIHsNCiAgICBjb25zdCB0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RvYXN0Jyk7DQogICAgdC50ZXh0Q29udGVudCA9IG1zZzsNCiAgICB0LmNsYXNzTGlzdC5hZGQoJ3Nob3cnKTsNCiAgICBjbGVhclRpbWVvdXQodG9hc3RUaW1lcik7DQogICAgdG9hc3RUaW1lciA9IHNldFRpbWVvdXQoZnVuY3Rpb24gKCkgew0KICAgICAgICB0LmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsNCiAgICB9LCAyMDAwKTsNCn0NCg0KLyog6Kem5Y+R5paH5Lu25LiL6L2977yI5L+d5a2Y5Yiw5rWP6KeI5Zmo5LiL6L2955uu5b2V77yJICovDQpmdW5jdGlvbiBkb3dubG9hZEZpbGUoZmlsZSkgew0KICAgIGNvbnN0IGEgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdhJyk7DQogICAgYS5ocmVmID0gZmlsZTsNCiAgICBhLmRvd25sb2FkID0gZmlsZTsNCiAgICBkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKGEpOw0KICAgIGEuY2xpY2soKTsNCiAgICBkb2N1bWVudC5ib2R5LnJlbW92ZUNoaWxkKGEpOw0KfQ0KDQovKiDloavlhYXlvLnnqpfkuK3nmoTkuIDooYzkv53lrZjpobkgKi8NCmZ1bmN0aW9uIGZpbGxTYXZlUm93KHJvd0lkLCBmaWxlSWQsIGJ0bklkLCBmaWxlLCB0eXBlKSB7DQogICAgY29uc3Qgcm93ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQocm93SWQpOw0KICAgIGNvbnN0IGZpbGVFbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKGZpbGVJZCk7DQogICAgY29uc3QgYnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoYnRuSWQpOw0KICAgIGlmIChmaWxlKSB7DQogICAgICAgIHJvdy5jbGFzc0xpc3QucmVtb3ZlKCdkaXNhYmxlZCcpOw0KICAgICAgICBmaWxlRWwudGV4dENvbnRlbnQgPSBmaWxlOw0KICAgICAgICBidG4uZGF0YXNldC5maWxlID0gZmlsZTsNCiAgICAgICAgYnRuLmRhdGFzZXQudHlwZSA9IHR5cGU7DQogICAgICAgIGJ0bi50ZXh0Q29udGVudCA9ICfkv53lrZgnOw0KICAgIH0gZWxzZSB7DQogICAgICAgIHJvdy5jbGFzc0xpc3QuYWRkKCdkaXNhYmxlZCcpOw0KICAgICAgICBmaWxlRWwudGV4dENvbnRlbnQgPSAn5pqC5peg5YaF5a6577yI6K+35YWI5oq95Y+W77yJJzsNCiAgICAgICAgYnRuLnJlbW92ZUF0dHJpYnV0ZSgnZGF0YS1maWxlJyk7DQogICAgICAgIGJ0bi50ZXh0Q29udGVudCA9ICfkuI3lj6/nlKgnOw0KICAgIH0NCn0NCg0KLyog5omT5byA5by556qX77ya5a6e5pe26K+75Y+W5b2T5YmN5oq95Y+W57uT5p6cICovDQpmdW5jdGlvbiBvcGVuU2F2ZU1vZGFsKCkgew0KICAgIGNvbnN0IHZpZGVvRmlsZSA9IChjdXJyZW50TWVkaWFUeXBlID09PSAndmlkZW8nKSA/IGN1cnJlbnRNZWRpYSA6IG51bGw7DQogICAgY29uc3QgaW1hZ2VGaWxlID0gKGN1cnJlbnRNZWRpYVR5cGUgPT09ICdpbWFnZScpID8gY3VycmVudE1lZGlhIDogbnVsbDsNCg0KICAgIGZpbGxTYXZlUm93KCdzYXZlVmlkZW9Sb3cnLCAnc2F2ZVZpZGVvRmlsZScsICdzYXZlVmlkZW9CdG4nLCB2aWRlb0ZpbGUsICd2aWRlbycpOw0KICAgIGZpbGxTYXZlUm93KCdzYXZlSW1hZ2VSb3cnLCAnc2F2ZUltYWdlRmlsZScsICdzYXZlSW1hZ2VCdG4nLCBpbWFnZUZpbGUsICdpbWFnZScpOw0KICAgIGZpbGxTYXZlUm93KCdzYXZlQXVkaW9Sb3cnLCAnc2F2ZUF1ZGlvRmlsZScsICdzYXZlQXVkaW9CdG4nLCBjdXJyZW50QXVkaW8sICdhdWRpbycpOw0KDQogICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NhdmVNYXNrJykuY2xhc3NMaXN0LmFkZCgnc2hvdycpOw0KfQ0KDQpkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2F2ZUJ0bicpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgb3BlblNhdmVNb2RhbCk7DQpkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2F2ZUNsb3NlJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoKSB7DQogICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NhdmVNYXNrJykuY2xhc3NMaXN0LnJlbW92ZSgnc2hvdycpOw0KfSk7DQovKiDngrnlh7vlvLnnqpflpJbnmoTngbDoibLpga7nvankuZ/lj6/lhbPpl60gKi8NCmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzYXZlTWFzaycpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKGUpIHsNCiAgICBpZiAoZS50YXJnZXQgPT09IHRoaXMpIHRoaXMuY2xhc3NMaXN0LnJlbW92ZSgnc2hvdycpOw0KfSk7DQoNCi8qIOS4ieS4quS/neWtmOaMiemSru+8muS4i+i9vSArIOWGmeWFpeiDjOWMheiusOW9lSAqLw0KZnVuY3Rpb24gYmluZFNhdmVCdG4oYnRuSWQpIHsNCiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChidG5JZCkuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoKSB7DQogICAgICAgIGNvbnN0IGZpbGUgPSB0aGlzLmRhdGFzZXQuZmlsZTsNCiAgICAgICAgY29uc3QgdHlwZSA9IHRoaXMuZGF0YXNldC50eXBlOw0KICAgICAgICBpZiAoIWZpbGUpIHsNCiAgICAgICAgICAgIHNob3dUb2FzdCgn6K+l6aG55pqC5peg5YaF5a6577yM6K+35YWI5oq95Y+W5LmQ5a2QJyk7DQogICAgICAgICAgICByZXR1cm47DQogICAgICAgIH0NCiAgICAgICAgZG93bmxvYWRGaWxlKGZpbGUpOyAgICAgICAgICAgIC8qIOWFiOinpuWPkeS4i+i9vSAqLw0KICAgICAgICBjb25zdCBvayA9IHNhdmVUb0JhZyh0eXBlLCBmaWxlKTsgLyog5YaN5YaZ5YWl6IOM5YyF6K6w5b2VICovDQogICAgICAgIHNob3dUb2FzdChvayA/ICflt7LkuIvovb3vvIzlubbmlL7lhaXog4zljIUg4pyTJyA6ICflt7LkuIvovb3vvIzkvYblvZPliY3mtY/op4jlmajkuI3mlK/mjIHog4zljIXorrDlvZUnKTsNCiAgICB9KTsNCn0NCmJpbmRTYXZlQnRuKCdzYXZlVmlkZW9CdG4nKTsNCmJpbmRTYXZlQnRuKCdzYXZlSW1hZ2VCdG4nKTsNCmJpbmRTYXZlQnRuKCdzYXZlQXVkaW9CdG4nKTsNCg0KLyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KICog5LiD44CBIuaKveWPluS5kOWtkCLmjInpkq7vvJrkuIDmrKHliLfmlrDkuInmoLwgKyA156eS5Ya35Y20DQogKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICovDQpsZXQgY29vbGRvd24gPSAwOyAgICAgICAgICAgICAgICAgICAgICAvKiDliankvZnlhrfljbTnp5LmlbAgKi8NCmxldCBjb29sZG93blRpbWVyID0gbnVsbDsNCg0KZnVuY3Rpb24gdXBkYXRlRHJhd0J0bigpIHsNCiAgICBjb25zdCBidG4gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZHJhd0J0bicpOw0KICAgIGlmIChjb29sZG93biA+IDApIHsNCiAgICAgICAgYnRuLmNsYXNzTGlzdC5hZGQoJ2Rpc2FibGVkJyk7DQogICAgICAgIGJ0bi50ZXh0Q29udGVudCA9ICfmir3lj5bkuZDlrZDvvIgnICsgY29vbGRvd24gKyAn56eS77yJJzsNCiAgICB9IGVsc2Ugew0KICAgICAgICBidG4uY2xhc3NMaXN0LnJlbW92ZSgnZGlzYWJsZWQnKTsNCiAgICAgICAgYnRuLnRleHRDb250ZW50ID0gJ+aKveWPluS5kOWtkCc7DQogICAgfQ0KfQ0KDQpmdW5jdGlvbiBkcmF3RnVuKCkgew0KICAgIGNvbnN0IGJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkcmF3QnRuJyk7DQogICAgaWYgKGNvb2xkb3duID4gMCkgcmV0dXJuOyAgICAgICAgICAvKiDlhrfljbTkuK3vvJrlv73nlaXngrnlh7sgKi8NCg0KICAgIC8qIOS4ieS4quahhuS4gOi1t+maj+acuuWIt+aWsO+8iOavj+asoeaciSAyMCUg5qaC546H6YeN5aSN5LiK5LiA5qyh77yJICovDQogICAgcmVmcmVzaE1lZGlhKCk7DQogICAgcmVmcmVzaFRleHQoKTsNCiAgICByZWZyZXNoQXVkaW8oKTsNCg0KICAgIC8qIOW8gOWniyA1IOenkuWGt+WNtCAqLw0KICAgIGNvb2xkb3duID0gNTsNCiAgICB1cGRhdGVEcmF3QnRuKCk7DQogICAgY29vbGRvd25UaW1lciA9IHNldEludGVydmFsKGZ1bmN0aW9uICgpIHsNCiAgICAgICAgY29vbGRvd24tLTsNCiAgICAgICAgdXBkYXRlRHJhd0J0bigpOw0KICAgICAgICBpZiAoY29vbGRvd24gPD0gMCkgew0KICAgICAgICAgICAgY2xlYXJJbnRlcnZhbChjb29sZG93blRpbWVyKTsNCiAgICAgICAgICAgIGNvb2xkb3duVGltZXIgPSBudWxsOw0KICAgICAgICB9DQogICAgfSwgMTAwMCk7DQp9DQoNCmRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkcmF3QnRuJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBkcmF3RnVuKTsNCg0KLyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KICog5YWr44CB6L2s5Zy65Yqo55S75o6n5Yi277yIIuaJvuS5kOWtkCLpga7nvanvvIwxIOenkuWQjui3s+i9rO+8iQ0KICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLw0KbGV0IGlzVHJhbnNpdGlvbmluZyA9IGZhbHNlOyAgICAgICAgICAgLyog6Ziy5q2i6L+e54K56YeN5aSN6Kem5Y+RICovDQoNCmZ1bmN0aW9uIHNob3dUcmFuc2l0aW9uKHRhcmdldFVybCkgew0KICAgIGlmIChpc1RyYW5zaXRpb25pbmcpIHJldHVybjsNCiAgICBpc1RyYW5zaXRpb25pbmcgPSB0cnVlOw0KDQogICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RyYW5zaXRpb25NYXNrJykuY2xhc3NMaXN0LmFkZCgnc2hvdycpOw0KDQogICAgc2V0VGltZW91dChmdW5jdGlvbiAoKSB7DQogICAgICAgIHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gdGFyZ2V0VXJsOw0KICAgIH0sIDEwMDApOyAgICAgICAgICAgICAgICAgICAgICAgICAgLyogMSDnp5LvvIgxMDAwIOavq+enku+8ieWQjui3s+i9rCAqLw0KfQ0KDQovKiDkuLrpk77mjqXnu5HlrprovazlnLrvvJrlhYjmi6bmiKrpu5jorqTot7PovazvvIzmkq3lrozliqjnlLvlho3ot7MgKi8NCmZ1bmN0aW9uIGJpbmRUcmFuc2l0aW9uKGxpbmtJZCkgew0KICAgIGNvbnN0IGVsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQobGlua0lkKTsNCiAgICBpZiAoIWVsKSByZXR1cm47DQogICAgZWwuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICBlLnByZXZlbnREZWZhdWx0KCk7DQogICAgICAgIHNob3dUcmFuc2l0aW9uKGVsLmdldEF0dHJpYnV0ZSgnaHJlZicpKTsNCiAgICB9KTsNCn0NCg0KYmluZFRyYW5zaXRpb24oJ2JhY2tCdG4nKTsgICAgICAgICAgICAgLy8g6L+U5ZueIC0+IDQuaHRtbA0KYmluZFRyYW5zaXRpb24oJ2JhY2tNYWluJyk7ICAgICAgICAgICAgLy8g5Li756iL5bqPIC0+IGluZGV4Lmh0bWwNCmJpbmRUcmFuc2l0aW9uKCdhZHZhbmNlZEJ0bicpOyAgICAgICAgIC8vIOmrmOe6pyAtPiA3Lmh0bWwNCg0KLyogIuiDjOWMhSLmjInpkq7vvJrmkq3mlL7ovazlnLrlkI7ot7PovawgOC5odG1sICovDQpkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmFnQnRuJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoKSB7DQogICAgc2hvd1RyYW5zaXRpb24oJzguaHRtbCcpOw0KfSk7DQoNCi8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCiAqIOS5neOAgemUruebmOWPr+iuv+mXruaAp+aUr+aMge+8iEVudGVyIC8gU3BhY2Ug6Kem5Y+R54K55Ye777yJDQogKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICovDQpmdW5jdGlvbiBiaW5kS2V5QWNjZXNzaWJpbGl0eShlbGVtZW50SWQsIGhhbmRsZXIpIHsNCiAgICBjb25zdCBlbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKGVsZW1lbnRJZCk7DQogICAgaWYgKCFlbCkgcmV0dXJuOw0KICAgIGVsLmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICBpZiAoZS5rZXkgPT09ICdFbnRlcicgfHwgZS5rZXkgPT09ICcgJykgew0KICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOw0KICAgICAgICAgICAgaGFuZGxlcihlKTsNCiAgICAgICAgfQ0KICAgIH0pOw0KfQ0KDQpiaW5kS2V5QWNjZXNzaWJpbGl0eSgnZHJhd0J0bicsIGRyYXdGdW4pOw0KYmluZEtleUFjY2Vzc2liaWxpdHkoJ3NhdmVCdG4nLCBvcGVuU2F2ZU1vZGFsKTsNCmJpbmRLZXlBY2Nlc3NpYmlsaXR5KCdiYWdCdG4nLCBmdW5jdGlvbiAoKSB7IHNob3dUcmFuc2l0aW9uKCc4Lmh0bWwnKTsgfSk7DQpiaW5kS2V5QWNjZXNzaWJpbGl0eSgnc2F2ZUNsb3NlJywgZnVuY3Rpb24gKCkgew0KICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzYXZlTWFzaycpLmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsNCn0pOw0KYmluZEtleUFjY2Vzc2liaWxpdHkoJ3NhdmVWaWRlb0J0bicsIGZ1bmN0aW9uICgpIHsNCiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2F2ZVZpZGVvQnRuJykuY2xpY2soKTsNCn0pOw0KYmluZEtleUFjY2Vzc2liaWxpdHkoJ3NhdmVJbWFnZUJ0bicsIGZ1bmN0aW9uICgpIHsNCiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2F2ZUltYWdlQnRuJykuY2xpY2soKTsNCn0pOw0KYmluZEtleUFjY2Vzc2liaWxpdHkoJ3NhdmVBdWRpb0J0bicsIGZ1bmN0aW9uICgpIHsNCiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2F2ZUF1ZGlvQnRuJykuY2xpY2soKTsNCn0pOw0K");
+</script>
+
+</body>
+</html>

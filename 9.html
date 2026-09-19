@@ -1,0 +1,755 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——纯文本一键生成txt文件</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* ========== 背景流光层 ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -150%;
+            left: -100%;
+            width: 350%;
+            height: 350%;
+            background: linear-gradient(125deg, #0a0e27, #1c1458, #32227a, #1a0f3e, #241a5e, #0e1233, #1d1652);
+            background-size: 400% 400%;
+            animation: flowGrad 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -80%;
+            left: -60%;
+            width: 260%;
+            height: 260%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%);
+            animation: flowSpin 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGrad {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes flowDrift {
+            0% { transform: translate(0,0) scale(1) rotate(0deg); }
+            50% { transform: translate(5%,-3%) scale(1.08) rotate(6deg); }
+            100% { transform: translate(-2%,4%) scale(.94) rotate(-6deg); }
+        }
+        @keyframes flowSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.06); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* 悬浮球 */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), rgba(255,255,255,.12) 45%, transparent 75%);
+            box-shadow: 0 0 60px rgba(255,255,255,.1), inset 0 0 30px rgba(255,255,255,.05);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 { width: 260px; height: 260px; top: 10%; left: 5%; animation: orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 78%; animation: orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 70%; left: 18%; animation: orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite; }
+        .orb-4 { width: 200px; height: 200px; top: 28%; left: 62%; animation: orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 82%; left: 45%; animation: orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite; }
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0,0); opacity:.5; }
+            30% { transform: translate(20px,-25px); opacity:.8; }
+            60% { transform: translate(-12px,15px); opacity:.4; }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0,0); opacity:.6; }
+            50% { transform: translate(-18px,14px); opacity:.3; }
+        }
+        @keyframes orbRotate { to { transform: rotate(360deg); } }
+
+        /* ========== 主容器 ========== */
+        main {
+            padding: 20px 0;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background: rgba(245, 247, 255, .96);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35);
+            padding: 24px;
+            margin-top: 30px;
+        }
+
+        /* ========== 6列8行网格 ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 14px;
+            padding: 8px;
+        }
+
+        .cell {
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            border: 3px solid transparent;
+        }
+
+        /* 彩色边框 */
+        .title-area { border-color: #f6d365; }
+        .back-area { border-color: #a78bfa; }
+        .input-area { border-color: #4fc3f7; }
+        .make-btn { border-color: #81c784; }
+        .output-area { border-color: #ff8a65; }
+        .rename-btn { border-color: #ffb74d; }
+        .export-btn { border-color: #ba68c8; }
+
+        /* 悬停效果 */
+        .cell:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 0 20px rgba(255, 255, 255, .15);
+            border-color: #fff;
+        }
+        .cell:active { transform: translateY(-2px) scale(.97); }
+
+        /* 标题区域 */
+        .title-area {
+            grid-row: 1 / 3;
+            grid-column: 1 / 5;
+            background: linear-gradient(135deg, #1a1a4e, #2d1b69, #1a1a4e);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+        }
+        .title-area h1 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            text-align: center;
+            line-height: 1.4;
+            background: linear-gradient(90deg, #f6d365, #fff, #a78bfa, #f6d365);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+        @keyframes titleShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 返回主页 */
+        .back-area {
+            grid-row: 1 / 3;
+            grid-column: 5 / 7;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            text-decoration: none;
+            color: #fff;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform .3s, box-shadow .3s;
+        }
+        .back-area:hover {
+            background: linear-gradient(135deg, #2b4a9e, #4b8ef6);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+        }
+
+        /* 输入区域（修改：占据1-3列，消除左侧空白） */
+        .input-area {
+            grid-row: 3 / 9;
+            grid-column: 1 / 4; /* 原来为3/4，现在改为1/4，吞并左侧 */
+            background: rgba(255, 255, 255, .97);
+            padding: 0;
+            overflow: hidden;
+            align-items: stretch;
+            justify-content: stretch;
+        }
+        .input-area textarea {
+            flex: 1;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            resize: none;
+            background: transparent;
+            outline: none;
+            color: #333;
+            font-size: 16px;
+            font-family: inherit;
+            line-height: 1.6;
+        }
+        .input-area textarea::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* 制作按钮 */
+        .make-btn {
+            grid-row: 3 / 4;
+            grid-column: 4 / 7;
+            background: #e0e0e0;
+            color: #999;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: not-allowed;
+            border: 3px solid #81c784;
+            border-radius: 14px;
+            user-select: none;
+            transition: all .3s ease;
+            letter-spacing: 2px;
+        }
+        .make-btn.active {
+            background: linear-gradient(135deg, #0f766e, #2dd4bf);
+            color: #fff;
+            cursor: pointer;
+            border-color: #2dd4bf;
+            box-shadow: 0 8px 25px rgba(45, 212, 191, .4);
+        }
+        .make-btn.active:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(45, 212, 191, .5);
+            border-color: #f6d365;
+        }
+        .make-btn.active:active { transform: translateY(-2px) scale(.96); }
+
+        /* 输出框 */
+        .output-area {
+            grid-row: 4 / 8;
+            grid-column: 4 / 7;
+            background: rgba(255, 255, 255, .97);
+            border: 3px solid #ff8a65;
+            border-radius: 14px;
+            padding: 14px;
+            overflow-y: auto;
+            color: #333;
+            cursor: default;
+            align-items: stretch;
+            justify-content: flex-start;
+        }
+        .output-area .file-label {
+            color: #d32f2f;
+            font-weight: 800;
+            font-size: 18px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+            display: block;
+            letter-spacing: 1px;
+        }
+        .output-area .content {
+            font-size: 15px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #444;
+        }
+
+        /* 改名按钮 */
+        .rename-btn {
+            grid-row: 8 / 9;
+            grid-column: 4 / 6;
+            background: #e0e0e0;
+            color: #999;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: not-allowed;
+            border: 3px solid #ffb74d;
+            border-radius: 14px;
+            user-select: none;
+            transition: all .3s ease;
+            text-align: center;
+            padding: 10px;
+            line-height: 1.4;
+        }
+        .rename-btn.active {
+            background: linear-gradient(135deg, #0f766e, #2dd4bf);
+            color: #fff;
+            cursor: pointer;
+            border-color: #2dd4bf;
+            box-shadow: 0 8px 20px rgba(45, 212, 191, .3);
+        }
+        .rename-btn.active:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(45, 212, 191, .4);
+            border-color: #f6d365;
+        }
+
+        /* 导出按钮 */
+        .export-btn {
+            grid-row: 8 / 9;
+            grid-column: 6 / 7;
+            background: #e0e0e0;
+            color: #999;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: not-allowed;
+            border: 3px solid #ba68c8;
+            border-radius: 14px;
+            user-select: none;
+            transition: all .3s ease;
+            text-align: center;
+            padding: 10px;
+        }
+        .export-btn.active {
+            background: linear-gradient(135deg, #b45309, #fbbf24);
+            color: #fff;
+            cursor: pointer;
+            border-color: #fbbf24;
+            box-shadow: 0 8px 20px rgba(251, 191, 36, .4);
+        }
+        .export-btn.active:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(251, 191, 36, .5);
+            border-color: #f6d365;
+        }
+
+        /* ========== 改名模态框 ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .5);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: rgba(255, 255, 255, .97);
+            border-radius: 18px;
+            padding: 24px;
+            width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+            border: 3px solid #a78bfa;
+        }
+        .modal-box h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .modal-box input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 15px;
+            transition: border-color .3s;
+            color: #333;
+        }
+        .modal-box input:focus { border-color: #a78bfa; }
+        .modal-btns {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .modal-btns button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all .2s;
+        }
+        .modal-btns button.ok {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: #fff;
+        }
+        .modal-btns button.cancel {
+            background: linear-gradient(135deg, #f44336, #c62828);
+            color: #fff;
+        }
+        .modal-btns button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .2);
+        }
+
+        /* ========== 跳转覆盖层（与主页一致） ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+
+        /* ========== 手机端针对性修复：单列堆叠布局 ========== */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr !important;
+                grid-template-rows: auto !important;
+            }
+            .title-area, .back-area, .input-area, .make-btn,
+            .output-area, .rename-btn, .export-btn {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            .input-area {
+                min-height: 150px !important;
+            }
+            .output-area {
+                min-height: 120px !important;
+                padding: 12px !important;
+            }
+            .make-btn, .rename-btn, .export-btn {
+                min-height: 56px !important;
+                font-size: 16px !important;
+            }
+        }
+</style>
+
+<!-- 多设备适配改进 v1.0 -->
+<style>
+/* 6. 全局box-sizing reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* 3. 刘海屏安全区域适配 */
+body {
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
+             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+
+/* 2. 触摸设备优化：禁用hover残留效果 */
+@media (hover: none) {
+    .tool-box:hover, .card:hover, .box:hover, button:hover, a:hover {
+        transform: none !important;
+        box-shadow: inherit !important;
+    }
+    .tooltip, [class*="tooltip"], [class*="tip"] {
+        display: none !important;
+    }
+}
+
+/* 4. 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+}
+</style>
+
+<!-- 游戏页面触摸优化 -->
+<style>
+/* 7. 游戏按钮触摸目标增大到44px */
+button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
+    min-width: 44px !important;
+    min-height: 44px !important;
+}
+
+/* 小屏幕游戏页面优化 */
+@media (max-width: 768px) {
+    canvas, .game-container, .board, .grid-board {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+</style>
+
+</head>
+<body>
+    <!-- 背景 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <!-- 标题区域 -->
+                <div class="cell title-area">
+                    <h1>找乐子——<br>优质工具箱</h1>
+                </div>
+
+                <!-- 返回主页 -->
+                <a href="index.html" class="cell back-area" id="backHome">返回<br>主页</a>
+
+                <!-- 输入区域（现在占1-3列） -->
+                <div class="cell input-area">
+                    <textarea id="textInput" placeholder="请复制文本" spellcheck="false"></textarea>
+                </div>
+
+                <!-- 制作按钮 -->
+                <div class="cell make-btn" id="makeBtn">请先输入文本</div>
+
+                <!-- 输出框 -->
+                <div class="cell output-area">
+                    <div class="file-label" id="fileNameLabel"></div>
+                    <div class="content" id="fileContent"></div>
+                </div>
+
+                <!-- 改名按钮 -->
+                <div class="cell rename-btn" id="renameBtn">改名（请先输入文本生成txt）</div>
+
+                <!-- 导出按钮 -->
+                <div class="cell export-btn" id="exportBtn">导出</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 改名模态框 -->
+    <div class="modal-overlay" id="renameModal">
+        <div class="modal-box">
+            <h3>✏️ 修改文件名</h3>
+            <input type="text" id="renameInput" placeholder="请输入文件名（不含后缀）">
+            <div class="modal-btns">
+                <button class="ok" id="confirmRename">确定</button>
+                <button class="cancel" id="cancelRename">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 转场覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQogICAgICAgIC8vID09PT09PT09PT0g5YWo5bGA5Y+Y6YePID09PT09PT09PT0NCiAgICAgICAgbGV0IGdlbmVyYXRlZEZpbGVOYW1lID0gJyc7DQogICAgICAgIGxldCBnZW5lcmF0ZWRDb250ZW50ID0gJyc7DQogICAgICAgIGNvbnN0IGJhc2VOYW1lcyA9IFsnMTg5OScsICcxMjk5JywgJzE1OTknXTsNCiAgICAgICAgbGV0IHVzZWROYW1lcyA9IFtdOw0KDQogICAgICAgIC8vIOivu+WPluWOhuWPsuS9v+eUqOi/h+eahOaWh+S7tuWQje+8iOaMgeS5heWMlu+8iQ0KICAgICAgICB0cnkgew0KICAgICAgICAgICAgY29uc3Qgc3RvcmVkID0gbG9jYWxTdG9yYWdlLmdldEl0ZW0oJ3VzZWRUeHROYW1lcycpOw0KICAgICAgICAgICAgaWYgKHN0b3JlZCkgdXNlZE5hbWVzID0gSlNPTi5wYXJzZShzdG9yZWQpOw0KICAgICAgICB9IGNhdGNoKGUpIHsgdXNlZE5hbWVzID0gW107IH0NCg0KICAgICAgICAvLyBET00g5YWD57SgDQogICAgICAgIGNvbnN0IHRleHRJbnB1dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0ZXh0SW5wdXQnKTsNCiAgICAgICAgY29uc3QgbWFrZUJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtYWtlQnRuJyk7DQogICAgICAgIGNvbnN0IGZpbGVOYW1lTGFiZWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZmlsZU5hbWVMYWJlbCcpOw0KICAgICAgICBjb25zdCBmaWxlQ29udGVudCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmaWxlQ29udGVudCcpOw0KICAgICAgICBjb25zdCByZW5hbWVCdG4gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVuYW1lQnRuJyk7DQogICAgICAgIGNvbnN0IGV4cG9ydEJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdleHBvcnRCdG4nKTsNCiAgICAgICAgY29uc3QgcmVuYW1lTW9kYWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVuYW1lTW9kYWwnKTsNCiAgICAgICAgY29uc3QgcmVuYW1lSW5wdXQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVuYW1lSW5wdXQnKTsNCiAgICAgICAgY29uc3QgY29uZmlybVJlbmFtZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjb25maXJtUmVuYW1lJyk7DQogICAgICAgIGNvbnN0IGNhbmNlbFJlbmFtZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjYW5jZWxSZW5hbWUnKTsNCiAgICAgICAgY29uc3Qgb3ZlcmxheSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdvdmVybGF5Jyk7DQogICAgICAgIGNvbnN0IGJhY2tIb21lID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JhY2tIb21lJyk7DQoNCiAgICAgICAgLy8gPT09PT09PT09PSDmm7TmlrDliLbkvZzmjInpkq7nirbmgIEgPT09PT09PT09PQ0KICAgICAgICBmdW5jdGlvbiB1cGRhdGVNYWtlQnRuU3RhdGUoKSB7DQogICAgICAgICAgICBpZiAodGV4dElucHV0LnZhbHVlLnRyaW0oKSA9PT0gJycpIHsNCiAgICAgICAgICAgICAgICBtYWtlQnRuLmNsYXNzTGlzdC5yZW1vdmUoJ2FjdGl2ZScpOw0KICAgICAgICAgICAgICAgIG1ha2VCdG4udGV4dENvbnRlbnQgPSAn6K+35YWI6L6T5YWl5paH5pysJzsNCiAgICAgICAgICAgICAgICBtYWtlQnRuLnN0eWxlLnBvaW50ZXJFdmVudHMgPSAnbm9uZSc7DQogICAgICAgICAgICB9IGVsc2Ugew0KICAgICAgICAgICAgICAgIG1ha2VCdG4uY2xhc3NMaXN0LmFkZCgnYWN0aXZlJyk7DQogICAgICAgICAgICAgICAgbWFrZUJ0bi50ZXh0Q29udGVudCA9ICfliLbkvZx0eHTmlofku7YnOw0KICAgICAgICAgICAgICAgIG1ha2VCdG4uc3R5bGUucG9pbnRlckV2ZW50cyA9ICdhdXRvJzsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KDQogICAgICAgIHRleHRJbnB1dC5hZGRFdmVudExpc3RlbmVyKCdpbnB1dCcsIHVwZGF0ZU1ha2VCdG5TdGF0ZSk7DQogICAgICAgIHVwZGF0ZU1ha2VCdG5TdGF0ZSgpOw0KDQogICAgICAgIC8vID09PT09PT09PT0g5paH5Lu25ZCN55Sf5oiQID09PT09PT09PT0NCiAgICAgICAgZnVuY3Rpb24gZ2VuZXJhdGVGaWxlTmFtZSgpIHsNCiAgICAgICAgICAgIGNvbnN0IGF2YWlsYWJsZSA9IFtdOw0KICAgICAgICAgICAgZm9yIChjb25zdCBuYW1lIG9mIGJhc2VOYW1lcykgew0KICAgICAgICAgICAgICAgIGlmICghdXNlZE5hbWVzLmluY2x1ZGVzKG5hbWUgKyAnLnR4dCcpKSB7DQogICAgICAgICAgICAgICAgICAgIGF2YWlsYWJsZS5wdXNoKG5hbWUpOw0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIGlmIChhdmFpbGFibGUubGVuZ3RoID4gMCkgew0KICAgICAgICAgICAgICAgIGNvbnN0IGNob3NlbiA9IGF2YWlsYWJsZVtNYXRoLmZsb29yKE1hdGgucmFuZG9tKCkgKiBhdmFpbGFibGUubGVuZ3RoKV07DQogICAgICAgICAgICAgICAgdXNlZE5hbWVzLnB1c2goY2hvc2VuICsgJy50eHQnKTsNCiAgICAgICAgICAgICAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgndXNlZFR4dE5hbWVzJywgSlNPTi5zdHJpbmdpZnkodXNlZE5hbWVzKSk7DQogICAgICAgICAgICAgICAgcmV0dXJuIGNob3NlbiArICcudHh0JzsNCiAgICAgICAgICAgIH0gZWxzZSB7DQogICAgICAgICAgICAgICAgbGV0IGluZGV4ID0gMTsNCiAgICAgICAgICAgICAgICB3aGlsZSAodHJ1ZSkgew0KICAgICAgICAgICAgICAgICAgICBjb25zdCBjYW5kaWRhdGUgPSBiYXNlTmFtZXNbMF0gKyAnXycgKyBpbmRleCArICcudHh0JzsNCiAgICAgICAgICAgICAgICAgICAgaWYgKCF1c2VkTmFtZXMuaW5jbHVkZXMoY2FuZGlkYXRlKSkgew0KICAgICAgICAgICAgICAgICAgICAgICAgdXNlZE5hbWVzLnB1c2goY2FuZGlkYXRlKTsNCiAgICAgICAgICAgICAgICAgICAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKCd1c2VkVHh0TmFtZXMnLCBKU09OLnN0cmluZ2lmeSh1c2VkTmFtZXMpKTsNCiAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBjYW5kaWRhdGU7DQogICAgICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICAgICAgaW5kZXgrKzsNCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICB9DQogICAgICAgIH0NCg0KICAgICAgICAvLyA9PT09PT09PT09IOWItuS9nHR4dOaWh+S7tiA9PT09PT09PT09DQogICAgICAgIGZ1bmN0aW9uIG1ha2VUeHRGaWxlKCkgew0KICAgICAgICAgICAgY29uc3QgdGV4dCA9IHRleHRJbnB1dC52YWx1ZS50cmltKCk7DQogICAgICAgICAgICBpZiAodGV4dCA9PT0gJycpIHJldHVybjsNCg0KICAgICAgICAgICAgZ2VuZXJhdGVkRmlsZU5hbWUgPSBnZW5lcmF0ZUZpbGVOYW1lKCk7DQogICAgICAgICAgICBnZW5lcmF0ZWRDb250ZW50ID0gdGV4dDsNCg0KICAgICAgICAgICAgZmlsZU5hbWVMYWJlbC50ZXh0Q29udGVudCA9IGdlbmVyYXRlZEZpbGVOYW1lOw0KICAgICAgICAgICAgZmlsZUNvbnRlbnQudGV4dENvbnRlbnQgPSBnZW5lcmF0ZWRDb250ZW50Ow0KDQogICAgICAgICAgICByZW5hbWVCdG4uY2xhc3NMaXN0LmFkZCgnYWN0aXZlJyk7DQogICAgICAgICAgICByZW5hbWVCdG4uc3R5bGUucG9pbnRlckV2ZW50cyA9ICdhdXRvJzsNCiAgICAgICAgICAgIHJlbmFtZUJ0bi50ZXh0Q29udGVudCA9ICfmlLnlkI0nOw0KICAgICAgICAgICAgZXhwb3J0QnRuLmNsYXNzTGlzdC5hZGQoJ2FjdGl2ZScpOw0KICAgICAgICAgICAgZXhwb3J0QnRuLnN0eWxlLnBvaW50ZXJFdmVudHMgPSAnYXV0byc7DQogICAgICAgIH0NCg0KICAgICAgICBtYWtlQnRuLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oKSB7DQogICAgICAgICAgICBpZiAobWFrZUJ0bi5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScpKSB7DQogICAgICAgICAgICAgICAgbWFrZVR4dEZpbGUoKTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfSk7DQoNCiAgICAgICAgLy8gPT09PT09PT09PSDlr7zlh7p0eHTmlofku7YgPT09PT09PT09PQ0KICAgICAgICBmdW5jdGlvbiBleHBvcnRUeHQoKSB7DQogICAgICAgICAgICBpZiAoZ2VuZXJhdGVkQ29udGVudCA9PT0gJycgfHwgZ2VuZXJhdGVkRmlsZU5hbWUgPT09ICcnKSByZXR1cm47DQoNCiAgICAgICAgICAgIGNvbnN0IGJsb2IgPSBuZXcgQmxvYihbZ2VuZXJhdGVkQ29udGVudF0sIHsgdHlwZTogJ3RleHQvcGxhaW47Y2hhcnNldD11dGYtOCcgfSk7DQogICAgICAgICAgICBjb25zdCB1cmwgPSBVUkwuY3JlYXRlT2JqZWN0VVJMKGJsb2IpOw0KICAgICAgICAgICAgY29uc3QgYSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2EnKTsNCiAgICAgICAgICAgIGEuaHJlZiA9IHVybDsNCiAgICAgICAgICAgIGEuZG93bmxvYWQgPSBnZW5lcmF0ZWRGaWxlTmFtZTsNCiAgICAgICAgICAgIGRvY3VtZW50LmJvZHkuYXBwZW5kQ2hpbGQoYSk7DQogICAgICAgICAgICBhLmNsaWNrKCk7DQogICAgICAgICAgICBkb2N1bWVudC5ib2R5LnJlbW92ZUNoaWxkKGEpOw0KICAgICAgICAgICAgVVJMLnJldm9rZU9iamVjdFVSTCh1cmwpOw0KICAgICAgICB9DQoNCiAgICAgICAgZXhwb3J0QnRuLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oKSB7DQogICAgICAgICAgICBpZiAoZXhwb3J0QnRuLmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpIHsNCiAgICAgICAgICAgICAgICBleHBvcnRUeHQoKTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfSk7DQoNCiAgICAgICAgLy8gPT09PT09PT09PSDmlLnlkI3lip/og70gPT09PT09PT09PQ0KICAgICAgICByZW5hbWVCdG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbigpIHsNCiAgICAgICAgICAgIGlmICghcmVuYW1lQnRuLmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpIHJldHVybjsNCg0KICAgICAgICAgICAgY29uc3QgY3VycmVudE5hbWUgPSBnZW5lcmF0ZWRGaWxlTmFtZS5yZXBsYWNlKC9cLnR4dCQvaSwgJycpOw0KICAgICAgICAgICAgcmVuYW1lSW5wdXQudmFsdWUgPSBjdXJyZW50TmFtZTsNCiAgICAgICAgICAgIHJlbmFtZU1vZGFsLmNsYXNzTGlzdC5hZGQoJ3Nob3cnKTsNCiAgICAgICAgICAgIHJlbmFtZUlucHV0LmZvY3VzKCk7DQogICAgICAgIH0pOw0KDQogICAgICAgIGNvbmZpcm1SZW5hbWUuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbigpIHsNCiAgICAgICAgICAgIGxldCBuZXdOYW1lID0gcmVuYW1lSW5wdXQudmFsdWUudHJpbSgpOw0KICAgICAgICAgICAgaWYgKG5ld05hbWUgPT09ICcnKSB7DQogICAgICAgICAgICAgICAgYWxlcnQoJ+aWh+S7tuWQjeS4jeiDveS4uuepuu+8gScpOw0KICAgICAgICAgICAgICAgIHJldHVybjsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIG5ld05hbWUgPSBuZXdOYW1lLnJlcGxhY2UoL1wudHh0JC9pLCAnJyk7DQogICAgICAgICAgICBpZiAoIS9eW1x3XHU0ZTAwLVx1OWZhNS1dKyQvaS50ZXN0KG5ld05hbWUpKSB7DQogICAgICAgICAgICAgICAgYWxlcnQoJ+aWh+S7tuWQjeWPquiDveWMheWQq+S4reaWh+OAgeWtl+avjeOAgeaVsOWtl+OAgeS4i+WIkue6v+aIluS4reWIkue6v++8gScpOw0KICAgICAgICAgICAgICAgIHJldHVybjsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIGdlbmVyYXRlZEZpbGVOYW1lID0gbmV3TmFtZSArICcudHh0JzsNCiAgICAgICAgICAgIGZpbGVOYW1lTGFiZWwudGV4dENvbnRlbnQgPSBnZW5lcmF0ZWRGaWxlTmFtZTsNCg0KICAgICAgICAgICAgcmVuYW1lTW9kYWwuY2xhc3NMaXN0LnJlbW92ZSgnc2hvdycpOw0KICAgICAgICB9KTsNCg0KICAgICAgICBjYW5jZWxSZW5hbWUuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbigpIHsNCiAgICAgICAgICAgIHJlbmFtZU1vZGFsLmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsNCiAgICAgICAgfSk7DQoNCiAgICAgICAgcmVuYW1lTW9kYWwuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbihlKSB7DQogICAgICAgICAgICBpZiAoZS50YXJnZXQgPT09IHJlbmFtZU1vZGFsKSB7DQogICAgICAgICAgICAgICAgcmVuYW1lTW9kYWwuY2xhc3NMaXN0LnJlbW92ZSgnc2hvdycpOw0KICAgICAgICAgICAgfQ0KICAgICAgICB9KTsNCg0KICAgICAgICAvLyA9PT09PT09PT09IOi/lOWbnuS4u+mhtei9rOWcuiA9PT09PT09PT09DQogICAgICAgIGJhY2tIb21lLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oZSkgew0KICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOw0KICAgICAgICAgICAgb3ZlcmxheS5jbGFzc0xpc3QuYWRkKCdhY3RpdmUnKTsNCiAgICAgICAgICAgIHNldFRpbWVvdXQoZnVuY3Rpb24oKSB7DQogICAgICAgICAgICAgICAgd2luZG93LmxvY2F0aW9uLmhyZWYgPSAnaW5kZXguaHRtbCc7DQogICAgICAgICAgICB9LCAxMDAwKTsNCiAgICAgICAgfSk7DQoNCiAgICAgICAgLy8g5Yid5aeL5YyWDQogICAgICAgIGZpbGVOYW1lTGFiZWwudGV4dENvbnRlbnQgPSAnJzsNCiAgICAgICAgZmlsZUNvbnRlbnQudGV4dENvbnRlbnQgPSAnJzsNCiAgICAgICAgcmVuYW1lQnRuLmNsYXNzTGlzdC5yZW1vdmUoJ2FjdGl2ZScpOw0KICAgICAgICByZW5hbWVCdG4uc3R5bGUucG9pbnRlckV2ZW50cyA9ICdub25lJzsNCiAgICAgICAgZXhwb3J0QnRuLmNsYXNzTGlzdC5yZW1vdmUoJ2FjdGl2ZScpOw0KICAgICAgICBleHBvcnRCdG4uc3R5bGUucG9pbnRlckV2ZW50cyA9ICdub25lJzsNCiAgICA=");
+</script>
+</body>
+</html>

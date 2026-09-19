@@ -1,0 +1,5 @@
+edge_profile/
+uploaded_files/
+exec_log.json
+node_modules/
+.env

@@ -1,0 +1,299 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——强密码生成器</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        /* 背景流光（与index完全一致） */
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
+        .bg-flow-1 { position: absolute; top: -150%; left: -100%; width: 350%; height: 350%; background: linear-gradient(125deg,#0a0e27,#1c1458,#32227a,#1a0f3e,#241a5e,#0e1233,#1d1652); background-size: 400% 400%; animation: flowDriftLarge 20s ease-in-out infinite; will-change: transform; }
+        .bg-flow-2 { position: absolute; top: -80%; left: -60%; width: 260%; height: 260%; background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%); animation: flowDrift 20s ease-in-out infinite alternate; }
+        .bg-flow-3 { position: absolute; top: -40%; left: -20%; width: 200%; height: 200%; background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%); animation: flowSpin 20s linear infinite; }
+        @keyframes flowDriftLarge { 0% {transform:translate(0%,0%) scale(1);} 50% {transform:translate(-2%,-2%) scale(1.05);} 100% {transform:translate(0%,0%) scale(1);} }
+        @keyframes flowDrift { 0% {transform:translate(0,0) scale(1) rotate(0deg);} 50% {transform:translate(5%,-3%) scale(1.08) rotate(6deg);} 100% {transform:translate(-2%,4%) scale(.94) rotate(-6deg);} }
+        @keyframes flowSpin { 0% {transform:rotate(0deg) scale(1);} 50% {transform:rotate(180deg) scale(1.06);} 100% {transform:rotate(360deg) scale(1);} }
+        .orb { position: absolute; border-radius: 50%; background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), rgba(255,255,255,.12) 45%, transparent 75%); box-shadow: 0 0 60px rgba(255,255,255,.1), inset 0 0 30px rgba(255,255,255,.05); pointer-events: none; will-change: transform, opacity; }
+        .orb-1 { width:260px; height:260px; top:10%; left:5%; animation:orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite; }
+        .orb-2 { width:160px; height:160px; top:55%; left:78%; animation:orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite; }
+        .orb-3 { width:110px; height:110px; top:70%; left:18%; animation:orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite; }
+        .orb-4 { width:200px; height:200px; top:28%; left:62%; animation:orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite; }
+        .orb-5 { width:80px; height:80px; top:82%; left:45%; animation:orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite; }
+        @keyframes orbFloat1 { 0%,100% {transform:translate(0,0); opacity:.5;} 30% {transform:translate(20px,-25px); opacity:.8;} 60% {transform:translate(-12px,15px); opacity:.4;} }
+        @keyframes orbFloat2 { 0%,100% {transform:translate(0,0); opacity:.6;} 50% {transform:translate(-18px,14px); opacity:.3;} }
+        @keyframes orbRotate { to {transform:rotate(360deg);} }
+        /* 主布局 */
+        main { padding: 20px 0; position: relative; z-index: 10; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+        .container { width: 92%; max-width: 1200px; background: rgba(245,247,255,.96); border-radius: 24px; box-shadow: 0 25px 70px rgba(0,0,0,.35); padding: 20px; margin-top: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(6,1fr); grid-template-rows: repeat(8,minmax(60px,auto)); gap: 14px; }
+        .cell { border-radius: 14px; background: rgba(255,255,255,.15); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; position: relative; border: 2px solid transparent; }
+        /* 标题区 */
+        .title-area { grid-row: 1/3; grid-column: 1/5; background: linear-gradient(135deg,#1a1a4e,#2d1b69,#1a1a4e); border-color:#f6d365; cursor:default; }
+        .title-area h1 { font-size: 42px; font-weight:900; letter-spacing:5px; background: linear-gradient(90deg,#f6d365,#fff,#a78bfa,#f6d365); background-size:300% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:titleShine 4s ease-in-out infinite; text-align:center; }
+        @keyframes titleShine { 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+        /* 返回主页 */
+        .back-area { grid-row:1/3; grid-column:5/7; background:linear-gradient(135deg,#1e3a8a,#3b82f6); border-color:#a78bfa; text-decoration:none; color:#fff; font-weight:800; font-size:22px; letter-spacing:3px; display:flex; flex-direction:column; justify-content:center; align-items:center; transition:transform .3s,box-shadow .3s; }
+        .back-area:hover { background:linear-gradient(135deg,#2b4a9e,#4b8ef6); transform:translateY(-4px); box-shadow:0 10px 30px rgba(0,0,0,.3); }
+        /* 密码输出区（3-6行，1-4列） */
+        .output-panel { grid-row:3/7; grid-column:1/5; background:rgba(255,255,255,.98); border-color:#4fc3f7; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        #passwordOutput { font-size:32px; font-weight:700; color:#333; text-align:center; word-break:break-all; background:#f8f9fa; border:2px solid #e0e0e0; border-radius:12px; padding:15px; width:100%; margin-bottom:15px; letter-spacing:2px; user-select:all; cursor:pointer; outline:none; }
+        #passwordOutput:focus { border-color:#4fc3f7; box-shadow:0 0 0 3px rgba(79,195,247,.2); }
+        .strength-meter { width:100%; margin-bottom:10px; }
+        .strength-label { display:flex; justify-content:space-between; font-size:14px; color:#555; margin-bottom:8px; }
+        .strength-bar-bg { width:100%; height:14px; background:#e0e0e0; border-radius:10px; overflow:hidden; }
+        .strength-bar { height:100%; width:0%; border-radius:10px; transition:width .3s, background .3s; }
+        .strength-info { display:flex; justify-content:space-between; font-size:12px; color:#555; margin-top:6px; }
+        /* 长度与选项面板（3-6行，5-6列） */
+        .settings-panel { grid-row:3/7; grid-column:5/7; background:rgba(255,255,255,.98); border-color:#81c784; padding:15px; display:flex; flex-direction:column; justify-content:center; gap:12px; }
+        .length-section { display:flex; flex-direction:column; gap:8px; }
+        .length-section label { font-size:14px; color:#555; display:flex; justify-content:space-between; align-items:center; }
+        .length-control { display:flex; align-items:center; gap:10px; }
+        .length-control input[type="range"] { flex:1; }
+        .length-value { font-weight:700; color:#333; font-size:18px; min-width:30px; text-align:center; }
+        .length-progress { width:100%; height:10px; background:#e0e0e0; border-radius:10px; overflow:hidden; }
+        .length-progress-bar { height:100%; width:0%; border-radius:10px; background:linear-gradient(90deg,#f44336,#ff9800,#4caf50,#2196f3,#9c27b0); transition:width .3s; }
+        .options-section { display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center; }
+        .checkbox-group { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+        .checkbox-item { display:flex; align-items:center; gap:6px; font-size:14px; color:#444; min-height:24px; }
+        .checkbox-item input { width:18px; height:18px; cursor:pointer; }
+        /* 历史区（7-8行，1-4列） */
+        .history-panel { grid-row:7/9; grid-column:1/5; background:rgba(255,255,255,.95); border-color:#90a4ae; padding:15px; display:flex; flex-direction:column; align-items:stretch; }
+        .history-panel h3 { font-size:16px; color:#333; margin-bottom:10px; }
+        .history-list { max-height:100px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; }
+        .history-item { display:flex; justify-content:space-between; align-items:center; background:#f8f9fa; border:1px solid #e0e0e0; border-radius:8px; padding:6px 10px; font-size:14px; cursor:pointer; outline:none; transition:border-color .2s; }
+        .history-item:focus { border-color:#4fc3f7; }
+        .history-item span { color:#333; word-break:break-all; flex:1; }
+        .history-item button { border:none; background:none; color:#666; font-size:16px; cursor:pointer; min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; border-radius:8px; transition:background .2s; }
+        .history-item button:hover { background:rgba(0,0,0,.08); }
+        /* 按钮区（7-8行，5-6列） */
+        .button-panel { grid-row:7/9; grid-column:5/7; background:rgba(255,255,255,.9); border-color:#ba68c8; padding:10px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:12px; }
+        .button-panel button { width:90%; padding:10px; border:none; border-radius:50px; font-size:16px; font-weight:700; cursor:pointer; transition:transform .2s; min-height:44px; }
+        #generateBtn { background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; }
+        #generateBtn:hover { transform:translateY(-2px); }
+        #copyBtn { background:linear-gradient(135deg,#10b981,#0fa572); color:#fff; }
+        #copyBtn:hover { transform:translateY(-2px); }
+        #clearHistoryBtn { background:#f0f0f0; color:#555; font-size:14px; }
+        /* 跳转覆盖层（index.html通用圆环） */
+        .overlay { position:fixed; top:0; left:0; width:100%; height:100%; z-index:999999; display:flex; align-items:center; justify-content:center; background:rgba(8,10,25,.72); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); opacity:0; visibility:hidden; transition:opacity .4s, visibility .4s; pointer-events:none; }
+        .overlay.active { opacity:1; visibility:visible; pointer-events:auto; }
+        .loader-wrap { position:relative; width:180px; height:180px; display:flex; align-items:center; justify-content:center; }
+        .loader-ring { position:absolute; top:0; left:0; width:100%; height:100%; border-radius:50%; border:3px solid rgba(255,255,255,0.1); border-top-color:#f6d365; border-right-color:#fda085; animation:ringSpin .8s linear infinite; box-sizing:border-box; }
+        .loader-ring::before { content:''; position:absolute; top:12px; left:12px; right:12px; bottom:12px; border-radius:50%; border:2px solid transparent; border-bottom-color:#a78bfa; border-left-color:#667eea; animation:ringSpin 1.4s linear infinite reverse; }
+        .loader-ring::after { content:''; position:absolute; top:28px; left:28px; right:28px; bottom:28px; border-radius:50%; border:1px solid transparent; border-top-color:#fb7185; border-right-color:#2dd4bf; animation:ringSpin 2s linear infinite; }
+        .loader-text { position:relative; z-index:5; font-size:24px; font-weight:900; letter-spacing:4px; background:linear-gradient(90deg,#f6d365,#fda085,#f6d365); background-size:200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:textShine 1.5s linear infinite; }
+        @keyframes ringSpin { to { transform:rotate(360deg); } }
+        @keyframes textShine { 0% { background-position:0% 50%; } 100% { background-position:200% 50%; } }
+        /* 响应式（保留原有，增加可读性） */
+        @media (max-width:900px) { .grid { gap:8px; } .title-area h1 { font-size:28px; } .back-area { font-size:18px; } .container { width:95%; } }
+        @media (max-width:600px) {
+            .grid { grid-template-columns:repeat(2,1fr); grid-template-rows:auto; }
+            .title-area { grid-row:1; grid-column:1/3; }
+            .back-area { grid-row:2; grid-column:1/3; }
+            .output-panel { grid-row:3; grid-column:1/3; }
+            .settings-panel { grid-row:4; grid-column:1/3; }
+            .history-panel { grid-row:5; grid-column:1/3; }
+            .button-panel { grid-row:6; grid-column:1/3; }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+</style>
+
+<!-- 多设备适配改进 v1.0 -->
+<style>
+/* 6. 全局box-sizing reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* 3. 刘海屏安全区域适配 */
+body {
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
+             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+
+/* 2. 触摸设备优化：禁用hover残留效果 */
+@media (hover: none) {
+    .tool-box:hover, .card:hover, .box:hover, button:hover, a:hover {
+        transform: none !important;
+        box-shadow: inherit !important;
+    }
+    .tooltip, [class*="tooltip"], [class*="tip"] {
+        display: none !important;
+    }
+}
+
+/* 4. 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+}
+</style>
+
+<!-- 游戏页面触摸优化 -->
+<style>
+/* 7. 游戏按钮触摸目标增大到44px */
+button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
+    min-width: 44px !important;
+    min-height: 44px !important;
+}
+
+/* 小屏幕游戏页面优化 */
+@media (max-width: 768px) {
+    canvas, .game-container, .board, .grid-board {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+</style>
+
+</head>
+<body>
+    <div class="bg-animation" aria-hidden="true">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+    <main>
+        <div class="container">
+            <div class="grid">
+                <div class="cell title-area" aria-label="标题"><h1>找乐子——强密码生成器</h1></div>
+                <a href="index.html" class="cell back-area" id="backHome" aria-label="返回主页">返回<br>主页</a>
+                <div class="cell output-panel">
+                    <div id="passwordOutput" role="status" aria-live="polite" tabindex="0" aria-label="生成的密码，可按 Ctrl+C 复制">点击下方按钮生成密码</div>
+                    <div class="strength-meter">
+                        <div class="strength-label"><span>密码强度</span><span id="strengthText">暂无</span></div>
+                        <div class="strength-bar-bg"><div class="strength-bar" id="strengthBar" role="progressbar" aria-label="密码强度"></div></div>
+                        <div class="strength-info"><span>熵值</span><span id="entropyText">0 bit</span></div>
+                    </div>
+                </div>
+                <div class="cell settings-panel">
+                    <div class="length-section">
+                        <label for="lengthSlider">密码长度：<span id="lenLabel">16</span></label>
+                        <div class="length-control">
+                            <input type="range" id="lengthSlider" min="4" max="64" value="16" aria-label="密码长度滑块">
+                            <div class="length-value" id="lengthValueDisplay">16</div>
+                        </div>
+                        <div class="length-progress"><div class="length-progress-bar" id="lengthProgress" aria-hidden="true"></div></div>
+                    </div>
+                    <div class="options-section">
+                        <div class="checkbox-group">
+                            <div class="checkbox-item"><input type="checkbox" id="useLower" checked aria-label="使用小写字母"><label for="useLower">小写 a-z</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="useUpper" checked aria-label="使用大写字母"><label for="useUpper">大写 A-Z</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="useDigits" checked aria-label="使用数字"><label for="useDigits">数字 0-9</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="useSymbols" checked aria-label="使用符号"><label for="useSymbols">符号</label></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cell history-panel">
+                    <h3>📜 生成历史（最近10条）</h3>
+                    <div class="history-list" id="historyList" aria-live="polite"></div>
+                </div>
+                <div class="cell button-panel">
+                    <button id="generateBtn" aria-label="生成新密码" title="点击生成新密码">🔒 生成密码</button>
+                    <button id="copyBtn" aria-label="复制当前密码" title="复制当前密码">📋 复制</button>
+                    <button id="clearHistoryBtn" aria-label="清空历史记录" title="清空历史记录">🗑️ 清空历史</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="跳转中"><div class="loader-wrap"><div class="loader-ring"></div><div class="loader-text">找乐子～</div></div></div>
+    <script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQogICAgICAgIChmdW5jdGlvbigpIHsNCiAgICAgICAgICAgIC8vIERPTQ0KICAgICAgICAgICAgY29uc3Qgb3V0cHV0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Bhc3N3b3JkT3V0cHV0Jyk7DQogICAgICAgICAgICBjb25zdCBzbGlkZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGVuZ3RoU2xpZGVyJyk7DQogICAgICAgICAgICBjb25zdCBsZW5MYWJlbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsZW5MYWJlbCcpOw0KICAgICAgICAgICAgY29uc3QgbGVuZ3RoVmFsdWVEaXNwbGF5ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xlbmd0aFZhbHVlRGlzcGxheScpOw0KICAgICAgICAgICAgY29uc3QgbGVuZ3RoUHJvZ3Jlc3MgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbGVuZ3RoUHJvZ3Jlc3MnKTsNCiAgICAgICAgICAgIGNvbnN0IGxvd2VyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3VzZUxvd2VyJyk7DQogICAgICAgICAgICBjb25zdCB1cHBlciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd1c2VVcHBlcicpOw0KICAgICAgICAgICAgY29uc3QgZGlnaXRzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3VzZURpZ2l0cycpOw0KICAgICAgICAgICAgY29uc3Qgc3ltYm9scyA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd1c2VTeW1ib2xzJyk7DQogICAgICAgICAgICBjb25zdCBoaXN0b3J5TGlzdCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdoaXN0b3J5TGlzdCcpOw0KICAgICAgICAgICAgY29uc3QgY2xlYXJIaXN0b3J5QnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NsZWFySGlzdG9yeUJ0bicpOw0KICAgICAgICAgICAgY29uc3QgZ2VuZXJhdGVCdG4gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2VuZXJhdGVCdG4nKTsNCiAgICAgICAgICAgIGNvbnN0IGNvcHlCdG4gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY29weUJ0bicpOw0KICAgICAgICAgICAgY29uc3Qgc3RyZW5ndGhCYXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc3RyZW5ndGhCYXInKTsNCiAgICAgICAgICAgIGNvbnN0IHN0cmVuZ3RoVGV4dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzdHJlbmd0aFRleHQnKTsNCiAgICAgICAgICAgIGNvbnN0IGVudHJvcHlUZXh0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2VudHJvcHlUZXh0Jyk7DQogICAgICAgICAgICAvLyDlrZfnrKbpm4YNCiAgICAgICAgICAgIGNvbnN0IExPV0VSX0NIQVJTID0gJ2FiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6JzsNCiAgICAgICAgICAgIGNvbnN0IFVQUEVSX0NIQVJTID0gJ0FCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaJzsNCiAgICAgICAgICAgIGNvbnN0IERJR0lUX0NIQVJTID0gJzAxMjM0NTY3ODknOw0KICAgICAgICAgICAgY29uc3QgU1lNQk9MX0NIQVJTID0gJyFAIyQlXiYqKClfKy09W117fXw7OiwuPD4/JzsNCiAgICAgICAgICAgIGxldCBoaXN0b3J5ID0gW107DQogICAgICAgICAgICAvLyDmm7TmlrDplb/luqbmmL7npLrkuI7ov5vluqbmnaENCiAgICAgICAgICAgIGZ1bmN0aW9uIHVwZGF0ZUxlbmd0aFVJKCkgew0KICAgICAgICAgICAgICAgIGNvbnN0IGxlbiA9IHBhcnNlSW50KHNsaWRlci52YWx1ZSk7DQogICAgICAgICAgICAgICAgbGVuTGFiZWwudGV4dENvbnRlbnQgPSBsZW47DQogICAgICAgICAgICAgICAgbGVuZ3RoVmFsdWVEaXNwbGF5LnRleHRDb250ZW50ID0gbGVuOw0KICAgICAgICAgICAgICAgIGNvbnN0IHBlcmNlbnRhZ2UgPSAoKGxlbiAtIDQpIC8gKDY0IC0gNCkpICogMTAwOw0KICAgICAgICAgICAgICAgIGxlbmd0aFByb2dyZXNzLnN0eWxlLndpZHRoID0gcGVyY2VudGFnZSArICclJzsNCiAgICAgICAgICAgICAgICBjb25zdCBodWUgPSBNYXRoLm1pbigzMDAsIE1hdGgubWF4KDAsIChwZXJjZW50YWdlIC8gMTAwKSAqIDI4MCkpOw0KICAgICAgICAgICAgICAgIGxlbmd0aFByb2dyZXNzLnN0eWxlLmJhY2tncm91bmQgPSBgbGluZWFyLWdyYWRpZW50KDkwZGVnLCBoc2woJHtodWV9LDcwJSw1MCUpLCBoc2woJHtodWUrNjB9LDcwJSw1MCUpKWA7DQogICAgICAgICAgICB9DQogICAgICAgICAgICBzbGlkZXIuYWRkRXZlbnRMaXN0ZW5lcignaW5wdXQnLCBmdW5jdGlvbigpIHsNCiAgICAgICAgICAgICAgICB1cGRhdGVMZW5ndGhVSSgpOw0KICAgICAgICAgICAgICAgIGdlbmVyYXRlUGFzc3dvcmQoKTsNCiAgICAgICAgICAgIH0pOw0KICAgICAgICAgICAgW2xvd2VyLCB1cHBlciwgZGlnaXRzLCBzeW1ib2xzXS5mb3JFYWNoKGVsID0+IGVsLmFkZEV2ZW50TGlzdGVuZXIoJ2NoYW5nZScsIGdlbmVyYXRlUGFzc3dvcmQpKTsNCiAgICAgICAgICAgIC8vIOeUn+aIkOWNleS4quWvhuegge+8iOeugOWNlemaj+acuu+8iQ0KICAgICAgICAgICAgZnVuY3Rpb24gZ2VuZXJhdGVPbmVQYXNzd29yZCgpIHsNCiAgICAgICAgICAgICAgICBsZXQgcG9vbCA9ICcnOw0KICAgICAgICAgICAgICAgIGlmIChsb3dlci5jaGVja2VkKSBwb29sICs9IExPV0VSX0NIQVJTOw0KICAgICAgICAgICAgICAgIGlmICh1cHBlci5jaGVja2VkKSBwb29sICs9IFVQUEVSX0NIQVJTOw0KICAgICAgICAgICAgICAgIGlmIChkaWdpdHMuY2hlY2tlZCkgcG9vbCArPSBESUdJVF9DSEFSUzsNCiAgICAgICAgICAgICAgICBpZiAoc3ltYm9scy5jaGVja2VkKSBwb29sICs9IFNZTUJPTF9DSEFSUzsNCiAgICAgICAgICAgICAgICBpZiAoIXBvb2wpIHJldHVybiAnJzsNCiAgICAgICAgICAgICAgICBjb25zdCBsZW4gPSBwYXJzZUludChzbGlkZXIudmFsdWUpOw0KICAgICAgICAgICAgICAgIGxldCBwYXNzd29yZCA9ICcnOw0KICAgICAgICAgICAgICAgIGZvciAobGV0IGkgPSAwOyBpIDwgbGVuOyBpKyspIHsNCiAgICAgICAgICAgICAgICAgICAgcGFzc3dvcmQgKz0gcG9vbFtNYXRoLmZsb29yKE1hdGgucmFuZG9tKCkgKiBwb29sLmxlbmd0aCldOw0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICByZXR1cm4gcGFzc3dvcmQ7DQogICAgICAgICAgICB9DQogICAgICAgICAgICBmdW5jdGlvbiBnZW5lcmF0ZVBhc3N3b3JkKCkgew0KICAgICAgICAgICAgICAgIGNvbnN0IHB3ZCA9IGdlbmVyYXRlT25lUGFzc3dvcmQoKTsNCiAgICAgICAgICAgICAgICBpZiAoIXB3ZCkgew0KICAgICAgICAgICAgICAgICAgICBvdXRwdXQudGV4dENvbnRlbnQgPSAn6K+36Iez5bCR6YCJ5oup5LiA56eN5a2X56ymJzsNCiAgICAgICAgICAgICAgICAgICAgdXBkYXRlU3RyZW5ndGgoMCwgMCk7DQogICAgICAgICAgICAgICAgICAgIHJldHVybjsNCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgb3V0cHV0LnRleHRDb250ZW50ID0gcHdkOw0KICAgICAgICAgICAgICAgIGNhbGN1bGF0ZVN0cmVuZ3RoKHB3ZCk7DQogICAgICAgICAgICAgICAgYWRkSGlzdG9yeShwd2QpOw0KICAgICAgICAgICAgfQ0KICAgICAgICAgICAgLy8g5by65bqm6K6h566X77yI54a177yJICsg5Yqo55S75pu05paw6L+b5bqm5p2hDQogICAgICAgICAgICBmdW5jdGlvbiBjYWxjdWxhdGVTdHJlbmd0aChwd2QpIHsNCiAgICAgICAgICAgICAgICBsZXQgcG9vbFNpemUgPSAwOw0KICAgICAgICAgICAgICAgIGlmICgvW2Etel0vLnRlc3QocHdkKSkgcG9vbFNpemUgKz0gMjY7DQogICAgICAgICAgICAgICAgaWYgKC9bQS1aXS8udGVzdChwd2QpKSBwb29sU2l6ZSArPSAyNjsNCiAgICAgICAgICAgICAgICBpZiAoL1xkLy50ZXN0KHB3ZCkpIHBvb2xTaXplICs9IDEwOw0KICAgICAgICAgICAgICAgIGlmICgvW15hLXpBLVowLTldLy50ZXN0KHB3ZCkpIHBvb2xTaXplICs9IDMyOw0KICAgICAgICAgICAgICAgIGlmIChwb29sU2l6ZSA9PT0gMCkgcG9vbFNpemUgPSAxOw0KICAgICAgICAgICAgICAgIGNvbnN0IGVudHJvcHkgPSBwd2QubGVuZ3RoICogTWF0aC5sb2cyKHBvb2xTaXplKTsNCiAgICAgICAgICAgICAgICBjb25zdCBwZXJjZW50ID0gTWF0aC5taW4oMTAwLCAoZW50cm9weSAvIDMwMCkgKiAxMDApOw0KICAgICAgICAgICAgICAgIGxldCBjb2xvciwgdGV4dDsNCiAgICAgICAgICAgICAgICBpZiAocGVyY2VudCA+IDkwKSB7IGNvbG9yID0gJyMwMGM4NTMnOyB0ZXh0ID0gJ+mdnuW4uOW8uic7IH0NCiAgICAgICAgICAgICAgICBlbHNlIGlmIChwZXJjZW50ID4gNzApIHsgY29sb3IgPSAnIzRjYWY1MCc7IHRleHQgPSAn5b6I5by6JzsgfQ0KICAgICAgICAgICAgICAgIGVsc2UgaWYgKHBlcmNlbnQgPiA1MCkgeyBjb2xvciA9ICcjZmY5ODAwJzsgdGV4dCA9ICfkuK3nrYknOyB9DQogICAgICAgICAgICAgICAgZWxzZSBpZiAocGVyY2VudCA+IDMwKSB7IGNvbG9yID0gJyNmZjU3MjInOyB0ZXh0ID0gJ+i+g+W8sSc7IH0NCiAgICAgICAgICAgICAgICBlbHNlIHsgY29sb3IgPSAnI2Y0NDMzNic7IHRleHQgPSAn5p6B5byxJzsgfQ0KICAgICAgICAgICAgICAgIHN0cmVuZ3RoQmFyLnN0eWxlLmJhY2tncm91bmQgPSBjb2xvcjsNCiAgICAgICAgICAgICAgICBzdHJlbmd0aFRleHQudGV4dENvbnRlbnQgPSB0ZXh0Ow0KICAgICAgICAgICAgICAgIGVudHJvcHlUZXh0LnRleHRDb250ZW50ID0gYCR7ZW50cm9weS50b0ZpeGVkKDEpfSBiaXRgOw0KICAgICAgICAgICAgICAgIC8vIOWKqOeUu+abtOaWsOi/m+W6puadoeWuveW6pg0KICAgICAgICAgICAgICAgIGFuaW1hdGVTdHJlbmd0aEJhcihwZXJjZW50KTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIC8vIOWKqOeUu+WHveaVsO+8muS7jjDlubPmu5Hov4fmuKHliLDnm67moIfnmb7liIbmr5QNCiAgICAgICAgICAgIGZ1bmN0aW9uIGFuaW1hdGVTdHJlbmd0aEJhcih0YXJnZXQpIHsNCiAgICAgICAgICAgICAgICBsZXQgY3VycmVudCA9IDA7DQogICAgICAgICAgICAgICAgY29uc3Qgc3RlcCA9ICgpID0+IHsNCiAgICAgICAgICAgICAgICAgICAgY3VycmVudCArPSA1OyAvLyDmr4/mrKHlop7liqA1JQ0KICAgICAgICAgICAgICAgICAgICBpZiAoY3VycmVudCA+PSB0YXJnZXQpIGN1cnJlbnQgPSB0YXJnZXQ7DQogICAgICAgICAgICAgICAgICAgIHN0cmVuZ3RoQmFyLnN0eWxlLndpZHRoID0gY3VycmVudCArICclJzsNCiAgICAgICAgICAgICAgICAgICAgaWYgKGN1cnJlbnQgPCB0YXJnZXQpIHsNCiAgICAgICAgICAgICAgICAgICAgICAgIHJlcXVlc3RBbmltYXRpb25GcmFtZShzdGVwKTsNCiAgICAgICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgIH07DQogICAgICAgICAgICAgICAgc3RyZW5ndGhCYXIuc3R5bGUud2lkdGggPSAnMCUnOw0KICAgICAgICAgICAgICAgIHJlcXVlc3RBbmltYXRpb25GcmFtZShzdGVwKTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIC8vIOWOhuWPsueuoeeQhg0KICAgICAgICAgICAgZnVuY3Rpb24gYWRkSGlzdG9yeShwd2QpIHsNCiAgICAgICAgICAgICAgICBpZiAoaGlzdG9yeS5pbmNsdWRlcyhwd2QpKSByZXR1cm47DQogICAgICAgICAgICAgICAgaGlzdG9yeS51bnNoaWZ0KHB3ZCk7DQogICAgICAgICAgICAgICAgaWYgKGhpc3RvcnkubGVuZ3RoID4gMTApIGhpc3RvcnkucG9wKCk7DQogICAgICAgICAgICAgICAgcmVuZGVySGlzdG9yeSgpOw0KICAgICAgICAgICAgfQ0KICAgICAgICAgICAgZnVuY3Rpb24gcmVuZGVySGlzdG9yeSgpIHsNCiAgICAgICAgICAgICAgICBoaXN0b3J5TGlzdC5pbm5lckhUTUwgPSAnJzsNCiAgICAgICAgICAgICAgICBpZiAoaGlzdG9yeS5sZW5ndGggPT09IDApIHsNCiAgICAgICAgICAgICAgICAgICAgaGlzdG9yeUxpc3QuaW5uZXJIVE1MID0gJzxkaXYgc3R5bGU9ImNvbG9yOiNhYWE7dGV4dC1hbGlnbjpjZW50ZXI7cGFkZGluZzoxMHB4OyI+5pqC5peg5Y6G5Y+yPC9kaXY+JzsNCiAgICAgICAgICAgICAgICAgICAgcmV0dXJuOw0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICBoaXN0b3J5LmZvckVhY2goKHB3ZCwgaWR4KSA9PiB7DQogICAgICAgICAgICAgICAgICAgIGNvbnN0IGl0ZW0gPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTsNCiAgICAgICAgICAgICAgICAgICAgaXRlbS5jbGFzc05hbWUgPSAnaGlzdG9yeS1pdGVtJzsNCiAgICAgICAgICAgICAgICAgICAgaXRlbS50YWJJbmRleCA9IDA7DQogICAgICAgICAgICAgICAgICAgIGl0ZW0uc2V0QXR0cmlidXRlKCdyb2xlJywgJ2J1dHRvbicpOw0KICAgICAgICAgICAgICAgICAgICBpdGVtLnNldEF0dHJpYnV0ZSgnYXJpYS1sYWJlbCcsIGDlpI3liLblr4bnoIEgJHtpZHggKyAxfWApOw0KICAgICAgICAgICAgICAgICAgICBpdGVtLmlubmVySFRNTCA9IGA8c3BhbiB0aXRsZT0i54K55Ye75aSN5Yi2Ij4ke3B3ZH08L3NwYW4+PGJ1dHRvbiBkYXRhLWluZGV4PSIke2lkeH0iIGFyaWEtbGFiZWw9IuWkjeWItiI+8J+TizwvYnV0dG9uPmA7DQogICAgICAgICAgICAgICAgICAgIA0KICAgICAgICAgICAgICAgICAgICBpdGVtLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oZSkgew0KICAgICAgICAgICAgICAgICAgICAgICAgaWYgKGUudGFyZ2V0LnRhZ05hbWUgPT09ICdCVVRUT04nKSByZXR1cm47DQogICAgICAgICAgICAgICAgICAgICAgICBjb3B5VG9DbGlwYm9hcmQocHdkKTsNCiAgICAgICAgICAgICAgICAgICAgICAgIGFsZXJ0KCflt7LlpI3liLYnKTsNCiAgICAgICAgICAgICAgICAgICAgfSk7DQogICAgICAgICAgICAgICAgICAgIA0KICAgICAgICAgICAgICAgICAgICBpdGVtLmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbihlKSB7DQogICAgICAgICAgICAgICAgICAgICAgICBpZiAoZS5rZXkgPT09ICdFbnRlcicgfHwgZS5rZXkgPT09ICcgJykgew0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb3B5VG9DbGlwYm9hcmQocHdkKTsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBhbGVydCgn5bey5aSN5Yi2Jyk7DQogICAgICAgICAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgICAgIH0pOw0KICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgICAgICAgICAgICAgaXRlbS5xdWVyeVNlbGVjdG9yKCdidXR0b24nKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uKGUpIHsNCiAgICAgICAgICAgICAgICAgICAgICAgIGUuc3RvcFByb3BhZ2F0aW9uKCk7DQogICAgICAgICAgICAgICAgICAgICAgICBjb3B5VG9DbGlwYm9hcmQocHdkKTsNCiAgICAgICAgICAgICAgICAgICAgICAgIGFsZXJ0KCflt7LlpI3liLYnKTsNCiAgICAgICAgICAgICAgICAgICAgfSk7DQogICAgICAgICAgICAgICAgICAgIGhpc3RvcnlMaXN0LmFwcGVuZENoaWxkKGl0ZW0pOw0KICAgICAgICAgICAgICAgIH0pOw0KICAgICAgICAgICAgfQ0KICAgICAgICAgICAgZnVuY3Rpb24gY2xlYXJIaXN0b3J5KCkgeyBoaXN0b3J5ID0gW107IHJlbmRlckhpc3RvcnkoKTsgfQ0KICAgICAgICAgICAgZnVuY3Rpb24gY29weVRvQ2xpcGJvYXJkKHRleHQpIHsNCiAgICAgICAgICAgICAgICBpZiAobmF2aWdhdG9yLmNsaXBib2FyZCAmJiBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dCkgew0KICAgICAgICAgICAgICAgICAgICBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dCh0ZXh0KS5jYXRjaCgoKSA9PiBmYWxsYmFja0NvcHkodGV4dCkpOw0KICAgICAgICAgICAgICAgIH0gZWxzZSBmYWxsYmFja0NvcHkodGV4dCk7DQogICAgICAgICAgICB9DQogICAgICAgICAgICBmdW5jdGlvbiBmYWxsYmFja0NvcHkodGV4dCkgew0KICAgICAgICAgICAgICAgIGNvbnN0IHRhID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgndGV4dGFyZWEnKTsNCiAgICAgICAgICAgICAgICB0YS52YWx1ZSA9IHRleHQ7DQogICAgICAgICAgICAgICAgZG9jdW1lbnQuYm9keS5hcHBlbmRDaGlsZCh0YSk7DQogICAgICAgICAgICAgICAgdGEuc2VsZWN0KCk7DQogICAgICAgICAgICAgICAgZG9jdW1lbnQuZXhlY0NvbW1hbmQoJ2NvcHknKTsNCiAgICAgICAgICAgICAgICBkb2N1bWVudC5ib2R5LnJlbW92ZUNoaWxkKHRhKTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIGdlbmVyYXRlQnRuLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZ2VuZXJhdGVQYXNzd29yZCk7DQogICAgICAgICAgICBjb3B5QnRuLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oKSB7DQogICAgICAgICAgICAgICAgY29uc3QgcHdkID0gb3V0cHV0LnRleHRDb250ZW50LnNwbGl0KCdcbicpWzBdOw0KICAgICAgICAgICAgICAgIGlmICghcHdkIHx8IHB3ZC5zdGFydHNXaXRoKCfngrnlh7snKSkgeyBhbGVydCgn6K+35YWI55Sf5oiQ5a+G56CBJyk7IHJldHVybjsgfQ0KICAgICAgICAgICAgICAgIGNvcHlUb0NsaXBib2FyZChwd2QpOw0KICAgICAgICAgICAgICAgIGFsZXJ0KCflt7LlpI3liLYnKTsNCiAgICAgICAgICAgIH0pOw0KICAgICAgICAgICAgY2xlYXJIaXN0b3J5QnRuLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgY2xlYXJIaXN0b3J5KTsNCiAgICAgICAgICAgIC8vIOWvhueggei+k+WHuuWMuuWfn+mUruebmOaTjeS9nOaUr+aMge+8iEN0cmwrQyDlpI3liLbvvIkNCiAgICAgICAgICAgIG91dHB1dC5hZGRFdmVudExpc3RlbmVyKCdrZXlkb3duJywgZnVuY3Rpb24oZSkgew0KICAgICAgICAgICAgICAgIGlmIChlLmN0cmxLZXkgJiYgZS5rZXkgPT09ICdjJykgew0KICAgICAgICAgICAgICAgICAgICBjb25zdCBwd2QgPSBvdXRwdXQudGV4dENvbnRlbnQuc3BsaXQoJ1xuJylbMF07DQogICAgICAgICAgICAgICAgICAgIGlmIChwd2QgJiYgIXB3ZC5zdGFydHNXaXRoKCfngrnlh7snKSkgew0KICAgICAgICAgICAgICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOw0KICAgICAgICAgICAgICAgICAgICAgICAgY29weVRvQ2xpcGJvYXJkKHB3ZCk7DQogICAgICAgICAgICAgICAgICAgICAgICBhbGVydCgn5bey5aSN5Yi2Jyk7DQogICAgICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICB9KTsNCiAgICAgICAgICAgIC8vIOi3s+i9rOWKqOeUu++8iGluZGV4Lmh0bWzpgJrnlKjlnIbnjq/vvIkNCiAgICAgICAgICAgIGNvbnN0IG92ZXJsYXkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnb3ZlcmxheScpOw0KICAgICAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JhY2tIb21lJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbihlKSB7DQogICAgICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOw0KICAgICAgICAgICAgICAgIG92ZXJsYXkuY2xhc3NMaXN0LmFkZCgnYWN0aXZlJyk7DQogICAgICAgICAgICAgICAgc2V0VGltZW91dCgoKSA9PiB7IGxvY2F0aW9uLmhyZWYgPSAnaW5kZXguaHRtbCc7IH0sIDEwMDApOw0KICAgICAgICAgICAgfSk7DQogICAgICAgICAgICAvLyDmlrDlop7vvJrmjIkgRXNjIOWFs+mXrei9rOWcuuimhuebluWxgg0KICAgICAgICAgICAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigna2V5ZG93bicsIGZ1bmN0aW9uKGUpIHsNCiAgICAgICAgICAgICAgICBpZiAoZS5rZXkgPT09ICdFc2NhcGUnKSB7DQogICAgICAgICAgICAgICAgICAgIGNvbnN0IG92ZXJsYXkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnb3ZlcmxheScpOw0KICAgICAgICAgICAgICAgICAgICBpZiAob3ZlcmxheS5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScpKSB7DQogICAgICAgICAgICAgICAgICAgICAgICBvdmVybGF5LmNsYXNzTGlzdC5yZW1vdmUoJ2FjdGl2ZScpOw0KICAgICAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfSk7DQogICAgICAgICAgICAvLyDliJ3lp4vljJYNCiAgICAgICAgICAgIHVwZGF0ZUxlbmd0aFVJKCk7DQogICAgICAgICAgICBnZW5lcmF0ZVBhc3N3b3JkKCk7DQogICAgICAgIH0pKCk7DQogICAg");
+</script>
+</body>
+</html>

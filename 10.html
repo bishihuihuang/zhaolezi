@@ -1,0 +1,722 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子—后台修改办法</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: #0a0e27;
+            overflow-x: hidden;
+        }
+
+        /* ===== 背景流光（20秒无缝循环） ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -150%;
+            left: -100%;
+            width: 350%;
+            height: 350%;
+            background: linear-gradient(125deg, #0a0e27, #1c1458, #32227a, #1a0f3e, #241a5e, #0e1233, #1d1652);
+            background-size: 400% 400%;
+            animation: flowGrad 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -80%;
+            left: -60%;
+            width: 260%;
+            height: 260%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%);
+            animation: flowSpin 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGrad {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        @keyframes flowDrift {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            50% {
+                transform: translate(5%, -3%) scale(1.08) rotate(6deg);
+            }
+            100% {
+                transform: translate(-2%, 4%) scale(.94) rotate(-6deg);
+            }
+        }
+        @keyframes flowSpin {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.06);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        /* ===== 悬浮球 ===== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), rgba(255,255,255,.12) 45%, transparent 75%);
+            box-shadow: 0 0 60px rgba(255,255,255,.1), inset 0 0 30px rgba(255,255,255,.05);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 {
+            width: 260px;
+            height: 260px;
+            top: 10%;
+            left: 5%;
+            animation: orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite;
+        }
+        .orb-2 {
+            width: 160px;
+            height: 160px;
+            top: 55%;
+            left: 78%;
+            animation: orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite;
+        }
+        .orb-3 {
+            width: 110px;
+            height: 110px;
+            top: 70%;
+            left: 18%;
+            animation: orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite;
+        }
+        .orb-4 {
+            width: 200px;
+            height: 200px;
+            top: 28%;
+            left: 62%;
+            animation: orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite;
+        }
+        .orb-5 {
+            width: 80px;
+            height: 80px;
+            top: 82%;
+            left: 45%;
+            animation: orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite;
+        }
+        @keyframes orbFloat1 {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: .5;
+            }
+            30% {
+                transform: translate(20px, -25px);
+                opacity: .8;
+            }
+            60% {
+                transform: translate(-12px, 15px);
+                opacity: .4;
+            }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: .6;
+            }
+            50% {
+                transform: translate(-18px, 14px);
+                opacity: .3;
+            }
+        }
+        @keyframes orbRotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== 主体容器 ===== */
+        main {
+            padding-top: 20px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background: rgba(245, 247, 255, .97);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px rgba(255, 255, 255, .3);
+            padding: 24px;
+            backdrop-filter: blur(4px);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* ===== 网格布局 ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 14px;
+            padding: 8px;
+        }
+
+        /* 通用格子样式 */
+        .cell {
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            transition: transform .3s, box-shadow .3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+        }
+        .cell:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
+        }
+
+        /* 标题区 */
+        .title-area {
+            grid-row: 1 / 3;
+            grid-column: 1 / 5;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500, #ffd700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+        }
+        .title-area h1 {
+            font-size: 42px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, .4);
+            letter-spacing: 4px;
+        }
+
+        /* 返回主页 */
+        .back-area {
+            grid-row: 1 / 3;
+            grid-column: 5 / 7;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            text-decoration: none;
+            color: #fff;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform .3s, box-shadow .3s;
+        }
+        .back-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(50, 220, 130, .4);
+        }
+
+        /* 内容区 */
+        .content-area {
+            grid-row: 3 / 9;
+            grid-column: 1 / 7;
+            background: rgba(255, 255, 255, .5);
+            border-radius: 14px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+        .content-section {
+            background: rgba(255, 255, 255, .92);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+            display: flex;
+            flex-direction: column;
+        }
+        .content-section h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .content-section p {
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .code-block {
+            position: relative;
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0 0;
+            overflow-x: auto;
+            flex: 1;
+        }
+        .code-block pre {
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        /* 【修复】复制按钮尺寸提升至44x44，确保触屏可点 */
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            border: none;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background .2s;
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        /* 图标网格 */
+        .icon-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .icon-card {
+            width: 56px;
+            height: 56px;
+            background: #f0f2f5;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: background .3s, transform .2s;
+            user-select: none;
+            border: 1px solid #ddd;
+        }
+        .icon-card:hover {
+            background: #e0e4e8;
+            transform: scale(1.1);
+        }
+        .icon-card:active {
+            transform: scale(.95);
+        }
+
+        /* ===== 响应式：窄屏时方法改为单列 ===== */
+        @media (max-width: 900px) {
+            .methods-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== 跳转覆盖层（沿用指定样式） ===== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* 转圈动画 */
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg,
+                    #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes textShine {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+</style>
+
+<!-- 多设备适配改进 v1.0 -->
+<style>
+/* 6. 全局box-sizing reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* 3. 刘海屏安全区域适配 */
+body {
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
+             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+
+/* 2. 触摸设备优化：禁用hover残留效果 */
+@media (hover: none) {
+    .tool-box:hover, .card:hover, .box:hover, button:hover, a:hover {
+        transform: none !important;
+        box-shadow: inherit !important;
+    }
+    .tooltip, [class*="tooltip"], [class*="tip"] {
+        display: none !important;
+    }
+}
+
+/* 4. 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+}
+</style>
+
+<!-- 游戏页面触摸优化 -->
+<style>
+/* 7. 游戏按钮触摸目标增大到44px */
+button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
+    min-width: 44px !important;
+    min-height: 44px !important;
+}
+
+/* 小屏幕游戏页面优化 */
+@media (max-width: 768px) {
+    canvas, .game-container, .board, .grid-board {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
+</style>
+
+</head>
+<body>
+
+    <!-- 背景 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <!-- 标题区域 -->
+                <div class="cell title-area">
+                    <h1>找乐子—后台修改办法</h1>
+                </div>
+                <!-- 返回主页 -->
+                <a href="index.html" class="cell back-area" id="backHome" aria-label="返回主页">返回<br>主页</a>
+
+                <!-- 内容区 -->
+                <div class="cell content-area">
+                    <!-- 三个方法并排对齐 -->
+                    <div class="methods-grid">
+                        <!-- 方法一 -->
+                        <div class="content-section">
+                            <h2>📝 方法一：手动修改代码</h2>
+                            <p>打开 <code>index.html</code>，找到 <code>const toolsConfig = [];</code>，在方括号内添加对象。每个对象格式如下：</p>
+                            <div class="code-block" id="code-block-1">
+                                <button class="copy-btn" data-target="code-block-1" aria-label="复制代码">复制</button>
+                                <pre><code>toolsConfig.push({
+    title: '我的工具',
+    desc: '工具简介',
+    link: 'my-tool.html',
+    icon: '🎯'
+});
+toolsConfig.push({
+    title: '另一个工具',
+    desc: '工具简介2',
+    link: 'other-tool.html',
+    icon: '📝'
+});</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- 方法二 -->
+                        <div class="content-section">
+                            <h2>🖥️ 方法二：控制台添加</h2>
+                            <p>按F12打开控制台，执行以下命令，即可立即添加工具并刷新界面：</p>
+                            <div class="code-block" id="code-block-2">
+                                <button class="copy-btn" data-target="code-block-2" aria-label="复制代码">复制</button>
+                                <pre><code>toolsConfig.push({
+    title: '控制台添加',
+    desc: '通过控制台直接添加',
+    link: 'console.html',
+    icon: '✨'
+});
+renderTools();</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- 方法三 -->
+                        <div class="content-section">
+                            <h2>⚙️ 方法三：管理面板添加</h2>
+                            <p>页面右侧有“添加工具”面板，填写名称、简介、链接后点击“添加”按钮即可。</p>
+                            <div style="flex:1;display:flex;align-items:center;justify-content:center;margin-top:12px;padding:20px;background:rgba(240,242,245,.8);border-radius:12px;border:1px dashed #bbb;">
+                                <span style="font-size:48px;" role="img" aria-label="工具图标">🛠️</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 图标列表（700个emoji） -->
+                    <div class="content-section" style="margin-top:20px;">
+                        <h2>🎨 常用图标列表（点击复制）</h2>
+                        <div class="icon-grid" id="icon-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 跳转覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQogICAgICAgIC8vID09PT09IDcwMOS4quW4uOeUqEVtb2pp5Zu+5qCH77yI5Liw5a+M5LiU5a6e55So77yJID09PT09DQogICAgICAgIGNvbnN0IGljb25zID0gWw0KICAgICAgICAgICAgLy8g5Y6fMTAw5Liq77yI5L+d55WZ77yJDQogICAgICAgICAgICAn8J+UiicsJ/Cfk7EnLCfinKgnLCfwn5OdJywn8J+UlycsJ/Cfjq8nLCfwn6euJywn8J+TtycsJ/CflrzvuI8nLCfwn5SSJywNCiAgICAgICAgICAgICfwn5SRJywn8J+TiicsJ+Kame+4jycsJ/Cfm6DvuI8nLCfwn5OBJywn8J+MkCcsJ/Cfkr4nLCfij7HvuI8nLCfwn46oJywn8J+nqicsDQogICAgICAgICAgICAn8J+SoScsJ/CflKUnLCfirZAnLCfinIUnLCfinYwnLCfimqDvuI8nLCfwn5SEJywn8J+TjCcsJ/Cfk44nLCfwn5OLJywNCiAgICAgICAgICAgICfwn5eC77iPJywn8J+ThScsJ/Cfk4YnLCfij7AnLCfijJsnLCfwn5WQJywn8J+VkScsJ/CflZInLCfwn5WTJywn8J+VlCcsDQogICAgICAgICAgICAn8J+VlScsJ/CflZYnLCfwn5WXJywn8J+VmCcsJ/CflZknLCfwn5WaJywn8J+VmycsJ/CfjJknLCfimIDvuI8nLCfwn4yn77iPJywNCiAgICAgICAgICAgICfimqEnLCfwn4yIJywn4p2E77iPJywn4piD77iPJywn8J+MgCcsJ/CfjKrvuI8nLCfwn4yKJywn8J+SpycsJ/CfjY4nLCfwn42KJywNCiAgICAgICAgICAgICfwn42LJywn8J+NiScsJ/CfjYcnLCfwn42TJywn8J+NkicsJ/CfjZEnLCfwn6WtJywn8J+NjScsJ/CfpaUnLCfwn42eJywNCiAgICAgICAgICAgICfwn6eAJywn8J+NlycsJ/CfjZQnLCfwn42fJywn8J+NlScsJ/CfjK0nLCfwn6WqJywn8J+MricsJ/CfjK8nLCfwn42cJywNCiAgICAgICAgICAgICfwn42jJywn8J+NpCcsJ/CfjbEnLCfwn42mJywn8J+NsCcsJ/CfjoInLCfwn42rJywn8J+NrCcsJ/Cfja0nLCfwn42uJywNCiAgICAgICAgICAgICfwn42pJywn8J+NqicsJ/CfjLAnLCfwn6WcJywn8J+NrycsJ/CfpZsnLCfwn428Jywn4piVJywn8J+NtScsJ/Cfp4MnLA0KDQogICAgICAgICAgICAvLyDliqjnianvvIgxMjDkuKrvvIkNCiAgICAgICAgICAgICfwn5C2Jywn8J+QsScsJ/CfkK0nLCfwn5C5Jywn8J+QsCcsJ/CfpoonLCfwn5C7Jywn8J+QvCcsJ/CfkKgnLCfwn5CvJywNCiAgICAgICAgICAgICfwn6aBJywn8J+QricsJ/CfkLcnLCfwn5C4Jywn8J+QtScsJ/CfmYgnLCfwn5mJJywn8J+ZiicsJ/CfkJInLCfwn5CUJywNCiAgICAgICAgICAgICfwn5CnJywn8J+QpicsJ/CfkKQnLCfwn5CjJywn8J+QpScsJ/CfpoYnLCfwn6aFJywn8J+miScsJ/CfpocnLCfwn5C6JywNCiAgICAgICAgICAgICfwn5CXJywn8J+QtCcsJ/CfpoQnLCfwn5CdJywn8J+QmycsJ/CfposnLCfwn5CMJywn8J+QnicsJ/CfkJwnLCfwn6afJywNCiAgICAgICAgICAgICfwn6aXJywn8J+Vt++4jycsJ/CflbjvuI8nLCfwn5CiJywn8J+QjScsJ/Cfpo4nLCfwn6aWJywn8J+mlScsJ/CfkJknLCfwn6aRJywNCiAgICAgICAgICAgICfwn6aQJywn8J+mnicsJ/CfpoAnLCfwn5ChJywn8J+QoCcsJ/CfkJ8nLCfwn5CsJywn8J+QsycsJ/CfkIsnLCfwn6aIJywNCiAgICAgICAgICAgICfwn5CKJywn8J+QhScsJ/CfkIYnLCfwn6aTJywn8J+mjScsJ/CfkJgnLCfwn6abJywn8J+mjycsJ/CfkKonLCfwn5CrJywNCiAgICAgICAgICAgICfwn6aSJywn8J+mmCcsJ/CfkIMnLCfwn5CCJywn8J+QhCcsJ/CfkI4nLCfwn5CWJywn8J+QjycsJ/CfkJEnLCfwn6aZJywNCiAgICAgICAgICAgICfwn5CQJywn8J+mjCcsJ/CfkJUnLCfwn5CpJywn8J+QiCcsJ/CfkJMnLCfwn6aDJywn8J+Viu+4jycsJ/CfkIcnLCfwn6adJywNCiAgICAgICAgICAgICfwn6aoJywn8J+moScsJ/CfpqsnLCfwn6amJywn8J+mpScsJ/CfkIEnLCfwn5CAJywn8J+Qv++4jycsJ/CfppQnLCfwn5C+JywNCiAgICAgICAgICAgICfwn5CJJywn8J+QsicsJ/CfjLUnLCfwn46EJywn8J+MsicsJ/CfjLMnLCfwn4y0Jywn8J+MsScsJ/CfjL8nLCfimJjvuI8nLA0KICAgICAgICAgICAgJ/CfjYAnLCfwn46NJywn8J+OiycsJ/CfjYMnLCfwn42CJywn8J+NgScsJ/CfjYQnLCfwn4y+Jywn8J+SkCcsJ/CfjLcnLA0KDQogICAgICAgICAgICAvLyDpo5/nianppa7mlpnvvIgxMjDkuKrvvIkNCiAgICAgICAgICAgICfwn42IJywn8J+NiScsJ/CfjYonLCfwn42LJywn8J+NjCcsJ/CfjY0nLCfwn6WtJywn8J+NjicsJ/CfjY8nLCfwn42QJywNCiAgICAgICAgICAgICfwn42RJywn8J+NkicsJ/CfjZMnLCfwn6uQJywn8J+lnScsJ/CfjYUnLCfwn6WlJywn8J+lkScsJ/CfjYYnLCfwn6WUJywNCiAgICAgICAgICAgICfwn6WVJywn8J+MvScsJ/CfjLbvuI8nLCfwn6uRJywn8J+lkicsJ/CfpawnLCfwn6WmJywn8J+NhCcsJ/CfpZwnLCfwn4ywJywNCiAgICAgICAgICAgICfwn42eJywn8J+lkCcsJ/CfpZYnLCfwn6WoJywn8J+lnicsJ/Cfp4cnLCfwn6eAJywn8J+NlicsJ/CfjZcnLCfwn6WpJywNCiAgICAgICAgICAgICfwn6WTJywn8J+NlCcsJ/CfjZ8nLCfwn42VJywn8J+MrScsJ/CfpaonLCfwn4yuJywn8J+MrycsJ/Cfq5QnLCfwn6WZJywNCiAgICAgICAgICAgICfwn6eGJywn8J+lmicsJ/CfjbMnLCfwn6WYJywn8J+NsicsJ/Cfq5UnLCfwn6WjJywn8J+llycsJ/Cfjb8nLCfwn6eIJywNCiAgICAgICAgICAgICfwn6eCJywn8J+lqycsJ/CfjbEnLCfwn42YJywn8J+NmScsJ/CfjZonLCfwn42bJywn8J+NnCcsJ/CfjZ0nLCfwn42gJywNCiAgICAgICAgICAgICfwn42iJywn8J+NoycsJ/CfjaQnLCfwn42lJywn8J+lricsJ/CfjaEnLCfwn6WfJywn8J+loCcsJ/CfpaEnLCfwn6aAJywNCiAgICAgICAgICAgICfwn6aeJywn8J+mkCcsJ/CfppEnLCfwn6aqJywn8J+NpicsJ/CfjacnLCfwn42oJywn8J+NqScsJ/CfjaonLCfwn46CJywNCiAgICAgICAgICAgICfwn42wJywn8J+ngScsJ/CfpacnLCfwn42rJywn8J+NrCcsJ/Cfja0nLCfwn42uJywn8J+NrycsJ/CfpZsnLCfwn428JywNCiAgICAgICAgICAgICfimJUnLCfwn421Jywn8J+ngycsJ/CfpaQnLCfwn422Jywn8J+NuicsJ/CfjbsnLCfwn6WCJywn8J+NtycsJ/CfpYMnLA0KICAgICAgICAgICAgJ/CfjbgnLCfwn425Jywn8J+niScsJ/Cfjb4nLCfwn6eKJywn8J+lhCcsJ/CfjbQnLCfwn42977iPJywn8J+loycsJ/Cfp4snLA0KDQogICAgICAgICAgICAvLyDkuqTpgJrlu7rnrZHvvIgxMDDkuKrvvIkNCiAgICAgICAgICAgICfwn5qXJywn8J+alScsJ/CfmpknLCfwn5qMJywn8J+ajicsJ/Cfj47vuI8nLCfwn5qTJywn8J+akScsJ/CfmpInLCfwn5qQJywNCiAgICAgICAgICAgICfwn5u7Jywn8J+amicsJ/CfmpsnLCfwn5qcJywn8J+mrycsJ/Cfpr0nLCfwn6a8Jywn8J+btCcsJ/CfmrInLCfwn5u1JywNCiAgICAgICAgICAgICfwn4+N77iPJywn8J+buicsJ/CfmqgnLCfwn5qUJywn8J+ajScsJ/CfmpgnLCfwn5qWJywn8J+aoScsJ/CfmqAnLCfwn5qfJywNCiAgICAgICAgICAgICfwn5qDJywn8J+aiycsJ/Cfmp4nLCfwn5qdJywn8J+ahCcsJ/CfmoUnLCfwn5qIJywn8J+agicsJ/CfmoYnLCfwn5qHJywNCiAgICAgICAgICAgICfwn5qKJywn8J+aiScsJ+KciO+4jycsJ/Cfm6snLCfwn5usJywn8J+bqe+4jycsJ/CfkronLCfwn5uw77iPJywn8J+agCcsJ/Cfm7gnLA0KICAgICAgICAgICAgJ/CfmoEnLCfwn5u2Jywn4pu1Jywn8J+apCcsJ/Cfm6XvuI8nLCfwn5uz77iPJywn4pu077iPJywn8J+aoicsJ+KakycsJ/Cfm58nLA0KICAgICAgICAgICAgJ/CfmqcnLCfwn5qmJywn8J+apScsJ/CfmrgnLCfwn5qPJywn8J+Xuu+4jycsJ/Cfl78nLCfwn5e9Jywn8J+XvCcsJ/Cfj7AnLA0KICAgICAgICAgICAgJ/Cfj68nLCfwn4+f77iPJywn8J+OoScsJ/CfjqInLCfwn46gJywn4puyJywn4pux77iPJywn8J+Plu+4jycsJ/Cfj53vuI8nLCfwn4+c77iPJywNCiAgICAgICAgICAgICfwn4yLJywn4puw77iPJywn8J+PlO+4jycsJ/Cfl7snLCfwn4+V77iPJywn4pu6Jywn8J+PoCcsJ/Cfj6EnLCfwn4+Y77iPJywn8J+Pmu+4jycsDQogICAgICAgICAgICAn8J+Pl++4jycsJ/Cfj60nLCfwn4+iJywn8J+PrCcsJ/Cfj6MnLCfwn4+kJywn8J+PpScsJ/Cfj6YnLCfwn4+oJywn8J+PqicsDQoNCiAgICAgICAgICAgIC8vIOeJqeWTgeS4juW3peWFt++8iDE1MOS4qu+8iQ0KICAgICAgICAgICAgJ/Cfj6snLCfwn4+pJywn8J+SkicsJ/Cfj5vvuI8nLCfim6onLCfwn5WMJywn8J+VjScsJ/Cfm5UnLCfwn5WLJywn4pup77iPJywNCiAgICAgICAgICAgICfwn5uk77iPJywn8J+bo++4jycsJ/Cfl74nLCfwn46RJywn8J+Pnu+4jycsJ/CfjIUnLCfwn4yEJywn8J+MoCcsJ/CfjocnLCfwn46GJywNCiAgICAgICAgICAgICfwn4yHJywn8J+MhicsJ/Cfj5nvuI8nLCfwn4yDJywn8J+MjCcsJ/CfjIknLCfwn4yBJywn4oyaJywn8J+TsScsJ/Cfk7InLA0KICAgICAgICAgICAgJ/CfkrsnLCfijKjvuI8nLCfwn5al77iPJywn8J+WqO+4jycsJ/CflrHvuI8nLCfwn5ay77iPJywn8J+Vue+4jycsJ/Cfl5zvuI8nLCfwn5K9Jywn8J+SvicsDQogICAgICAgICAgICAn8J+SvycsJ/Cfk4AnLCfwn5O8Jywn8J+TtycsJ/Cfk7gnLCfwn5O5Jywn8J+OpScsJ/Cfk73vuI8nLCfwn46e77iPJywn8J+TnicsDQogICAgICAgICAgICAn4piO77iPJywn8J+TnycsJ/Cfk6AnLCfwn5O6Jywn8J+TuycsJ/CfjpnvuI8nLCfwn46a77iPJywn8J+Om++4jycsJ/Cfp60nLCfij7HvuI8nLA0KICAgICAgICAgICAgJ+KPsu+4jycsJ+KPsCcsJ/CflbDvuI8nLCfijJsnLCfij7MnLCfwn5OhJywn8J+UiycsJ/CfqqsnLCfwn5SMJywn8J+SoScsDQogICAgICAgICAgICAn8J+UpicsJ/Cfla/vuI8nLCfwn6evJywn8J+bou+4jycsJ/CfkrgnLCfwn5K1Jywn8J+StCcsJ/CfkrYnLCfwn5K3Jywn8J+qmScsDQogICAgICAgICAgICAn8J+SsCcsJ/CfkrMnLCfwn5KOJywn4pqW77iPJywn8J+qnCcsJ/Cfp7AnLCfwn6qbJywn8J+UpycsJ/CflKgnLCfimpLvuI8nLA0KICAgICAgICAgICAgJ/Cfm6DvuI8nLCfim4/vuI8nLCfwn6qaJywn8J+UqScsJ+Kame+4jycsJ/CfqqQnLCfwn6exJywn4puT77iPJywn8J+nsicsJ/CflKsnLA0KICAgICAgICAgICAgJ/CfkqMnLCfwn6eoJywn8J+qkycsJ/CflKonLCfwn5eh77iPJywn4pqU77iPJywn8J+boe+4jycsJ/CfmqwnLCfimrDvuI8nLCfwn6qmJywNCiAgICAgICAgICAgICfimrHvuI8nLCfwn4+6Jywn8J+UricsJ/Cfk78nLCfwn6e/Jywn8J+SiCcsJ+Kal++4jycsJ/CflK0nLCfwn5SsJywn8J+Vs++4jycsDQogICAgICAgICAgICAn8J+puScsJ/CfqbonLCfwn5KKJywn8J+SiScsJ/CfqbgnLCfwn6esJywn8J+moCcsJ/Cfp6snLCfwn6eqJywn8J+Moe+4jycsDQogICAgICAgICAgICAn8J+nuScsJ/CfqqAnLCfwn6e6Jywn8J+nuycsJ/Cfmr0nLCfwn5qwJywn8J+avycsJ/Cfm4EnLCfwn5uAJywn8J+nvCcsDQogICAgICAgICAgICAn8J+qpScsJ/CfqpInLCfwn6e9Jywn8J+qoycsJ/Cfp7QnLCfwn5uO77iPJywn8J+UkScsJ/Cfl53vuI8nLCfwn5qqJywn8J+qkScsDQogICAgICAgICAgICAn8J+bi++4jycsJ/Cfm4/vuI8nLCfwn5uMJywn8J+nuCcsJ/CfqoYnLCfwn5a877iPJywn8J+qnicsJ/Cfqp8nLCfwn5uN77iPJywn8J+bkicsDQogICAgICAgICAgICAn8J+OgScsJ/CfjognLCfwn46PJywn8J+OgCcsJ/CfqoQnLCfwn6qFJywn8J+OiicsJ/CfjoknLCfwn46OJywn8J+PricsDQogICAgICAgICAgICAn8J+OkCcsJ/Cfp6cnLCfinInvuI8nLCfwn5OpJywn8J+TqCcsJ/Cfk6cnLCfwn5KMJywn8J+TpScsJ/Cfk6QnLCfwn5OmJywNCiAgICAgICAgICAgICfwn4+377iPJywn8J+qpycsJ/Cfk6onLCfwn5OrJywn8J+TrCcsJ/Cfk60nLCfwn5OuJywn8J+TrycsJ/Cfk5wnLCfwn5ODJywNCiAgICAgICAgICAgICfwn5OEJywn8J+TkScsJ/Cfp74nLCfwn5OKJywn8J+TiCcsJ/Cfk4knLCfwn5eS77iPJywn8J+Xk++4jycsJ/Cfk4YnLCfwn5OFJywNCiAgICAgICAgICAgICfwn5OHJywn8J+Xg++4jycsJ/Cfl7PvuI8nLCfwn5eE77iPJywn8J+TiycsJ/Cfk4EnLCfwn5OCJywn8J+Xgu+4jycsJ/Cfl57vuI8nLCfwn5OwJywNCiAgICAgICAgICAgICfwn5OTJywn8J+TlCcsJ/Cfk5InLCfwn5OVJywn8J+TlycsJ/Cfk5gnLCfwn5OZJywn8J+TmicsJ/Cfk5YnLCfwn5SWJywNCiAgICAgICAgICAgICfwn6e3Jywn8J+UlycsJ/Cfk44nLCfwn5aH77iPJywn8J+TkCcsJ/Cfk48nLCfwn6euJywn8J+TjCcsJ/Cfk40nLCfinILvuI8nLA0KICAgICAgICAgICAgJ/CflorvuI8nLCfwn5aL77iPJywn4pyS77iPJywn8J+WjO+4jycsJ/Cflo3vuI8nLCfwn5OdJywn4pyP77iPJywn8J+UjScsJ/CflI4nLCfwn5SPJywNCiAgICAgICAgICAgICfwn5SQJywn8J+UkicsJ/CflJMnLA0KDQogICAgICAgICAgICAvLyDnrKblj7fkuI7mnYLpobnvvIgxMTDkuKrvvIkNCiAgICAgICAgICAgICfinaTvuI8nLCfwn6ehJywn8J+SmycsJ/CfkponLCfwn5KZJywn8J+SnCcsJ/CflqQnLCfwn6SNJywn8J+kjicsJ/CfkpQnLA0KICAgICAgICAgICAgJ+Kdo++4jycsJ/CfkpUnLCfwn5KeJywn8J+SkycsJ/CfkpcnLCfwn5KWJywn8J+SmCcsJ/Cfkp0nLCfwn5KfJywn4piu77iPJywNCiAgICAgICAgICAgICfinJ3vuI8nLCfimKrvuI8nLCfwn5WJ77iPJywn4pi477iPJywn4pyh77iPJywn8J+UrycsJ/CflY4nLCfimK/vuI8nLCfimKbvuI8nLCfwn5uQJywNCiAgICAgICAgICAgICfim44nLCfimYgnLCfimYknLCfimYonLCfimYsnLCfimYwnLCfimY0nLCfimY4nLCfimY8nLCfimZAnLA0KICAgICAgICAgICAgJ+KZkScsJ+KZkicsJ+KZkycsJ/CfhpQnLCfimpvvuI8nLCfwn4mRJywn4pii77iPJywn4pij77iPJywn8J+TtCcsJ/Cfk7MnLA0KICAgICAgICAgICAgJ/CfiLYnLCfwn4iaJywn8J+IuCcsJ/CfiLonLCfwn4i377iPJywn4py077iPJywn8J+GmicsJ/Cfkq4nLCfwn4mQJywn44qZ77iPJywNCiAgICAgICAgICAgICfjipfvuI8nLCfwn4i0Jywn8J+ItScsJ/CfiLknLCfwn4iyJywn8J+FsO+4jycsJ/CfhbHvuI8nLCfwn4aOJywn8J+GkScsJ/Cfhb7vuI8nLA0KICAgICAgICAgICAgJ/CfhpgnLCfinYwnLCfirZUnLCfwn5uRJywn4puUJywn8J+TmycsJ/CfmqsnLCfwn5KvJywn8J+SoicsJ+KZqO+4jycsDQogICAgICAgICAgICAn8J+atycsJ/Cfmq8nLCfwn5qzJywn8J+asScsJ/CflJ4nLCfwn5O1Jywn8J+arScsJ+KdlycsJ+KdlScsJ+KdkycsDQogICAgICAgICAgICAn4p2UJywn4oC877iPJywn4oGJ77iPJywn8J+UhScsJ/CflIYnLCfjgL3vuI8nLCfimqDvuI8nLCfwn5q4Jywn8J+UsScsJ+KanO+4jycsDQogICAgICAgICAgICAn8J+UsCcsJ+KZu++4jycsJ+KchScsJ/CfiK8nLCfwn5K5Jywn4p2H77iPJywn4pyz77iPJywn4p2OJywn8J+MkCcsJ/CfkqAnLA0KICAgICAgICAgICAgJ+KTgu+4jycsJ/CfjIAnLCfwn5KkJywn8J+PpycsJ/Cfmr4nLCfimb8nLCfwn4W/77iPJywn8J+blycsJ/CfiLMnLCfwn4iC77iPJywNCiAgICAgICAgICAgICfwn5uCJywn8J+bgycsJ/Cfm4QnLCfwn5uFJywn8J+auScsJ/CfmronLCfwn5q8Jywn4pqnJywn8J+auycsJ/Cfmq4nLA0KICAgICAgICAgICAgJ/CfjqYnLCfwn5O2Jywn8J+IgScsJ/CflKMnLCfihLnvuI8nLCfwn5SkJywn8J+UoScsJ/CflKAnLCfwn4aWJywn8J+GlycsDQogICAgICAgICAgICAn8J+GmScsJ/CfhpInLCfwn4aVJywn8J+GkycsJzDvuI/ig6MnLCcx77iP4oOjJywnMu+4j+KDoycsJzPvuI/ig6MnLCc077iP4oOjJywnNe+4j+KDoycsDQogICAgICAgICAgICAnNu+4j+KDoycsJzfvuI/ig6MnLCc477iP4oOjJywnOe+4j+KDoycsJ/CflJ8nLCfwn5SiJywnI++4j+KDoycsJyrvuI/ig6MnLCfij4/vuI8nLCfilrbvuI8nLA0KICAgICAgICAgICAgJ+KPuO+4jycsJ+KPr++4jycsJ+KPue+4jycsJ+KPuu+4jycsJ+KPre+4jycsJ+KPru+4jycsJ+KPqScsJ+KPqicsJ+KPqycsJ+KPrCcsDQogICAgICAgICAgICAn4peA77iPJywn8J+UvCcsJ/CflL0nLCfinqHvuI8nLCfirIXvuI8nLCfirIbvuI8nLCfirIfvuI8nLCfihpfvuI8nLCfihpjvuI8nLCfihpnvuI8nLA0KICAgICAgICAgICAgJ+KGlu+4jycsJ+KGle+4jycsJ+KGlO+4jycsJ+KGqu+4jycsJ+KGqe+4jycsJ+KktO+4jycsJ+Kkte+4jycsJ/CflIAnLCfwn5SBJywn8J+UgicsDQogICAgICAgICAgICAn8J+UhCcsJ/CflIMnLCfwn461Jywn8J+OticsJ+KelScsJ+KelicsJ+KelycsJ+Kclu+4jycsJ/Cfn7AnLCfimb7vuI8nLA0KICAgICAgICAgICAgJ/CfkrInLCfwn5KxJywn4oSi77iPJywnwqnvuI8nLCfCru+4jycsJ/CfkYHvuI8nLCfwn5eo77iPJywn8J+SrCcsJ/Cfkq0nLCfwn5ev77iPJywNCiAgICAgICAgICAgICfimaDvuI8nLCfimaPvuI8nLCfimaXvuI8nLCfimabvuI8nLCfwn4OPJywn8J+OtCcsJ/CfgIQnDQogICAgICAgIF07DQoNCiAgICAgICAgLy8gPT09PT0g5aSN5Yi25Yqf6IO977yI6YCa55So77yM5pSv5oyB5Ymq6LS05p2/QVBJ5ZKM6ZmN57qn77yJID09PT09DQogICAgICAgIGZ1bmN0aW9uIGNvcHlUZXh0KHRleHQpIHsNCiAgICAgICAgICAgIGlmIChuYXZpZ2F0b3IuY2xpcGJvYXJkICYmIG5hdmlnYXRvci5jbGlwYm9hcmQud3JpdGVUZXh0KSB7DQogICAgICAgICAgICAgICAgbmF2aWdhdG9yLmNsaXBib2FyZC53cml0ZVRleHQodGV4dCkudGhlbigoKSA9PiB7DQogICAgICAgICAgICAgICAgICAgIHNob3dUb2FzdCgn5bey5aSN5Yi25Yiw5Ymq6LS05p2/Jyk7DQogICAgICAgICAgICAgICAgfSkuY2F0Y2goKCkgPT4gew0KICAgICAgICAgICAgICAgICAgICBmYWxsYmFja0NvcHkodGV4dCk7DQogICAgICAgICAgICAgICAgfSk7DQogICAgICAgICAgICB9IGVsc2Ugew0KICAgICAgICAgICAgICAgIGZhbGxiYWNrQ29weSh0ZXh0KTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KDQogICAgICAgIGZ1bmN0aW9uIGZhbGxiYWNrQ29weSh0ZXh0KSB7DQogICAgICAgICAgICBjb25zdCB0ZXh0YXJlYSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ3RleHRhcmVhJyk7DQogICAgICAgICAgICB0ZXh0YXJlYS52YWx1ZSA9IHRleHQ7DQogICAgICAgICAgICB0ZXh0YXJlYS5zdHlsZS5wb3NpdGlvbiA9ICdmaXhlZCc7DQogICAgICAgICAgICB0ZXh0YXJlYS5zdHlsZS50b3AgPSAnLTk5OTlweCc7DQogICAgICAgICAgICBkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKHRleHRhcmVhKTsNCiAgICAgICAgICAgIHRleHRhcmVhLnNlbGVjdCgpOw0KICAgICAgICAgICAgZG9jdW1lbnQuZXhlY0NvbW1hbmQoJ2NvcHknKTsNCiAgICAgICAgICAgIGRvY3VtZW50LmJvZHkucmVtb3ZlQ2hpbGQodGV4dGFyZWEpOw0KICAgICAgICAgICAgc2hvd1RvYXN0KCflt7LlpI3liLbvvIjpmY3nuqfvvIknKTsNCiAgICAgICAgfQ0KDQogICAgICAgIC8vIOaPkOekuua2iOaBrw0KICAgICAgICBmdW5jdGlvbiBzaG93VG9hc3QobXNnKSB7DQogICAgICAgICAgICBsZXQgdG9hc3QgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTsNCiAgICAgICAgICAgIHRvYXN0LnRleHRDb250ZW50ID0gbXNnOw0KICAgICAgICAgICAgdG9hc3Quc3R5bGUuY3NzVGV4dCA9ICdwb3NpdGlvbjpmaXhlZDtib3R0b206MzBweDtsZWZ0OjUwJTt0cmFuc2Zvcm06dHJhbnNsYXRlWCgtNTAlKTtiYWNrZ3JvdW5kOiMzMzM7Y29sb3I6I2ZmZjtwYWRkaW5nOjEwcHggMjBweDtib3JkZXItcmFkaXVzOjMwcHg7ei1pbmRleDo5OTk5OTtmb250LXNpemU6MTRweDtvcGFjaXR5OjA7dHJhbnNpdGlvbjpvcGFjaXR5IC4zcztib3gtc2hhZG93OjAgNXB4IDIwcHggcmdiYSgwLDAsMCwwLjMpOyc7DQogICAgICAgICAgICBkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKHRvYXN0KTsNCiAgICAgICAgICAgIHJlcXVlc3RBbmltYXRpb25GcmFtZSgoKSA9PiB7IHRvYXN0LnN0eWxlLm9wYWNpdHkgPSAnMSc7IH0pOw0KICAgICAgICAgICAgc2V0VGltZW91dCgoKSA9PiB7DQogICAgICAgICAgICAgICAgdG9hc3Quc3R5bGUub3BhY2l0eSA9ICcwJzsNCiAgICAgICAgICAgICAgICBzZXRUaW1lb3V0KCgpID0+IHRvYXN0LnJlbW92ZSgpLCA0MDApOw0KICAgICAgICAgICAgfSwgMTUwMCk7DQogICAgICAgIH0NCg0KICAgICAgICAvLyDnu5HlrprmiYDmnInku6PnoIHlpI3liLbmjInpkq4NCiAgICAgICAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnLmNvcHktYnRuJykuZm9yRWFjaChidG4gPT4gew0KICAgICAgICAgICAgYnRuLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oKSB7DQogICAgICAgICAgICAgICAgY29uc3QgdGFyZ2V0SWQgPSB0aGlzLmdldEF0dHJpYnV0ZSgnZGF0YS10YXJnZXQnKTsNCiAgICAgICAgICAgICAgICBjb25zdCBibG9jayA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKHRhcmdldElkKTsNCiAgICAgICAgICAgICAgICBpZiAoYmxvY2spIHsNCiAgICAgICAgICAgICAgICAgICAgY29uc3QgY29kZSA9IGJsb2NrLnF1ZXJ5U2VsZWN0b3IoJ2NvZGUnKS5pbm5lclRleHQ7DQogICAgICAgICAgICAgICAgICAgIGNvcHlUZXh0KGNvZGUpOw0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgIH0pOw0KICAgICAgICB9KTsNCg0KICAgICAgICAvLyDnlJ/miJDlm77moIfljaHniYfvvIg3MDDkuKrvvIkNCiAgICAgICAgY29uc3QgaWNvbkdyaWQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaWNvbi1ncmlkJyk7DQogICAgICAgIGljb25zLmZvckVhY2goaWNvbiA9PiB7DQogICAgICAgICAgICBjb25zdCBjYXJkID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7DQogICAgICAgICAgICBjYXJkLmNsYXNzTmFtZSA9ICdpY29uLWNhcmQnOw0KICAgICAgICAgICAgY2FyZC50ZXh0Q29udGVudCA9IGljb247DQogICAgICAgICAgICBjYXJkLnRpdGxlID0gJ+eCueWHu+WkjeWItiAnICsgaWNvbjsNCiAgICAgICAgICAgIGNhcmQuc2V0QXR0cmlidXRlKCdhcmlhLWxhYmVsJywgJ+WkjeWItuWbvuaghycgKyBpY29uKTsNCiAgICAgICAgICAgIGNhcmQuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbigpIHsNCiAgICAgICAgICAgICAgICBjb3B5VGV4dChpY29uKTsNCiAgICAgICAgICAgIH0pOw0KICAgICAgICAgICAgaWNvbkdyaWQuYXBwZW5kQ2hpbGQoY2FyZCk7DQogICAgICAgIH0pOw0KDQogICAgICAgIC8vIOi/lOWbnuS4u+mhtei9rOWcuuWKqOeUu++8iOS9v+eUqOaMh+WumueahOi3s+i9rOimhuebluWxgu+8iQ0KICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmFja0hvbWUnKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uKGUpIHsNCiAgICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsNCiAgICAgICAgICAgIGNvbnN0IG92ZXJsYXkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnb3ZlcmxheScpOw0KICAgICAgICAgICAgb3ZlcmxheS5jbGFzc0xpc3QuYWRkKCdhY3RpdmUnKTsNCiAgICAgICAgICAgIHNldFRpbWVvdXQoKCkgPT4gew0KICAgICAgICAgICAgICAgIHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gJ2luZGV4Lmh0bWwnOw0KICAgICAgICAgICAgfSwgMTAwMCk7DQogICAgICAgIH0pOw0KICAgIA==");
+</script>
+</body>
+</html>
