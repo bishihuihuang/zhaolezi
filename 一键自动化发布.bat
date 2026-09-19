@@ -3,7 +3,7 @@ cd /d "%~dp0"
 title 全自动构建与多路径发布
 
 echo ====================================================
-echo   开始执行：自动化构建、启动加速器、全自动推送
+echo   开始执行：自动化构建与全自动多路径推送
 echo ====================================================
 
 :: ====================================================
@@ -24,6 +24,7 @@ echo .env
 echo.
 echo [2/5] 正在执行代码混淆...
 node _混淆工具.js
+
 if %errorlevel% neq 0 (
     echo [错误] 混淆脚本执行失败！请检查 _混淆工具.js 是否在根目录。
     pause
@@ -31,42 +32,36 @@ if %errorlevel% neq 0 (
 )
 
 :: ====================================================
-:: 第三步：本地提交
+:: 第三步：本地提交修改
 :: ====================================================
 echo.
 echo [3/5] 正在提交本地修改...
 git add .
 git commit -m "自动构建更新: %date% %time%"
+echo 本地提交完成。
 
 :: ====================================================
-:: 第四步：自动启动加速器
+:: 第四步：智能检测加速器
 :: ====================================================
 echo.
 echo [4/5] 正在检查加速器状态...
-tasklist | findstr /i "Steam++.exe WattToolkit.exe" >nul
+tasklist | findstr /i "Steam++.exe WattToolkit.exe Watt Toolkit.exe" >nul
 if %errorlevel% equ 0 (
-    echo [加速器] 检测到加速器已在运行中。
+    echo [加速器] 检测到加速器已在运行中，准备开始推送！
+    timeout /t 3 /nobreak >nul
 ) else (
-    echo [加速器] 未检测到加速器，尝试自动启动...
-    
-    :: 尝试常见安装路径
-    if exist "C:\Program Files\Watt Toolkit\Steam++.exe" (
-        start "" "C:\Program Files\Watt Toolkit\Steam++.exe"
-    ) else if exist "C:\Program Files (x86)\Steam++\Steam++.exe" (
-        start "" "C:\Program Files (x86)\Steam++\Steam++.exe"
-    ) else if exist "D:\Steam++\Steam++.exe" (
-        start "" "D:\Steam++\Steam++.exe"
-    ) else (
-        echo [警告] 未找到加速器默认路径，请手动打开加速器并点击一键加速！
-    )
-    
-    echo [加速器] 等待加速器初始化 (12秒)...
-    echo [注意] 如果加速器没有自动开启加速，请手动点击一下“一键加速”！
-    timeout /t 12 /nobreak >nul
+    echo.
+    echo [重要提示] 未检测到加速器运行。
+    echo.
+    echo 请你现在手动打开 Watt Toolkit，并点击“一键加速”。
+    echo 加速成功后，按键盘上的任意键继续脚本...
+    pause >nul
 )
 
 :: ====================================================
 :: 第五步：多路径自动上传（共6次尝试）
+:: 【策略】第1次常规，第2次代理，第3-6次循环。
+:: 端口已根据你的截图修正为 26561
 :: ====================================================
 echo.
 echo [5/5] 开始多重路径上传流程...
@@ -91,9 +86,9 @@ if %mod% equ 1 (
     git config --global --unset https.proxy >nul 2>nul
 ) else (
     echo [模式] 加速器代理上传...
-    echo 正在配置代理 (假定你的加速器端口为 7890)...
-    git config --global http.proxy http://127.0.0.1:7890
-    git config --global https.proxy http://127.0.0.1:7890
+    echo 正在配置代理 (使用你截图中的端口 26561)...
+    git config --global http.proxy http://127.0.0.1:26561
+    git config --global https.proxy http://127.0.0.1:26561
 )
 
 echo 正在推送到 GitHub...
@@ -119,9 +114,9 @@ echo.
 echo ====================================================
 echo [警告] 连续 %max_attempts% 次尝试均告失败！
 echo 可能的原因：
-echo 1. 加速器没有开启“一键加速”（请手动点一下）
-echo 2. 加速器端口不是 7890（请用记事本修改本脚本里的 7890）
-echo 3. 本地文件体积过大（把 mp3 和图片移到其他地方再试）
+echo 1. 加速器没有开启“一键加速”（请确认已点）
+echo 2. 本地文件体积过大（把 mp3 和图片移到其他地方再试）
+echo 3. 你撤销了旧的 GitHub Token，但没有配置新的凭证（需重新登录）
 echo ====================================================
 pause
 exit /b
