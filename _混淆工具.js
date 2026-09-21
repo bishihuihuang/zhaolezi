@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 网站混淆工具 v2 - 防小白保护 + JS混淆 + PWA块自动同步
  *
  * 用法：
@@ -285,7 +285,7 @@ function obfuscateFile(fileName) {
         matchCount++;
         const fullJS = ANTI_CHEAT_CODE + '\n' + jsCode;
         const encoded = utf8ToBase64(fullJS);
-        const obfuscatedJS = `eval(function(_0x1){var _0x2=function(_0x3){return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("${encoded}");`;
+        const obfuscatedJS = `eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("${encoded}");`;
         return openTag + '\n' + obfuscatedJS + '\n' + closeTag;
     });
 
