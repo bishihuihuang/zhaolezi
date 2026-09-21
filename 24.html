@@ -1113,57 +1113,6 @@
         }
 </style>
 
-<!-- 多设备适配改进 v1.0 -->
-<style>
-/* 6. 全局box-sizing reset */
-*, *::before, *::after {
-    box-sizing: border-box;
-}
-
-/* 3. 刘海屏安全区域适配 */
-body {
-    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
-             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
-}
-
-/* 2. 触摸设备优化：禁用hover残留效果 */
-@media (hover: none) {
-    .tool-box:hover, .card:hover, .box:hover, button:hover, a:hover {
-        transform: none !important;
-        box-shadow: inherit !important;
-    }
-    .tooltip, [class*="tooltip"], [class*="tip"] {
-        display: none !important;
-    }
-}
-
-/* 4. 深色模式支持 */
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #121212 !important;
-        color: #e0e0e0 !important;
-    }
-}
-</style>
-
-<!-- 游戏页面触摸优化 -->
-<style>
-/* 7. 游戏按钮触摸目标增大到44px */
-button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
-    min-width: 44px !important;
-    min-height: 44px !important;
-}
-
-/* 小屏幕游戏页面优化 */
-@media (max-width: 768px) {
-    canvas, .game-container, .board, .grid-board {
-        max-width: 100% !important;
-        height: auto !important;
-    }
-}
-</style>
-
-
 <!-- PWA支持 -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#667eea">
