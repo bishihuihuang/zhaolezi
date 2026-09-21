@@ -17,9 +17,9 @@ if %errorlevel% neq 0 (
 
 echo.
 echo [1/4] Running obfuscator...
-node "_æ··æ·†å·¥å…·.js"
+node "_»ìÏý¹¤¾ß.js"
 if %errorlevel% neq 0 (
-    echo [ERROR] Obfuscator failed. Check _æ··æ·†å·¥å…·.js
+    echo [ERROR] Obfuscator failed.
     pause
     exit /b 1
 )
@@ -50,8 +50,7 @@ if %errorlevel% equ 0 (
 ) else (
     echo.
     echo ====================================================
-    echo   PUSH FAILED. Check network or sensitive info.
-    echo   If rejected, run: git pull --rebase
+    echo   PUSH FAILED. If rejected, run: git pull --rebase
     echo ====================================================
 )
 
