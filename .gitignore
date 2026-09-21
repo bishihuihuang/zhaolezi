@@ -1,5 +1,31 @@
+# ===== 源文件（本地保留，不上传 GitHub，防止未混淆代码公开）=====
+_原始未混淆版/
+
+# ===== 本地运行/临时目录 =====
 edge_profile/
 uploaded_files/
-exec_log.json
 node_modules/
 .env
+exec_log.json
+
+# ===== 临时截图/调试图（不进仓库）=====
+Camera_*.jpg
+Camera_*.png
+Screenshot_*.jpg
+Screenshot_*.png
+17877*.jpg
+17877*.png
+problem_screenshot*.png
+30html_problem*.png
+国风图片*.jpg
+
+# ===== 已废弃的旧脚本（被 _混淆工具.js 取代）=====
+obfuscate_all.js
+obfuscate_index_only.js
+simple_obfuscate_index.js
+batch_responsive_fix.js
+batch_full_optimize.js
+batch_pwa_optimize.js
+fix_timing.js
+undo_features.js
+upload_pwa.js

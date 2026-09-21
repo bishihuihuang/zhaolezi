@@ -1,26 +1,57 @@
 /**
- * 网站混淆工具 - 批量给HTML文件添加防小白保护和JS混淆
- * 
- * 功能：
- * 1. 禁用右键菜单
- * 2. 禁用F12、Ctrl+Shift+I、Ctrl+U、Ctrl+S等快捷键
- * 3. 内联JS代码Base64编码混淆（eval解码执行）
- * 
- * 使用方法：
- *   node _混淆工具.js          # 从 _原始未混淆版 读取源码，混淆后输出到根目录
- *   node _混淆工具.js 恢复     # 将 _原始未混淆版 的源码复制回根目录（覆盖混淆文件）
- * 
- * 重要：修改网站时请【只修改】 _原始未混淆版 文件夹中的文件，千万不要手动修改根目录下的HTML！
+ * 网站混淆工具 v2 - 防小白保护 + JS混淆 + PWA块自动同步
+ *
+ * 用法：
+ *   node _混淆工具.js                  # 全量：从 _原始未混淆版 混淆/复制所有文件到根目录
+ *   node _混淆工具.js index.html 5.html # 只处理指定文件（参数为相对 _原始未混淆版 的文件名）
+ *   node _混淆工具.js 恢复             # 将 _原始未混淆版 的文件复制回根目录（不混淆，用于本地调试源码）
+ *
+ * 设计：
+ *   - 源文件在 _原始未混淆版/，产物在根目录
+ *   - 每次混淆前自动确保 <head> 里有标准 PWA 块（manifest/theme-color/横屏CSS），没有就注入
+ *   - 输出确定性：同一源文件永远产出同一字节，不会产生无意义 diff
+ *   - 30.html 和 文件搜索.html 不混淆，直接复制
+ *
+ * 重要：改网站请只改 _原始未混淆版/ 里的文件，不要手改根目录的 HTML！
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// 配置
-const TARGET_FILES = ['index.html', ...Array.from({length: 29}, (_, i) => `${i + 1}.html`)];
-const SOURCE_DIR = '_原始未混淆版'; // 源码存放目录
+const SOURCE_DIR = '_原始未混淆版';
+const ROOT = __dirname;
+// 不混淆、直接复制的文件
+const NO_OBFUSCATE = ['30.html', '文件搜索.html'];
+// 需要处理的全部 HTML（index + 1..30 + 文件搜索）
+const ALL_FILES = ['index.html', '文件搜索.html', ...Array.from({ length: 30 }, (_, i) => `${i + 1}.html`)];
 
-// 防小白保护代码（和原先保持一致，用于注入到每个JS的开头）
+// 标准 PWA 块：注入到 </head> 之前
+const PWA_BLOCK = `
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+`;
+
+// 防小白保护代码（注入到每个内联 script 的开头）
 const ANTI_CHEAT_CODE = `
 /* 防小白保护开始 */
 (function(){
@@ -57,7 +88,7 @@ const ANTI_CHEAT_CODE = `
         ta.value=text;
         ta.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;';
         _0x1.body.appendChild(ta);
-        ta.focus();ta.select();
+        _0x1.focus();ta.select();
         try{_0x1.execCommand('copy');}catch(e){}
         _0x1.body.removeChild(ta);
         return true;
@@ -168,7 +199,7 @@ const ANTI_CHEAT_CODE = `
                     try{_0x1.execCommand('selectAll');}catch(e){}
                 }
             }else{
-                try{_0x1.execCommand('selectAll');}catch(err){
+                try{_0x1.execCommand('selectAll');}catch(e){
                     var range=_0x1.createRange();
                     range.selectNodeContents(_0x1.body);
                     var sel=window.getSelection();
@@ -196,140 +227,150 @@ const ANTI_CHEAT_CODE = `
 /* 防小白保护结束 */
 `;
 
-/**
- * UTF-8字符串转Base64（Node.js端）
- */
 function utf8ToBase64(str) {
     return Buffer.from(str, 'utf-8').toString('base64');
 }
 
 /**
- * 混淆单个HTML文件（从源目录读取，输出到目标目录）
+ * 确保 HTML 内容里有 PWA 块。如果没有，插到 </head> 前。
+ * 直接返回新内容；如果已有则原样返回。
  */
-function obfuscateFile(sourcePath, targetPath) {
-    const content = fs.readFileSync(sourcePath, 'utf-8');
-    
-    // 【新增】安全检查：如果文件已经被混淆过，跳过以防套娃
-    if (content.includes('eval(function(_0x1){var _0x2=function(_0x3)')) {
-        return { success: false, scripts: 0, reason: '文件已混淆，跳过以防重复混淆' };
+function ensurePwaBlock(html) {
+    if (html.includes('rel="manifest"') && html.includes('orientation: landscape')) {
+        return html; // 已有完整 PWA 块
+    }
+    if (/<\/head>/i.test(html)) {
+        return html.replace(/<\/head>/i, PWA_BLOCK + '\n</head>');
+    }
+    // 没有 </head>，硬加在 <body 之前
+    if (/<body[^>]*>/i.test(html)) {
+        return html.replace(/<body[^>]*>/i, '<head>' + PWA_BLOCK + '</head>\n$&');
+    }
+    return PWA_BLOCK + '\n' + html;
+}
+
+/**
+ * 混淆单个 HTML 文件：从源目录读，输出到根目录。
+ */
+function obfuscateFile(fileName) {
+    const src = path.join(ROOT, SOURCE_DIR, fileName);
+    const dst = path.join(ROOT, fileName);
+
+    if (!fs.existsSync(src)) {
+        return { file: fileName, status: 'skip', reason: '源文件不存在' };
     }
 
-    // 匹配所有内联script标签（排除外部src引用）
+    let content = fs.readFileSync(src, 'utf-8');
+
+    // 1. 注入 PWA 块（如果缺）
+    content = ensurePwaBlock(content);
+
+    // 2. 不混淆的文件直接写回
+    if (NO_OBFUSCATE.includes(fileName)) {
+        fs.writeFileSync(dst, content, 'utf-8');
+        return { file: fileName, status: 'copy' };
+    }
+
+    // 3. 安全检查：已经混淆过的不再二次混淆
+    if (content.includes('eval(function(_0x1){var _0x2=function(_0x3)')) {
+        fs.writeFileSync(dst, content, 'utf-8');
+        return { file: fileName, status: 'already-obfuscated' };
+    }
+
+    // 4. 内联 script 混淆
     const scriptRegex = /(<script(?![^>]*\bsrc=)[^>]*>)([\s\S]*?)(<\/script>)/gi;
-    
     let matchCount = 0;
     const newContent = content.replace(scriptRegex, (match, openTag, jsCode, closeTag) => {
-        // 跳过空script
-        if (!jsCode || jsCode.trim().length === 0) {
-            return match;
-        }
-        
+        if (!jsCode || jsCode.trim().length === 0) return match;
         matchCount++;
-        
-        // 合并防小白代码 + 原始JS
         const fullJS = ANTI_CHEAT_CODE + '\n' + jsCode;
-        
-        // Base64编码（UTF-8）
         const encoded = utf8ToBase64(fullJS);
-        
-        // 生成混淆后的代码：eval解码执行
-        const obfuscatedJS = `eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("${encoded}");`;
-        
+        const obfuscatedJS = `eval(function(_0x1){var _0x2=function(_0x3){return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("${encoded}");`;
         return openTag + '\n' + obfuscatedJS + '\n' + closeTag;
     });
-    
+
     if (matchCount > 0) {
-        // 写入到目标路径（根目录），不覆盖源文件
-        fs.writeFileSync(targetPath, newContent, 'utf-8');
-        return { success: true, scripts: matchCount };
+        fs.writeFileSync(dst, newContent, 'utf-8');
+        return { file: fileName, status: 'obfuscated', scripts: matchCount };
     }
-    return { success: false, scripts: 0, reason: '未找到内联script标签' };
+    // 没有内联 script，原样写回（但已注入 PWA 块）
+    fs.writeFileSync(dst, content, 'utf-8');
+    return { file: fileName, status: 'no-script' };
 }
 
 /**
- * 从备份恢复（将 _原始未混淆版 的文件复制回根目录，覆盖混淆文件）
+ * 从备份恢复：把 _原始未混淆版 的文件原样复制回根目录（不混淆）。
  */
 function restoreFromBackup() {
-    const backupDir = path.join(__dirname, SOURCE_DIR);
-    if (!fs.existsSync(backupDir)) {
-        console.log('错误：未找到备份文件夹 ' + SOURCE_DIR);
-        return;
+    const srcDir = path.join(ROOT, SOURCE_DIR);
+    if (!fs.existsSync(srcDir)) {
+        console.error('错误：未找到 ' + SOURCE_DIR);
+        process.exit(1);
     }
-    
     let count = 0;
-    for (const file of TARGET_FILES) {
-        const src = path.join(backupDir, file);
-        const dst = path.join(__dirname, file);
-        if (fs.existsSync(src)) {
-            fs.copyFileSync(src, dst);
-            count++;
-        }
+    for (const f of fs.readdirSync(srcDir)) {
+        if (!f.endsWith('.html')) continue;
+        const s = path.join(srcDir, f);
+        const d = path.join(ROOT, f);
+        fs.copyFileSync(s, d);
+        count++;
     }
-    console.log(`已从 ${SOURCE_DIR} 恢复 ${count} 个文件到根目录`);
+    console.log(`已从 ${SOURCE_DIR} 恢复 ${count} 个未混淆文件到根目录（本地调试用）`);
 }
 
-/**
- * 主函数
- */
 function main() {
     const args = process.argv.slice(2);
-    
+
     if (args[0] === '恢复' || args[0] === 'restore') {
         restoreFromBackup();
         return;
     }
-    
+
+    // 确定要处理的文件列表
+    let files;
+    if (args.length > 0) {
+        files = args.filter(a => a.endsWith('.html'));
+        if (files.length === 0) {
+            console.error('参数错误：请指定 .html 文件名，例如 node _混淆工具.js index.html 5.html');
+            process.exit(1);
+        }
+    } else {
+        files = ALL_FILES;
+    }
+
     console.log('========================================');
-    console.log('  网站混淆工具 - 防小白 + JS混淆 (安全分离版)');
+    console.log(`  混淆工具 v2 - 处理 ${files.length} 个文件`);
     console.log('========================================\n');
-    
-    // 【新增】确保源目录存在
-    const sourceDirPath = path.join(__dirname, SOURCE_DIR);
-    if (!fs.existsSync(sourceDirPath)) {
-        fs.mkdirSync(sourceDirPath);
-        console.log(`[提示] 未找到 ${SOURCE_DIR} 文件夹，已自动创建。`);
-        console.log(`[重要] 请把你的纯源码文件（如 index.html）放入 ${SOURCE_DIR} 文件夹中，然后重新运行本脚本！\n`);
-        return;
-    }
-    
-    let success = 0;
-    let failed = 0;
-    const results = [];
-    
-    for (const file of TARGET_FILES) {
-        const sourcePath = path.join(sourceDirPath, file); // 从备份读取
-        const targetPath = path.join(__dirname, file);       // 输出到根目录
-        
-        if (!fs.existsSync(sourcePath)) {
-            console.log(`[跳过] ${file} - 源文件不存在于 ${SOURCE_DIR}`);
-            failed++;
-            continue;
-        }
-        
+
+    let obf = 0, copy = 0, skip = 0;
+    for (const f of files) {
         try {
-            const result = obfuscateFile(sourcePath, targetPath);
-            if (result.success) {
-                const sizeKB = (fs.statSync(targetPath).size / 1024).toFixed(1);
-                console.log(`[成功] ${file} - 混淆 ${result.scripts} 个script (输出至根目录, ${sizeKB}KB)`);
-                success++;
-                results.push({ file, scripts: result.scripts, size: sizeKB });
+            const r = obfuscateFile(f);
+            if (r.status === 'obfuscated') {
+                console.log(`[混淆] ${f} (${r.scripts} 个 script)`);
+                obf++;
+            } else if (r.status === 'copy') {
+                console.log(`[复制] ${f} (不混淆)`);
+                copy++;
+            } else if (r.status === 'no-script') {
+                console.log(`[写入] ${f} (无内联script，仅同步PWA块)`);
+                copy++;
+            } else if (r.status === 'already-obfuscated') {
+                console.log(`[已混淆] ${f} (跳过)`);
+                copy++;
             } else {
-                console.log(`[跳过] ${file} - ${result.reason}`);
-                failed++;
+                console.log(`[跳过] ${f} - ${r.reason}`);
+                skip++;
             }
-        } catch (err) {
-            console.log(`[失败] ${file} - ${err.message}`);
-            failed++;
+        } catch (e) {
+            console.error(`[失败] ${f} - ${e.message}`);
+            skip++;
         }
     }
-    
+
     console.log('\n========================================');
-    console.log(`  完成：成功 ${success} 个，失败/跳过 ${failed} 个`);
+    console.log(`  完成：混淆 ${obf}，复制/写入 ${copy}，跳过/失败 ${skip}`);
     console.log('========================================');
-    console.log('\n提示：');
-    console.log(`  1. 原始文件请务必修改 ${SOURCE_DIR} 文件夹中的文件！`);
-    console.log(`  2. 修改完成后，运行 node _混淆工具.js 会自动将混淆结果输出到根目录。`);
-    console.log(`  3. 如果需要本地测试未混淆版本，可以运行 node _混淆工具.js 恢复，将源码复制回根目录。`);
 }
 
 main();

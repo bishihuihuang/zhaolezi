@@ -1,49 +1,64 @@
 @echo off
 cd /d "%~dp0"
-title 一键快速上传
+chcp 936 >nul
+title 一键自动化发布
 
 echo ====================================================
-echo   开始执行本地构建与推送到 GitHub
+echo   一键混淆 + 提交 + 推送 GitHub
 echo ====================================================
 
-:: 第一步：自动混淆
-echo [1/3] 正在执行代码混淆...
-node _混淆工具.js
+:: 第零步：先拉远程最新（rebase，避免 rejected）
+echo.
+echo [0/4] 拉取远程最新代码...
+git pull --rebase origin main
 if %errorlevel% neq 0 (
-    echo 混淆失败！请检查 _混淆工具.js
+    echo.
+    echo [错误] 拉取失败，可能有冲突。请手动解决后重新运行。
     pause
-    exit /b
+    exit /b 1
 )
 
-:: 第二步：本地记录修改
+:: 第一步：混淆（确定性输出，未改的文件产物字节不变，git 不会重复提交）
 echo.
-echo [2/3] 正在提交本地修改...
-git add .
-git commit -m "自动构建更新: %date% %time%"
+echo [1/4] 执行混淆...
+node "_混淆工具.js"
+if %errorlevel% neq 0 (
+    echo [错误] 混淆失败，请检查 _混淆工具.js
+    pause
+    exit /b 1
+)
 
-:: 第三步：原封不动地调用你手动成功的三条命令
+:: 第二步：精确暂存改动（不用 git add .，避免误加临时文件）
 echo.
-echo [3/3] 开始推送到 GitHub（复刻手动成功命令）...
+echo [2/4] 暂存改动...
+git add -u
+git add ".gitignore" ".gitattributes" "manifest.json" "service-worker.js" "images/" "audio/" "一键自动化发布.bat" "_混淆工具.js"
+echo --- 当前改动 ---
+git status --short
+echo ----------------
+
+:: 第三步：提交
 echo.
+echo [3/4] 提交...
+git commit -m "自动更新: %date% %time%"
+if %errorlevel% neq 0 (
+    echo [提示] 没有需要提交的改动，直接推送。
+)
 
-:: 1. 设置 HTTP 版本为 1.1（解决大文件断流）
-git config --global http.version HTTP/1.1
-
-:: 2. 增加缓冲区大小（容许大包传输）
-git config --global http.postBuffer 524288000
-
-:: 3. 执行最终推送
-git push origin main -f
-
+:: 第四步：推送
+echo.
+echo [4/4] 推送到 GitHub...
+git push origin main
 if %errorlevel% equ 0 (
     echo.
     echo ====================================================
-    echo  推送成功！等待 1-2 分钟后刷新网页即可。
+    echo   发布成功！等待 1-2 分钟刷新页面即可。
     echo ====================================================
 ) else (
     echo.
     echo ====================================================
-    echo 推送失败！请手动打开 Watt Toolkit 并开启加速，然后重新运行本脚本。
+    echo   推送失败！请检查网络或敏感信息提示。
+    echo   若提示 rejected，请先手动 git pull --rebase。
     echo ====================================================
 )
 

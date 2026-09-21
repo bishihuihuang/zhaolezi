@@ -586,7 +586,6 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
 <meta name="apple-mobile-web-app-title" content="找乐子">
 <meta name="mobile-web-app-capable" content="yes">
 
-
 <!-- 横屏模式优化 -->
 <style>
 /* 横屏模式：游戏页面优化 */
@@ -762,17 +761,5 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
             };
         });
     </script>
-
-<script>
-// PWA Service Worker注册
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-            .then(reg => console.log('SW registered'))
-            .catch(err => console.log('SW failed'));
-    });
-}
-</script>
-
 </body>
 </html>
