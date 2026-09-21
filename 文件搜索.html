@@ -98,6 +98,97 @@
         .progress-bar{grid-column:1/3}
         .results{grid-column:1/3}
     }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes textShine {
+            to { background-position: 200% 0; }
+        }
+
 </style>
 
 <!-- PWA支持 -->
