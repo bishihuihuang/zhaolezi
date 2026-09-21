@@ -479,6 +479,22 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
         });
     }
 })();
-</script>
+
+        /* ========== 转场覆盖层逻辑（index标准版） ========== */
+        let overlayTimer = null;
+        function showLoadingOverlay(url) {
+            const overlay = document.getElementById('overlay');
+            if (!overlay) return;
+            overlay.classList.add('active');
+            if (overlayTimer) clearTimeout(overlayTimer);
+            overlayTimer = setTimeout(function() {
+                overlay.classList.remove('active');
+                if (url && url !== '#') {
+                    window.location.href = url;
+                }
+            }, 1000);
+        }
+
+    </script>
 </body>
 </html>
