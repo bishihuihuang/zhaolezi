@@ -1,64 +1,58 @@
-@echo off
+锘緻echo off
 cd /d "%~dp0"
-chcp 936 >nul
-title 一键自动化发布
+chcp 65001 >nul
+title Auto Publish
 
 echo ====================================================
-echo   一键混淆 + 提交 + 推送 GitHub
+echo   Auto Obfuscate + Commit + Push to GitHub
 echo ====================================================
 
-:: 第零步：先拉远程最新（rebase，避免 rejected）
 echo.
-echo [0/4] 拉取远程最新代码...
+echo [0/4] Pulling latest from remote...
 git pull --rebase origin main
 if %errorlevel% neq 0 (
-    echo.
-    echo [错误] 拉取失败，可能有冲突。请手动解决后重新运行。
+    echo [ERROR] Pull failed. Please resolve conflicts manually.
     pause
     exit /b 1
 )
 
-:: 第一步：混淆（确定性输出，未改的文件产物字节不变，git 不会重复提交）
 echo.
-echo [1/4] 执行混淆...
-node "_混淆工具.js"
+echo [1/4] Running obfuscator...
+node "_娣锋穯宸ュ叿.js"
 if %errorlevel% neq 0 (
-    echo [错误] 混淆失败，请检查 _混淆工具.js
+    echo [ERROR] Obfuscator failed. Check _娣锋穯宸ュ叿.js
     pause
     exit /b 1
 )
 
-:: 第二步：精确暂存改动（不用 git add .，避免误加临时文件）
 echo.
-echo [2/4] 暂存改动...
+echo [2/4] Staging changes...
 git add -u
-git add ".gitignore" ".gitattributes" "manifest.json" "service-worker.js" "images/" "audio/" "一键自动化发布.bat" "_混淆工具.js"
-echo --- 当前改动 ---
+git add ".gitignore" ".gitattributes" "manifest.json" "service-worker.js" "images/" "audio/"
+echo --- Changed files ---
 git status --short
-echo ----------------
+echo ---------------------
 
-:: 第三步：提交
 echo.
-echo [3/4] 提交...
-git commit -m "自动更新: %date% %time%"
+echo [3/4] Committing...
+git commit -m "auto update: %date% %time%"
 if %errorlevel% neq 0 (
-    echo [提示] 没有需要提交的改动，直接推送。
+    echo [INFO] No changes to commit.
 )
 
-:: 第四步：推送
 echo.
-echo [4/4] 推送到 GitHub...
+echo [4/4] Pushing to GitHub...
 git push origin main
 if %errorlevel% equ 0 (
     echo.
     echo ====================================================
-    echo   发布成功！等待 1-2 分钟刷新页面即可。
+    echo   SUCCESS! Refresh in 1-2 minutes.
     echo ====================================================
 ) else (
     echo.
     echo ====================================================
-    echo   推送失败！请检查网络或敏感信息提示。
-    echo   若提示 rejected，请先手动 git pull --rebase。
+    echo   PUSH FAILED. Check network or sensitive info.
+    echo   If rejected, run: git pull --rebase
     echo ====================================================
 )
 
