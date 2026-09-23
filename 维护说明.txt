@@ -48,7 +48,7 @@ zhaolezi/
 
 如果只想快速修改并发布，可以在PowerShell中运行：
 
-  cd D:\Administrator\桌面\zhaolezi
+  cd E:\上传网页\zhaolezi
   node _混淆工具.js
   git add .
   git commit -m "更新网站"
@@ -60,7 +60,7 @@ zhaolezi/
 
 如果混淆后出现问题，可以恢复原始未混淆版本：
 
-  cd D:\Administrator\桌面\zhaolezi
+  cd E:\上传网页\zhaolezi
   node _混淆工具.js 恢复
 
 这会把 _原始未混淆版 中的文件复制回根目录，覆盖混淆后的版本。

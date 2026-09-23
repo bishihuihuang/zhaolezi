@@ -9,7 +9,7 @@ echo ============================================================
 
 echo.
 echo [1/5] Pulling latest from remote... / 拉取远程最新代码...
-git pull --rebase origin main
+git pull --rebase --autostash origin main
 if %errorlevel% neq 0 (
     echo.
     echo ============================================================
@@ -113,7 +113,7 @@ if %errorlevel% equ 0 (
     echo.
     echo 1. REJECTED - remote has new commits
     echo    远程有新提交，被拒绝
-    echo    Fix: git pull --rebase origin main  then rerun
+    echo    Fix: git pull --rebase --autostash origin main  then rerun
     echo.
     echo 2. NETWORK ERROR - timeout / proxy
     echo    网络超时，被代理/防火墙挡住
