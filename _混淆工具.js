@@ -257,18 +257,31 @@ function autoAttachGlobals(jsCode) {
     return jsCode + '\n\n/* 自动全局挂载（供内联事件属性调用） */\n' + lines.join('\n');
 }
 
-function ensurePwaBlock(html) {
+function ensurePwaBlock(html, fileName) {
     const COMMON_JS = '<script src="common.js"></script>';
-    if (html.includes('rel="manifest"') && html.includes('orientation: landscape') && html.includes('src="common.js"')) {
+    const THEME_JS = '<script src="theme.js"></script>';
+    const ZL_JS = '<script src="zl-features.js"></script>';
+    if (html.includes('rel="manifest"') && html.includes('orientation: landscape') && html.includes('src="common.js"') && html.includes('src="zl-features.js"')) {
         return html;
     }
+    // 统一 head 元信息：SEO description + Open Graph（#7 优化）
+    const titleMatch = /<title>([^<]*)<\/title>/i.exec(html);
+    const pageTitle = titleMatch ? titleMatch[1].trim() : '找乐子';
+    const ogBlock = '\n<!-- SEO/分享元信息 -->\n' +
+        '<meta name="description" content="找乐子——' + pageTitle + '，趣味工具与小游戏合集">\n' +
+        '<meta property="og:title" content="' + pageTitle + '">\n' +
+        '<meta property="og:description" content="找乐子——' + pageTitle + '，趣味工具与小游戏合集">\n' +
+        '<meta property="og:type" content="website">\n' +
+        '<meta property="og:site_name" content="找乐子">\n' +
+        '<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/' + (fileName || 'index.html') + '">\n';
+    const inject = PWA_BLOCK + '\n' + ogBlock + '\n' + COMMON_JS + '\n' + THEME_JS + '\n' + ZL_JS;
     if (/<\/head>/i.test(html)) {
-        return html.replace(/<\/head>/i, PWA_BLOCK + '\n' + COMMON_JS + '\n</head>');
+        return html.replace(/<\/head>/i, inject + '\n</head>');
     }
     if (/<body[^>]*>/i.test(html)) {
-        return html.replace(/<body[^>]*>/i, '<head>' + PWA_BLOCK + '</head>\n' + COMMON_JS + '\n$&');
+        return html.replace(/<body[^>]*>/i, '<head>' + inject + '</head>\n' + COMMON_JS + '\n$&');
     }
-    return PWA_BLOCK + '\n' + COMMON_JS + '\n' + html;
+    return inject + '\n' + COMMON_JS + '\n' + html;
 }
 
 function obfuscateFile(fileName) {
@@ -281,8 +294,8 @@ function obfuscateFile(fileName) {
 
     let content = fs.readFileSync(src, 'utf-8');
 
-    // 1. 注入 PWA 块
-    content = ensurePwaBlock(content);
+    // 1. 注入 PWA 块 + SEO/OG + 公共脚本引用
+    content = ensurePwaBlock(content, fileName);
 
     // 2. 不混淆的文件直接写回
     if (NO_OBFUSCATE.includes(fileName)) {

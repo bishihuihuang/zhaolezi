@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
  * 找乐子全站公共样式 common.css
  * 内容：多设备适配改进 v1.0 + 游戏页面触摸优化
  * 由 34 个页面内嵌补丁块抽取而来（2026-09-29 整站提升 V1）
@@ -51,4 +51,70 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         max-width: 100% !important;
         height: auto !important;
     }
+}
+
+
+
+/* ============================================================
+ * 主题切换（theme.js）支持样式：浅色 / 深色(默认) / 霓虹
+ * ============================================================ */
+[data-theme="light"] body {
+    background: #eef1f7 !important;
+    color: #222 !important;
+}
+[data-theme="light"] .card-container,
+[data-theme="light"] .card,
+[data-theme="light"] .tool-box,
+[data-theme="light"] .box,
+[data-theme="light"] .panel,
+[data-theme="light"] .container,
+[data-theme="light"] .main-card,
+[data-theme="light"] .game-card {
+    background: rgba(255, 255, 255, .94) !important;
+    color: #222 !important;
+    box-shadow: 0 8px 30px rgba(60, 80, 160, .12) !important;
+}
+[data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3,
+[data-theme="light"] .title-text, [data-theme="light"] label, [data-theme="light"] p,
+[data-theme="light"] span, [data-theme="light"] td, [data-theme="light"] th {
+    color: #222 !important;
+}
+[data-theme="light"] input, [data-theme="light"] textarea, [data-theme="light"] select {
+    background: #fff !important;
+    color: #222 !important;
+    border-color: #c9d2e8 !important;
+}
+[data-theme="light"] header {
+    background: rgba(255, 255, 255, .9) !important;
+}
+[data-theme="light"] .btn, [data-theme="light"] button {
+    color: #fff !important;
+}
+
+[data-theme="neon"] body {
+    background: #05010d !important;
+    color: #c9f7ff !important;
+}
+[data-theme="neon"] .card-container,
+[data-theme="neon"] .card,
+[data-theme="neon"] .tool-box,
+[data-theme="neon"] .box,
+[data-theme="neon"] .panel,
+[data-theme="neon"] .container,
+[data-theme="neon"] .main-card,
+[data-theme="neon"] .game-card {
+    background: rgba(10, 4, 28, .92) !important;
+    border: 1px solid rgba(0, 255, 200, .35) !important;
+    box-shadow: 0 0 24px rgba(0, 255, 200, .18), inset 0 0 12px rgba(0, 255, 200, .06) !important;
+}
+[data-theme="neon"] h1, [data-theme="neon"] h2, [data-theme="neon"] h3,
+[data-theme="neon"] .title-text, [data-theme="neon"] label,
+[data-theme="neon"] .card-container, [data-theme="neon"] .card,
+[data-theme="neon"] .tool-box, [data-theme="neon"] .box {
+    text-shadow: 0 0 8px rgba(0, 255, 200, .6) !important;
+}
+[data-theme="neon"] input, [data-theme="neon"] textarea, [data-theme="neon"] select {
+    background: rgba(8, 2, 24, .9) !important;
+    color: #c9f7ff !important;
+    border-color: rgba(0, 255, 200, .45) !important;
 }

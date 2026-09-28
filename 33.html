@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+<title>今天玩什么·随机乐子 - 找乐子</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+        min-height: 100vh;
+        background: #0a0e27;
+        color: #fff;
+        overflow-x: hidden;
+    }
+    .container { width: 100%; max-width: 900px; margin: 0 auto; padding: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .title-area { grid-column: 1 / -1; text-align: center; padding: 18px 0 6px; }
+    .title-area h2 { font-size: 24px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+    .back-area {
+        grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px;
+        text-decoration: none; color: #bbb; font-size: 13px; padding: 8px; border-radius: 10px;
+        background: rgba(255,255,255,.05); transition: all .3s;
+    }
+    .back-area:hover { background: rgba(255,255,255,.12); color: #fff; }
+    .card {
+        grid-column: 1 / -1;
+        background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
+        border-radius: 16px; padding: 20px; color: #333;
+        box-shadow: 0 8px 30px rgba(0,0,0,.35);
+    }
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        border: none; cursor: pointer; font-size: 15px; padding: 10px 20px; border-radius: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
+        box-shadow: 0 4px 14px rgba(102,126,234,.4); transition: transform .2s, box-shadow .2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,.55); }
+    .btn:active { transform: scale(.96); }
+    .btn-secondary { background: #e8eaf6; color: #333; box-shadow: none; }
+    .btn-danger { background: linear-gradient(135deg, #e53935, #d32f2f); box-shadow: 0 4px 14px rgba(229,57,53,.4); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    input, textarea, select {
+        width: 100%; border: 1px solid #d0d4ea; border-radius: 10px; padding: 10px 12px;
+        font-size: 14px; background: #fff; color: #333; outline: none;
+    }
+    input:focus, textarea:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,.2); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    .hint { font-size: 12px; color: #999; margin-top: 8px; }
+    .stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+    .stat div { background: rgba(102,126,234,.08); border-radius: 10px; padding: 10px; text-align: center; }
+    .stat b { display: block; font-size: 20px; color: #667eea; }
+    .stat span { font-size: 12px; color: #888; }
+    .overlay {
+        position: fixed; inset: 0; z-index: 9999; background: #0a0e27;
+        display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .4s;
+    }
+    .overlay.active { opacity: 1; visibility: visible; }
+    .loader-ring {
+        width: 60px; height: 60px; border: 4px solid rgba(102,126,234,.2); border-top-color: #667eea;
+        border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 14px;
+    }
+    .loader-text { color: #aaa; font-size: 14px; text-align: center; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 600px) {
+        .grid { grid-template-columns: repeat(2, 1fr); }
+        .stat { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——今天玩什么·随机乐子 - 找乐子，趣味工具与小游戏合集">
+<meta property="og:title" content="今天玩什么·随机乐子 - 找乐子">
+<meta property="og:description" content="找乐子——今天玩什么·随机乐子 - 找乐子，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/33.html">
+
+<script src="common.js"></script>
+<script src="theme.js"></script>
+<script src="zl-features.js"></script>
+</head>
+<body>
+<main class="container">
+    <div class="grid">
+        <div class="title-area"><h2>今天玩什么·随机乐子</h2></div>
+        <a href="index.html" class="back-area" id="backHome"><span style="font-size:28px;">🏠</span>返回主页</a>
+        <div class="card">
+            <div style="font-size:16px;font-weight:bold;color:#667eea;margin-bottom:4px;">🎲 今天玩什么？</div>
+            <div class="hint">纠结时点一下，帮你随机决定。支持分类抽取与历史回顾。</div>
+            <div class="row">
+                <button id="randomBtn" class="btn">🎲 随机抽一个</button>
+                <select id="catSelect" style="flex:1;min-width:160px;">
+                    <option value="">全部分类</option>
+                </select>
+            </div>
+            <div id="resultBox" style="margin-top:16px;padding:24px;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;text-align:center;font-size:18px;min-height:96px;display:flex;align-items:center;justify-content:center;word-break:break-all;">
+                点一下「随机抽一个」开始吧～
+            </div>
+            <div style="margin-top:14px;font-size:13px;color:#888;">🕘 最近抽到的：</div>
+            <div id="recentBox" style="margin-top:6px;display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+    </div>
+</main>
+<div class="overlay" id="overlay">
+    <div>
+        <div class="loader-ring"></div>
+        <div class="loader-text">找乐子～</div>
+    </div>
+</div>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQooZnVuY3Rpb24gKCkgew0KICAgICd1c2Ugc3RyaWN0JzsNCg0KICAgIHZhciBDQVRTID0gWw0KICAgICAgICB7IG46ICfwn46uIOeOqea4uOaIjycsIGl0ZW1zOiBbJ+adpeS4gOWxgOS6lOWtkOaji+aMkeaImEFJJywgJ+aJq+mbt+aOkumbt+ivleivleaJi+awlCcsICforrDlv4bphY3lr7nogIPpqozorrDlv4blipsnLCAn5Y+M5Lq65LqV5a2X5qOL5om+5pyL5Y+L5a+55oiYJywgJ+aJk+Wtl+mAn+W6pua1i+ivleavlOaLvOaJi+mAnyddIH0sDQogICAgICAgIHsgbjogJ/Cfk7og55yL6KeG6aKRJywgaXRlbXM6IFsn6YeN5rip5LiA6YOo6ICB55S15b2xJywgJ+WIt+S4gOS4quWGt+efpeivhuinhumikScsICfnnIvkuIDpm4bnuqrlvZXniYflvIDnnLznlYwnLCAn5a2m5LiA6YGT5a625bi46I+c6KeG6aKRJ10gfSwNCiAgICAgICAgeyBuOiAn8J+PgyDov5DliqjkuIDkuIsnLCBpdGVtczogWyflgZoyMOS4qua3sei5sicsICflh7rpl6jmlaPmraUxNeWIhumSnycsICfmi4nkvLg15YiG6ZKf5pS+5p2+6Lqr5L2TJywgJ+WOn+WcsOW/q+i1sDPliIbpkp8nXSB9LA0KICAgICAgICB7IG46ICfwn42cIOWQg+eCueWlveeahCcsIGl0ZW1zOiBbJ+e7meiHquW3seWBmuS4gOadr+WltuiMticsICfngrnkuIDku73msqHlkIPov4fnmoTlpJbljZYnLCAn54Wu5LiA56KX6LGq5Y2O5rOh6Z2iJywgJ+S5sOS4gOenjeayoeWwnei/h+eahOawtOaenCddIH0sDQogICAgICAgIHsgbjogJ/Cfk5og5a2m5Lmg5YWF55S1JywgaXRlbXM6IFsn6K+7MTDpobXkuaYnLCAn6IOMNeS4quWNleivjScsICflhpnkuIDmrrXml6XorrAnLCAn5a2m5LiA5Liq5bCP5oqA6IO9J10gfSwNCiAgICAgICAgeyBuOiAn8J+bi++4jyDourrlubPkvJHmga8nLCBpdGVtczogWyfpl63nnLzlkKw15YiG6ZKf55m95Zmq6Z+zJywgJ+WPkeWRhjEw5YiG6ZKf5pS+56m6JywgJ+edoeS4quWNiOiniScsICfmlbTnkIbkuIDkuIvmoYzpnaInXSB9LA0KICAgICAgICB7IG46ICfwn46oIOWwj+WIm+S9nCcsIGl0ZW1zOiBbJ+eUu+S4gOW5heeugOeslOeUuycsICflhpnkuInooYzmiZPmsrnor5cnLCAn57uZ5pyL5Y+L5Y+R5LiA5Y+l6Zeu5YCZJywgJ+aLjeS4gOW8oOWkqeepuueahOeFp+eJhyddIH0NCiAgICBdOw0KICAgIHZhciBjYXRTZWxlY3QgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2F0U2VsZWN0Jyk7DQogICAgdmFyIHJhbmRvbUJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyYW5kb21CdG4nKTsNCiAgICB2YXIgcmVzdWx0Qm94ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Jlc3VsdEJveCcpOw0KICAgIHZhciByZWNlbnRCb3ggPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVjZW50Qm94Jyk7DQogICAgQ0FUUy5mb3JFYWNoKGZ1bmN0aW9uIChjKSB7DQogICAgICAgIHZhciBvID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnb3B0aW9uJyk7DQogICAgICAgIG8udmFsdWUgPSBjLm47DQogICAgICAgIG8udGV4dENvbnRlbnQgPSBjLm47DQogICAgICAgIGNhdFNlbGVjdC5hcHBlbmRDaGlsZChvKTsNCiAgICB9KTsNCiAgICBmdW5jdGlvbiBsb2FkUmVjZW50KCkgew0KICAgICAgICB2YXIgbGlzdCA9IFtdOw0KICAgICAgICB0cnkgeyBsaXN0ID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbSgnemxfcmFuZG9tX2hpc3RvcnknKSB8fCAnW10nKTsgfSBjYXRjaCAoZSkge30NCiAgICAgICAgcmVjZW50Qm94LmlubmVySFRNTCA9ICcnOw0KICAgICAgICBpZiAoIWxpc3QubGVuZ3RoKSB7IHJlY2VudEJveC5pbm5lckhUTUwgPSAnPHNwYW4gc3R5bGU9ImNvbG9yOiNiYmI7Ij7mmoLml6DorrDlvZU8L3NwYW4+JzsgcmV0dXJuOyB9DQogICAgICAgIGxpc3QuZm9yRWFjaChmdW5jdGlvbiAoaXQpIHsNCiAgICAgICAgICAgIHZhciBkID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7DQogICAgICAgICAgICBkLnN0eWxlLmNzc1RleHQgPSAnYmFja2dyb3VuZDojZjRmNmZmO2JvcmRlci1yYWRpdXM6OHB4O3BhZGRpbmc6OHB4IDEycHg7Zm9udC1zaXplOjEzcHg7Y29sb3I6IzU1NTtkaXNwbGF5OmZsZXg7anVzdGlmeS1jb250ZW50OnNwYWNlLWJldHdlZW47JzsNCiAgICAgICAgICAgIGQuaW5uZXJIVE1MID0gJzxzcGFuPicgKyBpdC50ICsgJzwvc3Bhbj48c3BhbiBzdHlsZT0iY29sb3I6I2FhYTtmb250LXNpemU6MTFweDsiPicgKyBpdC50aW1lICsgJzwvc3Bhbj4nOw0KICAgICAgICAgICAgcmVjZW50Qm94LmFwcGVuZENoaWxkKGQpOw0KICAgICAgICB9KTsNCiAgICB9DQogICAgZnVuY3Rpb24gcGljaygpIHsNCiAgICAgICAgdmFyIGNhdFNlbCA9IGNhdFNlbGVjdC52YWx1ZTsNCiAgICAgICAgdmFyIHBvb2wgPSBDQVRTOw0KICAgICAgICBpZiAoY2F0U2VsKSB7IHBvb2wgPSBDQVRTLmZpbHRlcihmdW5jdGlvbiAoYykgeyByZXR1cm4gYy5uID09PSBjYXRTZWw7IH0pOyB9DQogICAgICAgIHZhciBjYXQgPSBwb29sW01hdGguZmxvb3IoTWF0aC5yYW5kb20oKSAqIHBvb2wubGVuZ3RoKV07DQogICAgICAgIHZhciBpdGVtID0gY2F0Lml0ZW1zW01hdGguZmxvb3IoTWF0aC5yYW5kb20oKSAqIGNhdC5pdGVtcy5sZW5ndGgpXTsNCiAgICAgICAgcmVzdWx0Qm94LnRleHRDb250ZW50ID0gJ+KcqCAnICsgaXRlbSArICfvvIgnICsgY2F0Lm4gKyAn77yJJzsNCiAgICAgICAgcmVzdWx0Qm94LnN0eWxlLmFuaW1hdGlvbiA9ICdub25lJzsNCiAgICAgICAgdm9pZCByZXN1bHRCb3gub2Zmc2V0V2lkdGg7DQogICAgICAgIHJlc3VsdEJveC5zdHlsZS5hbmltYXRpb24gPSAncG9wIC40cyBlYXNlJzsNCiAgICAgICAgdHJ5IHsNCiAgICAgICAgICAgIHZhciBsaXN0ID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbSgnemxfcmFuZG9tX2hpc3RvcnknKSB8fCAnW10nKTsNCiAgICAgICAgICAgIGxpc3QudW5zaGlmdCh7IHQ6IGl0ZW0gKyAn77yIJyArIGNhdC5uICsgJ++8iScsIHRpbWU6IG5ldyBEYXRlKCkudG9Mb2NhbGVTdHJpbmcoKSB9KTsNCiAgICAgICAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKCd6bF9yYW5kb21faGlzdG9yeScsIEpTT04uc3RyaW5naWZ5KGxpc3Quc2xpY2UoMCwgOCkpKTsNCiAgICAgICAgfSBjYXRjaCAoZSkge30NCiAgICAgICAgbG9hZFJlY2VudCgpOw0KICAgIH0NCiAgICByYW5kb21CdG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBwaWNrKTsNCiAgICBsb2FkUmVjZW50KCk7DQogICAgdmFyIHBvcFN0eWxlID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3R5bGUnKTsNCiAgICBwb3BTdHlsZS50ZXh0Q29udGVudCA9ICdAa2V5ZnJhbWVzIHBvcCB7IDAlIHsgdHJhbnNmb3JtOiBzY2FsZSguODUpOyBvcGFjaXR5OiAuNTsgfSAxMDAlIHsgdHJhbnNmb3JtOiBzY2FsZSgxKTsgb3BhY2l0eTogMTsgfSB9JzsNCiAgICBkb2N1bWVudC5oZWFkLmFwcGVuZENoaWxkKHBvcFN0eWxlKTsNCg0KICAgIC8vIOi/lOWbnuS4u+mhtei9rOWcug0KICAgIHZhciBvdmVybGF5ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ292ZXJsYXknKTsNCiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmFja0hvbWUnKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uIChlKSB7DQogICAgICAgIGUucHJldmVudERlZmF1bHQoKTsNCiAgICAgICAgaWYgKG92ZXJsYXkuY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKSkgcmV0dXJuOw0KICAgICAgICBvdmVybGF5LmNsYXNzTGlzdC5hZGQoJ2FjdGl2ZScpOw0KICAgICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsgd2luZG93LmxvY2F0aW9uLmhyZWYgPSAnaW5kZXguaHRtbCc7IH0sIDEyMDApOw0KICAgIH0pOw0KICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICBpZiAoZS5rZXkgPT09ICdFc2NhcGUnICYmIG92ZXJsYXkuY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKSkgew0KICAgICAgICAgICAgb3ZlcmxheS5jbGFzc0xpc3QucmVtb3ZlKCdhY3RpdmUnKTsNCiAgICAgICAgfQ0KICAgIH0pOw0KfSkoKTsNCgoKLyog6Ieq5Yqo5YWo5bGA5oyC6L2977yI5L6b5YaF6IGU5LqL5Lu25bGe5oCn6LCD55So77yJICovCmlmKCEoJ2xvYWRSZWNlbnQnIGluIHdpbmRvdykpd2luZG93LmxvYWRSZWNlbnQ9bG9hZFJlY2VudDsKaWYoISgncGljaycgaW4gd2luZG93KSl3aW5kb3cucGljaz1waWNrOw==");
+</script>
+</body>
+</html>

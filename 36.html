@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+<title>双人井字棋 - 找乐子</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+        min-height: 100vh;
+        background: #0a0e27;
+        color: #fff;
+        overflow-x: hidden;
+    }
+    .container { width: 100%; max-width: 900px; margin: 0 auto; padding: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .title-area { grid-column: 1 / -1; text-align: center; padding: 18px 0 6px; }
+    .title-area h2 { font-size: 24px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+    .back-area {
+        grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px;
+        text-decoration: none; color: #bbb; font-size: 13px; padding: 8px; border-radius: 10px;
+        background: rgba(255,255,255,.05); transition: all .3s;
+    }
+    .back-area:hover { background: rgba(255,255,255,.12); color: #fff; }
+    .card {
+        grid-column: 1 / -1;
+        background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
+        border-radius: 16px; padding: 20px; color: #333;
+        box-shadow: 0 8px 30px rgba(0,0,0,.35);
+    }
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        border: none; cursor: pointer; font-size: 15px; padding: 10px 20px; border-radius: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2); color: #fff;
+        box-shadow: 0 4px 14px rgba(102,126,234,.4); transition: transform .2s, box-shadow .2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,.55); }
+    .btn:active { transform: scale(.96); }
+    .btn-secondary { background: #e8eaf6; color: #333; box-shadow: none; }
+    .btn-danger { background: linear-gradient(135deg, #e53935, #d32f2f); box-shadow: 0 4px 14px rgba(229,57,53,.4); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    input, textarea, select {
+        width: 100%; border: 1px solid #d0d4ea; border-radius: 10px; padding: 10px 12px;
+        font-size: 14px; background: #fff; color: #333; outline: none;
+    }
+    input:focus, textarea:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,.2); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    .hint { font-size: 12px; color: #999; margin-top: 8px; }
+    .stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+    .stat div { background: rgba(102,126,234,.08); border-radius: 10px; padding: 10px; text-align: center; }
+    .stat b { display: block; font-size: 20px; color: #667eea; }
+    .stat span { font-size: 12px; color: #888; }
+    .overlay {
+        position: fixed; inset: 0; z-index: 9999; background: #0a0e27;
+        display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .4s;
+    }
+    .overlay.active { opacity: 1; visibility: visible; }
+    .loader-ring {
+        width: 60px; height: 60px; border: 4px solid rgba(102,126,234,.2); border-top-color: #667eea;
+        border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 14px;
+    }
+    .loader-text { color: #aaa; font-size: 14px; text-align: center; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 600px) {
+        .grid { grid-template-columns: repeat(2, 1fr); }
+        .stat { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——双人井字棋 - 找乐子，趣味工具与小游戏合集">
+<meta property="og:title" content="双人井字棋 - 找乐子">
+<meta property="og:description" content="找乐子——双人井字棋 - 找乐子，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/36.html">
+
+<script src="common.js"></script>
+<script src="theme.js"></script>
+<script src="zl-features.js"></script>
+</head>
+<body>
+<main class="container">
+    <div class="grid">
+        <div class="title-area"><h2>双人井字棋</h2></div>
+        <a href="index.html" class="back-area" id="backHome"><span style="font-size:28px;">🏠</span>返回主页</a>
+        <div class="card">
+            <div style="font-size:16px;font-weight:bold;color:#667eea;margin-bottom:4px;">⭕ 双人井字棋</div>
+            <div class="hint">两人轮流落子，三连一线获胜。谁先凑成一条线，谁就是赢家！</div>
+            <div style="text-align:center;padding:8px 0 14px;">
+                <span id="turnLabel" style="font-size:16px;font-weight:bold;color:#333;">轮到：❌ X</span>
+            </div>
+            <div id="board" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:320px;margin:0 auto;"></div>
+            <div class="stat">
+                <div><b id="xScore">0</b><span>X 胜</span></div>
+                <div><b id="oScore">0</b><span>O 胜</span></div>
+                <div><b id="drawScore">0</b><span>平局</span></div>
+            </div>
+            <div class="row" style="justify-content:center;">
+                <button id="newGameBtn" class="btn">🔄 再来一局</button>
+                <button id="resetScoreBtn" class="btn btn-secondary">清零比分</button>
+            </div>
+            <div id="tttMsg" style="text-align:center;margin-top:10px;font-size:15px;color:#e64a19;font-weight:bold;"></div>
+        </div>
+    </div>
+</main>
+<div class="overlay" id="overlay">
+    <div>
+        <div class="loader-ring"></div>
+        <div class="loader-text">找乐子～</div>
+    </div>
+</div>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQooZnVuY3Rpb24gKCkgew0KICAgICd1c2Ugc3RyaWN0JzsNCg0KICAgIHZhciBib2FyZEVsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JvYXJkJyk7DQogICAgdmFyIHR1cm5MYWJlbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0dXJuTGFiZWwnKTsNCiAgICB2YXIgeFNjb3JlRWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgneFNjb3JlJyk7DQogICAgdmFyIG9TY29yZUVsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ29TY29yZScpOw0KICAgIHZhciBkcmF3U2NvcmVFbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkcmF3U2NvcmUnKTsNCiAgICB2YXIgdHR0TXNnID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3R0dE1zZycpOw0KICAgIHZhciBib2FyZCA9IFsnJywgJycsICcnLCAnJywgJycsICcnLCAnJywgJycsICcnXTsNCiAgICB2YXIgY3VycmVudCA9ICdYJzsNCiAgICB2YXIgb3ZlciA9IGZhbHNlOw0KICAgIHZhciB3aW5MaW5lID0gbnVsbDsNCg0KICAgIGZ1bmN0aW9uIGxvYWRTY29yZXMoKSB7DQogICAgICAgIHRyeSB7DQogICAgICAgICAgICB2YXIgcyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oJ3psX3R0dCcpIHx8ICd7IngiOjAsIm8iOjAsImQiOjB9Jyk7DQogICAgICAgICAgICB4U2NvcmVFbC50ZXh0Q29udGVudCA9IHMueCB8fCAwOw0KICAgICAgICAgICAgb1Njb3JlRWwudGV4dENvbnRlbnQgPSBzLm8gfHwgMDsNCiAgICAgICAgICAgIGRyYXdTY29yZUVsLnRleHRDb250ZW50ID0gcy5kIHx8IDA7DQogICAgICAgIH0gY2F0Y2ggKGUpIHt9DQogICAgfQ0KICAgIGZ1bmN0aW9uIHNhdmVTY29yZXMoeCwgbywgZCkgew0KICAgICAgICB0cnkgeyBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgnemxfdHR0JywgSlNPTi5zdHJpbmdpZnkoeyB4OiB4LCBvOiBvLCBkOiBkIH0pKTsgfSBjYXRjaCAoZSkge30NCiAgICB9DQogICAgZnVuY3Rpb24gY2hlY2tXaW4oKSB7DQogICAgICAgIHZhciBsaW5lcyA9IFtbMCwxLDJdLFszLDQsNV0sWzYsNyw4XSxbMCwzLDZdLFsxLDQsN10sWzIsNSw4XSxbMCw0LDhdLFsyLDQsNl1dOw0KICAgICAgICBmb3IgKHZhciBpID0gMDsgaSA8IGxpbmVzLmxlbmd0aDsgaSsrKSB7DQogICAgICAgICAgICB2YXIgYSA9IGxpbmVzW2ldWzBdLCBiID0gbGluZXNbaV1bMV0sIGMgPSBsaW5lc1tpXVsyXTsNCiAgICAgICAgICAgIGlmIChib2FyZFthXSAmJiBib2FyZFthXSA9PT0gYm9hcmRbYl0gJiYgYm9hcmRbYl0gPT09IGJvYXJkW2NdKSB7IHdpbkxpbmUgPSBsaW5lc1tpXTsgcmV0dXJuIGJvYXJkW2FdOyB9DQogICAgICAgIH0NCiAgICAgICAgaWYgKGJvYXJkLmluZGV4T2YoJycpIDwgMCkgcmV0dXJuICdEJzsNCiAgICAgICAgcmV0dXJuIG51bGw7DQogICAgfQ0KICAgIGZ1bmN0aW9uIHJlbmRlcigpIHsNCiAgICAgICAgYm9hcmRFbC5pbm5lckhUTUwgPSAnJzsNCiAgICAgICAgZm9yICh2YXIgaSA9IDA7IGkgPCA5OyBpKyspIHsNCiAgICAgICAgICAgIHZhciBjZWxsID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7DQogICAgICAgICAgICBjZWxsLnN0eWxlLmNzc1RleHQgPSAnYXNwZWN0LXJhdGlvOjE7YmFja2dyb3VuZDojZjRmNmZmO2JvcmRlci1yYWRpdXM6MTBweDtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2p1c3RpZnktY29udGVudDpjZW50ZXI7Zm9udC1zaXplOjQwcHg7Zm9udC13ZWlnaHQ6Ym9sZDtjb2xvcjojNjY3ZWVhO2N1cnNvcjpwb2ludGVyO3VzZXItc2VsZWN0Om5vbmU7dHJhbnNpdGlvbjp0cmFuc2Zvcm0gLjE1czsnOw0KICAgICAgICAgICAgY2VsbC50ZXh0Q29udGVudCA9IGJvYXJkW2ldOw0KICAgICAgICAgICAgaWYgKHdpbkxpbmUgJiYgd2luTGluZS5pbmRleE9mKGkpID49IDApIGNlbGwuc3R5bGUuYmFja2dyb3VuZCA9ICdyZ2JhKDQ2LDEyNSw1MCwuMjUpJzsNCiAgICAgICAgICAgIGlmICghYm9hcmRbaV0gJiYgIW92ZXIpIHsNCiAgICAgICAgICAgICAgICBjZWxsLm9ubW91c2VlbnRlciA9IGZ1bmN0aW9uICgpIHsgdGhpcy5zdHlsZS50cmFuc2Zvcm0gPSAnc2NhbGUoMS4wNSknOyB9Ow0KICAgICAgICAgICAgICAgIGNlbGwub25tb3VzZWxlYXZlID0gZnVuY3Rpb24gKCkgeyB0aGlzLnN0eWxlLnRyYW5zZm9ybSA9ICcnOyB9Ow0KICAgICAgICAgICAgICAgIGNlbGwub25jbGljayA9IGZ1bmN0aW9uICgpIHsgbW92ZShwYXJzZUludCh0aGlzLmRhdGFzZXQuaSwgMTApKTsgfTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgICAgIGNlbGwuZGF0YXNldC5pID0gaTsNCiAgICAgICAgICAgIGJvYXJkRWwuYXBwZW5kQ2hpbGQoY2VsbCk7DQogICAgICAgIH0NCiAgICAgICAgdHVybkxhYmVsLnRleHRDb250ZW50ID0gb3ZlciA/ICcnIDogJ+i9ruWIsO+8micgKyAoY3VycmVudCA9PT0gJ1gnID8gJ+KdjCBYJyA6ICfirZUgTycpOw0KICAgIH0NCiAgICBmdW5jdGlvbiBtb3ZlKGkpIHsNCiAgICAgICAgaWYgKG92ZXIgfHwgYm9hcmRbaV0pIHJldHVybjsNCiAgICAgICAgYm9hcmRbaV0gPSBjdXJyZW50Ow0KICAgICAgICB2YXIgdyA9IGNoZWNrV2luKCk7DQogICAgICAgIGlmICh3KSB7DQogICAgICAgICAgICBvdmVyID0gdHJ1ZTsNCiAgICAgICAgICAgIHZhciBzID0gSlNPTi5wYXJzZShsb2NhbFN0b3JhZ2UuZ2V0SXRlbSgnemxfdHR0JykgfHwgJ3sieCI6MCwibyI6MCwiZCI6MH0nKTsNCiAgICAgICAgICAgIGlmICh3ID09PSAnRCcpIHsgcy5kKys7IHR0dE1zZy50ZXh0Q29udGVudCA9ICfwn6SdIOW5s+WxgO+8gSc7IH0NCiAgICAgICAgICAgIGVsc2UgeyBzW3ddKys7IHR0dE1zZy50ZXh0Q29udGVudCA9ICfwn46JICcgKyB3ICsgJyDojrfog5zvvIEnOyBpZiAod2luZG93LlpMICYmIFpMLnVubG9jaykgWkwudW5sb2NrKCd0aWN0YWNfd2luJyk7IH0NCiAgICAgICAgICAgIHNhdmVTY29yZXMocy54LCBzLm8sIHMuZCk7DQogICAgICAgICAgICBsb2FkU2NvcmVzKCk7DQogICAgICAgIH0gZWxzZSB7DQogICAgICAgICAgICBjdXJyZW50ID0gY3VycmVudCA9PT0gJ1gnID8gJ08nIDogJ1gnOw0KICAgICAgICAgICAgdHR0TXNnLnRleHRDb250ZW50ID0gJyc7DQogICAgICAgIH0NCiAgICAgICAgcmVuZGVyKCk7DQogICAgfQ0KICAgIGZ1bmN0aW9uIG5ld0dhbWUoKSB7DQogICAgICAgIGJvYXJkID0gWycnLCAnJywgJycsICcnLCAnJywgJycsICcnLCAnJywgJyddOw0KICAgICAgICBjdXJyZW50ID0gJ1gnOw0KICAgICAgICBvdmVyID0gZmFsc2U7DQogICAgICAgIHdpbkxpbmUgPSBudWxsOw0KICAgICAgICB0dHRNc2cudGV4dENvbnRlbnQgPSAnJzsNCiAgICAgICAgcmVuZGVyKCk7DQogICAgfQ0KICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCduZXdHYW1lQnRuJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBuZXdHYW1lKTsNCiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVzZXRTY29yZUJ0bicpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKCkgew0KICAgICAgICBzYXZlU2NvcmVzKDAsIDAsIDApOw0KICAgICAgICBsb2FkU2NvcmVzKCk7DQogICAgICAgIG5ld0dhbWUoKTsNCiAgICB9KTsNCiAgICBsb2FkU2NvcmVzKCk7DQogICAgcmVuZGVyKCk7DQoNCiAgICAvLyDov5Tlm57kuLvpobXovazlnLoNCiAgICB2YXIgb3ZlcmxheSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdvdmVybGF5Jyk7DQogICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2JhY2tIb21lJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICBlLnByZXZlbnREZWZhdWx0KCk7DQogICAgICAgIGlmIChvdmVybGF5LmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpIHJldHVybjsNCiAgICAgICAgb3ZlcmxheS5jbGFzc0xpc3QuYWRkKCdhY3RpdmUnKTsNCiAgICAgICAgc2V0VGltZW91dChmdW5jdGlvbiAoKSB7IHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gJ2luZGV4Lmh0bWwnOyB9LCAxMjAwKTsNCiAgICB9KTsNCiAgICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdrZXlkb3duJywgZnVuY3Rpb24gKGUpIHsNCiAgICAgICAgaWYgKGUua2V5ID09PSAnRXNjYXBlJyAmJiBvdmVybGF5LmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpIHsNCiAgICAgICAgICAgIG92ZXJsYXkuY2xhc3NMaXN0LnJlbW92ZSgnYWN0aXZlJyk7DQogICAgICAgIH0NCiAgICB9KTsNCn0pKCk7DQoKCi8qIOiHquWKqOWFqOWxgOaMgui9ve+8iOS+m+WGheiBlOS6i+S7tuWxnuaAp+iwg+eUqO+8iSAqLwppZighKCdsb2FkU2NvcmVzJyBpbiB3aW5kb3cpKXdpbmRvdy5sb2FkU2NvcmVzPWxvYWRTY29yZXM7CmlmKCEoJ3NhdmVTY29yZXMnIGluIHdpbmRvdykpd2luZG93LnNhdmVTY29yZXM9c2F2ZVNjb3JlczsKaWYoISgnY2hlY2tXaW4nIGluIHdpbmRvdykpd2luZG93LmNoZWNrV2luPWNoZWNrV2luOwppZighKCdyZW5kZXInIGluIHdpbmRvdykpd2luZG93LnJlbmRlcj1yZW5kZXI7CmlmKCEoJ21vdmUnIGluIHdpbmRvdykpd2luZG93Lm1vdmU9bW92ZTsKaWYoISgnbmV3R2FtZScgaW4gd2luZG93KSl3aW5kb3cubmV3R2FtZT1uZXdHYW1lOw==");
+</script>
+</body>
+</html>
