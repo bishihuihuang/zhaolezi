@@ -100,39 +100,6 @@
     }
 </style>
 
-<!-- 多设备适配改进 v1.0 -->
-<style>
-/* 6. 全局box-sizing reset */
-*, *::before, *::after {
-    box-sizing: border-box;
-}
-
-/* 3. 刘海屏安全区域适配 */
-body {
-    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
-             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
-}
-
-/* 2. 触摸设备优化：禁用hover残留效果 */
-@media (hover: none) {
-    .tool-box:hover, .card:hover, .box:hover, button:hover, a:hover {
-        transform: none !important;
-        box-shadow: inherit !important;
-    }
-    .tooltip, [class*="tooltip"], [class*="tip"] {
-        display: none !important;
-    }
-}
-
-/* 4. 深色模式支持 */
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #121212 !important;
-        color: #e0e0e0 !important;
-    }
-}
-</style>
-
 <!-- 文件搜索.html 移动端适配 -->
 <style>
 /* 1. 文件搜索.html移动端断点 */
@@ -184,7 +151,7 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
 }
 </style>
 
-
+<link rel="stylesheet" href="common.css">`n
 <!-- PWA支持 -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#667eea">
@@ -208,6 +175,7 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
 }
 </style>
 
+<script src="common.js"></script>
 </head>
 <body>
 <div class="bg-animation">

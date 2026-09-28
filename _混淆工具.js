@@ -8,7 +8,7 @@
  * 功能：
  *   - 从 _原始未混淆版/ 读源文件，混淆后输出到根目录
  *   - 自动注入 PWA 块（manifest/theme-color/横屏CSS）到 </head> 前
- *   - 自动注入防小白保护代码到每个内联 script 开头
+ *   - 自动刷新公共防小白脚本 common.js，并在页面注入 <script src="common.js">
  *   - 30.html 和 文件搜索.html 不混淆，直接复制
  */
 
@@ -213,21 +213,35 @@ const ANTI_CHEAT_CODE = `
 /* 防小白保护结束 */
 `;
 
+// PWA：Service Worker 注册（全部页面经 common.js 统一注册）
+const SW_REGISTER_CODE = `
+
+/* Service Worker 注册（离线缓存支持） */
+(function(){
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('service-worker.js').catch(function(err){});
+        });
+    }
+})();
+`;
+
 function utf8ToBase64(str) {
     return Buffer.from(str, 'utf-8').toString('base64');
 }
 
 function ensurePwaBlock(html) {
-    if (html.includes('rel="manifest"') && html.includes('orientation: landscape')) {
+    const COMMON_JS = '<script src="common.js"></script>';
+    if (html.includes('rel="manifest"') && html.includes('orientation: landscape') && html.includes('src="common.js"')) {
         return html;
     }
     if (/<\/head>/i.test(html)) {
-        return html.replace(/<\/head>/i, PWA_BLOCK + '\n</head>');
+        return html.replace(/<\/head>/i, PWA_BLOCK + '\n' + COMMON_JS + '\n</head>');
     }
     if (/<body[^>]*>/i.test(html)) {
-        return html.replace(/<body[^>]*>/i, '<head>' + PWA_BLOCK + '</head>\n$&');
+        return html.replace(/<body[^>]*>/i, '<head>' + PWA_BLOCK + '</head>\n' + COMMON_JS + '\n$&');
     }
-    return PWA_BLOCK + '\n' + html;
+    return PWA_BLOCK + '\n' + COMMON_JS + '\n' + html;
 }
 
 function obfuscateFile(fileName) {
@@ -255,14 +269,13 @@ function obfuscateFile(fileName) {
         return { file: fileName, status: 'already-obfuscated' };
     }
 
-    // 4. 内联 script 混淆
+    // 4. 内联 script 混淆（防小白已外置到 common.js，此处只混淆业务脚本）
     const scriptRegex = /(<script(?![^>]*\bsrc=)[^>]*>)([\s\S]*?)(<\/script>)/gi;
     let matchCount = 0;
     const newContent = content.replace(scriptRegex, (match, openTag, jsCode, closeTag) => {
         if (!jsCode || jsCode.trim().length === 0) return match;
         matchCount++;
-        const fullJS = ANTI_CHEAT_CODE + '\n' + jsCode;
-        const encoded = utf8ToBase64(fullJS);
+        const encoded = utf8ToBase64(jsCode);
         const obfuscatedJS = `eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("${encoded}");`;
         return openTag + '\n' + obfuscatedJS + '\n' + closeTag;
     });
@@ -293,6 +306,10 @@ function main() {
     console.log('========================================');
     console.log(`  混淆工具 - 处理 ${files.length} 个文件`);
     console.log('========================================\n');
+
+    // 公共脚本：每次混淆时刷新 common.js（防小白保护 + Service Worker 注册）
+    fs.writeFileSync(path.join(ROOT, 'common.js'), ANTI_CHEAT_CODE + SW_REGISTER_CODE, 'utf-8');
+    console.log('[公共] common.js 已刷新（防小白 + SW注册）\n');
 
     let obf = 0, copy = 0, skip = 0;
     for (const f of files) {
