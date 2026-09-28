@@ -230,6 +230,33 @@ function utf8ToBase64(str) {
     return Buffer.from(str, 'utf-8').toString('base64');
 }
 
+/**
+ * 自动全局挂载：扫描脚本内的 function 声明，在混淆载荷中追加 window.xxx 挂载。
+ * 背景：混淆模板用 direct eval 执行，function 声明不会进入全局作用域，
+ * 导致 HTML 内联事件属性（onclick="foo()"）按全局查找失败（ReferenceError）。
+ * 该函数恢复未混淆时代的全局语义，且对 window 已存在的内置属性安全跳过。
+ */
+function autoAttachGlobals(jsCode) {
+    const names = new Set();
+    // 匹配 function 声明（行首或语句起始处，兼容缩进），跳过已显式挂载的
+    const fnRe = /(?:^|[\n;])\s*function\s+([A-Za-z_$][\w$]*)\s*\(/g;
+    let m;
+    while ((m = fnRe.exec(jsCode)) !== null) {
+        names.add(m[1]);
+    }
+    const lines = [];
+    for (const n of names) {
+        // 已在源码中显式挂载的跳过，避免重复输出
+        if (jsCode.includes('window.' + n + ' = ' + n) || jsCode.includes('window.' + n + '=' + n)) {
+            continue;
+        }
+        // 运行时判断：window 已存在该属性（内置全局对象等）则不覆盖
+        lines.push("if(!('" + n + "' in window))window." + n + "=" + n + ";");
+    }
+    if (lines.length === 0) return jsCode;
+    return jsCode + '\n\n/* 自动全局挂载（供内联事件属性调用） */\n' + lines.join('\n');
+}
+
 function ensurePwaBlock(html) {
     const COMMON_JS = '<script src="common.js"></script>';
     if (html.includes('rel="manifest"') && html.includes('orientation: landscape') && html.includes('src="common.js"')) {
@@ -275,7 +302,7 @@ function obfuscateFile(fileName) {
     const newContent = content.replace(scriptRegex, (match, openTag, jsCode, closeTag) => {
         if (!jsCode || jsCode.trim().length === 0) return match;
         matchCount++;
-        const encoded = utf8ToBase64(jsCode);
+        const encoded = utf8ToBase64(autoAttachGlobals(jsCode));
         const obfuscatedJS = `eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("${encoded}");`;
         return openTag + '\n' + obfuscatedJS + '\n' + closeTag;
     });
