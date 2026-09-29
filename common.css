@@ -161,7 +161,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #070a12, #090c17, #161d38, #0c101e, #090b15, #0b0e1b, #080a13);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="gold"] {
@@ -178,7 +178,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #090703, #0b0904, #251e11, #0f0b05, #0a0804, #0d0a05, #090703);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="light"] {
@@ -195,7 +195,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #afb1b4, #dbdde1, #eef2f9, #ffffff, #ccced2, #ffffff, #b9babe);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="milk"] {
@@ -212,7 +212,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #b0aa9c, #dcd5c3, #efe6d0, #ffffff, #cdc7b6, #fff8e3, #bab4a4);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="guofeng"] {
@@ -229,7 +229,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #0f0705, #130907, #2a1a12, #190c09, #120906, #170b08, #100806);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="juju"] {
@@ -246,7 +246,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #05070b, #06090e, rgba(16,24,38,.50), #080c12, #05090d, #070b10, #05080c);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="snowsun"] {
@@ -263,7 +263,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #070a14, #090d19, rgba(18,26,44,.48), #0b1121, #080c17, #0a0f1d, #070b15);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="nostalgia"] {
@@ -280,7 +280,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #120c05, #171007, #2e2212, #1e1509, #150f06, #1b1208, #130d06);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="garden"] {
@@ -297,7 +297,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #b1b0ab, #dedcd6, #f2eee2, #ffffff, #cfcdc7, #fffff9, #bbbab4);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="coco"] {
@@ -314,7 +314,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #0c0516, #10071b, rgba(38,18,60,.50), #150924, #0f061a, #120820, #0d0617);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="cyber"] {
@@ -331,7 +331,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #05050e, #060612, #101a3a, #080817, #050510, #070715, #05050f);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="ink"] {
@@ -348,7 +348,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #afaeac, #dbdad8, #e9e7e2, #ffffff, #ccccc9, #fffffc, #b9b8b6);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="nebula"] {
@@ -365,7 +365,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #070411, #090515, #150d34, #0b071c, #080514, #0a0619, #070412);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="sakura"] {
@@ -382,7 +382,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #b6b1b2, #e3dddf, #f5e9ee, #ffffff, #d4ced0, #ffffff, #c0babc);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="desert"] {
@@ -399,7 +399,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #170c05, #1c1007, #36200e, #251509, #1a0f06, #211208, #180d06);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="ocean"] {
@@ -416,7 +416,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #040e14, #051219, #0e2638, #071721, #051017, #06151d, #040f15);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="aurora"] {
@@ -433,7 +433,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #050b11, #060e15, #10242e, #08121c, #050d14, #071019, #050c12);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="steampunk"] {
@@ -450,7 +450,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #100b05, #140e07, #2e2010, #1b1209, #130d06, #181008, #110c06);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="forest"] {
@@ -467,7 +467,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #050e05, #071207, #122c10, #091709, #061006, #081508, #060f06);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="moon"] {
@@ -484,7 +484,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #080b17, #0a0e1c, #16203e, #0e1225, #0a0d1a, #0c1021, #090c18);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
     :root[data-theme="custom"] {
@@ -501,7 +501,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
         --back-grad: linear-gradient(135deg, var(--green), var(--blue));
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
-        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --flow-grad: linear-gradient(125deg, #070a12, #090c17, #161d38, #0c101e, #090b15, #0b0e1b, #080a13);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
     }
 
