@@ -298,6 +298,14 @@
         0% { background-position: 0% 50%; }
         100% { background-position: 200% 50%; }
     }
+    @media (max-width: 900px) {
+        .container { width: 95%; padding: 12px; }
+        .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .title-area, .back-area { grid-column: 1 / -1; min-height: 80px; }
+        .title-area h2 { font-size: 28px; }
+        .back-area { font-size: 16px; }
+        .orb { display: none; }
+    }
     @media (max-width: 768px) {
         main { padding: 40px 12px 30px; }
         .container { width: 94%; max-width: 94vw; padding: 14px; }
@@ -305,7 +313,6 @@
         .title-area, .back-area { grid-column: 1 / -1; min-height: 70px; }
         .title-area h2 { font-size: 24px; }
         .stat { grid-template-columns: 1fr 1fr; }
-        .orb { display: none; }
     }
     @media (max-width: 480px) {
         .container { width: 96%; padding: 10px; }
@@ -362,7 +369,8 @@
 <div class="orb orb-3"></div>
 <div class="orb orb-4"></div>
 <div class="orb orb-5"></div>
-<main class="container">
+<main>
+<div class="container">
     <div class="grid">
         <div class="title-area"><h2>语音控制</h2></div>
         <a href="index.html" class="back-area" id="backHome"><span style="font-size:28px;">🏠</span>返回主页</a>
@@ -384,6 +392,7 @@
             </div>
         </div>
     </div>
+</div>
 </main>
 <div class="overlay" id="overlay">
     <div class="loader-wrap">
