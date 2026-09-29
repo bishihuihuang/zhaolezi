@@ -13,22 +13,183 @@
         background: #0a0e27;
         color: #fff;
         overflow-x: hidden;
+        position: relative;
     }
-    .container { width: 100%; max-width: 900px; margin: 0 auto; padding: 16px; }
-    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .title-area { grid-column: 1 / -1; text-align: center; padding: 18px 0 6px; }
-    .title-area h2 { font-size: 24px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+
+    /* ========== 背景流光层（全站统一，20秒无缝循环） ========== */
+    .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .bg-flow-1 {
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 300%;
+        height: 300%;
+        background: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
+        background-size: 400% 400%;
+        animation: flowGradient 20s ease-in-out infinite;
+        will-change: background-position;
+    }
+    .bg-flow-2 {
+        position: absolute;
+        top: -60%;
+        left: -40%;
+        width: 220%;
+        height: 220%;
+        background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.35), transparent 50%),
+            radial-gradient(ellipse at 65% 35%, rgba(120,180,255,.3), transparent 45%),
+            radial-gradient(ellipse at 80% 80%, rgba(220,130,250,.25), transparent 40%);
+        animation: flowDrift 20s ease-in-out infinite alternate;
+        will-change: transform;
+    }
+    .bg-flow-3 {
+        position: absolute;
+        top: -30%;
+        left: -20%;
+        width: 180%;
+        height: 180%;
+        background: radial-gradient(circle at 50% 50%, rgba(255,200,130,.15), transparent 60%),
+            radial-gradient(circle at 20% 80%, rgba(80,220,200,.2), transparent 50%);
+        animation: flowRotate 20s linear infinite;
+        will-change: transform;
+    }
+    @keyframes flowGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes flowDrift {
+        0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+        50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+        100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+    }
+    @keyframes flowRotate {
+        0% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.08); }
+        100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* ========== 透明悬浮球 ========== */
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.3), rgba(255,255,255,.1) 50%, transparent 70%);
+        box-shadow: 0 0 60px rgba(255,255,255,.08), inset 0 0 30px rgba(255,255,255,.04);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        pointer-events: none;
+        will-change: transform, opacity;
+    }
+    .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+    .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+    .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+    .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+    .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+    @keyframes orbFloatA {
+        0% { transform: translate(0,0) scale(1); opacity:.6; }
+        30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+        60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+        100% { transform: translate(0,0) scale(1); opacity:.6; }
+    }
+    @keyframes orbFloatB {
+        0% { transform: translate(0,0) scale(1); opacity:.5; }
+        35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+        70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+        100% { transform: translate(0,0) scale(1); opacity:.5; }
+    }
+    @keyframes orbSpin { to { transform: rotate(360deg); } }
+
+    /* ========== 主体布局（全站统一：白色悬浮容器） ========== */
+    main {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 60px 20px 40px;
+    }
+    .container {
+        width: 80%;
+        max-width: 1200px;
+        background: rgba(245, 247, 255, .96);
+        border-radius: 24px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px rgba(255, 255, 255, .3), inset 0 1px 0 rgba(255, 255, 255, .6);
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        padding: 20px;
+        color: #333;
+    }
+    .container::-webkit-scrollbar { width: 10px; }
+    .container::-webkit-scrollbar-track { background: rgba(0, 0, 0, .04); border-radius: 12px; }
+    .container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 12px; border: 2px solid rgba(255, 255, 255, .4); }
+
+    .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+    .title-area {
+        grid-column: 1 / 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 90px;
+        background: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+        background-size: 300% 300%;
+        animation: titleGradient 6s ease infinite;
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(255, 150, 50, .35), inset 0 1px 0 rgba(255, 255, 255, .2);
+        padding: 10px;
+    }
+    .title-area h2 {
+        font-size: 34px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        color: #fff;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, .3);
+        text-align: center;
+    }
+    @keyframes titleGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
     .back-area {
-        grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 8px;
-        text-decoration: none; color: #bbb; font-size: 13px; padding: 8px; border-radius: 10px;
-        background: rgba(255,255,255,.05); transition: all .3s;
+        grid-column: 5 / 7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 90px;
+        background: linear-gradient(135deg, #11998e, #38ef7d);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(17, 153, 142, .4), inset 0 1px 0 rgba(255, 255, 255, .2);
+        text-decoration: none;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform .3s, box-shadow .3s;
     }
-    .back-area:hover { background: rgba(255,255,255,.12); color: #fff; }
+    .back-area:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 50px rgba(17, 153, 142, .5);
+    }
+    .back-area:active {
+        transform: translateY(-2px) scale(.96);
+    }
     .card {
         grid-column: 1 / -1;
-        background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
-        border-radius: 16px; padding: 20px; color: #333;
-        box-shadow: 0 8px 30px rgba(0,0,0,.35);
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+        border: 2px solid #e8e8e8;
     }
     .btn {
         display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -137,9 +298,20 @@
         0% { background-position: 0% 50%; }
         100% { background-position: 200% 50%; }
     }
-    @media (max-width: 600px) {
-        .grid { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 768px) {
+        main { padding: 40px 12px 30px; }
+        .container { width: 94%; max-width: 94vw; padding: 14px; }
+        .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .title-area, .back-area { grid-column: 1 / -1; min-height: 70px; }
+        .title-area h2 { font-size: 24px; }
         .stat { grid-template-columns: 1fr 1fr; }
+        .orb { display: none; }
+    }
+    @media (max-width: 480px) {
+        .container { width: 96%; padding: 10px; }
+        .grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        .title-area h2 { font-size: 20px; letter-spacing: 2px; }
+        .back-area { font-size: 15px; }
     }
 </style>
 
@@ -180,6 +352,16 @@
 <script src="zl-features.js"></script>
 </head>
 <body>
+<div class="bg-animation">
+    <div class="bg-flow-1"></div>
+    <div class="bg-flow-2"></div>
+    <div class="bg-flow-3"></div>
+</div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="orb orb-4"></div>
+<div class="orb orb-5"></div>
 <main class="container">
     <div class="grid">
         <div class="title-area"><h2>每日一题</h2></div>
