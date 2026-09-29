@@ -258,10 +258,11 @@ function autoAttachGlobals(jsCode) {
 }
 
 function ensurePwaBlock(html, fileName) {
+    const COMMON_CSS = '<link rel="stylesheet" href="common.css">';
     const COMMON_JS = '<script src="common.js"></script>';
     const THEME_JS = '<script src="theme.js"></script>';
     const ZL_JS = '<script src="zl-features.js"></script>';
-    if (html.includes('rel="manifest"') && html.includes('orientation: landscape') && html.includes('src="common.js"') && html.includes('src="zl-features.js"')) {
+    if (html.includes('rel="manifest"') && html.includes('orientation: landscape') && html.includes('src="common.js"') && html.includes('src="zl-features.js"') && html.includes('href="common.css"')) {
         return html;
     }
     // 统一 head 元信息：SEO description + Open Graph（#7 优化）
@@ -274,7 +275,7 @@ function ensurePwaBlock(html, fileName) {
         '<meta property="og:type" content="website">\n' +
         '<meta property="og:site_name" content="找乐子">\n' +
         '<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/' + (fileName || 'index.html') + '">\n';
-    const inject = PWA_BLOCK + '\n' + ogBlock + '\n' + COMMON_JS + '\n' + THEME_JS + '\n' + ZL_JS;
+    const inject = PWA_BLOCK + '\n' + ogBlock + '\n' + COMMON_CSS + '\n' + COMMON_JS + '\n' + THEME_JS + '\n' + ZL_JS;
     if (/<\/head>/i.test(html)) {
         return html.replace(/<\/head>/i, inject + '\n</head>');
     }

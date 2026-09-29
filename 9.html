@@ -16,7 +16,7 @@
         body {
             font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
             min-height: 100vh;
-            background: #0a0e27;
+            background: var(--bg);
             color: #fff;
             overflow-x: hidden;
         }
@@ -38,7 +38,7 @@
             left: -100%;
             width: 350%;
             height: 350%;
-            background: linear-gradient(125deg, #0a0e27, #1c1458, #32227a, #1a0f3e, #241a5e, #0e1233, #1d1652);
+            background: var(--flow-grad);
             background-size: 400% 400%;
             animation: flowGrad 20s ease-in-out infinite;
             will-change: background-position;
@@ -663,6 +663,7 @@
 <meta property="og:site_name" content="找乐子">
 <meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/9.html">
 
+<link rel="stylesheet" href="common.css">
 <script src="common.js"></script>
 <script src="theme.js"></script>
 <script src="zl-features.js"></script>

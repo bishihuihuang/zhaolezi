@@ -17,7 +17,7 @@
         body {
             font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
             min-height: 100vh;
-            background: #0a0e27;
+            background: var(--bg);
             color: #fff;
             overflow-x: hidden;
             position: relative;
@@ -41,9 +41,7 @@
             left: -100%;
             width: 300%;
             height: 300%;
-            background: linear-gradient(125deg,
-                    #0a0e27, #161a3d, #1f1652, #331d6e,
-                    #1d1b4b, #0f122f, #241a54);
+            background: var(--flow-grad);
             background-size: 400% 400%;
             animation: flowGradient 20s ease-in-out infinite;
             will-change: background-position;
@@ -263,7 +261,7 @@
         .container {
             width: 80%;
             max-width: 1440px;
-            background: rgba(245, 247, 255, .96);
+            background: var(--card);
             border-radius: 24px;
             box-shadow: 0 25px 70px rgba(0, 0, 0, .35),
                 0 0 0 1px rgba(255, 255, 255, .3),
@@ -284,7 +282,7 @@
         }
 
         .container::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #667eea, #764ba2);
+            background: var(--scroll-thumb);
             border-radius: 12px;
             border: 2px solid rgba(255, 255, 255, .4);
         }
@@ -830,6 +828,7 @@
 <meta property="og:site_name" content="找乐子">
 <meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/31.html">
 
+<link rel="stylesheet" href="common.css">
 <script src="common.js"></script>
 <script src="theme.js"></script>
 <script src="zl-features.js"></script>

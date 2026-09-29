@@ -8,13 +8,13 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
-            background: #0a0e27;
+            background: var(--bg);
             color: #fff;
             overflow-x: hidden;
         }
         /* 背景流光（与index完全一致） */
         .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
-        .bg-flow-1 { position: absolute; top: -150%; left: -100%; width: 350%; height: 350%; background: linear-gradient(125deg,#0a0e27,#1c1458,#32227a,#1a0f3e,#241a5e,#0e1233,#1d1652); background-size: 400% 400%; animation: flowDriftLarge 20s ease-in-out infinite; will-change: transform; }
+        .bg-flow-1 { position: absolute; top: -150%; left: -100%; width: 350%; height: 350%; background: var(--flow-grad); background-size: 400% 400%; animation: flowDriftLarge 20s ease-in-out infinite; will-change: transform; }
         .bg-flow-2 { position: absolute; top: -80%; left: -60%; width: 260%; height: 260%; background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%); animation: flowDrift 20s ease-in-out infinite alternate; }
         .bg-flow-3 { position: absolute; top: -40%; left: -20%; width: 200%; height: 200%; background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%); animation: flowSpin 20s linear infinite; }
         @keyframes flowDriftLarge { 0% {transform:translate(0%,0%) scale(1);} 50% {transform:translate(-2%,-2%) scale(1.05);} 100% {transform:translate(0%,0%) scale(1);} }
@@ -219,6 +219,7 @@
 <meta property="og:site_name" content="找乐子">
 <meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/15.html">
 
+<link rel="stylesheet" href="common.css">
 <script src="common.js"></script>
 <script src="theme.js"></script>
 <script src="zl-features.js"></script>

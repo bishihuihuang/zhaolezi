@@ -1,5 +1,5 @@
-// 找乐子工具箱 - Service Worker（V2：导航 network-first，静态 cache-first）
-const CACHE_NAME = 'zhaolezi-v2';
+// 找乐子工具箱 - Service Worker（V3：V1.4 主题系统，静态缓存随版本更新）
+const CACHE_NAME = 'zhaolezi-v3';
 const ASSETS = [
   './',
   './index.html',

@@ -27,11 +27,11 @@ body {
     }
 }
 
-/* 4. 深色模式支持 */
+/* 4. 深色模式支持（跟随主题变量） */
 @media (prefers-color-scheme: dark) {
     body {
-        background-color: #121212 !important;
-        color: #e0e0e0 !important;
+        background: var(--bg) !important;
+        color: var(--txt) !important;
     }
 }
 
@@ -118,3 +118,440 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
     color: #c9f7ff !important;
     border-color: rgba(0, 255, 200, .45) !important;
 }
+
+/* ============ V1.4 多主题变量体系（默认深色流光 + 21 主题，源自 AI提示词/全能文件保存） ============ */
+    :root {
+        --bg: #0a0e27;
+        --bg-dim: #161a3d;
+        --card: rgba(245, 247, 255, .96);
+        --card-2: #ffffff;
+        --txt: #333333;
+        --dim: #666666;
+        --line: #e8e8e8;
+        --gold: #ff6b6b;
+        --gold-2: #ffd700;
+        --gold-grad: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+        --blue: #667eea;
+        --green: #11998e;
+        --purple: #764ba2;
+        --red: #ff6b6b;
+        --glow: #667eea;
+        --glow-2: #ffa500;
+        --glow-3: #38ef7d;
+        --radius: 16px;
+        --shadow: 0 25px 70px rgba(0, 0, 0, .35);
+        --btn-txt: #ffffff;
+        --title-grad: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+        --back-grad: linear-gradient(135deg, #11998e, #38ef7d);
+        --btn-grad: linear-gradient(135deg, #667eea, #764ba2);
+        --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
+        --scroll-thumb: linear-gradient(180deg, #667eea, #764ba2);
+    }
+    :root[data-theme="blue"] {
+        --bg: #0b0e1a; --bg-dim: linear-gradient(rgba(2,6,16,.18),rgba(2,6,16,.32));
+        --card: rgba(20,26,46,.82); --card-2: #161d38;
+        --txt: #e8ecf5; --dim: #8b93a7;
+        --line: #2a3557;
+        --gold: #7aa8ff; --gold-2: #4a7dff;
+        --blue: #4da3ff; --green: #3ddc97; --purple: #b48cff; --red: #ff6b6b;
+        --glow: #7aa8ff; --glow-2: #a8c9ff; --glow-3: #4a7dff;
+        --radius: 14px;
+        --shadow: 0 8px 28px rgba(2,6,18,.55);
+        --btn-txt: #0b0e1a;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="gold"] {
+        --bg: #0d0a05; --bg-dim: linear-gradient(rgba(0,0,0,.06),rgba(0,0,0,.14));
+        --card: rgba(28,23,14,.88); --card-2: #251e11;
+        --txt: #f0e9d8; --dim: #9a8f74;
+        --line: #3d331d;
+        --gold: #f5c542; --gold-2: #e6a817;
+        --blue: #6fb7ff; --green: #4cdb8b; --purple: #d4b3ff; --red: #ff7b7b;
+        --glow: #f5c542; --glow-2: #fff3c4; --glow-3: #e6a817;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.6);
+        --btn-txt: #3a2a00;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="light"] {
+        --bg: #f4f6fb; --bg-dim: none;
+        --card: rgba(255,255,255,.85); --card-2: #eef2f9;
+        --txt: #1e2733; --dim: #64748b;
+        --line: #e2e8f0;
+        --gold: #3b82f6; --gold-2: #2563eb;
+        --blue: #2563eb; --green: #0d9488; --purple: #7c3aed; --red: #dc2626;
+        --glow: #3b82f6; --glow-2: #93c5fd; --glow-3: #2563eb;
+        --radius: 14px;
+        --shadow: 0 6px 20px rgba(15,23,42,.10);
+        --btn-txt: #ffffff;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="milk"] {
+        --bg: #f5edd9; --bg-dim: linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.12));
+        --card: rgba(255,252,243,.92); --card-2: #efe6d0;
+        --txt: #4a3e2a; --dim: #8a7c5e;
+        --line: #e0d4b8;
+        --gold: #c9a227; --gold-2: #a8871f;
+        --blue: #6b8fd6; --green: #6aa84f; --purple: #9b6fd6; --red: #d96c5e;
+        --glow: #c9a227; --glow-2: #f0e0ae; --glow-3: #a8871f;
+        --radius: 14px;
+        --shadow: 0 8px 26px rgba(120,95,40,.16);
+        --btn-txt: #4a3e2a;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="guofeng"] {
+        --bg: #160b08; --bg-dim: linear-gradient(rgba(10,4,2,.18),rgba(10,4,2,.30));
+        --card: rgba(42,20,14,.86); --card-2: #2a1a12;
+        --txt: #f5ead9; --dim: #b3976f;
+        --line: #5a3520;
+        --gold: #e0b13c; --gold-2: #c98f1b;
+        --blue: #7fb4ff; --green: #5cdb8b; --purple: #d9b3ff; --red: #ff7b6b;
+        --glow: #e0b13c; --glow-2: #ffe9b8; --glow-3: #c98f1b;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.6);
+        --btn-txt: #3a2600;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="juju"] {
+        --bg: #070b10; --bg-dim: linear-gradient(rgba(2,5,9,.22),rgba(2,5,9,.38));
+        --card: rgba(10,16,26,.42); --card-2: rgba(16,24,38,.50);
+        --txt: #e3ecf4; --dim: #8fa4b8;
+        --line: rgba(148,190,224,.28);
+        --gold: #6fd0ff; --gold-2: #3fa8e8;
+        --blue: #4da3ff; --green: #3ddc97; --purple: #b48cff; --red: #ff6b6b;
+        --glow: #6fd0ff; --glow-2: #c4ecff; --glow-3: #3fa8e8;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #06202e;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="snowsun"] {
+        --bg: #0a0f1c; --bg-dim: linear-gradient(rgba(4,8,16,.20),rgba(4,8,16,.34));
+        --card: rgba(12,18,32,.40); --card-2: rgba(18,26,44,.48);
+        --txt: #eef3fb; --dim: #9db0cb;
+        --line: rgba(210,225,255,.26);
+        --gold: #ffb45c; --gold-2: #f08a30;
+        --blue: #6fb7ff; --green: #4cdb8b; --purple: #d4b3ff; --red: #ff8a8a;
+        --glow: #ffb45c; --glow-2: #ffe3b0; --glow-3: #f08a30;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #3a1c00;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="nostalgia"] {
+        --bg: #1a1208; --bg-dim: linear-gradient(rgba(10,6,2,.16),rgba(10,6,2,.34));
+        --card: rgba(38,28,14,.78); --card-2: #2e2212;
+        --txt: #f2e6cf; --dim: #a8936f;
+        --line: rgba(217,164,65,.35);
+        --gold: #d9a441; --gold-2: #b97f2a;
+        --blue: #d4a35a; --green: #a8b85a; --purple: #c9a8d4; --red: #e08a6a;
+        --glow: #d9a441; --glow-2: #f5e3b8; --glow-3: #b97f2a;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #3a2500;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="garden"] {
+        --bg: #f7f5ee; --bg-dim: none;
+        --card: rgba(255,253,247,.80); --card-2: #f2eee2;
+        --txt: #3a3a30; --dim: #8a8672;
+        --line: #e2dcc8;
+        --gold: #d4558f; --gold-2: #b03c72;
+        --blue: #2f9e6f; --green: #4c9e4c; --purple: #9b6fd6; --red: #d96c5e;
+        --glow: #d4558f; --glow-2: #f8c6da; --glow-3: #b03c72;
+        --radius: 14px;
+        --shadow: 0 6px 20px rgba(60,40,40,.12);
+        --btn-txt: #ffffff;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="coco"] {
+        --bg: #12081f; --bg-dim: linear-gradient(rgba(10,2,20,.18),rgba(10,2,20,.36));
+        --card: rgba(28,12,44,.42); --card-2: rgba(38,18,60,.50);
+        --txt: #f2ecff; --dim: #a090c0;
+        --line: rgba(200,170,255,.26);
+        --gold: #ff9e4d; --gold-2: #f0771f;
+        --blue: #8f7bff; --green: #ffd98a; --purple: #c77dff; --red: #ff8a8a;
+        --glow: #ff9e4d; --glow-2: #ffd9a8; --glow-3: #f0771f;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.60);
+        --btn-txt: #3a1500;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="cyber"] {
+        --bg: #070714; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
+        --card: rgba(16,12,36,.55); --card-2: #101a3a;
+        --txt: #e8f6ff; --dim: #8a92b8;
+        --line: rgba(0,217,255,.35);
+        --gold: #00d9ff; --gold-2: #0090cc;
+        --blue: #00d9ff; --green: #0090cc; --purple: #00d9ff; --red: #ff8a8a;
+        --glow: #00d9ff; --glow-2: #b8f4ff; --glow-3: #0090cc;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #001820;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="ink"] {
+        --bg: #f4f3f0; --bg-dim: none;
+        --card: rgba(255,255,255,.72); --card-2: #e9e7e2;
+        --txt: #2b2d31; --dim: #7a7d82;
+        --line: rgba(90,95,104,.30);
+        --gold: #6b6f76; --gold-2: #4a4d52;
+        --blue: #6b6f76; --green: #4a4d52; --purple: #6b6f76; --red: #ff8a8a;
+        --glow: #6b6f76; --glow-2: #9aa0a8; --glow-3: #4a4d52;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #ffffff;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="nebula"] {
+        --bg: #0a0618; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
+        --card: rgba(20,12,44,.5); --card-2: #150d34;
+        --txt: #eef0ff; --dim: #8f8ab8;
+        --line: rgba(168,139,255,.35);
+        --gold: #a88bff; --gold-2: #7a5cff;
+        --blue: #a88bff; --green: #7a5cff; --purple: #a88bff; --red: #ff8a8a;
+        --glow: #a88bff; --glow-2: #d0c8ff; --glow-3: #7a5cff;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #1a1030;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="sakura"] {
+        --bg: #fdf6f8; --bg-dim: none;
+        --card: rgba(255,252,253,.78); --card-2: #f5e9ee;
+        --txt: #4a3840; --dim: #9a8490;
+        --line: rgba(232,125,166,.30);
+        --gold: #e87da6; --gold-2: #c95a86;
+        --blue: #e87da6; --green: #c95a86; --purple: #e87da6; --red: #ff8a8a;
+        --glow: #e87da6; --glow-2: #f8c6d8; --glow-3: #c95a86;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #ffffff;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="desert"] {
+        --bg: #201208; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
+        --card: rgba(48,26,10,.72); --card-2: #36200e;
+        --txt: #f7ead6; --dim: #b09a76;
+        --line: rgba(242,166,90,.35);
+        --gold: #f2a65a; --gold-2: #d97b2a;
+        --blue: #f2a65a; --green: #d97b2a; --purple: #f2a65a; --red: #ff8a8a;
+        --glow: #f2a65a; --glow-2: #ffd9a8; --glow-3: #d97b2a;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #3a1c00;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="ocean"] {
+        --bg: #06141c; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
+        --card: rgba(10,30,44,.55); --card-2: #0e2638;
+        --txt: #e6f6fa; --dim: #7fa0b0;
+        --line: rgba(79,208,208,.35);
+        --gold: #4fd0d0; --gold-2: #2aa8a8;
+        --blue: #4fd0d0; --green: #2aa8a8; --purple: #4fd0d0; --red: #ff8a8a;
+        --glow: #4fd0d0; --glow-2: #c0eef0; --glow-3: #2aa8a8;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #002028;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="aurora"] {
+        --bg: #071018; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
+        --card: rgba(12,26,30,.5); --card-2: #10242e;
+        --txt: #eafbf2; --dim: #82a898;
+        --line: rgba(125,255,176,.35);
+        --gold: #7dffb0; --gold-2: #3dd98a;
+        --blue: #7dffb0; --green: #3dd98a; --purple: #7dffb0; --red: #ff8a8a;
+        --glow: #7dffb0; --glow-2: #c0f8e0; --glow-3: #3dd98a;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #00281a;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="steampunk"] {
+        --bg: #171008; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
+        --card: rgba(40,28,14,.8); --card-2: #2e2010;
+        --txt: #f2e8d0; --dim: #a3906a;
+        --line: rgba(217,162,75,.35);
+        --gold: #d9a24b; --gold-2: #b5762a;
+        --blue: #d9a24b; --green: #b5762a; --purple: #d9a24b; --red: #ff8a8a;
+        --glow: #d9a24b; --glow-2: #ffd9a0; --glow-3: #b5762a;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #2a1a00;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="forest"] {
+        --bg: #081408; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
+        --card: rgba(14,30,12,.55); --card-2: #122c10;
+        --txt: #ecf8e4; --dim: #8aaa80;
+        --line: rgba(184,232,77,.35);
+        --gold: #b8e84d; --gold-2: #8cc22e;
+        --blue: #b8e84d; --green: #8cc22e; --purple: #b8e84d; --red: #ff8a8a;
+        --glow: #b8e84d; --glow-2: #d4f2a8; --glow-3: #8cc22e;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #142000;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="moon"] {
+        --bg: #0c1020; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
+        --card: rgba(18,24,44,.6); --card-2: #16203e;
+        --txt: #e8eef8; --dim: #8a93ad;
+        --line: rgba(168,192,232,.35);
+        --gold: #a8c0e8; --gold-2: #7a96cc;
+        --blue: #a8c0e8; --green: #7a96cc; --purple: #a8c0e8; --red: #ff8a8a;
+        --glow: #a8c0e8; --glow-2: #c8d8f2; --glow-3: #7a96cc;
+        --radius: 14px;
+        --shadow: 0 8px 30px rgba(0,0,0,.55);
+        --btn-txt: #101828;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+    :root[data-theme="custom"] {
+        --bg: #0b0e1a; --bg-dim: ;
+        --card: rgba(20,26,46,.82); --card-2: #161d38;
+        --txt: #e8ecf5; --dim: #8b93a7;
+        --line: #2a3557;
+        --gold: #7aa8ff; --gold-2: #4a7dff;
+        --blue: #4da3ff; --green: #3ddc97; --purple: #b48cff; --red: #ff6b6b;
+        --glow: #7aa8ff; --glow-2: #a8c9ff; --glow-3: #4a7dff;
+        --radius: 14px;
+        --shadow: 0 8px 28px rgba(2,6,18,.55);
+        --btn-txt: #0b0e1a;
+        --title-grad: linear-gradient(135deg, var(--glow), var(--gold), var(--gold-2));
+        --back-grad: linear-gradient(135deg, var(--green), var(--blue));
+        --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
+        --flow-grad: linear-gradient(125deg, var(--bg), var(--bg), var(--card-2), var(--bg), var(--bg));
+        --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    }
+
+/* ============ V1.4 主题面板样式 ============ */
+.zl-theme-panel {
+    position: fixed;
+    bottom: 74px;
+    right: 16px;
+    z-index: 2147483645;
+    width: 272px;
+    max-height: 320px;
+    overflow-y: auto;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 12px;
+    display: none;
+    color: var(--txt);
+    scrollbar-width: thin;
+}
+.zl-theme-panel.open { display: block; }
+.zl-theme-panel::-webkit-scrollbar { width: 6px; }
+.zl-theme-panel::-webkit-scrollbar-thumb { background: var(--gold-2); border-radius: 3px; }
+.zl-theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+.zl-theme-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 4px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--card-2);
+    color: var(--txt);
+    font-size: 11px;
+    transition: transform .2s, box-shadow .2s;
+}
+.zl-theme-item:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.zl-theme-item.active { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+.zl-theme-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.5);
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.zl-theme-title { font-weight: 700; margin-bottom: 8px; font-size: 13px; }
