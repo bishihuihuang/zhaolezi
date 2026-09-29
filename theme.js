@@ -1,14 +1,17 @@
-/* 找乐子 V1.4 - 全局主题系统（默认深色流光 + 21 主题，源自 AI提示词/全能文件保存）
- * 主题面板：点右下角按钮弹出色块列表，点击应用，localStorage zl_theme 记忆 */
+/* 找乐子 V1.5 - 全局主题系统（默认深色流光 + 21 主题 + 自定义上传背景，源自 AI提示词/全能文件保存）
+ * 主题面板：点右下角按钮弹出色块列表，点击应用，localStorage zl_theme 记忆
+ * V1.5 新增：custom 主题支持上传本地图片作背景（压缩后存 localStorage zl_custom_bg）；
+ *          左下角 👁 欣赏模式按钮（与右下角主题按钮对称同大小，点击隐藏界面只看背景） */
 (function () {
     var KEY = 'zl_theme';
+    var BGB_KEY = 'zl_custom_bg';
     var THEMES = ['dark', 'blue', 'gold', 'light', 'milk', 'guofeng', 'juju', 'snowsun',
         'nostalgia', 'garden', 'coco', 'cyber', 'ink', 'nebula', 'sakura', 'desert',
         'ocean', 'aurora', 'steampunk', 'forest', 'moon', 'custom'];
     var LABELS = { dark: '深色流光', blue: '经典蓝', gold: '鎏金', light: '明亮', milk: '牛奶',
         guofeng: '国风', juju: '幽蓝', snowsun: '雪阳', nostalgia: '怀旧', garden: '花园',
         coco: '可可', cyber: '赛博', ink: '水墨', nebula: '星云', sakura: '樱花', desert: '沙漠',
-        ocean: '海洋', aurora: '极光', steampunk: '蒸汽朋克', forest: '森林', moon: '月光', custom: '自定义蓝' };
+        ocean: '海洋', aurora: '极光', steampunk: '蒸汽朋克', forest: '森林', moon: '月光', custom: '自定义' };
     // 兼容旧主题：neon → cyber（最接近），light 保留
     var LEGACY = { neon: 'cyber' };
     var current = localStorage.getItem(KEY) || 'dark';
@@ -17,10 +20,18 @@
 
     var panel = null;
 
+    function applyCustomBg() {
+        var bg = localStorage.getItem(BGB_KEY);
+        if (bg) {
+            document.documentElement.style.setProperty('--custom-bg', 'url(' + bg + ')');
+        }
+    }
+
     function apply(t) {
         document.documentElement.setAttribute('data-theme', t);
         localStorage.setItem(KEY, t);
         current = t;
+        if (t === 'custom') applyCustomBg();
         if (panel) {
             var items = panel.querySelectorAll('.zl-theme-item');
             for (var i = 0; i < items.length; i++) {
@@ -40,6 +51,39 @@
         var b = s.getPropertyValue('--gold-2').trim();
         document.documentElement.setAttribute('data-theme', prev || 'dark');
         return 'linear-gradient(135deg,' + (a || '#888') + ',' + (b || '#888') + ')';
+    }
+
+    // 上传自定义背景：读图 → 压缩（最长边 ≤1600）→ jpeg dataURL → localStorage → 应用
+    function uploadCustomBg(file) {
+        if (!file || file.type.indexOf('image/') !== 0) { alert('请选择图片文件'); return; }
+        var fr = new FileReader();
+        fr.onload = function () {
+            var img = new Image();
+            img.onload = function () {
+                var MAX = 1600;
+                var w = img.width, h = img.height;
+                var scale = 1;
+                if (Math.max(w, h) > MAX) scale = MAX / Math.max(w, h);
+                w = Math.round(w * scale); h = Math.round(h * scale);
+                var cv = document.createElement('canvas');
+                cv.width = w; cv.height = h;
+                var ctx = cv.getContext('2d');
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(img, 0, 0, w, h);
+                var data = cv.toDataURL('image/jpeg', 0.85);
+                try {
+                    localStorage.setItem(BGB_KEY, data);
+                    applyCustomBg();
+                    alert('自定义背景已保存并应用（切换其他主题后选「自定义」可恢复）');
+                } catch (e) {
+                    alert('图片太大无法保存（本地存储容量有限），请换更小的图');
+                }
+            };
+            img.onerror = function () { alert('图片读取失败，请换一张试试'); };
+            img.src = fr.result;
+        };
+        fr.readAsDataURL(file);
     }
 
     function buildPanel() {
@@ -66,6 +110,27 @@
             it.appendChild(dot);
             it.appendChild(nm);
             it.onclick = function () { apply(this.getAttribute('data-t')); };
+            // 自定义项：附加上传背景按钮
+            if (t === 'custom') {
+                var up = document.createElement('span');
+                up.className = 'zl-custom-up';
+                up.textContent = '📤';
+                up.title = '上传本地图片作自定义背景';
+                var fi = document.createElement('input');
+                fi.type = 'file';
+                fi.accept = 'image/*';
+                fi.style.display = 'none';
+                fi.onchange = function () {
+                    if (this.files && this.files[0]) uploadCustomBg(this.files[0]);
+                    this.value = '';
+                };
+                up.onclick = function (e) {
+                    e.stopPropagation();
+                    fi.click();
+                };
+                it.appendChild(up);
+                it.appendChild(fi);
+            }
             grid.appendChild(it);
         }
         panel.appendChild(grid);
@@ -88,6 +153,19 @@
         };
         document.body.appendChild(btn);
         buildPanel();
+        // V1.5 左下角欣赏模式按钮（与主题按钮对称、同大小；隐藏界面只看背景，再点恢复）
+        var admire = document.createElement('div');
+        admire.id = 'zlAdmireBtn';
+        admire.title = '欣赏模式：隐藏界面只看背景';
+        admire.setAttribute('aria-label', '欣赏模式');
+        admire.innerHTML = '👁';
+        admire.style.cssText = 'position:fixed;bottom:20px;left:20px;z-index:2147483646;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;box-shadow:0 4px 16px rgba(0,0,0,.35);user-select:none;-webkit-user-select:none;transition:opacity .3s;';
+        admire.onclick = function () {
+            var on = document.body.classList.toggle('zl-admire');
+            this.style.opacity = on ? '0.6' : '1';
+            this.title = on ? '退出欣赏模式' : '欣赏模式：隐藏界面只看背景';
+        };
+        document.body.appendChild(admire);
         document.addEventListener('click', function (e) {
             if (panel && panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) {
                 panel.classList.remove('open');

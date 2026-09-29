@@ -1,5 +1,5 @@
-// 找乐子工具箱 - Service Worker（V4：V1.4.4 真实背景图片内嵌 common.css）
-const CACHE_NAME = 'zhaolezi-v4';
+﻿// 找乐子工具箱 - Service Worker（V4：V1.4.4 真实背景图片内嵌 common.css）
+const CACHE_NAME = 'zhaolezi-v5';
 const ASSETS = [
   './',
   './index.html',
