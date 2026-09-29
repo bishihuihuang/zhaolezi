@@ -163,6 +163,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(122,168,255,.18), rgba(180,140,255,.10), transparent 72%);
+        --bg-pattern: linear-gradient(rgba(122,168,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(122,168,255,.05) 1px,transparent 1px),radial-gradient(circle at 20% 14%,rgba(122,168,255,.16),transparent 46%),radial-gradient(circle at 82% 20%,rgba(180,140,255,.12),transparent 42%),radial-gradient(circle at 58% 78%,rgba(77,163,255,.08),transparent 52%);
+        --bg-pattern-size: 36px 36px,36px 36px,auto,auto,auto;
     }
     :root[data-theme="gold"] {
         --bg: #0d0a05; --bg-dim: linear-gradient(rgba(0,0,0,.06),rgba(0,0,0,.14));
@@ -180,6 +184,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 65% 42% at 50% -6%, rgba(245,197,66,.14), rgba(255,160,40,.06), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(245,197,66,.03) 0 1px,transparent 1px 16px),radial-gradient(circle at 50% -10%,rgba(245,197,66,.16),transparent 55%),radial-gradient(circle at 85% 32%,rgba(230,168,23,.08),transparent 46%);
+        --bg-pattern-size: auto,auto,auto;
     }
     :root[data-theme="light"] {
         --bg: #f4f6fb; --bg-dim: none;
@@ -197,6 +205,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(147,197,253,.35), rgba(196,181,253,.18), transparent 72%);
+        --bg-pattern: radial-gradient(circle at 50% -4%,rgba(147,197,253,.30),transparent 55%),radial-gradient(circle at 18% 82%,rgba(196,181,253,.16),transparent 46%),radial-gradient(rgba(59,130,246,.09) 1px,transparent 1px);
+        --bg-pattern-size: auto,auto,22px 22px;
     }
     :root[data-theme="milk"] {
         --bg: #f5edd9; --bg-dim: linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.12));
@@ -214,6 +226,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(214,175,80,.16), rgba(255,240,200,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(0deg,rgba(201,162,39,.05) 0 1px,transparent 1px 32px),radial-gradient(circle at 50% -8%,rgba(214,175,80,.18),transparent 55%),radial-gradient(circle at 16% 86%,rgba(255,240,200,.16),transparent 44%);
+        --bg-pattern-size: auto,auto,auto;
     }
     :root[data-theme="guofeng"] {
         --bg: #160b08; --bg-dim: linear-gradient(rgba(10,4,2,.18),rgba(10,4,2,.30));
@@ -231,6 +247,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(224,60,40,.20), rgba(224,177,60,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(224,60,40,.05) 0 1px,transparent 1px 18px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="juju"] {
         --bg: #070b10; --bg-dim: linear-gradient(rgba(2,5,9,.22),rgba(2,5,9,.38));
@@ -248,6 +268,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(111,208,255,.20), rgba(255,140,40,.08), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(0deg,rgba(111,208,255,.04) 0 1px,transparent 1px 24px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="snowsun"] {
         --bg: #0a0f1c; --bg-dim: linear-gradient(rgba(4,8,16,.20),rgba(4,8,16,.34));
@@ -265,6 +289,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,170,70,.20), rgba(120,160,255,.08), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 1px,transparent 1px 22px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="nostalgia"] {
         --bg: #1a1208; --bg-dim: linear-gradient(rgba(10,6,2,.16),rgba(10,6,2,.34));
@@ -282,6 +310,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(217,164,65,.16), rgba(255,190,80,.06), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(217,164,65,.04) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="garden"] {
         --bg: #f7f5ee; --bg-dim: none;
@@ -299,6 +331,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(242,145,184,.30), rgba(147,208,174,.15), transparent 72%);
+        --bg-pattern: radial-gradient(circle at 50% -4%,rgba(248,198,218,.30),transparent 55%),radial-gradient(circle at 12% 112%,rgba(147,208,174,.25),transparent 50%),radial-gradient(circle,rgba(212,85,143,.10) 1px,transparent 1px);
+        --bg-pattern-size: auto,auto,22px 22px;
     }
     :root[data-theme="coco"] {
         --bg: #12081f; --bg-dim: linear-gradient(rgba(10,2,20,.18),rgba(10,2,20,.36));
@@ -316,6 +352,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,150,60,.18), rgba(140,90,255,.14), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="cyber"] {
         --bg: #070714; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -333,6 +373,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(0,217,255,.05) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="ink"] {
         --bg: #f4f3f0; --bg-dim: none;
@@ -350,6 +394,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(107,111,118,.05) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="nebula"] {
         --bg: #0a0618; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -367,6 +415,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(168,139,255,.05) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="sakura"] {
         --bg: #fdf6f8; --bg-dim: none;
@@ -384,6 +436,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(232,125,166,.06) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="desert"] {
         --bg: #201208; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -401,6 +457,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(242,166,90,.05) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="ocean"] {
         --bg: #06141c; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -418,6 +478,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(79,208,208,.05) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="aurora"] {
         --bg: #071018; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -435,6 +499,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(125,255,176,.05) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="steampunk"] {
         --bg: #171008; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -452,6 +520,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(217,162,75,.05) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="forest"] {
         --bg: #081408; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -469,6 +541,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(184,232,77,.05) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="moon"] {
         --bg: #0c1020; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -486,6 +562,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(255,255,255,.10), transparent 72%);
+        --bg-pattern: repeating-linear-gradient(45deg,rgba(168,192,232,.05) 0 1px,transparent 1px 20px);
+        --bg-pattern-size: auto;
     }
     :root[data-theme="custom"] {
         --bg: #0b0e1a; --bg-dim: ;
@@ -503,9 +583,21 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, var(--gold), var(--gold-2));
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, var(--gold), var(--gold-2));
+    
+        --bg-glow: radial-gradient(ellipse 70% 45% at 50% -6%, rgba(122,168,255,.18), rgba(180,140,255,.10), transparent 72%);
+        --bg-pattern: linear-gradient(rgba(122,168,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(122,168,255,.05) 1px,transparent 1px),radial-gradient(circle at 20% 14%,rgba(122,168,255,.16),transparent 46%),radial-gradient(circle at 82% 20%,rgba(180,140,255,.12),transparent 42%),radial-gradient(circle at 58% 78%,rgba(77,163,255,.08),transparent 52%);
+        --bg-pattern-size: 36px 36px,36px 36px,auto,auto,auto;
     }
 
 /* ============ V1.4 主题面板样式 ============ */
+
+/* V1.4.3 非深色流光主题：背景图片 = 顶部光晕 + 纹理图案（源自 AI提示词） */
+:root[data-theme]:not([data-theme="dark"]) .bg-flow-1 {
+    background: var(--bg-glow), var(--bg-pattern);
+    background-size: var(--bg-pattern-size, auto);
+    animation: none;
+}
+
 .zl-theme-panel {
     position: fixed;
     bottom: 74px;
