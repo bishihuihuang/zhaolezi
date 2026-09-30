@@ -246,6 +246,72 @@
         })();
     }
 
+    /* ========== V1.9.2 对比度兜底：深底暗字/浅底亮字自动换主题色 ========== */
+    function _zlLuma(rgb) { return (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255; }
+    function _zlParse(c) {
+        var m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+        if (m) { return [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10), m[4] === undefined ? 1 : parseFloat(m[4])]; }
+        return null;
+    }
+    function _zlIsGray(rgb) { return (Math.max(rgb[0], rgb[1], rgb[2]) - Math.min(rgb[0], rgb[1], rgb[2])) < 24; }
+    function _zlBgOf(el) {
+        var n = el;
+        while (n) {
+            var bg = getComputedStyle(n).backgroundColor;
+            var p = _zlParse(bg);
+            if (p && p[3] > 0) { return _zlLuma(p); }
+            if (n === document.body) break;
+            n = n.parentElement;
+        }
+        var b2 = _zlParse(getComputedStyle(document.body).backgroundColor);
+        if (b2 && b2[3] > 0) { return _zlLuma(b2); }
+        return 0.1;
+    }
+    var _zlFixRan = false;
+    ZL.contrastFix = function (force) {
+        if (_zlFixRan && !force) return;
+        _zlFixRan = true;
+        try {
+            var dim = 'var(--dim)', txt = 'var(--txt)', blue = 'var(--blue)';
+            var els = document.querySelectorAll('body *');
+            for (var i = 0; i < els.length; i++) {
+                var el = els[i];
+                var tag = el.tagName;
+                if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'CANVAS' || tag === 'IMG' || tag === 'VIDEO' || tag === 'SVG' || tag === 'BR' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') continue;
+                if (el.children.length > 0) continue;
+                if (!el.textContent || !el.textContent.trim()) continue;
+                var cs = getComputedStyle(el);
+                var c = _zlParse(cs.color);
+                if (!c) continue;
+                var bg = _zlBgOf(el);
+                var cl = _zlLuma(c);
+                var isHeading = /^(H1|H2|H3|H4|H5|H6)$/.test(tag) || /title|heading/i.test(el.className || '');
+                var rep = '';
+                if (_zlIsGray(c)) {
+                    if (bg < 0.4 && cl < 0.45) { rep = isHeading ? txt : dim; }
+                    else if (bg > 0.82 && cl > 0.82) { rep = isHeading ? txt : txt; }
+                } else if (bg < 0.4 && cl < 0.35) { rep = blue; }
+                if (rep) { el.style.color = rep; }
+            }
+        } catch (e) {}
+    };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { setTimeout(ZL.contrastFix, 200); });
+    } else {
+        setTimeout(ZL.contrastFix, 200);
+    }
+    try {
+        var _zlThemeObs = new MutationObserver(function (muts) {
+            for (var i = 0; i < muts.length; i++) {
+                if (muts[i].attributeName === 'data-theme') {
+                    setTimeout(function () { ZL.contrastFix(true); }, 120);
+                    return;
+                }
+            }
+        });
+        _zlThemeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    } catch (e2) {}
+
     /* 自动统计当前页使用（排除门禁/导航页） */
     var cur = (window.location.pathname.split('/').pop() || '').toLowerCase();
     var skipPages = ['1.html', '2.html', '3.html', '4.html', '28.html', '29.html', '30.html', '10.html'];

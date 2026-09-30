@@ -648,3 +648,23 @@ body.zl-admire { overflow: hidden !important; }
 
 /* V1.9.1 兜底：所有主题 --card-2 跟随 --card（修复深色主题下 var(--card-2) 白色块） */
 :root[data-theme] { --card-2: var(--card); }
+
+/* ========== V1.9.2 对比度兜底层（全站） ========== */
+/* 层1：内联 style 灰阶文字自动跟随主题（深色主题下深灰不可读） */
+[style*="color:#333"], [style*="color: #333"],
+[style*="color:#444"], [style*="color: #444"],
+[style*="color:#555"], [style*="color: #555"],
+[style*="color:#666"], [style*="color: #666"],
+[style*="color:#777"], [style*="color: #777"],
+[style*="color:#888"], [style*="color: #888"],
+[style*="color:#999"], [style*="color: #999"],
+[style*="color:#aaa"], [style*="color: #aaa"],
+[style*="color:#bbb"], [style*="color: #bbb"],
+[style*="color:#b5b5b5"], [style*="color: #b5b5b5"],
+[style*="color:#ccc"], [style*="color: #ccc"] { color: var(--dim) !important; }
+
+/* 层2：占位符与已知次要/主文字类兜底 */
+input::placeholder, textarea::placeholder { color: var(--dim) !important; }
+.hint, .tip, .tips, .note, .desc, .sub, .sub-text, .info, .muted, .gray, .small-text,
+.empty-tip, .hist-item .tm, .save-item.disabled .save-item-name { color: var(--dim); }
+.terminal-titlebar .title, .disclaimer-content strong, .modal-content h3, .content-section p { color: var(--txt); }
