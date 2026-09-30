@@ -62,7 +62,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --card: rgba(245, 247, 255, .96);
         --card-2: #ffffff;
         --txt: #333333;
-        --dim: #666666;
+        --dim: #8b93a7;
         --line: #e8e8e8;
         --gold: #ff6b6b;
         --gold-2: #ffd700;
@@ -667,4 +667,7 @@ body.zl-admire { overflow: hidden !important; }
 input::placeholder, textarea::placeholder { color: var(--dim) !important; }
 .hint, .tip, .tips, .note, .desc, .sub, .sub-text, .info, .muted, .gray, .small-text,
 .empty-tip, .hist-item .tm, .save-item.disabled .save-item-name { color: var(--dim); }
-.terminal-titlebar .title, .disclaimer-content strong, .modal-content h3, .content-section p { color: var(--txt); }
+.back-home, .back-btn, .back-link, a[class*="back-"] { color: var(--dim) !important; -webkit-text-fill-color: var(--dim) !important; }
+.mode-tab { color: var(--txt) !important; -webkit-text-fill-color: var(--txt) !important; }
+.mode-tab.active { color: #fff !important; -webkit-text-fill-color: #fff !important; }
+.terminal-titlebar .title, .disclaimer-content strong, .modal-content h3 { color: var(--txt); }

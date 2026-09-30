@@ -124,11 +124,11 @@
         var box = document.createElement('div');
         box.id = 'zlSearchBox';
         box.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:2147483646;background:rgba(8,10,30,.55);display:flex;align-items:flex-start;justify-content:center;padding-top:12vh;';
-        box.innerHTML = '<div style="width:min(560px,92%);background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden;">' +
-            '<div style="display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid #eee;">' +
+        box.innerHTML = '<div style="width:min(560px,92%);background:var(--card);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden;">' +
+            '<div style="display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);">' +
             '<span style="font-size:18px;margin-right:10px;">🔍</span>' +
-            '<input id="zlSearchInput" placeholder="搜索页面/功能，如：五子棋、计算器、购物…" style="flex:1;border:none;outline:none;font-size:16px;background:transparent;color:#222;">' +
-            '<button id="zlSearchClose" style="border:none;background:none;font-size:20px;cursor:pointer;color:#888;padding:2px 6px;">✕</button></div>' +
+            '<input id="zlSearchInput" placeholder="搜索页面/功能，如：五子棋、计算器、购物…" style="flex:1;border:none;outline:none;font-size:16px;background:transparent;color:var(--txt);">' +
+            '<button id="zlSearchClose" style="border:none;background:none;font-size:20px;cursor:pointer;color:var(--dim);padding:2px 6px;">✕</button></div>' +
             '<div id="zlSearchResults" style="max-height:52vh;overflow-y:auto;padding:6px 0;"></div></div>';
         document.body.appendChild(box);
         var input = document.getElementById('zlSearchInput');
@@ -136,15 +136,15 @@
         function render() {
             var q = input.value;
             var list = ZL.search(q);
-            if (!q) { results.innerHTML = '<div style="padding:20px;text-align:center;color:#999;font-size:13px;">输入关键词开始搜索全站功能</div>'; return; }
-            if (!list.length) { results.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">未找到相关功能</div>'; return; }
+            if (!q) { results.innerHTML = '<div style="padding:20px;text-align:center;color:var(--dim);font-size:13px;">输入关键词开始搜索全站功能</div>'; return; }
+            if (!list.length) { results.innerHTML = '<div style="padding:20px;text-align:center;color:var(--dim);">未找到相关功能</div>'; return; }
             results.innerHTML = '';
             for (var i = 0; i < list.length; i++) {
                 var a = document.createElement('a');
                 a.href = list[i].f;
-                a.style.cssText = 'display:block;padding:12px 18px;text-decoration:none;color:#333;font-size:15px;';
-                a.innerHTML = '<span style="color:#667eea;font-weight:bold;">' + list[i].t + '</span>';
-                a.onmouseenter = function () { this.style.background = '#f4f6ff'; };
+                a.style.cssText = 'display:block;padding:12px 18px;text-decoration:none;color:var(--txt);font-size:15px;';
+                a.innerHTML = '<span style="color:var(--blue);font-weight:bold;">' + list[i].t + '</span>';
+                a.onmouseenter = function () { this.style.background = 'var(--card-2)'; };
                 a.onmouseleave = function () { this.style.background = ''; };
                 results.appendChild(a);
             }
@@ -249,49 +249,101 @@
     /* ========== V1.9.2 对比度兜底：深底暗字/浅底亮字自动换主题色 ========== */
     function _zlLuma(rgb) { return (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255; }
     function _zlParse(c) {
+        if (!c) return null;
         var m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
         if (m) { return [parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10), m[4] === undefined ? 1 : parseFloat(m[4])]; }
+        var h = c.match(/^#([0-9a-f]{6})$/i);
+        if (h) { var v = parseInt(h[1], 16); return [(v >> 16) & 255, (v >> 8) & 255, v & 255, 1]; }
+        var h3 = c.match(/^#([0-9a-f]{3})$/i);
+        if (h3) { var s = h3[1]; return [parseInt(s[0] + s[0], 16), parseInt(s[1] + s[1], 16), parseInt(s[2] + s[2], 16), 1]; }
         return null;
     }
     function _zlIsGray(rgb) { return (Math.max(rgb[0], rgb[1], rgb[2]) - Math.min(rgb[0], rgb[1], rgb[2])) < 24; }
+    function _zlGradLuma(bi) {
+        if (!bi || bi.indexOf('gradient') < 0) return null;
+        var m = bi.match(/gradient\([^)]*\)/g);
+        if (!m) return null;
+        var sum = 0, cnt = 0;
+        for (var i = 0; i < m.length; i++) {
+            var cols = m[i].match(/#[0-9a-f]{6}|#[0-9a-f]{3}|rgba?\([^)]*\)/gi);
+            if (!cols) continue;
+            for (var j = 0; j < cols.length; j++) {
+                var p = _zlParse(cols[j]);
+                if (p) { sum += _zlLuma(p); cnt++; }
+            }
+        }
+        return cnt ? sum / cnt : null;
+    }
+    var _zlLight = false;
     function _zlBgOf(el) {
-        var n = el;
+        var n = el, acc = null;
         while (n) {
-            var bg = getComputedStyle(n).backgroundColor;
-            var p = _zlParse(bg);
-            if (p && p[3] > 0) { return _zlLuma(p); }
+            var cs = getComputedStyle(n);
+            var g = _zlGradLuma(cs.backgroundImage);
+            if (g !== null) { return (acc && acc[3] >= 0.95) ? _zlLuma(acc) : g; }
+            var bg = _zlParse(cs.backgroundColor);
+            if (bg && bg[3] > 0) {
+                if (bg[3] >= 0.95) { return acc ? _zlLuma(_zlBlend(acc, bg)) : _zlLuma(bg); }
+                acc = acc ? _zlBlend(bg, acc) : bg;
+            }
             if (n === document.body) break;
             n = n.parentElement;
         }
-        var b2 = _zlParse(getComputedStyle(document.body).backgroundColor);
-        if (b2 && b2[3] > 0) { return _zlLuma(b2); }
+        if (acc) {
+            var b2 = _zlParse(getComputedStyle(document.body).backgroundColor);
+            if (b2 && b2[3] > 0) { return _zlLuma(_zlBlend(acc, b2)); }
+            return _zlLuma(_zlBlend(acc, _zlLight ? [244, 246, 251, 1] : [10, 14, 39, 1]));
+        }
+        var b3 = _zlParse(getComputedStyle(document.body).backgroundColor);
+        if (b3 && b3[3] > 0) { return _zlLuma(b3); }
         return 0.1;
+    }
+    function _zlBlend(top, bottom) {
+        var a = top[3];
+        return [bottom[0] * (1 - a) + top[0] * a, bottom[1] * (1 - a) + top[1] * a, bottom[2] * (1 - a) + top[2] * a, 1];
     }
     var _zlFixRan = false;
     ZL.contrastFix = function (force) {
         if (_zlFixRan && !force) return;
         _zlFixRan = true;
         try {
-            var dim = 'var(--dim)', txt = 'var(--txt)', blue = 'var(--blue)';
+            var _rcs = getComputedStyle(document.documentElement);
+            var _bgV = _zlParse(_rcs.getPropertyValue('--bg'));
+            var lightTheme = _bgV ? _zlLuma(_bgV) > 0.5 : false;
+            _zlLight = lightTheme;
+            var dim = (_rcs.getPropertyValue('--dim') || '#8b93a7').trim();
+            var txt = (_rcs.getPropertyValue('--txt') || '#e8ecf5').trim();
+            var blue = (_rcs.getPropertyValue('--blue') || '#7aa8ff').trim();
+            if (dim.indexOf('#') === 0) dim = 'rgb(' + parseInt(dim.slice(1, 3), 16) + ',' + parseInt(dim.slice(3, 5), 16) + ',' + parseInt(dim.slice(5, 7), 16) + ')';
+            if (txt.indexOf('#') === 0) txt = 'rgb(' + parseInt(txt.slice(1, 3), 16) + ',' + parseInt(txt.slice(3, 5), 16) + ',' + parseInt(txt.slice(5, 7), 16) + ')';
+            if (blue.indexOf('#') === 0) blue = 'rgb(' + parseInt(blue.slice(1, 3), 16) + ',' + parseInt(blue.slice(3, 5), 16) + ',' + parseInt(blue.slice(5, 7), 16) + ')';
             var els = document.querySelectorAll('body *');
             for (var i = 0; i < els.length; i++) {
                 var el = els[i];
                 var tag = el.tagName;
                 if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'CANVAS' || tag === 'IMG' || tag === 'VIDEO' || tag === 'SVG' || tag === 'BR' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') continue;
-                if (el.children.length > 0) continue;
+                if (el.children.length > 0 && el.childNodes.length === el.children.length) continue;
                 if (!el.textContent || !el.textContent.trim()) continue;
                 var cs = getComputedStyle(el);
                 var c = _zlParse(cs.color);
                 if (!c) continue;
+                if (c[3] === 0) continue;
                 var bg = _zlBgOf(el);
                 var cl = _zlLuma(c);
                 var isHeading = /^(H1|H2|H3|H4|H5|H6)$/.test(tag) || /title|heading/i.test(el.className || '');
+                var _dlp = _zlParse(dim);
+                var dimLuma = _dlp ? _zlLuma(_dlp) : 0.5;
                 var rep = '';
                 if (_zlIsGray(c)) {
-                    if (bg < 0.4 && cl < 0.45) { rep = isHeading ? txt : dim; }
-                    else if (bg > 0.82 && cl > 0.82) { rep = isHeading ? txt : txt; }
-                } else if (bg < 0.4 && cl < 0.35) { rep = blue; }
-                if (rep) { el.style.color = rep; }
+                    if (bg < 0.4 && cl < 0.45) { rep = dimLuma > 0.5 ? dim : 'rgb(219,227,245)'; }
+                    else if (bg > 0.82 && cl > 0.82) { rep = isHeading ? 'rgb(30,39,51)' : 'rgb(30,39,51)'; }
+                } else if (bg < 0.4 && cl < 0.45) { rep = lightTheme ? 'rgb(219,227,245)' : blue; }
+                else if (bg > 0.82 && cl > 0.82) { rep = 'rgb(30,39,51)'; }
+                if (rep) {
+                    el.style.transition = 'none';
+                    el.style.setProperty('color', rep, 'important');
+                    try { el.style.setProperty('-webkit-text-fill-color', rep, 'important'); } catch (e2) {}
+                }
             }
         } catch (e) {}
     };
@@ -305,6 +357,7 @@
             for (var i = 0; i < muts.length; i++) {
                 if (muts[i].attributeName === 'data-theme') {
                     setTimeout(function () { ZL.contrastFix(true); }, 120);
+                    setTimeout(function () { ZL.contrastFix(true); }, 700);
                     return;
                 }
             }
