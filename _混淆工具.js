@@ -261,6 +261,55 @@ function autoAttachGlobals(jsCode) {
     return jsCode + '\n\n/* 自动全局挂载（供内联事件属性调用） */\n' + lines.join('\n');
 }
 
+/**
+ * V1.9.5 防回归 b 方案：构建期可读性预检（pre-check）
+ * 扫描目标页面：① 是否接入主题变量/对比度兜底体系（FAIL 拦截）；
+ * ② 硬编码灰阶文字色（深灰/亮灰）生成审计报告（HIGH/WARN 不拦截）。
+ * 用法：node _混淆工具.js --check   → 全量静态预检（不构建，有 FAIL 则退出码 1）
+ */
+function preCheck(fileName, content) {
+    const issues = [];
+    if (!content || typeof content !== 'string') {
+        issues.push({ level: 'FAIL', msg: '内容为空，无法预检' });
+        return issues;
+    }
+    // ① 体系接入检查：必须引用主题变量或加载 zl-features.js 对比度兜底
+    const hasVarRef = /var\(\s*--/.test(content);
+    const hasZL = /zl-features\.js/.test(content);
+    if (!hasVarRef && !hasZL) {
+        issues.push({ level: 'FAIL', msg: '页面未引用任何主题变量(var(--xx))且未加载 zl-features.js，新增内容将无法跟随主题，深底暗字/浅底亮字风险高' });
+    }
+    // ② 硬编码灰阶文字色扫描（color:#rgb 或 color:rgb(a)），按亮度分级
+    const colorRe = /color\s*:\s*(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6}|rgba?\([^)]*\))/g;
+    let m;
+    const seen = {};
+    while ((m = colorRe.exec(content)) !== null) {
+        const raw = m[1].trim();
+        let rgb = null;
+        if (/^#/.test(raw)) {
+            const h = raw.slice(1);
+            if (h.length === 3) { rgb = [parseInt(h[0] + h[0], 16), parseInt(h[1] + h[1], 16), parseInt(h[2] + h[2], 16)]; }
+            else if (h.length === 6) { rgb = [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
+        } else {
+            const p = raw.match(/\((\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+            if (p) rgb = [parseInt(p[1], 10), parseInt(p[2], 10), parseInt(p[3], 10)];
+        }
+        if (!rgb) continue;
+        // 灰阶判定：三通道差 < 24（与 zl-features _zlIsGray 一致）
+        if (Math.max(rgb[0], rgb[1], rgb[2]) - Math.min(rgb[0], rgb[1], rgb[2]) >= 24) continue;
+        const lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+        const key = raw;
+        if (seen[key]) continue; // 同类只报一次，避免刷屏
+        seen[key] = true;
+        if (lum < 0.45) {
+            issues.push({ level: 'HIGH', msg: '硬编码深灰文字 ' + raw + '（亮度 ' + lum.toFixed(2) + '）：在默认深色流光主题(--bg #0a0e27)下可能深底深字，应改用 var(--txt)/var(--dim)' });
+        } else if (lum > 0.82) {
+            issues.push({ level: 'WARN', msg: '硬编码亮灰/白字 ' + raw + '（亮度 ' + lum.toFixed(2) + '）：在 light/milk 浅色主题下可能浅底亮字，应改用 var(--txt)/var(--dim)' });
+        }
+    }
+    return issues;
+}
+
 function ensurePwaBlock(html, fileName) {
     const COMMON_CSS = '<link rel="stylesheet" href="common.css">';
     const COMMON_JS = '<script src="common.js"></script>';
@@ -334,8 +383,55 @@ function obfuscateFile(fileName) {
     return { file: fileName, status: 'no-script' };
 }
 
+function runPreCheck(fileName, content, isNoObfuscate) {
+    const issues = preCheck(fileName, content);
+    if (issues.length === 0) {
+        console.log(`[预检] ${fileName} ✓ 通过（无硬编码灰阶/未接入体系问题）`);
+        return true;
+    }
+    let fail = false;
+    for (const it of issues) {
+        const mark = it.level === 'FAIL' ? '✗' : (it.level === 'HIGH' ? '!' : '·');
+        console.log(`[预检] ${fileName} ${mark} [${it.level}] ${it.msg}`);
+        if (it.level === 'FAIL') fail = true;
+    }
+    if (!fail) console.log(`[预检] ${fileName} 存在 ${issues.length} 条告警（HIGH/WARN 不拦截，需人工确认）`);
+    else console.log(`[预检] ${fileName} ✗ 存在 FAIL，构建已拦截`);
+    return !fail;
+}
+
 function main() {
     const args = process.argv.slice(2);
+
+    // V1.9.5：--check 全量静态预检模式（不构建，仅读源文件扫描）
+    if (args.length === 1 && args[0] === '--check') {
+        console.log('========================================');
+        console.log('  混淆工具 - 全量可读性静态预检（b 方案）');
+        console.log('========================================\n');
+        const srcFiles = fs.existsSync(SOURCE_DIR) ? fs.readdirSync(SOURCE_DIR).filter(f => f.endsWith('.html')) : [];
+        if (srcFiles.length === 0) {
+            console.error('源目录为空，无文件可预检');
+            process.exit(1);
+        }
+        let failCount = 0, warnCount = 0;
+        for (const f of srcFiles) {
+            const src = path.join(ROOT, SOURCE_DIR, f);
+            try {
+                let content = fs.readFileSync(src, 'utf-8');
+                content = ensurePwaBlock(content, f); // 模拟构建后内容（注入公共脚本引用）
+                const ok = runPreCheck(f, content, NO_OBFUSCATE.includes(f));
+                if (!ok) failCount++;
+                else if (preCheck(f, content).length > 0) warnCount++;
+            } catch (e) {
+                console.error(`[预检失败] ${f} - ${e.message}`);
+                failCount++;
+            }
+        }
+        console.log('\n========================================');
+        console.log(`  预检完成：FAIL ${failCount} 个文件，告警 ${warnCount} 个文件（其余通过）`);
+        console.log('========================================');
+        process.exit(failCount > 0 ? 1 : 0);
+    }
 
     let files;
     if (args.length > 0) {
@@ -357,8 +453,20 @@ function main() {
     console.log('[公共] common.js 已刷新（防小白 + SW注册）\n');
 
     let obf = 0, copy = 0, skip = 0;
+    let preCheckBlocked = 0;
     for (const f of files) {
         try {
+            // V1.9.5：构建前可读性预检（b 方案）——FAIL 拦截构建
+            const srcPath = path.join(ROOT, SOURCE_DIR, f);
+            if (fs.existsSync(srcPath)) {
+                let srcContent = fs.readFileSync(srcPath, 'utf-8');
+                srcContent = ensurePwaBlock(srcContent, f);
+                if (!runPreCheck(f, srcContent, NO_OBFUSCATE.includes(f))) {
+                    preCheckBlocked++;
+                    console.error(`[拦截] 跳过 ${f}：可读性预检 FAIL，修复后重新构建\n`);
+                    continue;
+                }
+            }
             const r = obfuscateFile(f);
             if (r.status === 'obfuscated') {
                 console.log(`[混淆] ${f} (${r.scripts} 个 script)`);
@@ -384,7 +492,9 @@ function main() {
 
     console.log('\n========================================');
     console.log(`  完成：混淆 ${obf}，复制/写入 ${copy}，跳过/失败 ${skip}`);
+    if (preCheckBlocked > 0) console.log(`  预检拦截：${preCheckBlocked} 个文件（需修复后重新构建）`);
     console.log('========================================');
+    if (preCheckBlocked > 0) process.exitCode = 1;
 }
 
 main();

@@ -365,6 +365,66 @@
         _zlThemeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     } catch (e2) {}
 
+    /* ========== V1.9.5 防回归 c 方案：运行时巡检 ZL.verifyAudit() ========== */
+    /* 复用上方 _zlLuma/_zlParse/_zlBlend/_zlGradLuma/_zlBgOf/_zlLight；
+       用法：ZL.verifyAudit().then(r => console.log(JSON.stringify(r)))；
+       遍历 10 主题，每主题设 data-theme → contrastFix(true) 两次 → 审计叶子元素；
+       返回 { ok, totalFails, report:{主题:失败数, 主题_s:[样本]}, time } */
+    var _zlAuditThemes = ['dark', 'blue', 'gold', 'light', 'milk', 'guofeng', 'snowsun', 'cyber', 'aurora', 'custom'];
+    function _zlAuditOnce() {
+        var fails = [];
+        var els = document.querySelectorAll('body *');
+        for (var i = 0; i < els.length; i++) {
+            var el = els[i];
+            if (el.children.length > 0) continue;
+            if (!el.textContent || !el.textContent.trim()) continue;
+            var tag = el.tagName;
+            if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'CANVAS' || tag === 'IMG' || tag === 'VIDEO' || tag === 'SVG' || tag === 'BR' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') continue;
+            var cs = getComputedStyle(el);
+            var c = _zlParse(cs.color);
+            if (!c) continue;
+            if (c[3] === 0) continue;
+            var bg = _zlBgOf(el);
+            var cl = _zlLuma(c);
+            if (bg < 0.4 && cl < 0.45) {
+                fails.push({ t: el.textContent.trim().slice(0, 16), color: cs.color, bg: bg.toFixed(2) });
+            } else if (bg > 0.82 && cl > 0.82) {
+                fails.push({ t: el.textContent.trim().slice(0, 16), color: cs.color, bg: bg.toFixed(2) });
+            }
+        }
+        return fails;
+    }
+    ZL.verifyAudit = function (opts) {
+        opts = opts || {};
+        var themes = opts.themes || _zlAuditThemes;
+        return new Promise(function (resolve) {
+            var res = {}, idx = 0, totalFails = 0;
+            function next() {
+                if (idx >= themes.length) {
+                    var anyFail = totalFails > 0;
+                    res.total = themes.length;
+                    resolve({ ok: !anyFail, totalFails: totalFails, report: res, time: new Date().toISOString() });
+                    return;
+                }
+                var th = themes[idx];
+                document.documentElement.setAttribute('data-theme', th);
+                if (window.ZL && ZL.contrastFix) ZL.contrastFix(true);
+                setTimeout(function () {
+                    if (window.ZL && ZL.contrastFix) ZL.contrastFix(true);
+                    setTimeout(function () {
+                        var f = _zlAuditOnce();
+                        res[th] = f.length;
+                        totalFails += f.length;
+                        if (f.length) res[th + '_s'] = f.slice(0, 3);
+                        idx++;
+                        next();
+                    }, 350);
+                }, 250);
+            }
+            next();
+        });
+    };
+
     /* 自动统计当前页使用（排除门禁/导航页） */
     var cur = (window.location.pathname.split('/').pop() || '').toLowerCase();
     var skipPages = ['1.html', '2.html', '3.html', '4.html', '28.html', '29.html', '30.html', '10.html'];

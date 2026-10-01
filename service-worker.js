@@ -1,7 +1,8 @@
 ﻿// 找乐子工具箱 - Service Worker（V4：V1.4.4 真实背景图片内嵌 common.css）
 // V8：2026-09-30 33.html 体验重构（14类350条+心情筛选+详情卡+收藏+倒计时）修复 common.js 防小白 head 加载 appendChild 缺陷
 // V12：2026-10-01 全站可读性兜底修复（对比度引擎11项修复+42页×10主题审计全部通过）
-const CACHE_NAME = 'zhaolezi-v12';
+// V13：2026-10-02 防回归机制 b+c 落地（构建期 preCheck + 运行时 ZL.verifyAudit）
+const CACHE_NAME = 'zhaolezi-v13';
 const ASSETS = [
   './',
   './index.html',
