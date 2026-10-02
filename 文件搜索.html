@@ -401,20 +401,29 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
         }
     });
 
+function escapeHtml(s){
+        return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function highlight(text, keyword){
-        if(!keyword) return text;
-        const lower = text.toLowerCase();
-        const kw = keyword.toLowerCase();
+        if(!keyword) return escapeHtml(text);
+        const lower = String(text).toLowerCase();
+        const kw = String(keyword).toLowerCase();
         let result = '';
         let lastIdx = 0;
         let idx = lower.indexOf(kw);
         while(idx !== -1){
-            result += text.substring(lastIdx, idx) + '<mark>' + text.substring(idx, idx+keyword.length) + '</mark>';
+            result += escapeHtml(text.substring(lastIdx, idx)) + '<mark>' + escapeHtml(text.substring(idx, idx+keyword.length)) + '</mark>';
             lastIdx = idx + keyword.length;
             idx = lower.indexOf(kw, lastIdx);
         }
-        result += text.substring(lastIdx);
-        return result || text;
+        result += escapeHtml(text.substring(lastIdx));
+        return result;
     }
 
     function renderResults(files, keyword){
@@ -425,8 +434,8 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
         const display = files.slice(0, 500);
         let html = '';
         for(const f of display){
-            html += '<div class="result-item">' +
-                '<span class="icon">' + f.type + '</span>' +
+html += '<div class="result-item">' +
+                '<span class="icon">' + escapeHtml(f.type) + '</span>' +
                 '<div class="info">' +
                     '<div class="name">' + highlight(f.name, keyword) + '</div>' +
                     '<div class="path">' + highlight(f.path, keyword) + '</div>' +

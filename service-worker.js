@@ -2,11 +2,27 @@
 // V8：2026-09-30 33.html 体验重构（14类350条+心情筛选+详情卡+收藏+倒计时）修复 common.js 防小白 head 加载 appendChild 缺陷
 // V12：2026-10-01 全站可读性兜底修复（对比度引擎11项修复+42页×10主题审计全部通过）
 // V13：2026-10-02 防回归机制 b+c 落地（构建期 preCheck + 运行时 ZL.verifyAudit）
-const CACHE_NAME = 'zhaolezi-v13';
+// V14：2026-10-02 全站修复推进（favicon/17-data.js/背景图外置/robots/sitemap）新增预缓存资源
+const CACHE_NAME = 'zhaolezi-v14';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './17-data.js',
+  './favicon.ico',
+  './favicon.svg',
+  './favicon-48.png',
+  './robots.txt',
+  './sitemap.xml',
+  './images/bg-blue.jpg',
+  './images/bg-gold.jpg',
+  './images/bg-light.jpg',
+  './images/bg-milk.jpg',
+  './images/bg-guofeng.jpg',
+  './images/bg-snowsun.jpg',
+  './images/bg-cyber.jpg',
+  './images/bg-aurora.jpg',
+  './images/bg-custom.jpg'
 ];
 
 // 安装：预缓存核心资源
