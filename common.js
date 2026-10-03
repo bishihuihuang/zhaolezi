@@ -157,7 +157,7 @@
     });
     _0x1.addEventListener('keydown',function(_0x8){
         var _0x9=_0x8.keyCode||_0x8.which;
-        var _allowed = (_0x8.ctrlKey && (_0x9===86 || _0x9===67 || _0x9===88 || _0x9===65)) || _0x9===116;
+        var _allowed = (_0x8.ctrlKey && (_0x9===86 || _0x9===67 || _0x9===88 || _0x9===65 || _0x9===70)) || _0x9===116;
         var _isFuncKey = _0x9>=112 && _0x9<=123;
         var _normal = !_0x8.ctrlKey && !_0x8.altKey && !_0x8.metaKey && !_isFuncKey;
         if(!_allowed && !_normal){

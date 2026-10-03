@@ -3,12 +3,26 @@
 // V12：2026-10-01 全站可读性兜底修复（对比度引擎11项修复+42页×10主题审计全部通过）
 // V13：2026-10-02 防回归机制 b+c 落地（构建期 preCheck + 运行时 ZL.verifyAudit）
 // V14：2026-10-02 全站修复推进（favicon/17-data.js/背景图外置/robots/sitemap）新增预缓存资源
-const CACHE_NAME = 'zhaolezi-v14';
+// V15：2026-10-04 整站提升V2（全部页面+公共脚本入预缓存；音频/内容图仍走运行时缓存）
+const CACHE_NAME = 'zhaolezi-v15';
 const ASSETS = [
   './',
   './index.html',
+  './1.html', './2.html', './3.html', './4.html', './5.html', './6.html',
+  './7.html', './8.html', './9.html', './10.html', './11.html', './12.html',
+  './13.html', './14.html', './15.html', './16.html', './17.html', './18.html',
+  './19.html', './20.html', './21.html', './22.html', './23.html', './24.html',
+  './25.html', './26.html', './27.html', './28.html', './29.html', './30.html',
+  './31.html', './32.html', './33.html', './34.html', './35.html', './36.html',
+  './37.html', './38.html', './39.html', './40.html', './41.html', './42.html',
+  './文件搜索.html',
+  './verify.html',
   './manifest.json',
   './17-data.js',
+  './common.css',
+  './common.js',
+  './theme.js',
+  './zl-features.js',
   './favicon.ico',
   './favicon.svg',
   './favicon-48.png',

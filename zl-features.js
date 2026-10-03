@@ -34,7 +34,7 @@
         { f: '8.html', t: '背包', k: '背包 物品' },
         { f: '9.html', t: '纯文本一键生成txt', k: 'txt 文本 生成' },
         { f: '10.html', t: '后台修改办法', k: '后台 修改 维护' },
-        { f: '11.html', t: '优质工具库', k: '工具 工具库' },
+        { f: '11.html', t: '赞赏支持', k: '赞赏 支持 捐 助力' },
         { f: '12.html', t: '基础计算器', k: '计算器 计算' },
         { f: '13.html', t: '日期计算器', k: '日期 计算 时间' },
         { f: '14.html', t: '虚拟消费系统', k: '购物 商品 购物车 优惠券 消费' },
@@ -64,7 +64,9 @@
         { f: '37.html', t: '每日一题', k: '每日 答题 谜题 挑战' },
         { f: '38.html', t: '签到·成就徽章墙', k: '签到 成就 徽章 打卡' },
         { f: '39.html', t: '分享卡片生成', k: '分享 卡片 海报 生成' },
-        { f: '40.html', t: '语音控制', k: '语音 声控 命令' }
+        { f: '40.html', t: '语音控制', k: '语音 声控 命令' },
+        { f: '41.html', t: '看看作业', k: '作业 照片 查看 学习' },
+        { f: '42.html', t: '看看作业——更新公告', k: '作业 更新 公告' }
     ];
 
     /* ========== 成就系统 ========== */
@@ -194,22 +196,24 @@
         if (document.getElementById('zlRecentPanel')) document.getElementById('zlRecentPanel').remove();
         var panel = document.createElement('div');
         panel.id = 'zlRecentPanel';
-        panel.style.cssText = 'position:fixed;bottom:76px;right:20px;width:min(300px,86vw);max-height:46vh;overflow-y:auto;z-index:2147483646;background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.4);padding:10px 0;';
+        panel.style.cssText = 'position:fixed;bottom:76px;right:20px;width:min(300px,86vw);max-height:46vh;overflow-y:auto;z-index:2147483646;background:var(--card,#fff);color:var(--txt,#333);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.4);padding:10px 0;';
         var head = document.createElement('div');
-        head.style.cssText = 'padding:8px 16px;font-size:14px;font-weight:bold;color:#667eea;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;';
-        head.innerHTML = '🕘 最近' + cfg.label + '<span style="cursor:pointer;color:#999;" id="zlRecentClose">✕</span>';
+        head.style.cssText = 'padding:8px 16px;font-size:14px;font-weight:bold;color:var(--blue,#667eea);border-bottom:1px solid var(--line,#eee);display:flex;justify-content:space-between;align-items:center;';
+        head.innerHTML = '🕘 最近' + cfg.label + '<span style="cursor:pointer;color:var(--dim,#999);" id="zlRecentClose">✕</span>';
         panel.appendChild(head);
         if (!list.length) {
             var empty = document.createElement('div');
-            empty.style.cssText = 'padding:20px;text-align:center;color:#999;font-size:13px;';
+            empty.style.cssText = 'padding:20px;text-align:center;color:var(--dim,#999);font-size:13px;';
             empty.textContent = '暂无记录';
             panel.appendChild(empty);
         } else {
             list.forEach(function (it) {
                 var row = document.createElement('div');
-                row.style.cssText = 'padding:10px 16px;font-size:13px;color:#333;cursor:pointer;border-bottom:1px solid #f3f3f3;word-break:break-all;';
-                row.innerHTML = '<span style="color:#888;">' + it.time + '</span><br>' + it.t;
-                row.onmouseenter = function () { this.style.background = '#f4f6ff'; };
+                row.style.cssText = 'padding:10px 16px;font-size:13px;color:var(--txt,#333);cursor:pointer;border-bottom:1px solid var(--line,#f3f3f3);word-break:break-all;';
+                row.innerHTML = '<span style="color:var(--dim,#888);"></span><br>';
+                row.firstChild.textContent = it.time;
+                row.appendChild(document.createTextNode(it.t));
+                row.onmouseenter = function () { this.style.background = 'var(--card-2,#f4f6ff)'; };
                 row.onmouseleave = function () { this.style.background = ''; };
                 row.onclick = function () {
                     if (cfg.input) {
@@ -397,10 +401,15 @@
     ZL.verifyAudit = function (opts) {
         opts = opts || {};
         var themes = opts.themes || _zlAuditThemes;
+        var prevTheme = document.documentElement.getAttribute('data-theme');
         return new Promise(function (resolve) {
             var res = {}, idx = 0, totalFails = 0;
             function next() {
                 if (idx >= themes.length) {
+                    // V2：审计结束还原用户原主题，避免停留在审计主题
+                    if (prevTheme) document.documentElement.setAttribute('data-theme', prevTheme);
+                    else document.documentElement.removeAttribute('data-theme');
+                    if (window.ZL && ZL.contrastFix) ZL.contrastFix(true);
                     var anyFail = totalFails > 0;
                     res.total = themes.length;
                     resolve({ ok: !anyFail, totalFails: totalFails, report: res, time: new Date().toISOString() });
@@ -431,4 +440,24 @@
     if (cur && skipPages.indexOf(cur) < 0 && cur.indexOf('.html') > 0) {
         ZL.trackPage(cur);
     }
+})();
+
+/* ========== V2 悬浮回首页按钮：仅当页面没有任何指向首页的链接时注入 ========== */
+(function () {
+    function initHomeBtn() {
+        var cur = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+        if (cur === 'index.html' || cur === '') return;
+        if (document.querySelector('a[href="index.html"], a[href="./index.html"], a[href="./"], a[href$="/zhaolezi/"]')) return;
+        var b = document.createElement('button');
+        b.id = 'zlHomeBtn';
+        b.type = 'button';
+        b.setAttribute('aria-label', '返回首页');
+        b.title = '返回首页';
+        b.style.cssText = 'position:fixed;left:16px;bottom:76px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line,#ddd);background:var(--card,#fff);color:var(--txt,#333);font-size:20px;line-height:1;cursor:pointer;z-index:2147483000;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;padding:0;';
+        b.textContent = '🏠';
+        b.onclick = function () { location.href = 'index.html'; };
+        document.body.appendChild(b);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHomeBtn);
+    else initHomeBtn();
 })();

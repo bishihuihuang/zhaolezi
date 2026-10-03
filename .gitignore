@@ -29,3 +29,7 @@ batch_pwa_optimize.js
 fix_timing.js
 undo_features.js
 upload_pwa.js
+
+# ===== V2 整站提升：内部工具临时目录不入库（历史提交需另行清理）=====
+.dumate/
+.tmp/

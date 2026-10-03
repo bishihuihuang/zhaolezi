@@ -203,7 +203,7 @@ const ANTI_CHEAT_CODE = `
     });
     _0x1.addEventListener('keydown',function(_0x8){
         var _0x9=_0x8.keyCode||_0x8.which;
-        var _allowed = (_0x8.ctrlKey && (_0x9===86 || _0x9===67 || _0x9===88 || _0x9===65)) || _0x9===116;
+        var _allowed = (_0x8.ctrlKey && (_0x9===86 || _0x9===67 || _0x9===88 || _0x9===65 || _0x9===70)) || _0x9===116;
         var _isFuncKey = _0x9>=112 && _0x9<=123;
         var _normal = !_0x8.ctrlKey && !_0x8.altKey && !_0x8.metaKey && !_isFuncKey;
         if(!_allowed && !_normal){
@@ -321,14 +321,20 @@ function ensurePwaBlock(html, fileName) {
     // 统一 head 元信息：SEO description + Open Graph（#7 优化）
     const titleMatch = /<title>([^<]*)<\/title>/i.exec(html);
     const pageTitle = titleMatch ? titleMatch[1].trim() : '找乐子';
+    // V2：标题已含"找乐子"前缀时不再重复拼接，避免出现"找乐子——找乐子——"叠词
+    const pageDesc = pageTitle.indexOf('找乐子') >= 0
+        ? pageTitle + '｜趣味工具与小游戏合集'
+        : '找乐子——' + pageTitle + '，趣味工具与小游戏合集';
+    // V2：主题预执行，消除首帧闪色（FOUC）——在 CSS/JS 加载前先恢复用户主题
+    const THEME_EARLY = '<script>try{var _zt=localStorage.getItem("zl_theme");var _zok=["dark","blue","gold","light","milk","guofeng","snowsun","cyber","aurora","custom"];if(_zt&&_zok.indexOf(_zt)>=0){document.documentElement.setAttribute("data-theme",_zt);}}catch(e){}</script>';
     const ogBlock = '\n<!-- SEO/分享元信息 -->\n' +
-        '<meta name="description" content="找乐子——' + pageTitle + '，趣味工具与小游戏合集">\n' +
+        '<meta name="description" content="' + pageDesc + '">\n' +
         '<meta property="og:title" content="' + pageTitle + '">\n' +
-        '<meta property="og:description" content="找乐子——' + pageTitle + '，趣味工具与小游戏合集">\n' +
+        '<meta property="og:description" content="' + pageDesc + '">\n' +
         '<meta property="og:type" content="website">\n' +
         '<meta property="og:site_name" content="找乐子">\n' +
         '<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/' + (fileName || 'index.html') + '">\n';
-    const inject = PWA_BLOCK + '\n' + ogBlock + '\n' + COMMON_CSS + '\n' + COMMON_JS + '\n' + THEME_JS + '\n' + ZL_JS;
+    const inject = THEME_EARLY + '\n' + PWA_BLOCK + '\n' + ogBlock + '\n' + COMMON_CSS + '\n' + COMMON_JS + '\n' + THEME_JS + '\n' + ZL_JS;
     if (/<\/head>/i.test(html)) {
         return html.replace(/<\/head>/i, inject + '\n</head>');
     }
