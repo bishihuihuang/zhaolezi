@@ -2047,6 +2047,17 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             return Math.max(0, T.total - T.carried);
         }
 
+        /* 标签页标题唯一入口：只要还有一轮在进行（运行中，或中途暂停还没清掉）就保留
+           🍅/🧘/☕ 专注中，便于从任务栏认出哪个标签在专注；一轮结束、重置或切模式后
+           回落到页面默认名，避免结束后标题一直卡在“专注中” */
+        function syncTitle() {
+            var active = T.running || (T.paused && elapsedMs() > 0);
+            var t = active
+                ? (T.mode === 'free' ? '🧘 ' : (T.phase === 'brk' ? '☕ ' : '🍅 ')) + '专注中 - 找乐子'
+                : '学习计时与专注模式 - 找乐子';
+            if (document.title !== t) document.title = t;
+        }
+
         function startTimer() {
             if (T.mode === 'free') {
                 T.freeAt = Date.now();
@@ -2055,7 +2066,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             }
             T.running = true;
             T.paused = false;
-            document.title = (T.mode === 'free' ? '🧘 ' : (T.phase === 'work' ? '🍅 ' : '☕ ')) + '专注中 - 找乐子';
+            syncTitle();
             applyDnd();
             paint();
             saveSession();
@@ -2066,7 +2077,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             T.carried = elapsedMs();
             T.running = false;
             T.paused = true;
-            document.title = '学习计时与专注模式 - 找乐子';
+            syncTitle();
             applyDnd();
             paint();
             saveSession();
@@ -2079,7 +2090,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             T.paused = false;
             S.session = null;
             save();
-            document.title = '学习计时与专注模式 - 找乐子';
+            syncTitle();
             applyDnd();
             if (!quiet) toast('已重置本轮计时', 'warn');
             paint();
@@ -2184,6 +2195,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
         }
 
         function paint() {
+            syncTitle();
             var stateTxt = '', stateCls = '', subHtml = '', timeStr;
             if (T.mode === 'free') {
                 var e = elapsedMs();
@@ -2282,6 +2294,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             }
             S.session = null;
             save();
+            syncTitle();
             renderAll();
 
             setTimeout(function () {
@@ -2721,8 +2734,9 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
 
         function switchMode(m) {
             if (T.mode === m) { paint(); return; }
-            /* 自由专注进行中切走会丢时长，先确认 */
-            if (T.mode === 'free' && T.running && elapsedMs() >= 60000) {
+            /* 自由专注有累积时长切走就会丢，先确认。暂停态也要拦：刷新/关标签恢复出来的
+               会话一律是暂停态（T.running 为假），只判 running 会让整轮时长被静默丢弃 */
+            if (T.mode === 'free' && elapsedMs() >= 60000) {
                 var lostMin = Math.max(1, Math.floor(elapsedMs() / 60000));
                 confirmDialog('🧘 放弃本次自由专注？',
                     '本轮已专注 <b>' + lostMin + '</b> 分钟。切换到番茄钟后，这段时长<b>不会</b>被记入统计。',
@@ -2746,7 +2760,6 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             el.tabTomato.setAttribute('aria-selected', m === 'tomato' ? 'true' : 'false');
             el.tabFree.classList.toggle('on', m === 'free');
             el.tabFree.setAttribute('aria-selected', m === 'free' ? 'true' : 'false');
-            document.title = '学习计时与专注模式 - 找乐子';
             S.session = null;
             save();
             paint();
