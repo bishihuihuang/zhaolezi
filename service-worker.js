@@ -4,7 +4,8 @@
 // V13：2026-10-02 防回归机制 b+c 落地（构建期 preCheck + 运行时 ZL.verifyAudit）
 // V14：2026-10-02 全站修复推进（favicon/17-data.js/背景图外置/robots/sitemap）新增预缓存资源
 // V15：2026-10-04 整站提升V2（全部页面+公共脚本入预缓存；音频/内容图仍走运行时缓存）
-const CACHE_NAME = 'zhaolezi-v15';
+// V16：2026-10-04 43-46 学习工具箱四页（错题本/学习仪表盘/知识图谱/专注计时）入预缓存
+const CACHE_NAME = 'zhaolezi-v16';
 const ASSETS = [
   './',
   './index.html',
@@ -15,6 +16,7 @@ const ASSETS = [
   './25.html', './26.html', './27.html', './28.html', './29.html', './30.html',
   './31.html', './32.html', './33.html', './34.html', './35.html', './36.html',
   './37.html', './38.html', './39.html', './40.html', './41.html', './42.html',
+  './43.html', './44.html', './45.html', './46.html',
   './文件搜索.html',
   './verify.html',
   './manifest.json',

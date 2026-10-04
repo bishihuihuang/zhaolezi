@@ -1,0 +1,3149 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes">
+    <title>学习计时与专注模式 - 找乐子｜趣味工具与小游戏合集</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+
+    <!-- ========== 页面样式：全站共享骨架 ========== -->
+    <style>
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--txt);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%; left: -100%;
+            width: 300%; height: 300%;
+            background: var(--flow-grad);
+            background-size: 400% 400%;
+            animation: flowGradient 20s ease-in-out infinite;
+        }
+
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%; left: -40%;
+            width: 220%; height: 220%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%, rgba(120,180,255,.3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%, rgba(220,130,250,.25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+        }
+
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%; left: -20%;
+            width: 180%; height: 180%;
+            background: radial-gradient(circle at 50% 50%, rgba(255,200,130,.15), transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(80,220,200,.2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+        }
+
+        @keyframes flowGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes flowDrift {
+            0% { transform: translate(0,0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%,-4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%,3%) scale(.97) rotate(-5deg); }
+        }
+
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.3), rgba(255,255,255,.1) 50%, transparent 70%);
+            box-shadow: 0 0 60px rgba(255,255,255,.08), inset 0 0 30px rgba(255,255,255,.04);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+        .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+
+        @keyframes orbFloatA {
+            0% { transform: translate(0,0) scale(1); opacity: .6; }
+            30% { transform: translate(18px,-22px) scale(1.04); opacity: .8; }
+            60% { transform: translate(-12px,10px) scale(.96); opacity: .5; }
+            100% { transform: translate(0,0) scale(1); opacity: .6; }
+        }
+
+        @keyframes orbFloatB {
+            0% { transform: translate(0,0) scale(1); opacity: .5; }
+            35% { transform: translate(-20px,12px) scale(1.06); opacity: .7; }
+            70% { transform: translate(14px,-15px) scale(.94); opacity: .4; }
+            100% { transform: translate(0,0) scale(1); opacity: .5; }
+        }
+
+        @keyframes orbSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        main {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 14px 96px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1180px;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,.3), inset 0 1px 0 rgba(255,255,255,.6);
+            padding: 16px;
+            color: var(--txt);
+        }
+
+        .top-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .title-area h1 {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #ffd7a8 45%, #ff9e6d 70%, #c7e0ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: .5px;
+        }
+
+        .title-area .sub {
+            font-size: 12px;
+            color: var(--dim);
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+
+        .title-area .sub::before {
+            content: "✦";
+            margin-right: 5px;
+            color: var(--warn);
+        }
+
+        .top-acts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 9px 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            background: linear-gradient(135deg, rgba(255,140,90,.24), rgba(150,110,255,.24));
+            color: var(--txt);
+            border: 1px solid rgba(255,255,255,.18);
+            transition: transform .16s, box-shadow .16s, background .16s, border-color .16s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(255,130,90,.28);
+            background: linear-gradient(135deg, rgba(255,140,90,.38), rgba(150,110,255,.38));
+        }
+
+        .btn:active { transform: translateY(0); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff8b52, #e14b8a 55%, #7b5cff);
+            color: #fff;
+            border-color: rgba(255,255,255,.3);
+            box-shadow: 0 4px 16px rgba(220,70,130,.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff9c66, #ea5d99 55%, #8c6dff);
+            box-shadow: 0 8px 24px rgba(220,70,130,.45);
+        }
+
+        .btn-ghost {
+            background: rgba(127,127,127,.14);
+            border-color: rgba(127,127,127,.32);
+            color: var(--txt);
+        }
+
+        .btn-ghost:hover { background: rgba(127,127,127,.24); }
+
+        .btn-danger {
+            background: linear-gradient(135deg, rgba(230,62,62,.26), rgba(230,62,62,.42));
+            border-color: rgba(230,62,62,.5);
+            color: var(--txt);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, rgba(240,70,70,.4), rgba(240,70,70,.55));
+            box-shadow: 0 8px 22px rgba(240,70,70,.3);
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(6,8,22,.7);
+            backdrop-filter: blur(7px);
+            -webkit-backdrop-filter: blur(7px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .overlay.show {
+            display: flex;
+            animation: fadeIn .22s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal {
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.55), 0 0 0 1px rgba(255,255,255,.2);
+            width: 100%;
+            max-width: 560px;
+            padding: 18px;
+            color: var(--txt);
+            animation: modalIn .28s cubic-bezier(.2,.9,.3,1.15);
+            max-height: calc(100vh - 32px);
+            overflow-y: auto;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-x {
+            width: 28px;
+            height: 28px;
+            border-radius: 9px;
+            border: 1px solid rgba(127,127,127,.32);
+            background: rgba(127,127,127,.16);
+            color: var(--dim);
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .16s;
+            flex-shrink: 0;
+        }
+
+        .modal-x:hover {
+            background: rgba(230,62,62,.25);
+            color: #fff;
+        }
+
+        .toast-wrap {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            pointer-events: none;
+            width: calc(100% - 28px);
+            max-width: 420px;
+        }
+
+        .toast {
+            padding: 10px 17px;
+            border-radius: 999px;
+            background: rgba(24,28,58,.95);
+            border: 1px solid rgba(255,255,255,.2);
+            color: #fff;
+            font-size: 12.5px;
+            font-weight: 600;
+            box-shadow: 0 12px 30px rgba(0,0,0,.45);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            animation: toastIn .26s cubic-bezier(.2,.9,.3,1.2);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-16px) scale(.92); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .toast.ok { border-color: rgba(80,220,160,.55); }
+        .toast.err { border-color: rgba(240,90,90,.55); }
+        .toast.warn { border-color: rgba(255,190,80,.55); }
+
+        .sec { margin-top: 16px; }
+
+        .sec-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 11px;
+        }
+
+        .sec-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--txt);
+            letter-spacing: .4px;
+        }
+
+        .sec-sub {
+            font-size: 11px;
+            color: var(--dim);
+            font-weight: 500;
+        }
+
+        .sec-line {
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+            min-width: 24px;
+        }
+
+        .footer {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer-title {
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .data-acts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* ==================== 页面样式：专注计时 ==================== */
+        :root { --warn: var(--gold, #ff8b52); }
+
+        /* ---- 计时器主区 ---- */
+        .tm-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+            gap: 14px;
+            align-items: stretch;
+        }
+
+        .ring-box {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ring-wrap {
+            position: relative;
+            width: 246px;
+            max-width: 100%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ring-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: drop-shadow(0 6px 20px rgba(102,126,234,.28));
+        }
+
+        .ring-wrap.running .ring-svg { animation: breathe 4s ease-in-out infinite; }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.035); }
+        }
+
+        .ring-wrap.celebrate { animation: celeb 1.4s cubic-bezier(.4,.1,.3,1); }
+
+        @keyframes celeb {
+            0% { transform: rotate(0deg) scale(1); }
+            22% { transform: rotate(120deg) scale(1.07); }
+            100% { transform: rotate(1080deg) scale(1); }
+        }
+
+        .ring-bg {
+            fill: none;
+            stroke: rgba(127,127,127,.2);
+            stroke-width: 12;
+        }
+
+        .ring-prog {
+            fill: none;
+            stroke: hsl(210,88%,58%);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 578.053;
+            stroke-dashoffset: 578.053;
+            transition: stroke-dashoffset .3s linear, stroke .6s ease;
+        }
+
+        .ring-ticks {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            background:
+                repeating-conic-gradient(from -90deg,
+                    rgba(127,127,127,.28) 0deg .9deg,
+                    transparent .9deg 6deg);
+            -webkit-mask: radial-gradient(circle, transparent 84.5%, #000 85.5%, #000 88%, transparent 89%);
+            mask: radial-gradient(circle, transparent 84.5%, #000 85.5%, #000 88%, transparent 89%);
+            opacity: .55;
+        }
+
+        .ring-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .rc-state {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dim);
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rc-state.work { color: var(--blue); }
+        .rc-state.brk { color: var(--green, #11998e); }
+        .rc-state.done { color: var(--warn); }
+
+        .rc-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: .85;
+        }
+
+        .ring-wrap.running .rc-dot { animation: pulseDot 1.6s ease-in-out infinite; }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: .85; transform: scale(1); }
+            50% { opacity: .35; transform: scale(1.35); }
+        }
+
+        .rc-time {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: 1px;
+            color: var(--txt);
+            font-variant-numeric: tabular-nums;
+            margin: 3px 0 4px;
+        }
+
+        .rc-sub {
+            font-size: 11.5px;
+            color: var(--dim);
+            font-weight: 600;
+        }
+
+        .rc-sub b { color: var(--warn); font-weight: 800; }
+
+        .ring-task {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .task-in {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px 13px;
+            border-radius: 13px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.12);
+            color: var(--txt);
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .18s, box-shadow .18s, background .18s;
+        }
+
+        .task-in:focus {
+            border-color: rgba(102,126,234,.65);
+            box-shadow: 0 0 0 3px rgba(102,126,234,.16);
+            background: rgba(127,127,127,.2);
+        }
+
+        .task-hint {
+            font-size: 10.5px;
+            color: var(--dim);
+            margin-top: 5px;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ---- 控制面板 ---- */
+        .tm-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        .ctl-row {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .btn-main {
+            flex: 1 1 190px;
+            min-height: 52px;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 0 20px;
+        }
+
+        .mode-tabs {
+            display: flex;
+            background: rgba(127,127,127,.14);
+            border: 1px solid rgba(127,127,127,.24);
+            border-radius: 12px;
+            padding: 3px;
+            gap: 3px;
+        }
+
+        .mode-tabs button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dim);
+            padding: 7px 13px;
+            border-radius: 9px;
+            transition: all .16s;
+            white-space: nowrap;
+        }
+
+        .mode-tabs button:hover { color: var(--txt); }
+
+        .mode-tabs button.on {
+            background: linear-gradient(135deg, rgba(255,140,90,.3), rgba(150,110,255,.3));
+            color: var(--txt);
+            box-shadow: 0 2px 10px rgba(255,130,90,.22);
+        }
+
+        .set-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 9px;
+        }
+
+        .set-item {
+            background: var(--card-2);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 11px 10px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .set-lbl {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--dim);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: .3px;
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stp {
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+            border-radius: 9px;
+            border: 1px solid rgba(127,127,127,.3);
+            background: rgba(127,127,127,.14);
+            color: var(--txt);
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .14s;
+            padding: 0;
+        }
+
+        .stp:hover { background: rgba(127,127,127,.26); }
+        .stp:active { transform: scale(.92); }
+
+        .stp-val {
+            flex: 1;
+            text-align: center;
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--txt);
+            font-variant-numeric: tabular-nums;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .stp-val em {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--dim);
+            font-style: normal;
+        }
+
+        .set-full {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .sw-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 9px;
+            background: var(--card-2);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 11px 12px;
+        }
+
+        .sw-lbl {
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sw-lbl small {
+            display: block;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--dim);
+            margin-top: 2px;
+        }
+
+        .sw {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .sw input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .sw i {
+            position: absolute;
+            inset: 0;
+            border-radius: 999px;
+            background: rgba(127,127,127,.3);
+            border: 1px solid rgba(127,127,127,.36);
+            transition: background .2s, border-color .2s;
+        }
+
+        .sw i::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,.3);
+            transition: transform .2s cubic-bezier(.2,.9,.3,1.2);
+        }
+
+        .sw input:checked + i {
+            background: linear-gradient(135deg, #ff8b52, #e14b8a 55%, #7b5cff);
+            border-color: rgba(255,255,255,.3);
+        }
+
+        .sw input:checked + i::after { transform: translateX(20px); }
+
+        .tips {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .tip-line {
+            font-size: 11px;
+            color: var(--dim);
+            line-height: 1.55;
+            display: flex;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .tip-line b { color: var(--txt); font-weight: 700; }
+
+        .sec.dim-able { transition: opacity .3s, filter .3s; }
+
+        body.dnd .sec.dim-able {
+            opacity: .3;
+            filter: saturate(.4);
+            pointer-events: none;
+        }
+
+        body.dnd .footer { opacity: .3; pointer-events: none; }
+
+        .dnd-badge {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            z-index: 1500;
+            display: none;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(24,28,58,.95);
+            border: 1px solid rgba(255,130,90,.5);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 10px 28px rgba(0,0,0,.4);
+            backdrop-filter: blur(10px);
+        }
+
+        body.dnd .dnd-badge { display: flex; animation: fadeIn .3s ease; }
+
+        /* ---- 环境音电台 ---- */
+        .amb-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .amb-card {
+            position: relative;
+            border: 1px solid var(--line);
+            background: var(--card-2);
+            border-radius: 16px;
+            padding: 14px 12px 13px;
+            cursor: pointer;
+            transition: transform .18s, box-shadow .18s, border-color .18s, background .18s;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .amb-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(140deg, rgba(102,126,234,.16), rgba(255,130,90,.12));
+            opacity: 0;
+            transition: opacity .2s;
+        }
+
+        .amb-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 26px rgba(102,126,234,.2);
+        }
+
+        .amb-card.on {
+            border-color: rgba(102,126,234,.6);
+            box-shadow: 0 10px 26px rgba(102,126,234,.28), inset 0 0 0 1px rgba(102,126,234,.35);
+        }
+
+        .amb-card.on::before { opacity: 1; }
+
+        .amb-ic {
+            position: relative;
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+            background: rgba(127,127,127,.16);
+            border: 1px solid var(--line);
+        }
+
+        .amb-card.on .amb-ic {
+            background: linear-gradient(135deg, rgba(255,140,90,.3), rgba(150,110,255,.3));
+            border-color: rgba(102,126,234,.5);
+            animation: ambFloat 3.4s ease-in-out infinite;
+        }
+
+        @keyframes ambFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .amb-nm {
+            position: relative;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--txt);
+        }
+
+        .amb-desc {
+            position: relative;
+            font-size: 10.5px;
+            color: var(--dim);
+            line-height: 1.5;
+            min-height: 30px;
+        }
+
+        .amb-state {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--dim);
+        }
+
+        .amb-card.on .amb-state { color: var(--blue); }
+
+        .amb-eq {
+            display: none;
+            align-items: flex-end;
+            gap: 2px;
+            height: 13px;
+        }
+
+        .amb-card.on .amb-eq { display: flex; }
+
+        .amb-eq i {
+            width: 3px;
+            border-radius: 2px;
+            background: var(--blue);
+            animation: eq 1s ease-in-out infinite;
+        }
+
+        .amb-eq i:nth-child(1) { height: 40%; animation-delay: 0s; }
+        .amb-eq i:nth-child(2) { height: 85%; animation-delay: .18s; }
+        .amb-eq i:nth-child(3) { height: 60%; animation-delay: .36s; }
+        .amb-eq i:nth-child(4) { height: 95%; animation-delay: .52s; }
+
+        @keyframes eq {
+            0%, 100% { transform: scaleY(.35); }
+            50% { transform: scaleY(1); }
+        }
+
+        .vol-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 11px;
+            padding: 10px 13px;
+            border-radius: 13px;
+            background: var(--card-2);
+            border: 1px solid var(--line);
+            flex-wrap: wrap;
+        }
+
+        .vol-ic { font-size: 15px; }
+
+        .vol-in {
+            flex: 1;
+            min-width: 130px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 7px;
+            border-radius: 999px;
+            background: rgba(127,127,127,.28);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .vol-in::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff8b52, #7b5cff);
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,.3);
+            cursor: pointer;
+        }
+
+        .vol-in::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff8b52, #7b5cff);
+            border: 2px solid #fff;
+            cursor: pointer;
+        }
+
+        .vol-val {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--txt);
+            font-variant-numeric: tabular-nums;
+            min-width: 38px;
+            text-align: right;
+        }
+
+        .amb-note {
+            font-size: 10.5px;
+            color: var(--dim);
+            margin-left: auto;
+        }
+
+        /* ---- 统计 ---- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .kpi {
+            border: 1px solid var(--line);
+            background: var(--card-2);
+            border-radius: 16px;
+            padding: 13px 13px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--blue), var(--purple, #764ba2), var(--gold));
+            opacity: .75;
+        }
+
+        .kpi-lbl {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--dim);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            letter-spacing: .3px;
+        }
+
+        .kpi-val {
+            font-size: 25px;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--txt);
+            font-variant-numeric: tabular-nums;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .kpi-val em {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--dim);
+            font-style: normal;
+        }
+
+        .kpi-sub {
+            font-size: 10px;
+            color: var(--dim);
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .card-box {
+            border: 1px solid var(--line);
+            background: var(--card-2);
+            border-radius: 16px;
+            padding: 13px 14px;
+        }
+
+        .cb-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .cb-title {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: var(--txt);
+        }
+
+        .cb-sub {
+            font-size: 10.5px;
+            color: var(--dim);
+            font-weight: 600;
+        }
+
+        .bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 128px;
+        }
+
+        .bar-col {
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 6px;
+            cursor: default;
+        }
+
+        .bar-num {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--dim);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+
+        .bar-track {
+            width: 100%;
+            max-width: 34px;
+            flex: 1;
+            min-height: 12px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .bar {
+            width: 100%;
+            min-height: 0;
+            border-radius: 7px 7px 3px 3px;
+            background: linear-gradient(180deg, rgba(102,126,234,.9), rgba(102,126,234,.45));
+            transition: height .5s cubic-bezier(.2,.9,.3,1);
+        }
+
+        .bar-col.today .bar {
+            background: linear-gradient(180deg, #ff8b52, #e14b8a 60%, #7b5cff);
+            box-shadow: 0 0 14px rgba(255,130,90,.4);
+        }
+
+        .bar-lbl {
+            font-size: 10px;
+            color: var(--dim);
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .bar-col.today .bar-lbl { color: var(--warn); font-weight: 800; }
+
+        .donut-wrap {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .donut-svg {
+            width: 96px;
+            height: 96px;
+            flex-shrink: 0;
+            transform: rotate(-90deg);
+        }
+
+        .donut-leg {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .leg-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11.5px;
+            color: var(--txt);
+            font-weight: 600;
+        }
+
+        .leg-sw {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .leg-pct {
+            margin-left: auto;
+            color: var(--dim);
+            font-variant-numeric: tabular-nums;
+            font-size: 11px;
+        }
+
+        /* ---- 成就 ---- */
+        .ach-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .ach {
+            border: 1px solid var(--line);
+            background: var(--card-2);
+            border-radius: 16px;
+            padding: 13px 9px 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            filter: grayscale(1);
+            opacity: .55;
+            transition: transform .2s, opacity .3s, filter .3s;
+        }
+
+        .ach.got {
+            filter: none;
+            opacity: 1;
+            border-color: rgba(255,190,80,.55);
+            box-shadow: 0 6px 20px rgba(255,190,80,.18);
+        }
+
+        .ach-ic {
+            font-size: 30px;
+            line-height: 1;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(127,127,127,.15);
+            border: 1px solid var(--line);
+        }
+
+        .ach.got .ach-ic {
+            background: radial-gradient(circle at 35% 30%, rgba(255,225,150,.9), rgba(255,180,70,.5) 60%, rgba(255,140,60,.35));
+            border-color: rgba(255,190,80,.7);
+            animation: achGlow 2.6s ease-in-out infinite;
+        }
+
+        @keyframes achGlow {
+            0%, 100% { box-shadow: 0 0 0 rgba(255,190,80,0); }
+            50% { box-shadow: 0 0 22px rgba(255,190,80,.5); }
+        }
+
+        .ach-nm {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--txt);
+        }
+
+        .ach-ds {
+            font-size: 9.5px;
+            color: var(--dim);
+            line-height: 1.45;
+            min-height: 27px;
+        }
+
+        .ach-dt {
+            font-size: 9.5px;
+            font-weight: 700;
+            color: var(--warn);
+        }
+
+        .ach .lock {
+            position: absolute;
+            top: 8px;
+            right: 9px;
+            font-size: 10px;
+            opacity: .7;
+        }
+
+        .ach.got .lock { display: none; }
+
+        /* ---- 日志 ---- */
+        .log-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            max-height: 330px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .log-list::-webkit-scrollbar { width: 6px; }
+        .log-list::-webkit-scrollbar-thumb {
+            background: var(--scroll-thumb, linear-gradient(180deg, #667eea, #764ba2));
+            border-radius: 3px;
+        }
+
+        .log-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: var(--card-2);
+            transition: transform .15s, box-shadow .15s;
+        }
+
+        .log-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 4px 14px rgba(102,126,234,.14);
+        }
+
+        .log-ic {
+            font-size: 18px;
+            flex-shrink: 0;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(127,127,127,.14);
+        }
+
+        .log-mid { flex: 1; min-width: 0; }
+
+        .log-t {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--txt);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .log-meta {
+            font-size: 10.5px;
+            color: var(--dim);
+            margin-top: 2px;
+        }
+
+        .log-min {
+            flex-shrink: 0;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--warn);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ---- 空状态 ---- */
+        .empty {
+            text-align: center;
+            padding: 26px 16px 24px;
+            border: 1px dashed var(--line);
+            border-radius: 16px;
+            background: rgba(127,127,127,.07);
+        }
+
+        .empty-ic {
+            font-size: 38px;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .empty-t {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--txt);
+            margin-bottom: 5px;
+        }
+
+        .empty-d {
+            font-size: 11.5px;
+            color: var(--dim);
+            line-height: 1.6;
+            max-width: 400px;
+            margin: 0 auto 13px;
+        }
+
+        /* ---- 休息遮罩 ---- */
+        .brk-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 1800;
+            background: linear-gradient(150deg, rgba(17,153,142,.95), rgba(17,199,190,.94) 50%, rgba(56,239,125,.9));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .brk-mask.show { display: flex; animation: fadeIn .3s ease; }
+
+        .brk-ic { font-size: 62px; line-height: 1; margin-bottom: 14px; }
+
+        .brk-t {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            text-shadow: 0 3px 14px rgba(0,0,0,.2);
+        }
+
+        .brk-d {
+            font-size: 13px;
+            opacity: .92;
+            margin-bottom: 22px;
+        }
+
+        .brk-time {
+            font-size: 46px;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+            margin-bottom: 26px;
+        }
+
+        .brk-step {
+            max-width: 520px;
+            background: rgba(255,255,255,.16);
+            border: 1px solid rgba(255,255,255,.28);
+            border-radius: 18px;
+            padding: 15px 22px;
+            margin-bottom: 26px;
+            min-height: 76px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .brk-step-k {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            opacity: .85;
+        }
+
+        .brk-step-v {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+
+        .brk-acts {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .brk-btn {
+            padding: 11px 22px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.4);
+            background: rgba(255,255,255,.16);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background .16s, transform .16s;
+        }
+
+        .brk-btn:hover { background: rgba(255,255,255,.3); transform: translateY(-2px); }
+
+        .brk-btn.strong {
+            background: #fff;
+            color: #0e6f66;
+            border-color: #fff;
+            box-shadow: 0 6px 20px rgba(0,0,0,.2);
+        }
+
+        /* ---- 响应式 ---- */
+        @media (max-width: 1000px) {
+            .tm-grid { grid-template-columns: 1fr; }
+            .ring-box { order: 0; }
+            .ring-wrap { width: 232px; }
+            .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .ach-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .chart-row { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            main { padding: 12px 10px 80px; }
+            .container { padding: 13px; border-radius: 19px; }
+            .top-grid { grid-template-columns: 1fr; }
+            .top-acts { justify-content: stretch; }
+            .top-acts .btn { flex: 1; justify-content: center; }
+            .amb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .set-grid { grid-template-columns: 1fr 1fr; }
+            .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .kpi:last-child { grid-column: 1 / -1; }
+            .ach-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .title-area h1 { font-size: 21px; }
+            .rc-time { font-size: 44px; }
+            .btn-main { font-size: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            .amb-grid { grid-template-columns: 1fr 1fr; }
+            .set-grid { grid-template-columns: 1fr; }
+            .set-full { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; }
+            .ach-grid { grid-template-columns: 1fr 1fr; }
+            .ring-wrap { width: 210px; }
+            .rc-time { font-size: 40px; }
+            .sec-head .sec-sub { display: none; }
+            .bars { gap: 4px; height: 108px; }
+            .footer { flex-direction: column; align-items: stretch; }
+            .data-acts { justify-content: stretch; }
+            .data-acts .btn { flex: 1; justify-content: center; }
+            .dnd-badge { top: auto; bottom: 14px; right: 14px; left: 14px; justify-content: center; }
+        }
+
+        @media (orientation: landscape) and (max-height: 480px) {
+            main { padding: 8px 10px 40px; align-items: flex-start; }
+            .container { max-width: 100%; border-radius: 16px; padding: 10px; }
+            .sec { margin-top: 10px; }
+            .tm-grid { grid-template-columns: minmax(0, 250px) minmax(0, 1fr); }
+            .ring-wrap { width: 190px; }
+            .rc-time { font-size: 34px; }
+            .amb-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .kpi-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+            .ach-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+            .chart-row { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
+            .bars { height: 92px; }
+            .top-grid { align-items: center; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="common.css">
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="专注计时">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <meta name="description" content="学习计时与专注模式：番茄钟 25/5/15、自由时长专注、四类环境白噪音（雨声/咖啡馆/森林/图书馆）、强制休息遮罩、专注成就徽章与专注统计。全部本地保存，支持离线使用。">
+    <meta name="keywords" content="学习计时,专注模式,番茄钟,Pomodoro,白噪音,专注力训练,深度学习,找乐子">
+    <meta name="author" content="找乐子 zhaolezi">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="学习计时与专注模式 - 找乐子">
+    <meta property="og:description" content="番茄钟 + 环境白噪音 + 成就徽章，把碎片时间变成深度专注。">
+    <meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/46.html">
+    <meta property="og:site_name" content="找乐子">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="学习计时与专注模式 - 找乐子">
+    <meta name="twitter:description" content="番茄钟 + 环境白噪音 + 成就徽章，把碎片时间变成深度专注。">
+
+</head>
+<body>
+    <!-- 背景流光（与全站一致） -->
+    <div class="bg-animation" aria-hidden="true">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+
+            <!-- 顶部：标题 + 公告/返回 -->
+            <div class="top-grid">
+                <div class="title-area">
+                    <h1>学习计时与专注模式</h1>
+                    <p class="sub">番茄钟 · 环境白噪音 · 成就徽章 · 让专注看得见</p>
+                </div>
+                <div class="top-acts">
+                    <a href="42.html" class="btn btn-ghost" id="announceBtn" aria-label="更新公告">
+                        <span>📢</span><span>更新公告</span>
+                    </a>
+                    <a href="index.html" class="btn btn-ghost" id="backHome" aria-label="返回主页">
+                        <span>🏠</span><span>返回主页</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 专注计时器 -->
+            <div class="sec">
+                <div class="sec-head">
+                    <span class="sec-title">⏱️ 专注计时器</span>
+                    <span class="sec-sub">番茄工作法 25/5/15 · 切后台依然精准</span>
+                    <span class="sec-line"></span>
+                    <div class="mode-tabs" role="tablist" aria-label="计时模式">
+                        <button type="button" id="tabTomato" class="on" role="tab" aria-selected="true">🍅 番茄钟</button>
+                        <button type="button" id="tabFree" role="tab" aria-selected="false">🧘 自由专注</button>
+                    </div>
+                </div>
+
+                <div class="tm-grid">
+                    <!-- 环形进度 -->
+                    <div class="ring-box">
+                        <div class="ring-wrap" id="ringWrap">
+                            <div class="ring-ticks" aria-hidden="true"></div>
+                            <svg class="ring-svg" viewBox="0 0 220 220" aria-hidden="true">
+                                <circle class="ring-bg" cx="110" cy="110" r="92"></circle>
+                                <circle class="ring-prog" id="ringProg" cx="110" cy="110" r="92"
+                                    transform="rotate(-90 110 110)"></circle>
+                            </svg>
+                            <div class="ring-center">
+                                <div class="rc-state" id="rcState"><span class="rc-dot"></span><span id="rcStateTxt">准备就绪</span></div>
+                                <div class="rc-time" id="rcTime">25:00</div>
+                                <div class="rc-sub" id="rcSub">今日已完成 <b id="rcTom">0</b> 个番茄</div>
+                            </div>
+                        </div>
+                        <div class="ring-task">
+                            <input type="text" class="task-in" id="taskInput" maxlength="40"
+                                placeholder="📝 这一轮我要做什么？（可留空）" aria-label="本轮专注任务">
+                            <div class="task-hint">💡 任务写入后，会随每一次专注自动记入专注日志</div>
+                        </div>
+                    </div>
+
+                    <!-- 控制面板 -->
+                    <div class="tm-panel">
+                        <div class="ctl-row">
+                            <button type="button" class="btn btn-primary btn-main" id="btnMain">▶ 开始专注</button>
+                            <button type="button" class="btn btn-ghost" id="btnReset">↺ 重置</button>
+                            <button type="button" class="btn btn-ghost" id="btnSkip">⏭ 跳过</button>
+                        </div>
+
+                        <div class="set-grid">
+                            <div class="set-item">
+                                <span class="set-lbl">🍅 专注时长</span>
+                                <div class="stepper">
+                                    <button type="button" class="stp" data-k="work" data-d="-5" aria-label="减少专注时长">−</button>
+                                    <span class="stp-val"><b id="vWork">25</b><em>分钟</em></span>
+                                    <button type="button" class="stp" data-k="work" data-d="5" aria-label="增加专注时长">＋</button>
+                                </div>
+                            </div>
+                            <div class="set-item">
+                                <span class="set-lbl">☕ 短休息</span>
+                                <div class="stepper">
+                                    <button type="button" class="stp" data-k="brk" data-d="-1" aria-label="减少短休息时长">−</button>
+                                    <span class="stp-val"><b id="vBrk">5</b><em>分钟</em></span>
+                                    <button type="button" class="stp" data-k="brk" data-d="1" aria-label="增加短休息时长">＋</button>
+                                </div>
+                            </div>
+                            <div class="set-item">
+                                <span class="set-lbl">🌿 长休息</span>
+                                <div class="stepper">
+                                    <button type="button" class="stp" data-k="long" data-d="-1" aria-label="减少长休息时长">−</button>
+                                    <span class="stp-val"><b id="vLong">15</b><em>分钟</em></span>
+                                    <button type="button" class="stp" data-k="long" data-d="1" aria-label="增加长休息时长">＋</button>
+                                </div>
+                            </div>
+
+                            <div class="set-full">
+                                <div class="sw-row">
+                                    <span class="sw-lbl">🔄 自动开始下一轮<small>专注结束自动进入休息，休息结束自动开始</small></span>
+                                    <label class="sw"><input type="checkbox" id="swAuto" checked><i></i></label>
+                                </div>
+                                <div class="sw-row">
+                                    <span class="sw-lbl">🌙 专注勿扰<small>计时中弱化下方统计与日志，减少干扰</small></span>
+                                    <label class="sw"><input type="checkbox" id="swDnd"><i></i></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tips">
+                            <div class="tip-line">🍅 <span>每完成 <b>4 个番茄</b>自动切换为 <b>15 分钟长休息</b>，避免大脑疲劳累积</span></div>
+                            <div class="tip-line">⏸ <span>计时基于<b>时间戳</b>计算，切换到别的标签页或锁屏也不会走时不准</span></div>
+                            <div class="tip-line">🔔 <span>阶段结束会播放<b>提示音</b>并弹出门遮罩；休息期间记得看看远处</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 环境音电台 -->
+            <div class="sec">
+                <div class="sec-head">
+                    <span class="sec-title">🔊 环境白噪音电台</span>
+                    <span class="sec-sub">纯本地合成 · 无音频文件 · 一次只能开一个</span>
+                    <span class="sec-line"></span>
+                </div>
+                <div class="amb-grid" id="ambGrid"></div>
+                <div class="vol-row">
+                    <span class="vol-ic" id="volIc" aria-hidden="true">🔊</span>
+                    <input type="range" class="vol-in" id="volIn" min="0" max="100" value="55" step="1"
+                        aria-label="环境音音量">
+                    <span class="vol-val" id="volVal">55%</span>
+                    <span class="amb-note">音量与当前音效保存在本机，下次打开自动恢复</span>
+                </div>
+            </div>
+
+            <!-- 专注统计 -->
+            <div class="sec dim-able">
+                <div class="sec-head">
+                    <span class="sec-title">📊 专注统计</span>
+                    <span class="sec-sub">按天记录，只统计你主动完成的专注</span>
+                    <span class="sec-line"></span>
+                </div>
+                <div class="kpi-grid" id="kpiGrid"></div>
+                <div class="chart-row">
+                    <div class="card-box">
+                        <div class="cb-head">
+                            <span class="cb-title">📅 近 7 天专注时长</span>
+                            <span class="cb-sub" id="weekSub">合计 0 分钟</span>
+                        </div>
+                        <div class="bars" id="bars"></div>
+                    </div>
+                    <div class="card-box">
+                        <div class="cb-head">
+                            <span class="cb-title">🥧 模式分布</span>
+                            <span class="cb-sub" id="modeSub">暂无数据</span>
+                        </div>
+                        <div class="donut-wrap">
+                            <svg class="donut-svg" viewBox="0 0 42 42" aria-hidden="true">
+                                <circle cx="21" cy="21" r="15.915" fill="none"
+                                    stroke="rgba(127,127,127,.2)" stroke-width="6"></circle>
+                                <circle id="donutTom" cx="21" cy="21" r="15.915" fill="none"
+                                    stroke="#e14b8a" stroke-width="6" stroke-dasharray="0 100"
+                                    stroke-linecap="round"></circle>
+                                <circle id="donutFree" cx="21" cy="21" r="15.915" fill="none"
+                                    stroke="#38ef7d" stroke-width="6" stroke-dasharray="0 100"></circle>
+                            </svg>
+                            <div class="donut-leg" id="donutLeg"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 成就徽章 -->
+            <div class="sec dim-able">
+                <div class="sec-head">
+                    <span class="sec-title">🏆 专注成就</span>
+                    <span class="sec-sub" id="achSub">已解锁 0 / 6</span>
+                    <span class="sec-line"></span>
+                </div>
+                <div class="ach-grid" id="achGrid"></div>
+            </div>
+
+            <!-- 专注日志 -->
+            <div class="sec dim-able">
+                <div class="sec-head">
+                    <span class="sec-title">📔 专注日志</span>
+                    <span class="sec-sub" id="logSub">最近 50 条</span>
+                    <span class="sec-line"></span>
+                </div>
+                <div id="logBody"></div>
+            </div>
+
+            <!-- 底部：数据管理 -->
+            <div class="footer">
+                <div class="footer-title">🗂️ 数据管理 <span class="sec-sub">专注记录保存在本机浏览器，联网也能正常使用</span></div>
+                <div class="data-acts">
+                    <button type="button" class="btn btn-ghost" id="exportBtn">⬇️ 导出数据</button>
+                    <button type="button" class="btn btn-ghost" id="importBtn">⬆️ 导入数据</button>
+                    <button type="button" class="btn btn-danger" id="resetBtn">🗑️ 清空记录</button>
+                    <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 勿扰角标 -->
+    <div class="dnd-badge" aria-hidden="true">🌙 专注中，请勿打扰</div>
+
+    <!-- 强制休息遮罩 -->
+    <div class="brk-mask" id="brkMask" role="dialog" aria-modal="true" aria-labelledby="brkTitle">
+        <div class="brk-ic" id="brkIc">🌿</div>
+        <div class="brk-t" id="brkTitle">休息中…</div>
+        <div class="brk-d">离开屏幕，看看远处，让大脑换个频道</div>
+        <div class="brk-time" id="brkTime">05:00</div>
+        <div class="brk-step">
+            <div class="brk-step-k">护眼小练习</div>
+            <div class="brk-step-v" id="brkStep">正在为你准备…</div>
+        </div>
+        <div class="brk-acts">
+            <button type="button" class="brk-btn strong" id="brkSkip">跳过休息，继续专注</button>
+            <button type="button" class="brk-btn" id="brkStay">继续休息</button>
+        </div>
+    </div>
+
+    <!-- 确认弹窗 -->
+    <div class="overlay" id="cfOverlay" role="dialog" aria-modal="true" aria-labelledby="cfTitle">
+        <div class="modal" style="max-width:410px;">
+            <div class="modal-head">
+                <div class="modal-title" id="cfTitle">确认操作</div>
+                <button type="button" class="modal-x" id="cfClose" aria-label="关闭">✕</button>
+            </div>
+            <div id="cfMsg" style="font-size:13.5px;line-height:1.75;color:var(--txt);">确认执行？</div>
+            <div style="display:flex;gap:8px;margin-top:16px;">
+                <button type="button" class="btn btn-ghost" id="cfNo" style="flex:1;min-height:42px;">取消</button>
+                <button type="button" class="btn btn-danger" id="cfYes" style="flex:1;min-height:42px;">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+    <script src="common.js"></script>
+    <script src="theme.js"></script>
+    <script src="zl-features.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        /* ==================== 通用工具 ==================== */
+        var KEY = 'zhaolezi_46_focus';
+        var R = 92;
+        var CIRC = 2 * Math.PI * R;
+
+        function $(id) { return document.getElementById(id); }
+        function esc(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+        function toast(msg, type) {
+            if (typeof window.toast === 'function') { try { window.toast(msg, type); return; } catch (e) { } }
+            var w = $('toastWrap');
+            if (!w) return;
+            var d = document.createElement('div');
+            d.className = 'toast' + (type ? ' ' + type : '');
+            d.textContent = msg;
+            w.appendChild(d);
+            setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, 2600);
+        }
+        function pad(n) { return n < 10 ? '0' + n : '' + n; }
+        function hm(sec) {
+            sec = Math.max(0, Math.round(sec));
+            return pad(Math.floor(sec / 60)) + ':' + pad(sec % 60);
+        }
+        function dstr(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+        function todayStr() { return dstr(new Date()); }
+        function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+        function fmtDur(min) {
+            if (min < 60) return min + ' 分钟';
+            var h = Math.floor(min / 60), m = min % 60;
+            return h + ' 小时' + (m ? ' ' + m + ' 分' : '');
+        }
+
+        /* ==================== 本地状态 ==================== */
+        function defState() {
+            return {
+                settings: { work: 25, brk: 5, long: 15, auto: true, dnd: false, amb: '', vol: 55 },
+                stats: { days: {}, totalMin: 0, totalTom: 0, cyc: 0 },
+                logs: [],
+                ach: {}
+            };
+        }
+
+        var S = defState();
+        try {
+            var raw = localStorage.getItem(KEY);
+            if (raw) {
+                var p = JSON.parse(raw);
+                if (p && typeof p === 'object') {
+                    if (p.settings) for (var k in p.settings) { if (p.settings.hasOwnProperty(k)) S.settings[k] = p.settings[k]; }
+                    if (p.stats) for (var k2 in p.stats) { if (p.stats.hasOwnProperty(k2)) S.stats[k2] = p.stats[k2]; }
+                    if (p.logs && p.logs.length) S.logs = p.logs;
+                    if (p.ach) S.ach = p.ach;
+                    if (p.session && typeof p.session === 'object') S.session = p.session;
+                }
+            }
+        } catch (e) { }
+
+        S.stats = S.stats || {};
+        S.stats.days = S.stats.days || {};
+        S.stats.totalMin = S.stats.totalMin || 0;
+        S.stats.totalTom = S.stats.totalTom || 0;
+        S.stats.cyc = S.stats.cyc || 0;
+        if (!S.settings.work) S.settings.work = 25;
+        if (!S.settings.brk) S.settings.brk = 5;
+        if (!S.settings.long) S.settings.long = 15;
+
+        function save() {
+            try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { }
+        }
+
+        /* 进行中的一轮也落盘，刷新/关标签后能接着来（恢复时一律为暂停态，不自动续跑）
+           title 一并存：标签页上的 🍅/🧘/☕ 图标与“专注中”字样刷新后不会变回页面默认名 */
+        function saveSession() {
+            try {
+                S.session = {
+                    m: T.mode,
+                    p: T.phase,
+                    c: Math.round(elapsedMs()),
+                    t: T.total || 0,
+                    title: document.title
+                };
+                save();
+            } catch (e) { }
+        }
+
+        /* 关标签/切后台/刷新前先补写一次：兜住 30s 节流间隔内最后那段进度与标题 */
+        function flushSession() {
+            try {
+                if (T.running || T.paused || elapsedMs() > 0) saveSession();
+            } catch (e) { }
+        }
+
+        /* 读回进行中的一轮；无法恢复时清掉记录并返回 false */
+        function restoreSession() {
+            var ss = S.session;
+            if (!ss || typeof ss !== 'object') return false;
+            var ok = false;
+            if (ss.m === 'free') {
+                var fe = Math.max(0, Math.round(ss.c) || 0);
+                if (fe >= 5000) {
+                    T.mode = 'free';
+                    T.phase = 'work';
+                    T.total = 30 * 60000;
+                    T.carried = fe;
+                    T.running = false;
+                    T.paused = true;
+                    T.endAt = 0;
+                    T.freeAt = 0;
+                    ok = true;
+                }
+            } else if (ss.m === 'tomato' && (ss.p === 'work' || ss.p === 'brk')) {
+                var tt = phaseTotal(ss.p);
+                var cc = clamp(Math.max(0, Math.round(ss.c) || 0), 0, tt);
+                if (cc > 0) {
+                    T.mode = 'tomato';
+                    T.phase = ss.p;
+                    T.total = tt;
+                    T.carried = cc;
+                    T.running = false;
+                    T.paused = true;
+                    T.endAt = 0;
+                    T.freeAt = 0;
+                    ok = true;
+                }
+            }
+            if (!ok) {
+                S.session = null;
+                save();
+                return false;
+            }
+            el.tabTomato.classList.toggle('on', T.mode === 'tomato');
+            el.tabFree.classList.toggle('on', T.mode === 'free');
+            el.tabTomato.setAttribute('aria-selected', T.mode === 'tomato' ? 'true' : 'false');
+            el.tabFree.setAttribute('aria-selected', T.mode === 'free' ? 'true' : 'false');
+            /* 会话一起恢复时把标签页标题也还原回来；只认本站自己的标题，避免写脏 */
+            if (typeof ss.title === 'string' && ss.title && ss.title.indexOf('找乐子') > -1) {
+                document.title = ss.title;
+            }
+            return true;
+        }
+
+        /* ==================== 元素缓存 ==================== */
+        var el = {
+            ringWrap: $('ringWrap'), ringProg: $('ringProg'),
+            rcState: $('rcState'), rcStateTxt: $('rcStateTxt'),
+            rcTime: $('rcTime'), rcSub: $('rcSub'), rcTom: $('rcTom'),
+            taskInput: $('taskInput'),
+            btnMain: $('btnMain'), btnReset: $('btnReset'), btnSkip: $('btnSkip'),
+            tabTomato: $('tabTomato'), tabFree: $('tabFree'),
+            vWork: $('vWork'), vBrk: $('vBrk'), vLong: $('vLong'),
+            swAuto: $('swAuto'), swDnd: $('swDnd'),
+            ambGrid: $('ambGrid'), volIn: $('volIn'), volVal: $('volVal'), volIc: $('volIc'),
+            kpiGrid: $('kpiGrid'), bars: $('bars'), weekSub: $('weekSub'),
+            donutTom: $('donutTom'), donutFree: $('donutFree'), donutLeg: $('donutLeg'), modeSub: $('modeSub'),
+            achGrid: $('achGrid'), achSub: $('achSub'),
+            logBody: $('logBody'), logSub: $('logSub'),
+            brkMask: $('brkMask'), brkTime: $('brkTime'), brkStep: $('brkStep'), brkIc: $('brkIc'), brkTitle: $('brkTitle'),
+            brkSkip: $('brkSkip'), brkStay: $('brkStay'),
+            cfOverlay: $('cfOverlay'), cfTitle: $('cfTitle'), cfMsg: $('cfMsg'),
+            cfClose: $('cfClose'), cfNo: $('cfNo'), cfYes: $('cfYes'),
+            exportBtn: $('exportBtn'), importBtn: $('importBtn'), resetBtn: $('resetBtn'), importFile: $('importFile')
+        };
+
+        /* ==================== 定时器核心 ==================== */
+        var T = {
+            mode: 'tomato',      // tomato | free
+            phase: 'work',       // work | brk
+            running: false,
+            total: 25 * 60000,   // 当前阶段总时长(ms)
+            endAt: 0,            // 阶段到期时间戳（绝对时间，切后台不丢）
+            carried: 0,          // 已流逝时长（暂停时保留）
+            freeAt: 0,           // 自由模式起始时间戳
+            paused: false
+        };
+
+        /* 当天已完成的番茄数（用于 4 个一轮的长休息判定） */
+        function cycDone() { return S.stats.cyc || 0; }
+
+        /* 计算“当前应处于哪个阶段、总时长多少” */
+        function phaseTotal(phase) {
+            if (phase === 'work') return S.settings.work * 60000;
+            var c = cycDone();
+            return ((c > 0 && c % 4 === 0) ? S.settings.long : S.settings.brk) * 60000;
+        }
+
+        function resetPhase(phase, mode) {
+            T.mode = mode || T.mode;
+            T.phase = phase;
+            T.running = false;
+            T.paused = false;
+            T.carried = 0;
+            T.endAt = 0;
+            T.freeAt = 0;
+            T.total = (T.mode === 'free') ? 30 * 60000 : phaseTotal(phase);
+        }
+
+        function elapsedMs() {
+            if (T.mode === 'free') {
+                var e = T.carried;
+                if (T.running) e += Date.now() - T.freeAt;
+                return Math.max(0, e);
+            }
+            if (T.running) return clamp(T.total - (T.endAt - Date.now()), 0, T.total);
+            return clamp(T.carried, 0, T.total);
+        }
+
+        function remainMs() {
+            if (T.mode === 'free') return -elapsedMs();
+            if (T.running) return Math.max(0, T.endAt - Date.now());
+            return Math.max(0, T.total - T.carried);
+        }
+
+        function startTimer() {
+            if (T.mode === 'free') {
+                T.freeAt = Date.now();
+            } else {
+                T.endAt = Date.now() + Math.max(0, T.total - T.carried);
+            }
+            T.running = true;
+            T.paused = false;
+            document.title = (T.mode === 'free' ? '🧘 ' : (T.phase === 'work' ? '🍅 ' : '☕ ')) + '专注中 - 找乐子';
+            applyDnd();
+            paint();
+            saveSession();
+        }
+
+        function pauseTimer() {
+            if (!T.running) return;
+            T.carried = elapsedMs();
+            T.running = false;
+            T.paused = true;
+            document.title = '学习计时与专注模式 - 找乐子';
+            applyDnd();
+            paint();
+            saveSession();
+        }
+
+        function resetTimer(quiet) {
+            if (T.mode === 'free') { T.carried = 0; T.freeAt = 0; }
+            else { T.carried = 0; T.endAt = 0; T.total = phaseTotal(T.phase); }
+            T.running = false;
+            T.paused = false;
+            S.session = null;
+            save();
+            document.title = '学习计时与专注模式 - 找乐子';
+            applyDnd();
+            if (!quiet) toast('已重置本轮计时', 'warn');
+            paint();
+        }
+
+        /* 每 250ms 校准一次；切回前台时也立即校准 */
+        setInterval(function () { tick(); }, 250);
+
+        /* 进行中每 30 秒落盘一次会话，直接关标签也能接着续（暂停/开始时会立刻落盘） */
+        var lastSessSave = 0;
+        function maybeSaveSession() {
+            var n = Date.now();
+            if (n - lastSessSave > 30000) { lastSessSave = n; saveSession(); }
+        }
+
+        function tick() {
+            applyDnd();
+            if (!T.running) { hideBreakMaskIfDone(); return; }
+            maybeSaveSession();
+            if (T.mode === 'tomato' && Date.now() >= T.endAt) {
+                T.running = false;
+                completePhase();
+                return;
+            }
+            paint();
+            if (T.mode === 'tomato' && T.phase === 'brk') paintBreakMask();
+        }
+
+        /* ==================== 记录与成就 ==================== */
+        function ensureDay(min, tom) {
+            var d = todayStr();
+            var e = S.stats.days[d] || { min: 0, tom: 0 };
+            e.min += min;
+            if (tom) e.tom += tom;
+            S.stats.days[d] = e;
+        }
+
+        function addLog(mode, min, task) {
+            if (!(min > 0)) return;
+            S.logs.unshift({
+                t: new Date().toISOString(),
+                mode: mode,
+                min: min,
+                task: (task || '').trim()
+            });
+            if (S.logs.length > 300) S.logs.length = 300;
+        }
+
+        function streak() {
+            var d = new Date(), n = 0;
+            while (true) {
+                var e = S.stats.days[dstr(d)];
+                if (e && e.min > 0) { n++; d.setDate(d.getDate() - 1); }
+                else break;
+            }
+            return n;
+        }
+
+        var ACHS = [
+            { id: 'first', ic: '🌱', nm: '初次专注', ds: '完成你的第一次专注' },
+            { id: 't10', ic: '🍅', nm: '番茄达人', ds: '单日完成 10 个番茄' },
+            { id: 'streak7', ic: '🔥', nm: '持之以恒', ds: '连续专注 7 天' },
+            { id: 'h100', ic: '⏳', nm: '时间领主', ds: '累计专注 100 小时' },
+            { id: 'free60', ic: '🧘', nm: '深度马拉松', ds: '单次自由专注满 60 分钟' },
+            { id: 'night', ic: '🌙', nm: '深夜书房', ds: '在 22:00 - 02:00 完成一次专注' }
+        ];
+
+        function unlock(id) {
+            if (S.ach[id]) return false;
+            S.ach[id] = { d: todayStr() };
+            var m = null;
+            for (var i = 0; i < ACHS.length; i++) { if (ACHS[i].id === id) { m = ACHS[i]; break; } }
+            if (m) setTimeout(function () { toast('🏆 解锁成就：' + m.ic + ' ' + m.nm, 'ok'); }, 1700);
+            return true;
+        }
+
+        function anyFocus() {
+            if (S.stats.totalTom > 0) return true;
+            var ds = S.stats.days;
+            for (var k in ds) { if (ds.hasOwnProperty(k) && ds[k].min > 0) return true; }
+            return false;
+        }
+
+        function checkAch() {
+            if (anyFocus()) unlock('first');
+            var today = S.stats.days[todayStr()];
+            if (today && (today.tom || 0) >= 10) unlock('t10');
+            if (streak() >= 7) unlock('streak7');
+            if (S.stats.totalMin >= 6000) unlock('h100');
+            var t = new Date().getHours();
+            if (t >= 22 || t < 2) unlock('night');
+        }
+
+        /* ==================== 环形进度绘制 ==================== */
+        /* f = 剩余比例（1=刚开始，0=即将结束）：蓝 → 橙 → 红 */
+        function ringColor(f) {
+            f = clamp(f, 0, 1);
+            var h;
+            if (f > 0.5) h = 35 + ((f - 0.5) / 0.5) * 175;
+            else h = 8 + (f / 0.5) * 27;
+            return 'hsl(' + Math.round(h) + ',88%,58%)';
+        }
+
+        function paint() {
+            var stateTxt = '', stateCls = '', subHtml = '', timeStr;
+            if (T.mode === 'free') {
+                var e = elapsedMs();
+                timeStr = hm(e / 1000);
+                var cyc = clamp(e / (30 * 60000), 0, 1);
+                el.ringProg.style.strokeDashoffset = (CIRC * (1 - cyc)).toFixed(1);
+                el.ringProg.style.stroke = ringColor(1 - cyc);
+                stateCls = 'work';
+                stateTxt = T.running ? '自由专注中' : (e > 0 ? '已暂停' : '随时开始');
+                var td0 = S.stats.days[todayStr()] || { min: 0 };
+                subHtml = '本轮 ' + Math.floor(e / 60000) + ' 分钟 · 今日 ' + (td0.min || 0) + ' 分钟';
+            } else {
+                var r = remainMs(), t = T.total || 1;
+                timeStr = hm(r / 1000);
+                var prog = clamp((t - r) / t, 0, 1);
+                el.ringProg.style.strokeDashoffset = (CIRC * (1 - prog)).toFixed(1);
+                el.ringProg.style.stroke = ringColor(1 - prog);
+                if (T.phase === 'work') {
+                    stateCls = 'work';
+                    stateTxt = T.running ? '专注工作中' : (T.paused ? '已暂停' : '准备专注');
+                    var td1 = S.stats.days[todayStr()] || { tom: 0 };
+                    subHtml = '今日已完成 <b>' + (td1.tom || 0) + '</b> 个番茄';
+                } else {
+                    stateCls = 'brk';
+                    stateTxt = T.running ? '正在休息' : (T.paused ? '休息已暂停' : '准备休息');
+                    subHtml = '下一轮：<b>' + S.settings.work + '</b> 分钟专注';
+                }
+            }
+            el.rcState.className = 'rc-state' + (stateCls ? ' ' + stateCls : '');
+            el.rcStateTxt.textContent = stateTxt;
+            el.rcTime.textContent = timeStr;
+            el.rcSub.innerHTML = subHtml;
+            el.ringWrap.classList.toggle('running', T.running);
+
+            var label;
+            if (T.mode === 'free') {
+                label = T.running ? '✓ 结束并记录' : (T.carried > 0 ? '▶ 继续' : '▶ 开始专注');
+            } else {
+                label = T.running ? '⏸ 暂停' : (T.paused ? '▶ 继续' : '▶ 开始专注');
+            }
+            el.btnMain.textContent = label;
+            el.btnSkip.style.display = (T.mode === 'tomato') ? '' : 'none';
+        }
+
+        /* ==================== 提示音 ==================== */
+        function ding() {
+            try {
+                var AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return;
+                var ctx = (Sound && Sound.ctx) ? Sound.ctx : new AC();
+                var t0 = ctx.currentTime;
+                var freqs = [880, 880, 1320];
+                for (var i = 0; i < freqs.length; i++) {
+                    (function (dt, f) {
+                        var o = ctx.createOscillator(), g = ctx.createGain();
+                        o.type = 'sine';
+                        o.frequency.setValueAtTime(f, t0 + dt);
+                        g.gain.setValueAtTime(0.0001, t0 + dt);
+                        g.gain.exponentialRampToValueAtTime(0.28, t0 + dt + 0.02);
+                        g.gain.exponentialRampToValueAtTime(0.0001, t0 + dt + 0.24);
+                        o.connect(g);
+                        g.connect(ctx.destination);
+                        o.start(t0 + dt);
+                        o.stop(t0 + dt + 0.28);
+                    })(i * 0.19, freqs[i]);
+                }
+            } catch (e) { }
+        }
+
+        /* ==================== 阶段完成 / 自由专注结束 ==================== */
+        function completePhase() {
+            var wasWork = (T.phase === 'work');
+            var mins = Math.round(T.total / 60000);
+
+            el.ringWrap.classList.remove('celebrate');
+            void el.ringWrap.offsetWidth;
+            el.ringWrap.classList.add('celebrate');
+            el.rcState.className = 'rc-state done';
+            el.rcStateTxt.textContent = '✓ 完成！';
+
+            if (wasWork) {
+                addLog('tomato', mins, el.taskInput.value);
+                S.stats.cyc = (S.stats.cyc || 0) + 1;
+                S.stats.totalTom += 1;
+                S.stats.totalMin += mins;
+                ensureDay(mins, 1);
+                checkAch();
+                var isLong = (S.stats.cyc > 0 && S.stats.cyc % 4 === 0);
+                var dayTom = (S.stats.days[todayStr()] || { tom: 0 }).tom;
+                toast('🍅 第 ' + dayTom + ' 个番茄完成！' + (isLong ? ' 进入 ' + S.settings.long + ' 分钟长休息' : ''), 'ok');
+                ding();
+            } else {
+                closeBreakMask();
+                toast('☕ 休息结束，回来继续', 'ok');
+                ding();
+            }
+            S.session = null;
+            save();
+            renderAll();
+
+            setTimeout(function () {
+                el.ringWrap.classList.remove('celebrate');
+                if (wasWork) {
+                    resetPhase('brk');
+                    if (S.settings.auto) {
+                        startTimer();
+                        openBreakMask();
+                    } else {
+                        paint();
+                        toast('休息 ' + Math.round(T.total / 60000) + ' 分钟', 'warn');
+                    }
+                } else {
+                    resetPhase('work');
+                    if (S.settings.auto) startTimer();
+                    else { paint(); toast('准备好了，开始下一轮专注', 'ok'); }
+                }
+            }, 1500);
+        }
+
+        function finishFree() {
+            var secs = Math.floor(elapsedMs() / 1000);
+            var mins = Math.round(secs / 60);
+            T.running = false;
+            T.paused = false;
+            T.carried = 0;
+            T.freeAt = 0;
+            closeBreakMask();
+            if (mins >= 1) {
+                addLog('free', mins, el.taskInput.value);
+                S.stats.totalMin += mins;
+                ensureDay(mins, 0);
+                if (secs >= 3600) unlock('free60');
+                checkAch();
+                save();
+                toast('✅ 自由专注 ' + mins + ' 分钟已记录', 'ok');
+            } else {
+                toast(secs >= 20 ? '专注不足 1 分钟，本次未记录' : '已取消本轮计时', 'warn');
+            }
+            resetPhase('work', 'free');
+            S.session = null;
+            save();
+            paint();
+            renderAll();
+        }
+
+
+        /* ==================== 环境白噪音（Web Audio 实时合成） ==================== */
+        var Sound = {
+            ctx: null, master: null, nodes: [], srcs: [], active: '', vol: 0.55,
+
+            ensure: function () {
+                if (this.ctx) return true;
+                var AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return false;
+                this.ctx = new AC();
+                this.master = this.ctx.createGain();
+                this.master.gain.value = this.vol;
+                this.master.connect(this.ctx.destination);
+                return true;
+            },
+
+            /* 生成 noise 缓冲：pink（粉噪）/ brown（棕噪） */
+            buf: function (seconds, kind) {
+                var c = this.ctx;
+                var len = Math.floor(c.sampleRate * seconds);
+                var b = c.createBuffer(1, len, c.sampleRate);
+                var d = b.getChannelData(0);
+                var i;
+                if (kind === 'brown') {
+                    var last = 0;
+                    for (i = 0; i < len; i++) {
+                        var w2 = Math.random() * 2 - 1;
+                        d[i] = (last + 0.02 * w2) / 1.02;
+                        last = d[i];
+                        d[i] *= 3.2;
+                    }
+                } else {
+                    var b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+                    for (i = 0; i < len; i++) {
+                        var w = Math.random() * 2 - 1;
+                        b0 = 0.99886 * b0 + w * 0.0555179;
+                        b1 = 0.99332 * b1 + w * 0.0750759;
+                        b2 = 0.96900 * b2 + w * 0.1538520;
+                        b3 = 0.86650 * b3 + w * 0.3104856;
+                        b4 = 0.55000 * b4 + w * 0.5329522;
+                        b5 = -0.7616 * b5 - w * 0.0168980;
+                        d[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
+                        b6 = w * 0.115926;
+                    }
+                }
+                return b;
+            },
+
+            noise: function (kind) {
+                var s = this.ctx.createBufferSource();
+                s.buffer = this.buf(4, kind);
+                s.loop = true;
+                this.srcs.push(s);
+                return s;
+            },
+
+            /* LFO：缓慢调制某个 gain，制造风声/低语的起伏 */
+            lfo: function (target, freq, depth, base) {
+                var o = this.ctx.createOscillator(), g = this.ctx.createGain();
+                o.type = 'sine';
+                o.frequency.value = freq;
+                g.gain.value = depth;
+                target.gain.value = base;
+                o.connect(g);
+                g.connect(target.gain);
+                o.start();
+                this.nodes.push(o);
+                return target;
+            },
+
+            filter: function (type, freq, q) {
+                var f = this.ctx.createBiquadFilter();
+                f.type = type;
+                f.frequency.value = freq;
+                f.Q.value = q || 0.4;
+                return f;
+            },
+
+            gain: function (v) {
+                var g = this.ctx.createGain();
+                g.gain.value = v;
+                return g;
+            },
+
+            /* 鸟鸣：不定时短促上扬音 */
+            chirpTimer: null,
+            startChirp: function () {
+                var self = this;
+                function one() {
+                    if (self.active !== 'forest' || !self.ctx) return;
+                    var t0 = self.ctx.currentTime;
+                    var o = self.ctx.createOscillator(), g = self.ctx.createGain();
+                    o.type = 'sine';
+                    var f0 = 1900 + Math.random() * 900;
+                    o.frequency.setValueAtTime(f0, t0);
+                    o.frequency.exponentialRampToValueAtTime(f0 * (1.3 + Math.random() * 0.5), t0 + 0.22);
+                    g.gain.setValueAtTime(0.0001, t0);
+                    g.gain.exponentialRampToValueAtTime(0.035, t0 + 0.05);
+                    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.3);
+                    o.connect(g);
+                    g.connect(self.master);
+                    o.start(t0);
+                    o.stop(t0 + 0.34);
+                    self.chirpTimer = setTimeout(one, 3800 + Math.random() * 6500);
+                }
+                self.chirpTimer = setTimeout(one, 2500 + Math.random() * 3000);
+            },
+
+            stopAll: function () {
+                var i;
+                try {
+                    for (i = 0; i < this.srcs.length; i++) {
+                        try { this.srcs[i].stop(); } catch (e) { }
+                        try { this.srcs[i].disconnect(); } catch (e) { }
+                    }
+                } catch (e) { }
+                this.srcs = [];
+                try {
+                    for (i = 0; i < this.nodes.length; i++) {
+                        try { this.nodes[i].stop(); } catch (e) { }
+                        try { this.nodes[i].disconnect(); } catch (e) { }
+                    }
+                } catch (e) { }
+                this.nodes = [];
+                if (this.chirpTimer) { clearTimeout(this.chirpTimer); this.chirpTimer = null; }
+            },
+
+            start: function (kind) {
+                if (!this.ensure()) { toast('当前浏览器不支持音频合成', 'err'); return false; }
+                if (this.ctx.state === 'suspended') { try { this.ctx.resume(); } catch (e) { } }
+                this.stopAll();
+                var c = this.ctx;
+
+                if (kind === 'rain') {
+                    var g1 = this.gain(0.5);
+                    var f1 = this.filter('lowpass', 1500, 0.35);
+                    var s1 = this.noise('pink');
+                    s1.connect(f1); f1.connect(g1); g1.connect(this.master);
+                    this.lfo(g1, 0.11, 0.08, 0.5);
+                    s1.start();
+                } else if (kind === 'cafe') {
+                    var gb = this.gain(0.6);
+                    var fb = this.filter('lowpass', 430, 0.3);
+                    var sB = this.noise('brown');
+                    sB.connect(fb); fb.connect(gb); gb.connect(this.master);
+                    this.lfo(gb, 1.3, 0.16, 0.55);
+                    this.lfo(gb, 0.41, 0.12, 0.55);
+                    sB.start();
+                    var g2 = this.gain(0.05);
+                    var f2 = this.filter('bandpass', 2600, 0.7);
+                    var s2 = this.noise('pink');
+                    s2.connect(f2); f2.connect(g2); g2.connect(this.master);
+                    s2.start();
+                } else if (kind === 'forest') {
+                    var gf = this.gain(0.32);
+                    var ff = this.filter('bandpass', 950, 0.6);
+                    var sf = this.noise('pink');
+                    sf.connect(ff); ff.connect(gf); gf.connect(this.master);
+                    this.lfo(gf, 0.07, 0.16, 0.3);
+                    sf.start();
+                    var g3 = this.gain(0.08);
+                    var f3 = this.filter('lowpass', 320, 0.4);
+                    var s3 = this.noise('brown');
+                    s3.connect(f3); f3.connect(g3); g3.connect(this.master);
+                    s3.start();
+                    this.startChirp();
+                } else { /* library */
+                    var gl = this.gain(0.24);
+                    var fl = this.filter('lowpass', 250, 0.35);
+                    var sl = this.noise('brown');
+                    sl.connect(fl); fl.connect(gl); gl.connect(this.master);
+                    var hum = c.createOscillator(), gh = c.createGain();
+                    hum.type = 'sine';
+                    hum.frequency.value = 55;
+                    gh.gain.value = 0.012;
+                    hum.connect(gh); gh.connect(this.master);
+                    hum.start();
+                    this.nodes.push(hum);
+                    sl.start();
+                }
+                this.active = kind;
+                return true;
+            },
+
+            stop: function () {
+                this.stopAll();
+                this.active = '';
+            },
+
+            setVol: function (v) {
+                this.vol = v;
+                if (this.master) {
+                    try {
+                        this.master.gain.cancelScheduledValues(this.ctx.currentTime);
+                        this.master.gain.setTargetAtTime(v, this.ctx.currentTime, 0.06);
+                    } catch (e) { this.master.gain.value = v; }
+                }
+            }
+        };
+
+
+        /* ==================== 环境音 UI ==================== */
+        var AMBS = [
+            { id: 'rain', ic: '🌧️', nm: '淅沥雨声', d: '粉噪 + 低通滤波，像窗外的连续雨幕，适合写作与阅读' },
+            { id: 'cafe', ic: '☕', nm: '咖啡馆', d: '棕噪 + 低频人声起伏，背景里永远有聊不完的对话' },
+            { id: 'forest', ic: '🌲', nm: '森林', d: '风吹树叶的宽带噪声，偶尔穿插几声鸟鸣' },
+            { id: 'library', ic: '📚', nm: '图书馆', d: '极低频底噪 + 55Hz 空调嗡鸣，安静到能听见纸页' }
+        ];
+
+        function renderAmb() {
+            var html = '';
+            for (var i = 0; i < AMBS.length; i++) {
+                var a = AMBS[i];
+                var on = (Sound.active === a.id);
+                html += '<button type="button" class="amb-card' + (on ? ' on' : '') + '" data-amb="' + a.id + '" ' +
+                    'aria-pressed="' + (on ? 'true' : 'false') + '">' +
+                    '<span class="amb-ic">' + a.ic + '</span>' +
+                    '<span class="amb-nm">' + a.nm + '</span>' +
+                    '<span class="amb-desc">' + a.d + '</span>' +
+                    '<span class="amb-state"><span class="amb-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' +
+                    (on ? '播放中 · 再点一次关闭' : '点击开启') + '</span></button>';
+            }
+            el.ambGrid.innerHTML = html;
+        }
+
+        function toggleAmb(id) {
+            if (Sound.active === id) {
+                Sound.stop();
+                S.settings.amb = '';
+                save();
+                renderAmb();
+                toast('环境音已关闭', 'warn');
+                return;
+            }
+            if (Sound.start(id)) {
+                S.settings.amb = id;
+                S.settings.vol = Math.round(Sound.vol * 100);
+                save();
+                renderAmb();
+                var nm = '';
+                for (var i = 0; i < AMBS.length; i++) { if (AMBS[i].id === id) { nm = AMBS[i].nm; break; } }
+                toast('🔊 ' + nm + ' 已开启', 'ok');
+            }
+        }
+
+        function paintVol() {
+            el.volIn.value = String(Math.round(Sound.vol * 100));
+            el.volVal.textContent = Math.round(Sound.vol * 100) + '%';
+            el.volIc.textContent = Sound.vol === 0 ? '🔇' : (Sound.vol < 0.35 ? '🔈' : '🔊');
+        }
+
+        function bindAmb() {
+            el.ambGrid.addEventListener('click', function (e) {
+                var b = e.target.closest('[data-amb]');
+                if (!b) return;
+                toggleAmb(b.getAttribute('data-amb'));
+            });
+            el.volIn.addEventListener('input', function () {
+                var v = clamp(parseInt(el.volIn.value, 10) || 0, 0, 100);
+                Sound.setVol(v / 100);
+                S.settings.vol = v;
+                paintVol();
+                clearTimeout(bindAmb._t);
+                bindAmb._t = setTimeout(save, 400);
+            });
+        }
+
+
+        /* ==================== 强制休息遮罩 ==================== */
+        var EYE_STEPS = [
+            { ic: '👀', t: '20-20-20 法则：盯着 20 英尺（约 6 米）外的景物，看 20 秒' },
+            { ic: '💧', t: '缓慢眨眼 20 次，让泪膜均匀铺满眼球表面' },
+            { ic: '🌳', t: '把目光放到窗外最远的点，让睫状肌彻底放松' },
+            { ic: '✋', t: '用掌心热敷双眼 15 秒，感受掌心的温度' },
+            { ic: '💆', t: '颈部缓慢左右转动各 3 次，松开肩颈的紧张' },
+            { ic: '🌬️', t: '深呼吸三次：吸气 4 秒、呼气 6 秒，把注意力带回来' }
+        ];
+        var eyeIdx = 0, eyeTimer = null;
+
+        function openBreakMask() {
+            if (T.mode !== 'tomato' || T.phase !== 'brk' || !T.running) return;
+            el.brkMask.classList.add('show');
+            eyeIdx = 0;
+            showEyeStep();
+            if (eyeTimer) clearInterval(eyeTimer);
+            eyeTimer = setInterval(function () {
+                eyeIdx = (eyeIdx + 1) % EYE_STEPS.length;
+                showEyeStep();
+            }, 30000);
+            paintBreakMask();
+        }
+
+        function showEyeStep() {
+            var s = EYE_STEPS[eyeIdx];
+            el.brkIc.textContent = s.ic;
+            el.brkStep.textContent = s.t;
+        }
+
+        function paintBreakMask() {
+            if (!el.brkMask.classList.contains('show')) return;
+            var r = remainMs();
+            el.brkTime.textContent = hm(r / 1000);
+            var isLong = (cycDone() > 0 && cycDone() % 4 === 0);
+            el.brkTitle.textContent = isLong ? '长休息中…' : '休息中…';
+        }
+
+        function closeBreakMask() {
+            el.brkMask.classList.remove('show');
+            if (eyeTimer) { clearInterval(eyeTimer); eyeTimer = null; }
+        }
+
+        /* tick() 中用到：计时停止时自动收起遮罩 */
+        function hideBreakMaskIfDone() {
+            if (el.brkMask.classList.contains('show') && !T.running) closeBreakMask();
+        }
+
+        function bindBreakMask() {
+            el.brkSkip.addEventListener('click', function () {
+                closeBreakMask();
+                T.running = false;
+                resetPhase('work');
+                S.session = null;
+                save();
+                paint();
+                toast('休息结束，继续专注！', 'ok');
+            });
+            el.brkStay.addEventListener('click', function () {
+                closeBreakMask();
+                toast('遮罩已收起，休息继续计时', 'ok');
+            });
+        }
+
+        /* ==================== 勿扰模式 ==================== */
+        function applyDnd() {
+            document.body.classList.toggle('dnd', !!(S.settings.dnd && T.running));
+        }
+
+        /* ==================== 设置与按钮 ==================== */
+        var LIM = { work: [10, 90], brk: [1, 30], long: [5, 60] };
+        var STEP = { work: 5, brk: 1, long: 1 };
+
+        function each(nodes, fn) {
+            for (var i = 0; i < nodes.length; i++) fn(nodes[i], i);
+        }
+
+        function syncSettingsUI() {
+            el.vWork.textContent = S.settings.work;
+            el.vBrk.textContent = S.settings.brk;
+            el.vLong.textContent = S.settings.long;
+            el.swAuto.checked = !!S.settings.auto;
+            el.swDnd.checked = !!S.settings.dnd;
+        }
+
+        function bindSettings() {
+            each(document.querySelectorAll('.stp'), function (b) {
+                b.addEventListener('click', function () {
+                    var k = b.getAttribute('data-k');
+                    var d = parseInt(b.getAttribute('data-d'), 10);
+                    var lim = LIM[k];
+                    var v = clamp(S.settings[k] + d, lim[0], lim[1]);
+                    if (v === S.settings[k]) {
+                        toast(d > 0 ? '已达到最大 ' + lim[1] + ' 分钟' : '已达到最小 ' + lim[0] + ' 分钟', 'warn');
+                        return;
+                    }
+                    S.settings[k] = v;
+                    save();
+                    syncSettingsUI();
+                    /* 未在计时时，把改动立刻反映到环形进度 */
+                    if (T.mode === 'tomato' && !T.running) {
+                        if ((k === 'work' && T.phase === 'work') || (k !== 'work' && T.phase === 'brk')) {
+                            resetTimer(true);
+                        }
+                    }
+                });
+            });
+
+            el.swAuto.addEventListener('change', function () {
+                S.settings.auto = el.swAuto.checked;
+                save();
+                toast('自动开始下一轮：' + (el.swAuto.checked ? '已开启' : '已关闭'), 'ok');
+            });
+
+            el.swDnd.addEventListener('change', function () {
+                S.settings.dnd = el.swDnd.checked;
+                save();
+                applyDnd();
+                toast('专注勿扰：' + (el.swDnd.checked ? '已开启' : '已关闭'), 'ok');
+            });
+        }
+
+        function switchMode(m) {
+            if (T.mode === m) { paint(); return; }
+            /* 自由专注进行中切走会丢时长，先确认 */
+            if (T.mode === 'free' && T.running && elapsedMs() >= 60000) {
+                var lostMin = Math.max(1, Math.floor(elapsedMs() / 60000));
+                confirmDialog('🧘 放弃本次自由专注？',
+                    '本轮已专注 <b>' + lostMin + '</b> 分钟。切换到番茄钟后，这段时长<b>不会</b>被记入统计。',
+                    function () { doSwitchMode(m); });
+                return;
+            }
+            doSwitchMode(m);
+        }
+
+        function doSwitchMode(m) {
+            T.mode = m;
+            T.running = false;
+            T.paused = false;
+            T.carried = 0;
+            T.endAt = 0;
+            T.freeAt = 0;
+            T.phase = 'work';
+            T.total = (m === 'free') ? 30 * 60000 : phaseTotal('work');
+            closeBreakMask();
+            el.tabTomato.classList.toggle('on', m === 'tomato');
+            el.tabTomato.setAttribute('aria-selected', m === 'tomato' ? 'true' : 'false');
+            el.tabFree.classList.toggle('on', m === 'free');
+            el.tabFree.setAttribute('aria-selected', m === 'free' ? 'true' : 'false');
+            document.title = '学习计时与专注模式 - 找乐子';
+            S.session = null;
+            save();
+            paint();
+            applyDnd();
+            toast(m === 'free' ? '已切换到自由专注，随时点"结束并记录"' : '已切换到番茄钟 25/5/15', 'ok');
+        }
+
+        function bindButtons() {
+            el.tabTomato.addEventListener('click', function () { switchMode('tomato'); });
+            el.tabFree.addEventListener('click', function () { switchMode('free'); });
+
+            el.btnMain.addEventListener('click', function () {
+                if (T.mode === 'free') {
+                    if (T.running) { finishFree(); return; }
+                    startTimer();
+                    if (!T.carried) toast('自由专注已开始，随时点"结束并记录"', 'ok');
+                    return;
+                }
+                if (T.running) { pauseTimer(); return; }
+                startTimer();
+                if (T.phase === 'brk') openBreakMask();
+                applyDnd();
+            });
+
+            el.btnReset.addEventListener('click', function () {
+                resetTimer(false);
+                applyDnd();
+            });
+
+            el.btnSkip.addEventListener('click', function () {
+                if (T.mode !== 'tomato') return;
+                if (T.phase === 'work') {
+                    closeBreakMask();
+                    T.running = false;
+                    resetPhase('brk');
+                    toast('已跳过本轮工作，先进入休息', 'warn');
+                } else {
+                    closeBreakMask();
+                    T.running = false;
+                    resetPhase('work');
+                    toast('已跳过休息，开始下一轮', 'warn');
+                }
+                S.session = null;
+                save();
+                paint();
+                applyDnd();
+                renderAll();
+            });
+
+            document.addEventListener('keydown', function (e) {
+                if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+                if (e.key === 'Escape' && el.brkMask.classList.contains('show')) { closeBreakMask(); return; }
+                if (e.key === ' ' || e.code === 'Space') {
+                    e.preventDefault();
+                    el.btnMain.click();
+                }
+            });
+        }
+
+
+        /* ==================== 专注统计 ==================== */
+        function renderKpi() {
+            var ds = S.stats.days;
+            var td = ds[todayStr()] || { min: 0, tom: 0 };
+            var days = Object.keys(ds);
+            var cnt = 0;
+            for (var i = 0; i < days.length; i++) { if (ds[days[i]].min > 0) cnt++; }
+            var list = weekData();
+            var wk = 0;
+            for (var j = 0; j < list.length; j++) wk += list[j].min;
+            var hrs = (S.stats.totalMin / 60);
+
+            var items = [
+                { ic: '🍅', lb: '今日番茄', val: (td.tom || 0), unit: '个', sub: td.min ? '≈ ' + fmtDur(td.min) : '今天还没开始' },
+                { ic: '⏱️', lb: '今日时长', val: (td.min || 0), unit: '分钟', sub: streak() > 1 ? '已连续 ' + streak() + ' 天' : (td.min ? '从今天算起第 1 天' : '从第一个番茄开始') },
+                { ic: '📅', lb: '本周时长', val: wk, unit: '分钟', sub: wk ? '≈ ' + fmtDur(wk) : '本周待加油' },
+                { ic: '🎯', lb: '累计专注', val: (hrs >= 10 ? hrs.toFixed(0) : hrs.toFixed(1)), unit: '小时', sub: '共 ' + S.stats.totalTom + ' 个番茄' },
+                { ic: '🔥', lb: '连续天数', val: streak(), unit: '天', sub: cnt ? '历史有效 ' + cnt + ' 天' : '尚无记录' }
+            ];
+
+            var html = '';
+            for (var k = 0; k < items.length; k++) {
+                var it = items[k];
+                html += '<div class="kpi"><div class="kpi-lbl">' + it.ic + ' ' + it.lb + '</div>' +
+                    '<div class="kpi-val">' + it.val + '<em>' + it.unit + '</em></div>' +
+                    '<div class="kpi-sub">' + it.sub + '</div></div>';
+            }
+            el.kpiGrid.innerHTML = html;
+        }
+
+        function weekData() {
+            var out = [];
+            var d = new Date();
+            d.setDate(d.getDate() - 6);
+            var wkNames = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            for (var i = 0; i < 7; i++) {
+                var k = dstr(d);
+                var e = S.stats.days[k] || { min: 0, tom: 0 };
+                out.push({ k: k, min: e.min, tom: e.tom, w: wkNames[d.getDay()], today: (k === todayStr()) });
+                d.setDate(d.getDate() + 1);
+            }
+            return out;
+        }
+
+        function renderBars() {
+            var list = weekData();
+            var max = 1;
+            var sum = 0;
+            for (var i = 0; i < list.length; i++) {
+                max = Math.max(max, list[i].min);
+                sum += list[i].min;
+            }
+            var html = '';
+            for (var j = 0; j < list.length; j++) {
+                var b = list[j];
+                var h = Math.round((b.min / max) * 100);
+                html += '<div class="bar-col' + (b.today ? ' today' : '') + '" title="' + b.k + ' · ' + b.min + ' 分钟 · ' + b.tom + ' 个番茄">' +
+                    '<div class="bar-num">' + (b.min || '') + '</div>' +
+                    '<div class="bar-track"><div class="bar" style="height:' + h + '%"></div></div>' +
+                    '<div class="bar-lbl">' + (b.today ? '今' : b.w) + '</div></div>';
+            }
+            el.bars.innerHTML = html;
+            el.weekSub.textContent = '合计 ' + (sum ? fmtDur(sum) : '0 分钟');
+        }
+
+        function renderDonut() {
+            var tom = 0, free = 0, i;
+            for (i = 0; i < S.logs.length; i++) {
+                if (S.logs[i].mode === 'free') free += S.logs[i].min;
+                else tom += S.logs[i].min;
+            }
+            var total = tom + free;
+            var leg = '';
+            if (!total) {
+                el.donutTom.setAttribute('stroke-dasharray', '0 100');
+                el.donutFree.setAttribute('stroke-dasharray', '0 100');
+                el.donutLeg.innerHTML = '<div class="leg-item" style="color:var(--dim)">完成一次专注后这里会显示分布</div>';
+                el.modeSub.textContent = '暂无数据';
+                return;
+            }
+            var pt = tom / total, pf = free / total;
+            el.donutTom.setAttribute('stroke-dasharray', (pt * 100).toFixed(1) + ' ' + (100 - pt * 100).toFixed(1));
+            el.donutFree.setAttribute('stroke-dasharray', (pf * 100).toFixed(1) + ' ' + (100 - pf * 100).toFixed(1));
+            el.donutFree.setAttribute('stroke-dashoffset', String(-Math.round(pt * 100)));
+            leg += '<div class="leg-item"><span class="leg-sw" style="background:#e14b8a"></span>番茄钟' +
+                '<span class="leg-pct">' + tom + ' 分 · ' + Math.round(pt * 100) + '%</span></div>';
+            leg += '<div class="leg-item"><span class="leg-sw" style="background:#38ef7d"></span>自由专注' +
+                '<span class="leg-pct">' + free + ' 分 · ' + Math.round(pf * 100) + '%</span></div>';
+            el.donutLeg.innerHTML = leg;
+            el.modeSub.textContent = '近 ' + S.logs.length + ' 条记录合计 ' + fmtDur(total);
+        }
+
+        /* ==================== 成就徽章 ==================== */
+        function renderAch() {
+            var got = 0;
+            var html = '';
+            for (var i = 0; i < ACHS.length; i++) {
+                var a = ACHS[i];
+                var g = !!S.ach[a.id];
+                if (g) got++;
+                html += '<div class="ach' + (g ? ' got' : '') + '">' +
+                    '<span class="lock">🔒</span>' +
+                    '<span class="ach-ic">' + a.ic + '</span>' +
+                    '<span class="ach-nm">' + a.nm + '</span>' +
+                    '<span class="ach-ds">' + a.ds + '</span>' +
+                    (g ? '<span class="ach-dt">🏅 ' + S.ach[a.id].d + '</span>' : '') +
+                    '</div>';
+            }
+            el.achGrid.innerHTML = html;
+            el.achSub.textContent = '已解锁 ' + got + ' / ' + ACHS.length;
+        }
+
+        /* ==================== 专注日志 ==================== */
+        function renderLogs() {
+            var list = S.logs.slice(0, 50);
+            if (!list.length) {
+                el.logBody.innerHTML = '<div class="empty">' +
+                    '<div class="empty-ic">🌱</div>' +
+                    '<div class="empty-t">还没有专注记录</div>' +
+                    '<div class="empty-d">点击上方"开始专注"，完成第一个番茄之后，这里就会出现你的第一条专注日志。<br>每一次专注都会带上当前的任务描述和时间。</div>' +
+                    '<button type="button" class="btn btn-primary" id="emptyStart">▶ 立刻开始第一个番茄</button></div>';
+                var b = $('emptyStart');
+                if (b) b.addEventListener('click', function () {
+                    if (T.mode !== 'tomato') switchMode('tomato');
+                    if (!T.running) startTimer();
+                });
+                el.logSub.textContent = '完成一次专注即可解锁';
+                return;
+            }
+            var html = '<div class="log-list">';
+            for (var i = 0; i < list.length; i++) {
+                var L = list[i];
+                var d = new Date(L.t);
+                if (isNaN(d.getTime())) d = new Date();
+                var hh = pad(d.getHours()) + ':' + pad(d.getMinutes());
+                var day = (d.getMonth() + 1) + '/' + d.getDate();
+                var isTom = (L.mode !== 'free');
+                html += '<div class="log-item">' +
+                    '<span class="log-ic">' + (isTom ? '🍅' : '🧘') + '</span>' +
+                    '<span class="log-mid"><div class="log-t">' + (L.task ? esc(L.task) : (isTom ? '番茄专注' : '自由专注')) + '</div>' +
+                    '<div class="log-meta">' + day + ' ' + hh + ' · ' + (isTom ? '番茄钟' : '自由专注') + '</div></span>' +
+                    '<span class="log-min">' + L.min + ' 分</span></div>';
+            }
+            html += '</div>';
+            el.logBody.innerHTML = html;
+            el.logSub.textContent = '共 ' + S.logs.length + ' 条 · 显示最近 ' + list.length + ' 条';
+        }
+
+        function renderAll() {
+            renderKpi();
+            renderBars();
+            renderDonut();
+            renderAch();
+            renderLogs();
+        }
+
+
+        /* ==================== 确认弹窗 ==================== */
+        var cfCb = null;
+        function confirmDialog(title, msg, onYes) {
+            el.cfTitle.textContent = title;
+            el.cfMsg.innerHTML = msg;
+            cfCb = onYes;
+            el.cfOverlay.classList.add('show');
+        }
+        function closeCf() {
+            el.cfOverlay.classList.remove('show');
+            cfCb = null;
+        }
+
+        /* ==================== 数据管理 ==================== */
+        function doExport() {
+            var payload = {
+                app: 'zhaolezi-46-focus',
+                version: 1,
+                date: new Date().toISOString(),
+                data: { settings: S.settings, stats: S.stats, logs: S.logs, ach: S.ach }
+            };
+            try {
+                var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'zhaolezi-focus-' + todayStr() + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+                toast('📦 已导出 ' + S.logs.length + ' 条专注记录', 'ok');
+            } catch (e) {
+                toast('导出失败：' + e.message, 'err');
+            }
+        }
+
+        function doImport(obj) {
+            var d = obj && obj.data ? obj.data : obj;
+            if (!d || typeof d !== 'object' || !d.settings) {
+                toast('文件格式不正确，无法导入', 'err');
+                return false;
+            }
+            var s = d.settings, st = d.stats || {}, lg = d.logs || [], ac = d.ach || {};
+            S.settings.work = clamp(parseInt(s.work, 10) || 25, 10, 90);
+            S.settings.brk = clamp(parseInt(s.brk, 10) || 5, 1, 30);
+            S.settings.long = clamp(parseInt(s.long, 10) || 15, 5, 60);
+            S.settings.auto = !!s.auto;
+            S.settings.dnd = !!s.dnd;
+            S.settings.vol = clamp(parseInt(s.vol, 10) || 55, 0, 100);
+            S.stats.days = st.days || {};
+            S.stats.totalMin = st.totalMin || 0;
+            S.stats.totalTom = st.totalTom || 0;
+            S.stats.cyc = st.cyc || 0;
+            S.logs = lg;
+            S.ach = ac;
+            S.session = null;
+            return true;
+        }
+
+        function onImportFile(f) {
+            var fr = new FileReader();
+            fr.onload = function () {
+                try {
+                    var obj = JSON.parse(fr.result);
+                    if (doImport(obj)) {
+                        save();
+                        Sound.stop();
+                        resetPhase('work', 'tomato');
+                        syncSettingsUI();
+                        Sound.vol = S.settings.vol / 100;
+                        paintVol();
+                        renderAmb();
+                        applyDnd();
+                        paint();
+                        renderAll();
+                        toast('📥 导入成功，专注记录已恢复', 'ok');
+                    }
+                } catch (e) {
+                    toast('解析失败，请确认是本页导出的 JSON 文件', 'err');
+                }
+            };
+            fr.onerror = function () { toast('读取文件失败', 'err'); };
+            fr.readAsText(f);
+        }
+
+        function bindData() {
+            el.exportBtn.addEventListener('click', doExport);
+            el.importBtn.addEventListener('click', function () { el.importFile.click(); });
+            el.importFile.addEventListener('change', function () {
+                var f = el.importFile.files && el.importFile.files[0];
+                el.importFile.value = '';
+                if (f) onImportFile(f);
+            });
+
+            el.resetBtn.addEventListener('click', function () {
+                confirmDialog('🗑️ 清空专注记录',
+                    '将删除 <b>' + S.logs.length + '</b> 条专注日志、<b>' + S.stats.totalTom + '</b> 个番茄统计和全部成就。<br>' +
+                    '计时时长设置会保留。此操作不可撤销，确认继续？',
+                    function () {
+                        S.logs = [];
+                        S.stats = { days: {}, totalMin: 0, totalTom: 0, cyc: 0 };
+                        S.ach = {};
+                        S.session = null;
+                        save();
+                        resetPhase('work', 'tomato');
+                        renderAll();
+                        toast('已清空全部专注记录', 'ok');
+                    });
+            });
+
+            el.cfClose.addEventListener('click', closeCf);
+            el.cfNo.addEventListener('click', closeCf);
+            el.cfYes.addEventListener('click', function () {
+                var cb = cfCb;
+                closeCf();
+                if (cb) cb();
+            });
+            el.cfOverlay.addEventListener('click', function (e) {
+                if (e.target === el.cfOverlay) closeCf();
+            });
+        }
+
+        /* ==================== 初始化 ==================== */
+        function init() {
+            resetPhase('work', 'tomato');
+            if (restoreSession()) {
+                setTimeout(function () { toast('⏱️ 已恢复上次未完成的一轮，处于暂停状态', 'warn'); }, 600);
+            }
+            syncSettingsUI();
+            Sound.vol = clamp(S.settings.vol || 55, 0, 100) / 100;
+            paintVol();
+            renderAmb();
+            bindSettings();
+            bindAmb();
+            bindBreakMask();
+            bindButtons();
+            bindData();
+            applyDnd();
+            paint();
+            renderAll();
+
+            /* 切回前台立刻校准一次，避免切后台期间错过的提示 */
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) tick();
+            });
+            window.addEventListener('focus', function () { tick(); });
+
+            /* 关标签、刷新、切后台前把进行中/已暂停的一轮和标签页标题写回本地 */
+            window.addEventListener('beforeunload', flushSession);
+            window.addEventListener('pagehide', flushSession);
+
+            /* 站点工具使用计数（用于 42 页的成就解锁统计） */
+            try { if (window.ZL && ZL.trackPage) ZL.trackPage('46.html'); } catch (e) { }
+
+            /* 上次播放的环境音不会自动续播（浏览器禁止自动播放），提示一句 */
+            if (S.settings.amb) {
+                var nm0 = '';
+                for (var i0 = 0; i0 < AMBS.length; i0++) {
+                    if (AMBS[i0].id === S.settings.amb) { nm0 = AMBS[i0].nm; break; }
+                }
+                if (nm0) {
+                    setTimeout(function () {
+                        toast('🔊 上次播放的是「' + nm0 + '」，点击卡片即可继续', 'warn');
+                    }, 900);
+                }
+            }
+        }
+
+        init();
+    })();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

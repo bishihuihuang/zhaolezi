@@ -1,0 +1,2532 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, user-scalable=yes">
+    <title>学习资料知识图谱 - 找乐子｜趣味工具与小游戏合集</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+
+    <!-- ========== 页面样式：全站共享骨架 ========== -->
+    <style>
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--txt);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ========== 背景流光层（全站统一，20s 无缝循环） ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%; left: -100%;
+            width: 300%; height: 300%;
+            background: var(--flow-grad);
+            background-size: 400% 400%;
+            animation: flowGradient 20s ease-in-out infinite;
+        }
+
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%; left: -40%;
+            width: 220%; height: 220%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%, rgba(120,180,255,.3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%, rgba(220,130,250,.25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+        }
+
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%; left: -20%;
+            width: 180%; height: 180%;
+            background: radial-gradient(circle at 50% 50%, rgba(255,200,130,.15), transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(80,220,200,.2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+        }
+
+        @keyframes flowGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes flowDrift {
+            0% { transform: translate(0,0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%,-4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%,3%) scale(.97) rotate(-5deg); }
+        }
+
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.3), rgba(255,255,255,.1) 50%, transparent 70%);
+            box-shadow: 0 0 60px rgba(255,255,255,.08), inset 0 0 30px rgba(255,255,255,.04);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+        .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+
+        @keyframes orbFloatA {
+            0% { transform: translate(0,0) scale(1); opacity: .6; }
+            30% { transform: translate(18px,-22px) scale(1.04); opacity: .8; }
+            60% { transform: translate(-12px,10px) scale(.96); opacity: .5; }
+            100% { transform: translate(0,0) scale(1); opacity: .6; }
+        }
+
+        @keyframes orbFloatB {
+            0% { transform: translate(0,0) scale(1); opacity: .5; }
+            35% { transform: translate(-20px,12px) scale(1.06); opacity: .7; }
+            70% { transform: translate(14px,-15px) scale(.94); opacity: .4; }
+            100% { transform: translate(0,0) scale(1); opacity: .5; }
+        }
+
+        @keyframes orbSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        main {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 14px 96px;
+        }
+        .container {
+            width: 100%;
+            max-width: 1180px;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,.3), inset 0 1px 0 rgba(255,255,255,.6);
+            padding: 16px;
+            color: var(--txt);
+        }
+
+        /* 顶部：标题 + 返回/公告 */
+        .top-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .title-area h1 {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #ffd7a8 45%, #ff9e6d 70%, #c7e0ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: .5px;
+        }
+
+        .title-area .sub {
+            font-size: 12px;
+            color: var(--dim);
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+
+        .title-area .sub::before {
+            content: "✦";
+            margin-right: 5px;
+            color: var(--warn);
+        }
+
+        .top-acts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 9px 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            background: linear-gradient(135deg, rgba(255,140,90,.24), rgba(150,110,255,.24));
+            color: var(--txt);
+            border: 1px solid rgba(255,255,255,.18);
+            transition: transform .16s, box-shadow .16s, background .16s, border-color .16s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(255,130,90,.28);
+            background: linear-gradient(135deg, rgba(255,140,90,.38), rgba(150,110,255,.38));
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff8b52, #e14b8a 55%, #7b5cff);
+            color: #fff;
+            border-color: rgba(255,255,255,.3);
+            box-shadow: 0 4px 16px rgba(220,70,130,.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff9c66, #ea5d99 55%, #8c6dff);
+            box-shadow: 0 8px 24px rgba(220,70,130,.45);
+        }
+
+        .btn-ghost {
+            background: rgba(127,127,127,.14);
+            border-color: rgba(127,127,127,.32);
+            color: var(--txt);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(127,127,127,.24);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, rgba(230,62,62,.26), rgba(230,62,62,.42));
+            border-color: rgba(230,62,62,.5);
+            color: var(--txt);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, rgba(240,70,70,.4), rgba(240,70,70,.55));
+            box-shadow: 0 8px 22px rgba(240,70,70,.3);
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 11px;
+            border-radius: 9px;
+        }
+
+        /* ========== 弹窗通用 ========== */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(6,8,22,.7);
+            backdrop-filter: blur(7px);
+            -webkit-backdrop-filter: blur(7px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .overlay.show {
+            display: flex;
+            animation: fadeIn .22s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 24px 70px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.55), 0 0 0 1px rgba(255,255,255,.2);
+            width: 100%;
+            max-width: 560px;
+            padding: 18px;
+            color: var(--txt);
+            animation: modalIn .28s cubic-bezier(.2,.9,.3,1.15);
+            max-height: calc(100vh - 32px);
+            overflow-y: auto;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .modal-title {
+            font-size: 17px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-x {
+            width: 28px;
+            height: 28px;
+            border-radius: 9px;
+            border: 1px solid rgba(127,127,127,.32);
+            background: rgba(127,127,127,.16);
+            color: var(--dim);
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .16s;
+            flex-shrink: 0;
+        }
+
+        .modal-x:hover {
+            background: rgba(230,62,62,.25);
+            color: #fff;
+        }
+
+        .toast-wrap {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            pointer-events: none;
+            width: calc(100% - 28px);
+            max-width: 400px;
+        }
+
+        .toast {
+            padding: 10px 17px;
+            border-radius: 999px;
+            background: rgba(24,28,58,.95);
+            border: 1px solid rgba(255,255,255,.2);
+            color: #fff;
+            font-size: 12.5px;
+            font-weight: 600;
+            box-shadow: 0 12px 30px rgba(0,0,0,.45);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            animation: toastIn .26s cubic-bezier(.2,.9,.3,1.2);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-16px) scale(.92); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .toast.ok { border-color: rgba(80,220,160,.55); }
+        .toast.err { border-color: rgba(240,90,90,.55); }
+        .toast.warn { border-color: rgba(255,190,80,.55); }
+
+        .toast.out {
+            animation: toastOut .24s ease forwards;
+        }
+
+        @keyframes toastOut {
+            to { opacity: 0; transform: translateY(-14px) scale(.94); }
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="common.css">
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="学习资料知识图谱 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:title" content="学习资料知识图谱 - 找乐子">
+<meta property="og:description" content="学习资料知识图谱 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/45.html">
+
+    <!-- ========== 页面样式：知识图谱 ========== -->
+    <style>
+
+
+        :root {
+            --warn: var(--gold, #ff8b52);
+        }
+
+        .sec {
+            margin-top: 14px;
+        }
+
+        .sec-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .sec-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--txt);
+            letter-spacing: .4px;
+        }
+
+        .sec-sub {
+            font-size: 11px;
+            color: var(--dim);
+            font-weight: 500;
+        }
+
+        .sec-line {
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+            min-width: 24px;
+        }
+
+        /* ========== 顶部工具条：搜索 + 路径探索 ========== */
+        .g-tools {
+            display: grid;
+            grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-in {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 34px 10px 36px;
+            border-radius: 13px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.12);
+            color: var(--txt);
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .18s, box-shadow .18s, background .18s;
+        }
+
+        .search-in:focus {
+            border-color: rgba(102,126,234,.65);
+            box-shadow: 0 0 0 3px rgba(102,126,234,.16);
+            background: rgba(127,127,127,.2);
+        }
+
+        .search-in::placeholder {
+            color: var(--dim);
+            opacity: .85;
+        }
+
+        .search-box .s-ic {
+            position: absolute;
+            left: 12px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .search-box .s-clear {
+            position: absolute;
+            right: 8px; top: 50%;
+            transform: translateY(-50%);
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(127,127,127,.22);
+            color: var(--dim);
+            font-size: 11px;
+            cursor: pointer;
+            line-height: 1;
+            display: none;
+        }
+
+        .search-box .s-clear.show {
+            display: block;
+        }
+
+        .search-drop {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0; right: 0;
+            background: var(--card-2, #fff);
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            box-shadow: 0 16px 40px rgba(0,0,0,.28);
+            max-height: 230px;
+            overflow-y: auto;
+            z-index: 40;
+            display: none;
+            padding: 5px;
+        }
+
+        .search-drop.show {
+            display: block;
+        }
+
+        .drop-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 9px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--txt);
+            line-height: 1.2;
+        }
+
+        .drop-item:hover {
+            background: rgba(127,127,127,.14);
+        }
+
+        .drop-item i {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            flex: 0 0 auto;
+        }
+
+        .drop-item span {
+            margin-left: auto;
+            font-size: 10px;
+            color: var(--dim);
+            font-weight: 600;
+        }
+
+        .drop-empty {
+            padding: 12px;
+            font-size: 11.5px;
+            color: var(--dim);
+            text-align: center;
+        }
+
+        .path-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .path-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .path-row select {
+            flex: 1;
+            min-width: 0;
+            min-height: 40px;
+            padding: 8px 10px;
+            border-radius: 11px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.12);
+            color: var(--txt);
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 9px center;
+            padding-right: 26px;
+        }
+
+        .path-row select option {
+            background: #1a1f42;
+            color: #fff;
+        }
+
+        .path-swap {
+            flex: 0 0 auto;
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.14);
+            color: var(--dim);
+            font-size: 12px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .path-swap:active {
+            transform: scale(.9);
+        }
+
+        /* ========== 科目筛选 + 图例 ========== */
+        .g-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .meta-block {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .meta-lbl {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--dim);
+            letter-spacing: .3px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-height: 26px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.10);
+            color: var(--dim);
+            font-size: 11.5px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            line-height: 1.1;
+            transition: transform .16s, background .16s, color .16s, border-color .16s;
+        }
+
+        .chip:hover {
+            transform: translateY(-1px);
+        }
+
+        .chip:active {
+            transform: scale(.95);
+        }
+
+        .chip i {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--c, var(--blue));
+            flex: 0 0 auto;
+            opacity: .35;
+            transition: opacity .16s;
+        }
+
+        .chip.on {
+            color: var(--txt);
+            border-color: var(--c, var(--blue));
+            background: rgba(127,127,127,.16);
+        }
+
+        .chip.on i {
+            opacity: 1;
+            box-shadow: 0 0 0 2px rgba(127,127,127,.16);
+        }
+
+        .chip em {
+            font-size: 10px;
+            color: var(--dim);
+            font-weight: 700;
+        }
+
+        .leg-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10.5px;
+            color: var(--dim);
+            font-weight: 600;
+        }
+
+        .leg-sw {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 2px solid rgba(127,127,127,.45);
+            background: rgba(127,127,127,.30);
+        }
+
+        .leg-sw.learning {
+            border-color: #ffb020;
+            background: rgba(255,176,32,.24);
+        }
+
+        .leg-sw.mastered {
+            border-color: #34d399;
+            background: rgba(52,211,153,.24);
+            box-shadow: 0 0 6px rgba(52,211,153,.5);
+        }
+
+        /* ========== 图谱舞台 ========== */
+        .stage {
+            position: relative;
+            height: 62vh;
+            min-height: 380px;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background:
+                radial-gradient(circle at 18% 12%, rgba(102,126,234,.14), transparent 46%),
+                radial-gradient(circle at 82% 78%, rgba(225,75,138,.12), transparent 46%),
+                rgba(127,127,127,.07);
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .stage canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            cursor: grab;
+        }
+
+        .stage.dragging canvas {
+            cursor: grabbing;
+        }
+
+        .stage .grid-dot {
+            display: none;
+        }
+
+        .tip {
+            position: absolute;
+            z-index: 20;
+            max-width: 220px;
+            padding: 7px 10px;
+            border-radius: 10px;
+            background: rgba(24,28,58,.94);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,.2);
+            font-size: 11.5px;
+            font-weight: 600;
+            line-height: 1.45;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity .14s, transform .14s;
+            box-shadow: 0 8px 22px rgba(0,0,0,.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .tip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tip .tip-sub {
+            display: block;
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255,255,255,.62);
+            margin-top: 2px;
+        }
+
+        .hint {
+            position: absolute;
+            top: 10px;
+            left: 12px;
+            z-index: 15;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--dim);
+            background: rgba(127,127,127,.10);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 4px 11px;
+            pointer-events: none;
+            max-width: calc(100% - 24px);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: opacity .8s ease;
+        }
+
+        .hint.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .zoom-box {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            z-index: 15;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .zoom-box button {
+            min-height: 34px;
+            min-width: 34px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.14);
+            color: var(--txt);
+            font-size: 14px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 8px;
+            transition: background .15s, transform .15s;
+        }
+
+        .zoom-box button:hover {
+            background: rgba(127,127,127,.24);
+        }
+
+        .zoom-box button:active {
+            transform: scale(.9);
+        }
+
+        .zoom-val {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--dim);
+            min-width: 34px;
+            text-align: center;
+        }
+
+        .path-note {
+            position: absolute;
+            left: 50%;
+            bottom: 12px;
+            transform: translateX(-50%);
+            z-index: 15;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(24,28,58,.94);
+            color: #fff;
+            border: 1px solid rgba(102,126,234,.55);
+            font-size: 11.5px;
+            font-weight: 600;
+            box-shadow: 0 8px 22px rgba(0,0,0,.35);
+            backdrop-filter: blur(8px);
+            max-width: calc(100% - 90px);
+        }
+
+        .path-note.show {
+            display: inline-flex;
+        }
+
+        .path-note button {
+            border: none;
+            background: rgba(255,255,255,.16);
+            color: #fff;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 10px;
+            line-height: 1;
+        }
+
+        /* ========== 右侧详情面板 ========== */
+        .detail {
+            position: absolute;
+            top: 0; right: 0;
+            height: 100%;
+            width: 300px;
+            max-width: 86%;
+            z-index: 30;
+            background: var(--card);
+            border-left: 1px solid var(--line);
+            box-shadow: -18px 0 40px rgba(0,0,0,.22);
+            transform: translateX(102%);
+            transition: transform .32s cubic-bezier(.2,.8,.25,1);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(14px);
+        }
+
+        .detail.open {
+            transform: translateX(0);
+        }
+
+        .dt-head {
+            padding: 12px 12px 10px 14px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .dt-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            margin-top: 4px;
+            flex: 0 0 auto;
+            box-shadow: 0 0 0 3px rgba(127,127,127,.16);
+        }
+
+        .dt-titles {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dt-name {
+            font-size: 14.5px;
+            font-weight: 800;
+            color: var(--txt);
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        .dt-sub {
+            font-size: 10.5px;
+            color: var(--dim);
+            margin-top: 3px;
+            display: flex;
+            gap: 7px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .imp {
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--warn);
+        }
+
+        .dt-x {
+            flex: 0 0 auto;
+            width: 28px; height: 28px;
+            border-radius: 9px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.12);
+            color: var(--dim);
+            font-size: 12px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .dt-x:hover {
+            background: rgba(127,127,127,.22);
+            color: var(--txt);
+        }
+
+        .dt-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 11px 14px 16px;
+        }
+
+        .dt-body::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .dt-body::-webkit-scrollbar-thumb {
+            background: rgba(127,127,127,.32);
+            border-radius: 4px;
+        }
+
+        .dt-block {
+            margin-bottom: 13px;
+        }
+
+        .dt-lbl {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--dim);
+            letter-spacing: .3px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .st-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .st-btn {
+            flex: 1;
+            min-height: 34px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.10);
+            color: var(--dim);
+            font-size: 11.5px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            line-height: 1.15;
+            transition: background .15s, color .15s, transform .15s, border-color .15s;
+        }
+
+        .st-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .st-btn:active {
+            transform: scale(.95);
+        }
+
+        .st-btn.on {
+            color: var(--txt);
+            border-color: var(--stc);
+            background: rgba(127,127,127,.18);
+            box-shadow: inset 0 0 0 1px var(--stc);
+        }
+
+        .dt-def {
+            font-size: 12.5px;
+            line-height: 1.72;
+            color: var(--txt);
+            background: rgba(127,127,127,.08);
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            padding: 9px 11px;
+        }
+
+        .ex-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .ex-item {
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--txt);
+            background: rgba(127,127,127,.08);
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--sc, var(--blue));
+            border-radius: 9px;
+            padding: 7px 9px;
+            word-break: break-word;
+        }
+
+        .res-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .res-tag {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--txt);
+            background: rgba(127,127,127,.12);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 3px 8px;
+            line-height: 1.2;
+        }
+
+        .nb-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nb-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 32px;
+            padding: 5px 8px;
+            border-radius: 9px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.08);
+            color: var(--txt);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            text-align: left;
+            transition: background .15s, transform .15s;
+        }
+
+        .nb-btn:hover {
+            background: rgba(127,127,127,.16);
+            transform: translateX(2px);
+        }
+
+        .nb-btn i {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex: 0 0 auto;
+        }
+
+        .nb-btn em {
+            margin-left: auto;
+            font-size: 10px;
+            color: var(--dim);
+            font-weight: 600;
+            flex: 0 0 auto;
+        }
+
+        .dt-empty {
+            font-size: 11.5px;
+            color: var(--dim);
+            line-height: 1.6;
+        }
+
+        .dt-focus-acts {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dt-focus-acts button {
+            flex: 1;
+            min-height: 32px;
+            border-radius: 9px;
+            border: 1px solid var(--line);
+            background: rgba(127,127,127,.10);
+            color: var(--txt);
+            font-size: 11px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            line-height: 1.1;
+        }
+
+        .dt-focus-acts button:active {
+            transform: scale(.95);
+        }
+
+        /* ========== 底部数据管理 ========== */
+        .footer {
+            margin-top: 14px;
+            background: var(--card);
+            border-radius: 18px;
+            padding: 13px 14px;
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.5), 0 0 0 1px rgba(255,255,255,.13);
+        }
+
+        .footer-title {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: var(--txt);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .data-acts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 780px) {
+            .g-tools {
+                grid-template-columns: 1fr;
+            }
+
+            .stage {
+                height: 56vh;
+                min-height: 340px;
+            }
+
+            .top-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-acts {
+                justify-content: flex-start;
+            }
+
+            .detail {
+                width: 100%;
+                max-width: 100%;
+                border-left: none;
+                border-top: 1px solid var(--line);
+                height: 58%;
+                top: auto;
+                bottom: 0;
+                transform: translateY(102%);
+                border-radius: 18px 18px 0 0;
+            }
+
+            .detail.open {
+                transform: translateY(0);
+            }
+
+            .hint {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 12px 10px 80px;
+            }
+
+            .container {
+                padding: 11px;
+                border-radius: 18px;
+            }
+
+            .title-area h1 {
+                font-size: 20px;
+            }
+
+            .stage {
+                height: 50vh;
+                min-height: 300px;
+            }
+
+            .g-meta {
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 8px 11px;
+                font-size: 12px;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 460px) {
+            .stage {
+                height: 46vh;
+                min-height: 240px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    0
+
+    </style>
+
+<link rel="stylesheet" href="common.css">
+<script src="common.js"></script>
+<script src="theme.js"></script>
+<script src="zl-features.js"></script>
+</head>
+<body>
+    <!-- 背景流光（与全站一致） -->
+    <div class="bg-animation" aria-hidden="true">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+
+            <!-- 顶部：标题 + 公告/返回 -->
+            <div class="top-grid">
+                <div class="title-area">
+                    <h1>学习资料知识图谱</h1>
+                    <p class="sub">拖动 · 探索 · 串联你的知识网络</p>
+                </div>
+                <div class="top-acts">
+                    <a href="42.html" class="btn btn-ghost" id="announceBtn" aria-label="更新公告">
+                        <span>📢</span><span>更新公告</span>
+                    </a>
+                    <a href="index.html" class="btn btn-ghost" id="backHome" aria-label="返回主页">
+                        <span>🏠</span><span>返回主页</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 工具条：搜索定位 + 路径探索 -->
+            <div class="sec">
+                <div class="sec-head">
+                    <span class="sec-title">🧭 快速导航</span>
+                    <span class="sec-sub">搜索知识点 / 找出两个知识点之间的关联路径</span>
+                    <span class="sec-line"></span>
+                </div>
+
+                <div class="g-tools">
+                    <!-- 搜索定位 -->
+                    <div class="search-box">
+                        <span class="s-ic" aria-hidden="true">🔍</span>
+                        <input type="text" id="searchIn" class="search-in" placeholder="搜索知识点，如「判别式」「定语从句」" autocomplete="off" aria-label="搜索知识点">
+                        <button type="button" class="s-clear" id="searchClear" aria-label="清空搜索">✕</button>
+                        <div class="search-drop" id="searchDrop" role="listbox" aria-label="搜索结果"></div>
+                    </div>
+
+                    <!-- 路径探索 -->
+                    <div class="path-box">
+                        <div class="path-row">
+                            <select id="pathA" aria-label="起点知识点"></select>
+                            <button type="button" class="path-swap" id="pathSwap" title="交换起终点" aria-label="交换起点与终点">⇄</button>
+                            <select id="pathB" aria-label="终点知识点"></select>
+                        </div>
+                        <div class="path-row">
+                            <button type="button" class="btn btn-primary" id="pathGo" style="flex:1;">查找路径</button>
+                            <button type="button" class="btn btn-ghost" id="pathClear">清除高亮</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 科目筛选 + 图例 + 统计 -->
+            <div class="sec">
+                <div class="g-meta">
+                    <div class="meta-block" id="subjChips"></div>
+                    <div class="meta-block">
+                        <span id="statLine">节点 0 · 连线 0</span>
+                    </div>
+                    <div class="meta-block">
+                        <span class="meta-lbl">状态</span>
+                        <span class="leg-row"><i class="leg-sw"></i>未学</span>
+                        <span class="leg-row"><i class="leg-sw learning"></i>学习中</span>
+                        <span class="leg-row"><i class="leg-sw mastered"></i>已掌握</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图谱舞台 -->
+            <div class="sec">
+                <div class="stage" id="stage">
+                    <canvas id="cv" aria-label="知识图谱画布"></canvas>
+
+                    <div class="hint" id="hint">💡 拖动节点整理布局 · 双击聚焦 · 滚轮缩放</div>
+
+                    <div class="zoom-box">
+                        <button type="button" id="zoomOut" aria-label="缩小">－</button>
+                        <span class="zoom-val" id="zoomVal">100%</span>
+                        <button type="button" id="zoomIn" aria-label="放大">＋</button>
+                        <button type="button" id="zoomReset" aria-label="重置视角" title="重置视角">⟳</button>
+                    </div>
+
+                    <div class="path-note" id="pathNote"></div>
+
+                    <div class="tip" id="tip" role="tooltip"></div>
+
+                    <!-- 右侧详情面板 -->
+                    <div class="detail" id="detail" role="dialog" aria-modal="false" aria-label="知识点详情">
+                        <div class="dt-head">
+                            <span class="dt-dot" id="dtDot"></span>
+                            <div class="dt-titles">
+                                <div class="dt-name" id="dtName">知识点</div>
+                                <div class="dt-sub" id="dtSub"></div>
+                            </div>
+                            <button type="button" class="dt-x" id="dtClose" aria-label="关闭详情">✕</button>
+                        </div>
+                        <div class="dt-body" id="dtBody"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部：数据管理 -->
+            <div class="footer">
+                <div class="footer-title">🗂️ 数据管理 <span class="sec-sub">状态与布局保存在本机浏览器，联网也能正常使用</span></div>
+                <div class="data-acts">
+                    <button type="button" class="btn btn-ghost" id="layoutBtn">🧲 重新布局</button>
+                    <button type="button" class="btn btn-ghost" id="exportBtn">⬇️ 导出状态</button>
+                    <button type="button" class="btn btn-ghost" id="importBtn">⬆️ 导入状态</button>
+                    <button type="button" class="btn btn-danger" id="resetBtn">🗑️ 重置图谱</button>
+                    <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 确认弹窗 -->
+    <div class="overlay" id="delOverlay" role="dialog" aria-modal="true" aria-labelledby="delTitle">
+        <div class="modal" style="max-width:400px;">
+            <div class="modal-head">
+                <div class="modal-title" id="delTitle">确认操作</div>
+                <button type="button" class="modal-x" id="delClose" aria-label="关闭">✕</button>
+            </div>
+            <div id="delMsg" style="font-size:13.5px;line-height:1.75;color:var(--txt);">确认执行？</div>
+            <div style="display:flex;gap:8px;margin-top:16px;">
+                <button type="button" class="btn btn-ghost" id="delNo" style="flex:1;min-height:42px;">取消</button>
+                <button type="button" class="btn btn-danger" id="delYes" style="flex:1;min-height:42px;">确认</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+'use strict';
+
+/* ==================== 静态图数据 ==================== */
+var DATA = {
+    nodes: [
+        { id: 'm1',  name: '一元二次方程', subject: '数学', imp: 5, def: 'ax²+bx+c=0 (a≠0)，含一个未知数且最高次为 2 的整式方程。', ex: ['x²−5x+6=0 → x=2 或 x=3', '2x²+3x−2=0'], res: ['课本 P32', '练习册 P15'] },
+        { id: 'm2',  name: '求根公式',   subject: '数学', imp: 4, def: 'x = (−b±√(b²−4ac)) / 2a，直接由系数求出两根。', ex: ['x²−4x+1=0 → x = 2±√3', '2x²+x−1=0'], res: ['课本 P34', '错题本 · 求根类'] },
+        { id: 'm3',  name: '判别式',     subject: '数学', imp: 4, def: 'Δ = b²−4ac：Δ>0 两个不等实根，Δ=0 两个相等实根，Δ<0 无实根。', ex: ['x²+2x+3=0，Δ=−8<0，无实根'], res: ['课本 P35', '练习册 P18'] },
+        { id: 'm4',  name: '韦达定理',   subject: '数学', imp: 3, def: '两根之和 x₁+x₂ = −b/a，两根之积 x₁·x₂ = c/a。', ex: ['x²−5x+6=0 → x₁+x₂=5，x₁·x₂=6'], res: ['课本 P38'] },
+        { id: 'm5',  name: '因式分解',   subject: '数学', imp: 4, def: '把多项式化为几个整式乘积的形式，常用提公因式与十字相乘。', ex: ['x²−5x+6 = (x−2)(x−3)', '2x²−5x+2 = (2x−1)(x−2)'], res: ['课本 P28'] },
+        { id: 'm6',  name: '一元一次方程', subject: '数学', imp: 5, def: 'ax+b=0 (a≠0)，只含一个未知数且次数为 1。', ex: ['2x−6=0 → x=3', '3(x−1)=x+5 → x=4'], res: ['课本 P8', '练习册 P4'] },
+        { id: 'm7',  name: '数轴上的点', subject: '数学', imp: 3, def: '数轴上表示相反数的两点关于原点对称；到原点的距离即绝对值。', ex: ['表示 −3 与 3 的两点关于原点对称'], res: ['课本 P12'] },
+        { id: 'm8',  name: '二次方程应用题', subject: '数学', imp: 3, def: '设未知量 → 列方程 → 求解 → 检验（舍去不符合实际的值）。', ex: ['矩形面积：设宽为 x，由面积与长宽关系列方程'], res: ['练习册 P22', '真题 2024 · 二次方程应用'] },
+        { id: 'm9',  name: '二次函数',   subject: '数学', imp: 5, def: 'y = ax²+bx+c (a≠0)，图像是一条抛物线。', ex: ['y = x²−4x+3', 'y = −2x²'], res: ['课本 P56', '课本 P62'] },
+        { id: 'm10', name: '图像与性质', subject: '数学', imp: 4, def: '开口方向由 a 决定；对称轴 x=−b/2a；顶点 (−b/2a, (4ac−b²)/4a)。', ex: ['y=x²−4x+3 的顶点为 (2,−1)'], res: ['课本 P60'] },
+        { id: 'm11', name: '顶点式与配方法', subject: '数学', imp: 4, def: 'y = a(x−h)²+k 可直接读出顶点 (h,k)；配方：先提 a，再补平方。', ex: ['y=x²−4x+3 = (x−2)²−1'], res: ['课本 P58', '微课 · 配方三步法'] },
+        { id: 'm12', name: '二次不等式', subject: '数学', imp: 3, def: 'ax²+bx+c>0 的解集由抛物线与 x 轴的位置关系确定。', ex: ['x²−5x+6<0 → 2<x<3'], res: ['课本 P44'] },
+
+        { id: 'c1',  name: '文言文阅读', subject: '语文', imp: 5, def: '以实词虚词为突破口，结合上下文推断词义，先翻译后答题。', ex: ['《岳阳楼记》· “嗟夫！予尝求古仁人之心”'], res: ['文言文专项 20 篇', '课本 P78'] },
+        { id: 'c2',  name: '实词积累',   subject: '语文', imp: 4, def: '高频实词的含义与用法，含一词多义、古今异义、词类活用。', ex: ['走：古义“跑”；汤：古义“热水”'], res: ['实词手册', '积累本 · 实词'] },
+        { id: 'c3',  name: '虚词用法',   subject: '语文', imp: 3, def: '之、其、而、以、于、则、乃等虚词，重点掌握判断句与省略句中的用法。', ex: ['“之”作代词 / 助词 / 动词三种用法辨析'], res: ['虚词手册', '实词手册'] },
+        { id: 'c4',  name: '古诗鉴赏',   subject: '语文', imp: 4, def: '按意象 → 意境 → 手法 → 情感四步赏析，先读懂诗再谈手法。', ex: ['马致远《天净沙》· 萧瑟衰败的旅途意象'], res: ['古诗百首', '真题 2024 · 古诗鉴赏'] },
+        { id: 'c5',  name: '现代文阅读', subject: '语文', imp: 4, def: '理清文章脉络，抓中心句，答题先定范围再提取关键词。', ex: ['概括段落大意 · 说明文与议论文题型'], res: ['阅读专项训练'] },
+        { id: 'c6',  name: '修辞手法',   subject: '语文', imp: 3, def: '比喻、拟人、排比、夸张、反问等，赏析时要点明表达效果。', ex: ['“桃花潭水深千尺” — 夸张'], res: ['语文考点手册'] },
+        { id: 'c7',  name: '作文素材',   subject: '语文', imp: 3, def: '主题素材积累，注重细节描写与真情实感。', ex: ['“坚持”主题：从马拉松到科研攻关'], res: ['素材精选 100 篇', '作文范文集'] },
+
+        { id: 'e1',  name: '时态语态',     subject: '英语', imp: 5, def: '动词形式的核心：常见 16 种时态，重点掌握 8 种常用时态与被动语态。', ex: ['一般现在时 vs 现在进行时 辨析'], res: ['语法通关手册', '语法专项练习册'] },
+        { id: 'e2',  name: '一般现在时',   subject: '英语', imp: 4, def: '表示习惯、常态与客观真理；主语第三人称单数时动词加 s/es。', ex: ['He goes to school by bike.'], res: ['语法通关手册'] },
+        { id: 'e3',  name: '现在进行时',   subject: '英语', imp: 3, def: '表示正在进行的动作；结构 be + doing。', ex: ['She is reading a novel now.'], res: ['语法通关手册'] },
+        { id: 'e4',  name: '定语从句',     subject: '英语', imp: 4, def: '由关系词引导、修饰名词的从句：who / which / that / where / whose。', ex: ['The book which I bought is useful.'], res: ['语法专项练习册', '真题 2024 · 定语从句'] },
+        { id: 'e5',  name: '名词性从句',   subject: '英语', imp: 3, def: '主语从句、宾语从句、表语从句与同位语从句；注意语序与连接词。', ex: ['What he said was true.（主语从句）'], res: ['语法通关手册'] },
+        { id: 'e6',  name: '完形填空策略', subject: '英语', imp: 3, def: '先通读全文猜大意，再看空格上下文确定词义，最后回头通读验证。', ex: ['2024 真题 · 完形填空第 1–5 题'], res: ['真题 2024 · 完形填空', '完形填空专项'] },
+        { id: 'e7',  name: '阅读理解技巧', subject: '英语', imp: 4, def: '先读题干再定位原文，逐题作答；注意代词指代与同义替换。', ex: ['2024 真题 · 阅读理解第 6–10 题'], res: ['真题 2024 · 阅读理解', '阅读理解技巧手册'] },
+
+        { id: 'p1',  name: '力学基础',     subject: '物理', imp: 5, def: '力的三要素：大小、方向、作用点；合成与分解遵循平行四边形定则。', ex: ['重力 G = mg；支持力与压力的关系'], res: ['课本 P20', '受力分析图示'] },
+        { id: 'p2',  name: '受力分析',     subject: '物理', imp: 4, def: '先定研究对象，再按重力 → 弹力 → 摩擦力 → 其它力顺序画受力图。', ex: ['斜面上物体的受力图'], res: ['课本 P22', '受力分析图示'] },
+        { id: 'p3',  name: '牛顿第二定律', subject: '物理', imp: 5, def: 'F = ma，加速度方向与合外力方向相同。', ex: ['F=10N，m=2kg → a=5 m/s²'], res: ['课本 P30', '真题 2024 · 牛顿定律'] },
+        { id: 'p4',  name: '匀变速直线运动', subject: '物理', imp: 5, def: '速度、时间、加速度满足 v=v₀+at；位移 s=v₀t+½at² 是关于时间的二次函数。', ex: ['刹车距离问题（取负方向为正）'], res: ['课本 P34', '练习册 P40'] },
+        { id: 'p5',  name: '自由落体',     subject: '物理', imp: 3, def: '初速度为 0、只受重力作用的匀加速直线运动；g 约 9.8 m/s²。', ex: ['h = ½gt²'], res: ['课本 P42'] },
+        { id: 'p6',  name: '平抛运动',     subject: '物理', imp: 4, def: '水平方向匀速、竖直方向自由落体，合运动为匀变速曲线运动。', ex: ['x = v₀t；y = ½gt²'], res: ['课本 P48', '练习册 P52'] },
+        { id: 'p7',  name: '曲线运动',     subject: '物理', imp: 3, def: '速度方向沿轨迹切线，合外力指向轨迹凹侧。', ex: ['圆周运动中指向圆心的法向力'], res: ['课本 P50'] },
+        { id: 'p8',  name: '机械能守恒',   subject: '物理', imp: 4, def: '只有重力或弹力做功时机械能守恒：½mv² + mgh = 常量。', ex: ['自由落体中 动能 + 重力势能 恒定'], res: ['课本 P58', '真题 2024 · 机械能守恒'] }
+    ],
+    links: [
+        ['m6','m7',0.5], ['m6','m1',0.9], ['m1','m2',1], ['m1','m3',0.85], ['m1','m4',0.6],
+        ['m1','m5',0.75], ['m1','m8',0.6], ['m1','m9',0.8], ['m2','m3',0.55], ['m2','m11',0.5],
+        ['m1','m12',0.6], ['m5','m12',0.5], ['m12','m10',0.55], ['m9','m10',0.9], ['m11','m10',0.65], ['m9','m11',0.7],
+
+        ['c1','c2',0.9], ['c1','c3',0.85], ['c1','c4',0.6], ['c4','c6',0.5],
+        ['c5','c6',0.45], ['c5','c7',0.5], ['c4','c7',0.4],
+
+        ['e1','e2',0.9], ['e1','e3',0.85], ['e1','e7',0.5], ['e4','e5',0.65], ['e7','e6',0.75], ['c5','e6',0.35],
+
+        ['p1','p2',0.9], ['p2','p3',0.9], ['p3','p4',0.8], ['p3','p5',0.65], ['p4','p6',0.8],
+        ['p6','p7',0.55], ['p5','p8',0.7], ['p6','p8',0.7], ['p1','p8',0.5],
+
+        ['m1','p4',0.35], ['m10','p6',0.3]
+    ]
+};
+
+/* ==================== 常量与全局状态 ==================== */
+var LS_KEY = 'zhaolezi_45_graph';
+var SUBJECTS = ['数学', '语文', '英语', '物理'];
+var STATUS_TXT = { unlearned: '未学', learning: '学习中', mastered: '已掌握' };
+
+var NODES = [], LINKS = [], ADJ = {}, IDX = {}, VIS = [];
+var state = { pos: {}, status: {} };
+
+// 相机：x/y 为视口中心的场景坐标，k 为缩放倍率
+var cam = { x: 0, y: 0, k: 1 };
+var camAnim = null;
+
+var drag = null;        // {mode:'node'|'pan', node, dx, dy, sx, sy, moved}
+var hover = null;
+var selected = null;
+var focused = null;     // 双击聚焦节点
+var pathHL = null;      // {n: Set(id), l: Set(index)}
+var active = {};        // subject -> bool
+var alpha = 1;          // 力导向模拟退火系数
+var raf = 0;
+
+var cv, ctx, stage, tip, W = 0, H = 0, DPR = 1;
+
+/* ==================== 持久化 ==================== */
+function loadState() {
+    try {
+        var raw = localStorage.getItem(LS_KEY);
+        if (raw) {
+            var o = JSON.parse(raw);
+            if (o && typeof o === 'object') {
+                state.pos = o.pos || {};
+                state.status = o.status || {};
+                if (o.active) active = o.active;
+            }
+        }
+    } catch (e) { /* 解析失败则用默认值 */ }
+    SUBJECTS.forEach(function (s) { if (typeof active[s] !== 'boolean') active[s] = true; });
+}
+function saveState() {
+    var pos = {};
+    NODES.forEach(function (n) { pos[n.id] = [Math.round(n.x * 10) / 10, Math.round(n.y * 10) / 10]; });
+    var st = {};
+    NODES.forEach(function (n) { st[n.id] = n.status; });
+    try { localStorage.setItem(LS_KEY, JSON.stringify({ pos: pos, status: st, active: active })); }
+    catch (e) { /* 配额满时静默失败 */ }
+}
+
+/* ==================== 图构建 ==================== */
+function hashId(id) {
+    var h = 7;
+    for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+    return h;
+}
+function defaultStatus(n) {
+    var h = hashId(n.id);
+    if (n.imp >= 5) return h % 3 === 0 ? 'learning' : 'mastered';
+    return ['unlearned', 'learning', 'mastered'][h % 3];
+}
+
+function buildGraph() {
+    NODES = DATA.nodes.map(function (d) {
+        return {
+            id: d.id, name: d.name, subject: d.subject, imp: d.imp,
+            def: d.def, ex: d.ex, res: d.res,
+            status: state.status[d.id] || defaultStatus(d),
+            r: 8 + d.imp * 2.8,
+            x: 0, y: 0, vx: 0, vy: 0, fx: null, fy: null
+        };
+    });
+    IDX = {};
+    NODES.forEach(function (n) { IDX[n.id] = n; });
+    LINKS = DATA.links.map(function (l) {
+        return { a: IDX[l[0]], b: IDX[l[1]], w: l[2] };
+    }).filter(function (l) { return l.a && l.b; });
+    ADJ = {};
+    NODES.forEach(function (n) { ADJ[n.id] = []; });
+    LINKS.forEach(function (l) {
+        if (ADJ[l.a.id].indexOf(l.b.id) < 0) ADJ[l.a.id].push(l.b.id);
+        if (ADJ[l.b.id].indexOf(l.a.id) < 0) ADJ[l.b.id].push(l.a.id);
+    });
+    // 初始坐标：按科目分四个扇区，优先用已保存坐标
+    var ci = 0;
+    SUBJECTS.forEach(function (s) {
+        var ang = (ci / SUBJECTS.length) * Math.PI * 2 - Math.PI / 2;
+        var cx = Math.cos(ang) * 210, cy = Math.sin(ang) * 175;
+        var idx = 0;
+        NODES.forEach(function (n) {
+            if (n.subject !== s) return;
+            var a2 = (idx / 10) * Math.PI * 2 + ang;
+            idx++;
+            var p = state.pos[n.id];
+            n.x = p ? p[0] : cx + Math.cos(a2) * (120 + idx * 14);
+            n.y = p ? p[1] : cy + Math.sin(a2) * (100 + idx * 12);
+        });
+        ci++;
+    });
+    rebuildVisible();
+}
+
+function rebuildVisible() {
+    VIS = NODES.filter(function (n) { return active[n.subject]; });
+    var visIds = {};
+    VIS.forEach(function (n) { visIds[n.id] = 1; });
+    LINKS.forEach(function (l) { l.on = !!(visIds[l.a.id] && visIds[l.b.id]); });
+    if (selected && !visIds[selected.id]) selected = null;
+    if (focused && !visIds[focused.id]) focused = null;
+    if (hover && !visIds[hover.id]) hover = null;
+    refreshStats();
+}
+
+/* ==================== 相机与坐标 ==================== */
+function toScreen(wx, wy) {
+    return { x: (wx - cam.x) * cam.k + W / 2, y: (wy - cam.y) * cam.k + H / 2 };
+}
+function toWorld(sx, sy) {
+    return { x: (sx - W / 2) / cam.k + cam.x, y: (sy - H / 2) / cam.k + cam.y };
+}
+function localPt(e) {
+    var r = cv.getBoundingClientRect();
+    var t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) || e;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
+}
+function nodeAt(sx, sy) {
+    var w = toWorld(sx, sy), best = null, bd = Infinity;
+    for (var i = VIS.length - 1; i >= 0; i--) {
+        var n = VIS[i];
+        var dx = n.x - w.x, dy = n.y - w.y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        var hit = n.r + 9 / cam.k;   // 缩小时放宽命中范围
+        if (d < hit && d < bd) { bd = d; best = n; }
+    }
+    return best;
+}
+function reheat(v) { alpha = Math.max(alpha, v || 0.5); }
+
+/* ==================== 力导向物理 ==================== */
+var REP = 3200, DAMP = 0.86, VMAX = 14;
+
+function tick() {
+    if (alpha <= 0.004) return;
+    var i, j, dx, dy, d2, d, f, sp;
+    var N = VIS.length, a, b;
+    for (i = 0; i < N; i++) {
+        a = VIS[i];
+        for (j = i + 1; j < N; j++) {
+            b = VIS[j];
+            dx = b.x - a.x; dy = b.y - a.y;
+            d2 = dx * dx + dy * dy;
+            if (d2 < 1) { dx = 0.5; dy = 0.5; d2 = 0.5; }
+            d = Math.sqrt(d2);
+            f = REP / d2;
+            var rr = a.r + b.r + 16;
+            if (d < rr) f += (rr - d) * 0.10;   // 硬性推离，防止节点重叠
+            f = Math.min(f, 60);
+            var fx = dx / d * f, fy = dy / d * f;
+            a.vx -= fx; a.vy -= fy;
+            b.vx += fx; b.vy += fy;
+        }
+    }
+    for (i = 0; i < LINKS.length; i++) {
+        var l = LINKS[i];
+        if (!l.on) continue;
+        dx = l.b.x - l.a.x; dy = l.b.y - l.a.y;
+        d = Math.sqrt(dx * dx + dy * dy) || 1;
+        var target = 62 + (l.a.r + l.b.r) * 1.15;
+        var k = (d - target) * 0.02 * (0.45 + l.w);
+        var gx = dx / d * k, gy = dy / d * k;
+        l.a.vx += gx; l.a.vy += gy;
+        l.b.vx -= gx; l.b.vy -= gy;
+    }
+    for (i = 0; i < N; i++) {
+        var n = VIS[i];
+        n.vx += -n.x * 0.007;      // 中心引力，防止图谱漂出视野
+        n.vy += -n.y * 0.007;
+        if (n.fx !== null) { n.x = n.fx; n.y = n.fy; n.vx = 0; n.vy = 0; continue; }
+        n.vx *= DAMP; n.vy *= DAMP;
+        sp = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
+        if (sp > VMAX) { n.vx = n.vx / sp * VMAX; n.vy = n.vy / sp * VMAX; }
+        n.x += n.vx * alpha;
+        n.y += n.vy * alpha;
+    }
+    alpha *= 0.986;
+    if (alpha < 0.004) alpha = 0;
+}
+
+/* ==================== 颜色 ==================== */
+var SUBJ_COLOR = {
+    '数学': '#7c9cff',
+    '语文': '#f78fb3',
+    '英语': '#6fd3c0',
+    '物理': '#c9a2ff'
+};
+var STATUS_COLOR = { unlearned: '#9aa6b8', learning: '#ffb347', mastered: '#4ade80' };
+
+function subjColor(s) { return SUBJ_COLOR[s] || '#8fa0c8'; }
+function hexA(hex, a) {
+    var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+}
+function lighten(hex, t) {
+    var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    r = Math.round(r + (255 - r) * t); g = Math.round(g + (255 - g) * t); b = Math.round(b + (255 - b) * t);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+function statusOf(n) { return STATUS_COLOR[n.status] || STATUS_COLOR.unlearned; }
+
+/* ==================== 画布尺寸 ==================== */
+function resize() {
+    var r = stage.getBoundingClientRect();
+    W = Math.max(1, r.width);
+    H = Math.max(1, r.height);
+    DPR = Math.min(window.devicePixelRatio || 1, 2);   // 高清屏适配，上限 2 控性能
+    cv.width = Math.round(W * DPR);
+    cv.height = Math.round(H * DPR);
+    cv.style.width = W + 'px';
+    cv.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    draw();
+}
+
+/* ==================== 主题取色（画布文字用） ==================== */
+var THEME = { txt: '#eef2fb', dim: '#8fa0bd', bg: '#0b1020' };
+function readTheme() {
+    var cs = getComputedStyle(document.documentElement);
+    var t = (cs.getPropertyValue('--txt') || '').trim();
+    var d = (cs.getPropertyValue('--dim') || '').trim();
+    var b = (cs.getPropertyValue('--bg') || '').trim();
+    if (t) THEME.txt = t;
+    if (d) THEME.dim = d;
+    if (b) THEME.bg = b;
+}
+
+var FONT_STACK = "'PingFang SC','Microsoft YaHei','Hiragino Sans GB',-apple-system,'Segoe UI',sans-serif";
+var placed = [];   // 本帧已放置的标签矩形，用于避让
+
+/* ==================== 绘制 ==================== */
+function draw() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, W, H);
+    var now = performance.now();
+    var pulse = 0.5 + 0.5 * Math.sin(now * 0.0055);
+
+    // 高亮集合：路径优先，其次选中/聚焦节点的一层邻居
+    var hi = null, rootId = null;
+    if (pathHL) {
+        hi = pathHL.n;
+    } else if (focused || selected) {
+        rootId = (focused || selected).id;
+        hi = {};
+        hi[rootId] = 1;
+        var nb = ADJ[rootId] || [];
+        for (var k = 0; k < nb.length; k++) hi[nb[k]] = 1;
+    }
+
+    /* ---- 连线 ---- */
+    ctx.lineCap = 'round';
+    for (var i = 0; i < LINKS.length; i++) {
+        var l = LINKS[i];
+        if (!l.on) continue;
+        var A = toScreen(l.a.x, l.a.y), B = toScreen(l.b.x, l.b.y);
+        if (B.x < -60 || B.x > W + 60 || B.y < -60 || B.y > H + 60) continue;   // 视口裁剪
+        var onPath = pathHL ? pathHL.l[i] : false;
+        ctx.beginPath();
+        ctx.moveTo(A.x, A.y);
+        ctx.lineTo(B.x, B.y);
+        if (onPath) {
+            ctx.shadowColor = 'rgba(255,199,92,0.95)';
+            ctx.shadowBlur = 16;
+            ctx.strokeStyle = 'rgba(255,203,98,' + (0.5 + 0.5 * pulse).toFixed(3) + ')';
+            ctx.lineWidth = 3 + pulse * 1.8;
+        } else if (hi && (l.a.id === rootId || l.b.id === rootId)) {
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = hexA(subjColor(l.a.subject === l.b.subject ? l.a.subject : l.b.subject), 0.75);
+            ctx.lineWidth = 1.4 + l.w * 1.8;
+        } else {
+            ctx.shadowBlur = 0;
+            var base = hi ? 0.05 : 0.13;
+            ctx.strokeStyle = 'rgba(255,255,255,' + (base + l.w * 0.10).toFixed(3) + ')';
+            ctx.lineWidth = 0.8 + l.w * 1.3;
+        }
+        ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+
+    /* ---- 节点（先画淡化项，再画高亮项保证在上层） ---- */
+    var order = VIS.slice();
+    if (hi) {
+        order.sort(function (p, q) {
+            return ((hi[p.id] ? 1 : 0) - (hi[q.id] ? 1 : 0)) || (p.imp - q.imp);
+        });
+    }
+    placed = [];
+    for (var j2 = 0; j2 < order.length; j2++) {
+        var n = order[j2];
+        var s = toScreen(n.x, n.y);
+        if (s.x < -80 || s.x > W + 80 || s.y < -80 || s.y > H + 80) continue;
+        var dimmed = hi && !hi[n.id];
+        var isRoot = n.id === rootId;
+        var onPath = pathHL ? !!pathHL.n[n.id] : false;
+        var c = subjColor(n.subject);
+        var R = n.r * cam.k * (hover === n ? 1.2 : 1);
+
+        ctx.globalAlpha = dimmed ? 0.22 : 1;
+
+        if (isRoot || onPath || hover === n) {
+            ctx.shadowColor = onPath ? 'rgba(255,199,92,0.85)' : hexA(c, 0.95);
+            ctx.shadowBlur = (isRoot || onPath) ? 18 + pulse * 10 : 12;
+        } else {
+            ctx.shadowBlur = 0;
+        }
+
+        var grad = ctx.createRadialGradient(s.x - R * 0.35, s.y - R * 0.42, R * 0.12, s.x, s.y, R);
+        grad.addColorStop(0, lighten(c, 0.6));
+        grad.addColorStop(1, c);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, R, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // 状态环：未学=灰色虚线，学习中=黄色实线，已掌握=绿色加粗
+        ctx.lineWidth = Math.max(1.6, 2.1 + (n.status === 'mastered' ? 0.9 : 0));
+        ctx.strokeStyle = statusOf(n);
+        if (n.status === 'unlearned') { ctx.setLineDash([3.2, 3.2]); } else { ctx.setLineDash([]); }
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, R, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 已掌握：中心白色小点，一眼可辨
+        if (n.status === 'mastered' && R > 6) {
+            ctx.fillStyle = 'rgba(255,255,255,0.92)';
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, Math.max(1.6, R * 0.22), 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    /* ---- 标签（避让重叠） ---- */
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    var fs = Math.max(9.5, Math.min(14, 11 * cam.k));
+    ctx.font = '600 ' + fs.toFixed(1) + 'px ' + FONT_STACK;
+    for (var m = 0; m < order.length; m++) {
+        var q = order[m];
+        if (hi && !hi[q.id]) continue;
+        if (!hi && cam.k < 0.42 && q.imp < 5 && hover !== q) continue;   // 缩放小时只留大节点标签
+        var sp = toScreen(q.x, q.y);
+        if (sp.x < -40 || sp.x > W + 40 || sp.y < -40 || sp.y > H + 40) continue;
+        var Rr = q.r * cam.k * (hover === q ? 1.2 : 1);
+        var tw = ctx.measureText(q.name).width;
+        var bx = sp.x - tw / 2 - 5, bw = tw + 10;
+        var y0 = sp.y + Rr + 13;
+        var cy2 = y0, ok2 = false;
+        for (var t2 = 0; t2 < 6; t2++) {
+            var rect = { x: bx, y: cy2 - 8, w: bw, h: 16 };
+            var clash = false;
+            for (var u = 0; u < placed.length; u++) {
+                var p2 = placed[u];
+                if (rect.x < p2.x + p2.w && p2.x < rect.x + rect.w &&
+                    rect.y < p2.y + p2.h && p2.y < rect.y + rect.h) { clash = true; break; }
+            }
+            if (!clash) { placed.push(rect); ok2 = true; break; }
+            cy2 = y0 + (t2 % 2 === 0 ? 1 : -1) * Math.ceil(t2 / 2) * 15;
+        }
+        if (!ok2) continue;
+        ctx.fillStyle = hexA('#080d1a', 0.55);
+        roundRect(bx, cy2 - 8, bw, 16, 8);
+        ctx.fill();
+        ctx.fillStyle = (pathHL && pathHL.n[q.id]) ? '#ffd35e' : THEME.txt;
+        ctx.fillText(q.name, sp.x, cy2);
+    }
+}
+
+function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+}
+
+function loop() {
+    tick();
+    stepCam();
+    draw();
+    raf = requestAnimationFrame(loop);
+}
+
+/* ==================== 相机动画与缩放 ==================== */
+function clampK(k) { return Math.max(0.3, Math.min(3.2, k)); }
+function animCam(tx, ty, tk) { camAnim = { tx: tx, ty: ty, tk: tk }; }
+
+function stepCam() {
+    if (!camAnim) return;
+    var d = camAnim, done = true;
+    if (Math.abs(d.tx - cam.x) > 0.5) { cam.x += (d.tx - cam.x) * 0.17; done = false; } else { cam.x = d.tx; }
+    if (Math.abs(d.ty - cam.y) > 0.5) { cam.y += (d.ty - cam.y) * 0.17; done = false; } else { cam.y = d.ty; }
+    if (Math.abs(d.tk - cam.k) > 0.004) { cam.k += (d.tk - cam.k) * 0.17; done = false; } else { cam.k = d.tk; }
+    if (done) camAnim = null;
+    if (typeof updateZoomLabel === 'function') updateZoomLabel();
+}
+
+function focusOn(n, k) { animCam(n.x, n.y, k == null ? Math.max(cam.k, 1.6) : k); }
+
+function zoomAt(sx, sy, factor) {
+    var before = toWorld(sx, sy);
+    cam.k = clampK(cam.k * factor);
+    var after = toWorld(sx, sy);
+    cam.x += before.x - after.x;   // 保持指针下的场景点不动
+    cam.y += before.y - after.y;
+    camAnim = null;
+    if (typeof updateZoomLabel === 'function') updateZoomLabel();
+}
+
+function pinchZoom(a, b, k0, dStart) {
+    var mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    var dNow = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+    var before = toWorld(mid.x, mid.y);
+    cam.k = clampK(k0 * (dNow / dStart));   // 双指距离比例映射为缩放倍率
+    var after = toWorld(mid.x, mid.y);
+    cam.x += before.x - after.x;
+    cam.y += before.y - after.y;
+    camAnim = null;
+    if (typeof updateZoomLabel === 'function') updateZoomLabel();
+}
+
+/* ==================== 指针交互（鼠标 + 触屏） ==================== */
+var pointers = {};
+var pinch = null;
+var moved = false;
+var firstPt = null;
+
+function countPtr() { var k = Object.keys(pointers), n = 0; for (var i = 0; i < k.length; i++) n++; return n; }
+
+function onDown(e) {
+    if (e.button !== undefined && e.button !== 0) return;
+    var p = localPt(e);
+    pointers[e.pointerId] = p;
+    if (countPtr() === 2) {                 // 进入双指缩放，放弃单指拖动
+        if (drag && drag.node) { drag.node.fx = null; drag.node.fy = null; }
+        drag = null; pinch = null;
+        var ks = Object.keys(pointers);
+        var pa = pointers[ks[0]], pb = pointers[ks[1]];
+        pinch = { k0: cam.k, d0: Math.hypot(pa.x - pb.x, pa.y - pb.y) || 1 };
+        hover = null; hideTip(); moved = true;
+        return;
+    }
+    if (countPtr() > 2) return;
+    firstPt = p;
+    moved = false;
+    var n = nodeAt(p.x, p.y);
+    if (n) {
+        drag = { mode: 'node', node: n };
+        n.fx = n.x; n.fy = n.y;
+        reheat(0.55);
+        cv.style.cursor = 'grabbing';
+    } else {
+        drag = { mode: 'pan', sx: p.x, sy: p.y, cx: cam.x, cy: cam.y };
+        cv.style.cursor = 'grabbing';
+    }
+    camAnim = null;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) { }
+    e.preventDefault();
+}
+
+function onMove(e) {
+    var p = localPt(e);
+    if (pointers[e.pointerId] !== undefined) pointers[e.pointerId] = p;
+
+    if (pinch && countPtr() >= 2) {
+        var ks = Object.keys(pointers);
+        pinchZoom(pointers[ks[0]], pointers[ks[1]], pinch.k0, pinch.d0);
+        return;
+    }
+    if (moved === false && firstPt) {
+        if (Math.abs(p.x - firstPt.x) + Math.abs(p.y - firstPt.y) > 5) moved = true;
+    }
+    if (drag && drag.mode === 'pan') {
+        cam.x = drag.cx - (p.x - drag.sx) / cam.k;
+        cam.y = drag.cy - (p.y - drag.sy) / cam.k;
+        if (typeof updateZoomLabel === 'function') updateZoomLabel();
+        return;
+    }
+    if (drag && drag.mode === 'node') {
+        var w = toWorld(p.x, p.y);
+        drag.node.fx = w.x; drag.node.fy = w.y;
+        reheat(0.5);
+        return;
+    }
+    // 悬停检测（仅鼠标）
+    if (e.pointerType !== 'touch') {
+        var h = nodeAt(p.x, p.y);
+        if (h !== hover) {
+            hover = h;
+            cv.style.cursor = h ? 'pointer' : 'grab';
+        }
+        if (h) showTip(h, p); else hideTip();
+    }
+    e.preventDefault();
+}
+
+function onUp(e) {
+    delete pointers[e.pointerId];
+    if (countPtr() < 2) pinch = null;
+    var p = localPt(e);
+    if (!moved && !pinch) {
+        var n = (drag && drag.mode === 'node') ? drag.node : nodeAt(p.x, p.y);
+        if (n) { selectNode(n); }
+        else { clearFocus(); }
+    }
+    if (drag && drag.node) { drag.node.fx = null; drag.node.fy = null; reheat(0.45); }
+    drag = null;
+    firstPt = null;
+    cv.style.cursor = hover ? 'pointer' : 'grab';
+    saveState();
+    e.preventDefault();
+}
+
+function onDbl(e) {
+    var p = localPt(e);
+    var n = nodeAt(p.x, p.y);
+    if (n) {
+        selected = n; focused = n;
+        renderDetail(n);
+        focusOn(n, Math.max(cam.k, 1.7));
+        reheat(0.35);
+        toast('🔍 已聚焦「' + n.name + '」');
+    } else {
+        clearFocus();
+    }
+}
+
+function clearFocus() {
+    selected = null; focused = null; pathHL = null;
+    hideDetail(); hidePathNote();
+}
+
+function onWheel(e) {
+    var p = localPt(e);
+    zoomAt(p.x, p.y, e.deltaY < 0 ? 1.13 : 0.885);
+    e.preventDefault();
+}
+
+/* ==================== 工具函数 ==================== */
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+function toast(msg) {
+    if (typeof window.toast === 'function') { try { window.toast(msg); return; } catch (e) { } }
+    var w = document.getElementById('toastWrap');
+    if (!w) return;
+    var d = document.createElement('div');
+    d.className = 'toast';
+    d.textContent = msg;
+    w.appendChild(d);
+    setTimeout(function () { d.classList.add('show'); }, 10);
+    setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, 2400);
+}
+
+/* ==================== 悬浮提示 ==================== */
+function showTip(n, p) {
+    if (!tip) return;
+    tip.innerHTML = '<div class="tip-name">' + esc(n.name) + '</div>' +
+        '<div class="tip-row"><span style="color:' + subjColor(n.subject) + '">' + esc(n.subject) +
+        '</span><span>重要度 ' + '★'.repeat(n.imp) + '</span><span>' + STATUS_TXT[n.status] + '</span></div>';
+    tip.style.display = 'block';
+    var sr = stage.getBoundingClientRect();
+    var r = tip.getBoundingClientRect();
+    var x = p.x + 15, y = p.y - r.height - 12;
+    if (x + r.width > sr.width - 8) x = p.x - r.width - 15;
+    if (x < 8) x = 8;
+    if (y < 8) y = p.y + 20;
+    tip.style.left = Math.round(x) + 'px';
+    tip.style.top = Math.round(y) + 'px';
+}
+function hideTip() { if (tip) tip.style.display = 'none'; }
+
+/* ==================== 详情面板 ==================== */
+function selectNode(n) {
+    selected = n;
+    renderDetail(n);
+    reheat(0.3);
+}
+function hideDetail() { if (detail) detail.classList.remove('open'); }
+
+function renderDetail(n) {
+    var stHtml = ['unlearned', 'learning', 'mastered'].map(function (s) {
+        return '<button type="button" class="st-btn ' + s + (n.status === s ? ' on' : '') + '" data-st="' + s + '">' + STATUS_TXT[s] + '</button>';
+    }).join('');
+    var exHtml = (n.ex || []).map(function (x) { return '<div class="ex-item">' + esc(x) + '</div>'; }).join('');
+    var resHtml = (n.res || []).map(function (r) { return '<span class="res-tag">' + esc(r) + '</span>'; }).join('');
+    var nb = (ADJ[n.id] || []).map(function (id) { return IDX[id]; }).filter(Boolean);
+    var nbHtml = nb.length
+        ? nb.map(function (m) {
+            return '<button type="button" class="nb-btn" data-id="' + m.id + '"><i style="background:' + statusOf(m) + '"></i>' + esc(m.name) + '</button>';
+        }).join('')
+        : '<div class="dt-empty">该知识点暂无关联</div>';
+
+    detail.classList.add('open');
+    dtDot.style.background = subjColor(n.subject);
+    dtName.textContent = n.name;
+    dtSub.textContent = n.subject + ' · 重要度 ' + '★'.repeat(n.imp);
+    dtBody.innerHTML =
+        '<div class="dt-block"><div class="dt-lbl">🎯 掌握状态</div><div class="st-row">' + stHtml + '</div></div>' +
+        '<div class="dt-block"><div class="dt-lbl">📖 定义 / 公式</div><div class="dt-def">' + esc(n.def) + '</div></div>' +
+        '<div class="dt-block"><div class="dt-lbl">✏️ 典型例题</div><div class="ex-list">' + exHtml + '</div></div>' +
+        '<div class="dt-block"><div class="dt-lbl">🧭 关联知识点（' + nb.length + '）</div><div class="nb-list">' + nbHtml + '</div></div>' +
+        '<div class="dt-block"><div class="dt-lbl">🔗 学习资源</div><div class="res-row">' + resHtml + '</div></div>';
+
+    detail.querySelector('.st-row').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-st]');
+        if (!b) return;
+        n.status = b.getAttribute('data-st');
+        renderDetail(n);
+        saveState();
+        toast('已标记为「' + STATUS_TXT[n.status] + '」');
+    });
+    detail.querySelector('.nb-list').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-id]');
+        if (!b) return;
+        var m = IDX[b.getAttribute('data-id')];
+        if (m) { selectNode(m); focusOn(m, Math.max(cam.k, 1.3)); }
+    });
+}
+
+/* ==================== 统计与科目筛选 ==================== */
+function refreshStats() {
+    var onLinks = 0;
+    for (var i = 0; i < LINKS.length; i++) if (LINKS[i].on) onLinks++;
+    var m = { unlearned: 0, learning: 0, mastered: 0 };
+    VIS.forEach(function (n) { m[n.status]++; });
+    statLine.textContent = '节点 ' + VIS.length + ' · 连线 ' + onLinks + ' · 已掌握 ' + m.mastered;
+}
+
+function buildSubjectChips() {
+    var html = '<span class="meta-lbl">科目</span>';
+    SUBJECTS.forEach(function (s) {
+        var cnt = 0;
+        NODES.forEach(function (n) { if (n.subject === s) cnt++; });
+        html += '<button type="button" class="chip ' + (active[s] ? 'on' : '') + '" data-subj="' + esc(s) + '" style="--c:' + subjColor(s) + '"><i></i>' + esc(s) + '<em>' + cnt + '</em></button>';
+    });
+    subjChips.innerHTML = html;
+    subjChips.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-subj]');
+        if (!b) return;
+        var s = b.getAttribute('data-subj');
+        var others = 0;
+        SUBJECTS.forEach(function (x) { if (x !== s && active[x]) others++; });
+        if (active[s] && others === 0) { toast('至少保留一个科目可见'); return; }
+        active[s] = !active[s];
+        b.classList.toggle('on', active[s]);
+        rebuildVisible();
+        saveState();
+        reheat(0.8);
+        toast(active[s] ? '已显示「' + s + '」' : '已隐藏「' + s + '」');
+    });
+}
+
+/* ==================== 搜索定位 ==================== */
+function runSearch(q) {
+    q = (q || '').trim();
+    if (!q) { searchDrop.innerHTML = ''; searchDrop.classList.remove('show'); return; }
+    var res = NODES.filter(function (n) {
+        return active[n.subject] && n.name.indexOf(q) >= 0;
+    });
+    if (!res.length) {
+        searchDrop.innerHTML = '<div class="drop-empty">未找到「' + esc(q) + '」相关知识点</div>';
+    } else {
+        searchDrop.innerHTML = res.slice(0, 8).map(function (n) {
+            return '<button type="button" class="drop-item" data-id="' + n.id + '"><i style="background:' + subjColor(n.subject) + '"></i>' + esc(n.name) + '<span>' + esc(n.subject) + '</span></button>';
+        }).join('');
+    }
+    searchDrop.classList.add('show');
+}
+
+function locateNode(n) {
+    selected = n;
+    focused = n;
+    renderDetail(n);
+    focusOn(n, Math.max(cam.k, 1.6));
+    reheat(0.3);
+    searchDrop.classList.remove('show');
+    hideTip();
+}
+
+/* ==================== 路径探索 ==================== */
+function findPath(aId, bId) {
+    if (aId === bId) return [aId];
+    var seen = {}, prev = {}, queue = [aId];
+    seen[aId] = true;
+    while (queue.length) {
+        var cur = queue.shift();
+        var nb = (ADJ[cur] || []).filter(function (id) {
+            var nd = IDX[id];
+            return nd && active[nd.subject];
+        });
+        for (var i = 0; i < nb.length; i++) {
+            var m = nb[i];
+            if (seen[m]) continue;
+            seen[m] = true;
+            prev[m] = cur;
+            if (m === bId) {
+                var path = [bId];
+                while (prev[path[0]] !== undefined) path.unshift(prev[path[0]]);
+                return path;
+            }
+            queue.push(m);
+        }
+    }
+    return null;
+}
+
+function linkIdx(u, v) {
+    for (var i = 0; i < LINKS.length; i++) {
+        var l = LINKS[i];
+        if ((l.a.id === u && l.b.id === v) || (l.a.id === v && l.b.id === u)) return i;
+    }
+    return -1;
+}
+
+function highlightPath(path, aName, bName) {
+    var nSet = {}, lSet = {};
+    path.forEach(function (id) { nSet[id] = 1; });
+    for (var i = 0; i < path.length - 1; i++) {
+        var li = linkIdx(path[i], path[i + 1]);
+        if (li >= 0) lSet[li] = 1;
+    }
+    pathHL = { n: nSet, l: lSet };
+    selected = null; focused = null;
+    hideDetail();
+    var mx = 0, my = 0;
+    path.forEach(function (id) { mx += IDX[id].x; my += IDX[id].y; });
+    mx /= path.length; my /= path.length;
+    animCam(mx, my, Math.max(0.8, Math.min(cam.k, 1.35)));
+    pathNote.innerHTML = '<b>🧭 ' + esc(aName) + ' → ' + esc(bName) + '</b><span>共 ' + path.length + ' 个知识点 · ' + (path.length - 1) + ' 跳</span>' +
+        '<button type="button" id="pathNoteClear">清除</button>';
+    pathNote.classList.add('show');
+    document.getElementById('pathNoteClear').addEventListener('click', clearPath);
+}
+
+function clearPath() {
+    pathHL = null;
+    hidePathNote();
+}
+function hidePathNote() { if (pathNote) pathNote.classList.remove('show'); }
+
+function buildPathSelects() {
+    var opts = '<option value="">选择知识点…</option>';
+    var last = '';
+    NODES.forEach(function (n) {
+        if (!active[n.subject]) return;
+        if (n.subject !== last) {
+            if (last) opts += '</optgroup>';
+            opts += '<optgroup label="' + esc(n.subject) + '">';
+            last = n.subject;
+        }
+        opts += '<option value="' + n.id + '">' + esc(n.name) + '</option>';
+    });
+    if (last) opts += '</optgroup>';
+    pathA.innerHTML = opts;
+    pathB.innerHTML = opts;
+}
+
+/* ==================== 缩放与视角 ==================== */
+function updateZoomLabel() { if (zoomVal) zoomVal.textContent = Math.round(cam.k * 100) + '%'; }
+function doZoom(f) { zoomAt(W / 2, H / 2, f); }
+function resetView() {
+    clearPath();
+    selected = null; focused = null;
+    hideDetail();
+    animCam(0, 0, 1);
+    reheat(0.9);
+    updateZoomLabel();
+}
+
+/* ==================== 重新布局 ==================== */
+function relayout() {
+    selected = null; focused = null;
+    clearPath(); hideDetail();
+    for (var id in state.pos) delete state.pos[id];
+    buildGraph();
+    cam.x = 0; cam.y = 0;
+    animCam(0, 0, 1);
+    reheat(1);
+    updateZoomLabel();
+    toast('🧲 已重新布局图谱');
+}
+
+/* ==================== 导出 / 导入 ==================== */
+function packData() {
+    var st = {}, pos = {};
+    NODES.forEach(function (n) {
+        st[n.id] = n.status;
+        pos[n.id] = [Math.round(n.x * 10) / 10, Math.round(n.y * 10) / 10];
+    });
+    return { app: 'zhaolezi_45_graph', version: 1, date: new Date().toISOString().slice(0, 10), active: active, status: st, pos: pos };
+}
+
+function exportData() {
+    var blob = new Blob([JSON.stringify(packData(), null, 2)], { type: 'application/json;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'zhaolezi-45-知识图谱状态.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+    toast('⬇️ 已导出状态文件');
+}
+
+function importData(file) {
+    var fr = new FileReader();
+    fr.onload = function () {
+        try {
+            var o = JSON.parse(String(fr.result));
+            if (!o || typeof o !== 'object') throw new Error('bad');
+            var cnt = 0;
+            if (o.status) {
+                for (var id in o.status) {
+                    if (IDX[id] && STATUS_TXT[o.status[id]]) { state.status[id] = o.status[id]; cnt++; }
+                }
+            }
+            if (o.pos) state.pos = o.pos;
+            if (o.active) { for (var s in o.active) if (SUBJECTS.indexOf(s) >= 0) active[s] = !!o.active[s]; }
+            buildGraph();
+            buildSubjectChips();
+            refreshStats();
+            saveState();
+            toast('⬆️ 导入完成，已更新 ' + cnt + ' 个掌握状态');
+        } catch (e) {
+            toast('❌ 文件格式不正确');
+        }
+    };
+    fr.readAsText(file);
+}
+
+/* ==================== 确认弹窗与重置 ==================== */
+function askConfirm(title, msg, onYes) {
+    askConfirm.cb = onYes;
+    delTitle.textContent = title;
+    delMsg.textContent = msg;
+    delOverlay.classList.add('show');
+}
+function closeConfirm() {
+    delOverlay.classList.remove('show');
+    askConfirm.cb = null;
+}
+
+function doReset() {
+    try { localStorage.removeItem(LS_KEY); } catch (e) { }
+    state = { pos: {}, status: {} };
+    SUBJECTS.forEach(function (s) { active[s] = true; });
+    clearPath();
+    selected = null; focused = null;
+    hideDetail();
+    buildGraph();
+    buildSubjectChips();
+    refreshStats();
+    cam.k = 1;
+    animCam(0, 0, 1);
+    reheat(1);
+    updateZoomLabel();
+    toast('🗑️ 已重置图谱，状态恢复默认');
+}
+
+/* ==================== 键盘与尺寸 ==================== */
+function onKey(e) {
+    if (e.key !== 'Escape') return;
+    if (delOverlay.classList.contains('show')) { closeConfirm(); return; }
+    if (searchDrop.classList.contains('show')) { searchDrop.classList.remove('show'); return; }
+    if (pathHL || selected || focused) {
+        clearPath();
+        clearFocus();
+    } else {
+        searchIn.blur();
+    }
+}
+
+var ro = null;
+function bindResize() {
+    function apply() { resize(); }
+    window.addEventListener('resize', apply);
+    window.addEventListener('orientationchange', function () {
+        setTimeout(apply, 250);
+    });
+    if (window.ResizeObserver) {
+        ro = new ResizeObserver(apply);
+        ro.observe(stage);
+    }
+}
+
+/* ==================== DOM 引用与初始化 ==================== */
+var detail, dtDot, dtName, dtSub, dtBody, subjChips, statLine, zoomVal, pathNote,
+    searchIn, searchClear, searchDrop, pathA, pathB, pathSwap, pathGo, pathClearBtn,
+    importFile, delOverlay, delTitle, delMsg, delYes, delNo, delClose, hintEl;
+
+function $(id) { return document.getElementById(id); }
+function go(url) {
+    var m = document.querySelector('main');
+    if (m) {
+        m.style.transition = 'opacity .26s ease, transform .26s ease';
+        m.style.opacity = '0';
+        m.style.transform = 'scale(.985)';
+    }
+    setTimeout(function () { location.href = url; }, 250);
+}
+
+function init() {
+    stage = $('stage');
+    cv = $('cv');
+    ctx = cv.getContext('2d');
+    tip = $('tip');
+    detail = $('detail'); dtDot = $('dtDot'); dtName = $('dtName'); dtSub = $('dtSub'); dtBody = $('dtBody');
+    subjChips = $('subjChips'); statLine = $('statLine'); zoomVal = $('zoomVal'); pathNote = $('pathNote');
+    searchIn = $('searchIn'); searchClear = $('searchClear'); searchDrop = $('searchDrop');
+    pathA = $('pathA'); pathB = $('pathB'); pathSwap = $('pathSwap'); pathGo = $('pathGo'); pathClearBtn = $('pathClear');
+    importFile = $('importFile');
+    delOverlay = $('delOverlay'); delTitle = $('delTitle'); delMsg = $('delMsg');
+    delYes = $('delYes'); delNo = $('delNo'); delClose = $('delClose');
+    hintEl = $('hint');
+
+    cv.style.touchAction = 'none';
+    stage.style.touchAction = 'none';
+    readTheme();
+    if (window.MutationObserver) {
+        new MutationObserver(function () { readTheme(); }).observe(document.documentElement, {
+            attributes: true, attributeFilter: ['data-theme', 'class']
+        });
+    }
+
+    loadState();
+    buildGraph();
+    buildSubjectChips();
+    buildPathSelects();
+    refreshStats();
+    resize();
+    bindResize();
+    raf = requestAnimationFrame(loop);
+    updateZoomLabel();
+    if (hintEl) setTimeout(function () { hintEl.classList.add('hide'); }, 7000);
+
+    /* ---- 画布交互 ---- */
+    cv.addEventListener('pointerdown', onDown);
+    cv.addEventListener('pointermove', onMove);
+    cv.addEventListener('pointerup', onUp);
+    cv.addEventListener('pointercancel', onUp);
+    cv.addEventListener('dblclick', onDbl);
+    cv.addEventListener('wheel', onWheel, { passive: false });
+    cv.addEventListener('pointerleave', function () { hover = null; hideTip(); cv.style.cursor = 'grab'; });
+
+    /* ---- 缩放 ---- */
+    $('zoomIn').addEventListener('click', function () { doZoom(1.2); });
+    $('zoomOut').addEventListener('click', function () { doZoom(1 / 1.2); });
+    $('zoomReset').addEventListener('click', function () { resetView(); toast('已重置视角'); });
+
+    /* ---- 搜索 ---- */
+    searchIn.addEventListener('input', function () {
+        searchClear.style.display = searchIn.value ? 'block' : 'none';
+        runSearch(searchIn.value);
+    });
+    searchIn.addEventListener('focus', function () { if (searchIn.value) runSearch(searchIn.value); });
+    searchIn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            var q = searchIn.value.trim();
+            var hit = NODES.filter(function (n) { return active[n.subject] && n.name.indexOf(q) >= 0; });
+            if (hit.length) { locateNode(hit[0]); toast('已定位「' + hit[0].name + '」'); }
+        }
+    });
+    searchClear.addEventListener('click', function () {
+        searchIn.value = '';
+        searchClear.style.display = 'none';
+        runSearch('');
+        searchIn.focus();
+    });
+    searchDrop.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-id]');
+        if (!b) return;
+        var n = IDX[b.getAttribute('data-id')];
+        if (n) { locateNode(n); toast('已定位「' + n.name + '」'); }
+    });
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.search-box')) searchDrop.classList.remove('show');
+    });
+
+    /* ---- 路径探索 ---- */
+    pathGo.addEventListener('click', function () {
+        var a = pathA.value, b = pathB.value;
+        if (!a || !b) { toast('请先选择起点与终点'); return; }
+        if (a === b) { toast('起点与终点不能相同'); return; }
+        if (!active[IDX[a].subject] || !active[IDX[b].subject]) { toast('请先在科目筛选中打开对应科目'); return; }
+        var p = findPath(a, b);
+        if (!p) { toast('两者之间暂无关联路径'); return; }
+        highlightPath(p, IDX[a].name, IDX[b].name);
+    });
+    pathSwap.addEventListener('click', function () {
+        var t = pathA.value; pathA.value = pathB.value; pathB.value = t;
+    });
+    pathClearBtn.addEventListener('click', function () {
+        clearPath();
+        toast('已清除路径高亮');
+    });
+
+    /* ---- 详情面板 ---- */
+    $('dtClose').addEventListener('click', function () {
+        selected = null; focused = null;
+        hideDetail();
+    });
+
+    /* ---- 数据管理 ---- */
+    $('layoutBtn').addEventListener('click', relayout);
+    $('exportBtn').addEventListener('click', exportData);
+    $('importBtn').addEventListener('click', function () { importFile.click(); });
+    importFile.addEventListener('change', function () {
+        if (importFile.files && importFile.files[0]) importData(importFile.files[0]);
+        importFile.value = '';
+    });
+    $('resetBtn').addEventListener('click', function () {
+        askConfirm('重置知识图谱', '将清空本机保存的掌握状态与节点位置，恢复默认布局。此操作无法撤销，确认继续？', doReset);
+    });
+
+    /* ---- 确认弹窗 ---- */
+    delYes.addEventListener('click', function () {
+        var cb = askConfirm.cb;
+        closeConfirm();
+        if (cb) cb();
+    });
+    delNo.addEventListener('click', closeConfirm);
+    delClose.addEventListener('click', closeConfirm);
+    delOverlay.addEventListener('click', function (e) { if (e.target === delOverlay) closeConfirm(); });
+
+    /* ---- 顶栏与键盘 ---- */
+    $('backHome').addEventListener('click', function (e) { e.preventDefault(); go('index.html'); });
+    $('announceBtn').addEventListener('click', function (e) { e.preventDefault(); go('42.html'); });
+    document.addEventListener('keydown', onKey);
+
+    /* ---- 空闲时落盘坐标 ---- */
+    setInterval(function () { if (alpha > 0) saveState(); }, 4000);
+}
+
+init();
+
+
+</script>
+</body>
+</html>
