@@ -798,12 +798,6 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            transition: opacity .8s ease;
-        }
-
-        .hint.hide {
-            opacity: 0;
-            pointer-events: none;
         }
 
         .zoom-box {
@@ -2081,7 +2075,7 @@ function renderDetail(n) {
         ? nb.map(function (m) {
             return '<button type="button" class="nb-btn" data-id="' + m.id + '"><i style="background:' + statusOf(m) + '"></i>' + esc(m.name) + '</button>';
         }).join('')
-        : '<div class="dt-empty">该知识点暂无关联</div>';
+        : '<div class="nb-empty">该知识点暂无关联</div>';
 
     detail.classList.add('open');
     dtDot.style.background = subjColor(n.subject);
