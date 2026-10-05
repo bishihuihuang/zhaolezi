@@ -5,21 +5,196 @@
     function LS(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
     function SS(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 
-    /* ========== 通用 Toast ========== */
+    /* ========== 通用 Toast（样式走公共层 .zl-toast，随主题变量联动） ========== */
     ZL.showToast = function (msg, ms) {
         ms = ms || 2600;
         var t = document.getElementById('zlToast');
         if (!t) {
             t = document.createElement('div');
             t.id = 'zlToast';
-            t.style.cssText = 'position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:2147483647;background:rgba(20,22,45,.92);color:#fff;padding:10px 22px;border-radius:24px;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);pointer-events:none;opacity:0;transition:opacity .3s;max-width:86%;text-align:center;';
+            t.className = 'zl-toast';
             document.body.appendChild(t);
         }
         t.textContent = msg;
-        t.style.opacity = '1';
+        t.classList.add('show');
         clearTimeout(t._tm);
-        t._tm = setTimeout(function () { t.style.opacity = '0'; }, ms);
+        t._tm = setTimeout(function () { t.classList.remove('show'); }, ms);
     };
+
+    /* ========== 公共工具（供各页面复用，页面勿重复实现） ========== */
+    ZL.escapeHtml = function (s) {
+        return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+    };
+    ZL.fmtDate = function (d) {
+        d = d || new Date();
+        return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    };
+    ZL.download = function (fileName, text, mime) {
+        try {
+            var blob = new Blob([text], { type: mime || 'text/plain;charset=utf-8' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+        } catch (e) {}
+    };
+
+    /* ========== 事件总线：同页直调 + 跨 tab（BroadcastChannel + storage 兜底） ========== */
+    ZL._evt = {};
+    ZL.on = function (type, cb) {
+        (ZL._evt[type] = ZL._evt[type] || []).push(cb);
+    };
+    ZL.emit = function (type, payload) {
+        var list = ZL._evt[type] || [];
+        for (var i = 0; i < list.length; i++) { try { list[i](payload || {}); } catch (e) {} }
+        try {
+            new BroadcastChannel('zhaolezi').postMessage({ type: type, payload: payload || {}, at: Date.now() });
+        } catch (e) {}
+        try { localStorage.setItem('zl_evt_' + type, JSON.stringify({ payload: payload || {}, at: Date.now() })); } catch (e2) {}
+    };
+    try {
+        var _zlBC = new BroadcastChannel('zhaolezi');
+        _zlBC.onmessage = function (e) {
+            var d = e.data || {};
+            var list = ZL._evt[d.type] || [];
+            for (var i = 0; i < list.length; i++) { try { list[i](d.payload || {}); } catch (err) {} }
+        };
+    } catch (e) {}
+    /* storage 兜底：BroadcastChannel 不可用时，跨 tab 靠同源 storage 事件同步 */
+    window.addEventListener('storage', function (e) {
+        if (!e.newValue || e.key.indexOf('zl_evt_') !== 0) return;
+        var type = e.key.slice(7);
+        var list = ZL._evt[type] || [];
+        try { var p = JSON.parse(e.newValue).payload; } catch (e2) { return; }
+        for (var i = 0; i < list.length; i++) { try { list[i](p || {}); } catch (err) {} }
+    });
+
+    /* ========== V2.0 学习数据层 zl_study_log_v1（事件驱动数据资产） ==========
+     * 记录全站学习动作（复习/掌握/增删改错题等），供 44 仪表盘聚合：
+     *   ZL.studyLog.add({type, itemId, subject, kp, extra}) -> 写日志 + emit 'study.recorded'
+     *   ZL.studyLog.recent(n)     最近 n 条
+     *   ZL.studyLog.todayCount()  今日活动数
+     *   ZL.studyLog.streakDays()  连续学习天数（今天未学则以今天为断点回退）
+     * 条目：{type, itemId, subject, kp, at}
+     * type 契约：add/edit/del/review/mastered */
+    (function () {
+        var KEY = 'zl_study_log_v1';
+        var MAX = 500; // 容量上限，超出截断最旧记录
+        function read() {
+            try { var a = JSON.parse(localStorage.getItem(KEY)); if (Object.prototype.toString.call(a) === '[object Array]') return a; } catch (e) {}
+            return [];
+        }
+        function write(a) {
+            if (a.length > MAX) a = a.slice(a.length - MAX);
+            try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {}
+            return a;
+        }
+        ZL.studyLog = {
+            add: function (entry) {
+                var a = read();
+                a.push({
+                    type: entry.type || 'review',
+                    itemId: entry.itemId == null ? '' : String(entry.itemId),
+                    subject: entry.subject || '',
+                    kp: entry.kp || '',
+                    at: entry.at || Date.now()
+                });
+                write(a);
+                ZL.emit('study.recorded', a[a.length - 1]);
+            },
+            recent: function (n) {
+                var a = read();
+                return n ? a.slice(-n) : a;
+            },
+            todayCount: function () {
+                var a = read(), now = new Date(), c = 0;
+                for (var i = 0; i < a.length; i++) {
+                    var d = new Date(a[i].at);
+                    if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate()) c++;
+                }
+                return c;
+            },
+            // 连续学习天数：往前数连续有记录的天数；今天没记录则不把今天算入
+            streakDays: function () {
+                var a = read(), days = {};
+                for (var i = 0; i < a.length; i++) {
+                    var d = new Date(a[i].at);
+                    days[d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()] = 1;
+                }
+                var now = new Date(), n = 0, cur = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                function key(d) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+                if (!days[key(cur)]) cur.setDate(cur.getDate() - 1); // 今天没学，从昨天起算
+                while (days[key(cur)]) { n++; cur.setDate(cur.getDate() - 1); }
+                return n;
+            }
+        };
+    })();
+
+    /* ========== V2.0 版本与数据迁移框架 ==========
+     * zl_app_version = {ver, at, read[]}：ver=数据已迁移到的版本，read=已读过的更新记录
+     * 新功能发布流程：ZL.APP_VER 升版 → VERSION_LOG 补一条 → whatsNew() 自动触达用户
+     * dataMigration(name, toVer, fn)：确保数据结构演进到 toVer，幂等，只执行一次 */
+    ZL.APP_VER = '2.0.0';
+    ZL.VERSION_LOG = [
+        { ver: '2.0.0', title: '学习数据层 · 跨页实时', desc: '学习动态/连续天数实时联动；作业盒子一键转错题；设计 Token 主题层' }
+    ];
+    function verState() {
+        var st = { ver: '', read: [] };
+        try {
+            var p = JSON.parse(localStorage.getItem('zl_app_version') || '{}');
+            if (p && typeof p.ver === 'string') st.ver = p.ver;
+            if (Object.prototype.toString.call(p && p.read) === '[object Array]') st.read = p.read;
+        } catch (e) {}
+        return st;
+    }
+    function verGte(a, b) { // 仅支持 x.y.z 数字段
+        var pa = String(a || '0').split('.').map(Number);
+        var pb = String(b || '0').split('.').map(Number);
+        while (pa.length < 3) pa.push(0);
+        while (pb.length < 3) pb.push(0);
+        for (var i = 0; i < 3; i++) { if (pa[i] > pb[i]) return true; if (pa[i] < pb[i]) return false; }
+        return true;
+    }
+    ZL.dataMigration = function (name, toVer, fn) {
+        var st = verState();
+        if (verGte(st.ver, toVer)) return; // 已推进到该版本，跳过
+        try { if (fn) fn(); } catch (e) {}
+        st.ver = toVer;
+        try { localStorage.setItem('zl_app_version', JSON.stringify({ ver: st.ver, at: Date.now(), read: st.read })); } catch (e2) {}
+    };
+    ZL.whatsNew = function () {
+        var st = verState(), out = [];
+        for (var i = 0; i < ZL.VERSION_LOG.length; i++) {
+            var v = ZL.VERSION_LOG[i];
+            if (st.read.indexOf(v.ver) < 0 && verGte(v.ver, st.ver)) out.push(v);
+        }
+        return out;
+    };
+    ZL.markVersionSeen = function () {
+        var st = verState(), read = st.read.slice();
+        for (var i = 0; i < ZL.VERSION_LOG.length; i++) {
+            var v = ZL.VERSION_LOG[i].ver;
+            if (read.indexOf(v) < 0) read.push(v);
+        }
+        try { localStorage.setItem('zl_app_version', JSON.stringify({ ver: st.ver, at: Date.now(), read: read })); } catch (e) {}
+    };
+    // 内置迁移：v2.0.0 —— 规范 43 错题条目字段（补 point 默认值，幂等无害）
+    ZL.dataMigration('err_items_norm', '2.0.0', function () {
+        try {
+            var items = JSON.parse(localStorage.getItem('zl_err_items_v1') || '[]');
+            if (Object.prototype.toString.call(items) === '[object Array]') {
+                var changed = false;
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i] && items[i].point == null) { items[i].point = ''; changed = true; }
+                }
+                if (changed) localStorage.setItem('zl_err_items_v1', JSON.stringify(items));
+            }
+        } catch (e) {}
+    });
 
     /* ========== 页面索引（站内搜索） ========== */
     ZL.PAGES = [

@@ -10,9 +10,11 @@
  *   - 自动注入 PWA 块（manifest/theme-color/横屏CSS）到 </head> 前
  *   - 自动刷新公共防小白脚本 common.js，并在页面注入 <script src="common.js">
  *   - 30.html 和 文件搜索.html 不混淆，直接复制
+ *   - 构建末尾：主题三方断言 + service-worker 缓存自动升版 + 全量冒烟自检（_冒烟自检.js）
  */
 
 const fs = require('fs');
+const cp = require('child_process');
 const path = require('path');
 
 const SOURCE_DIR = '_原始未混淆版';
@@ -235,6 +237,67 @@ function utf8ToBase64(str) {
 }
 
 /**
+ * P1-10：ZL.PAGES 作为 sitemap 单一来源，构建时生成 sitemap.xml
+ * 从 zl-features.js 正则提取 PAGES 中的文件名，生成 GitHub Pages 域名下的 URL 列表
+ */
+function genSitemap() {
+    const zlSrc = path.join(ROOT, 'zl-features.js');
+    if (!fs.existsSync(zlSrc)) return;
+    const code = fs.readFileSync(zlSrc, 'utf-8');
+    const re = /f:\s*'([^']+\.html)'/g;
+    const files = [];
+    let m;
+    while ((m = re.exec(code)) !== null) files.push(m[1]);
+    if (!files.length) return;
+    const base = 'https://bishihuihuang.github.io/zhaolezi/';
+    const urls = files.map(f => '  <url><loc>' + base + f + '</loc></url>').join('\n');
+    const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '\n</urlset>\n';
+    fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), xml, 'utf-8');
+    console.log('[公共] sitemap.xml 已生成（' + files.length + ' 页，来源 ZL.PAGES）');
+}
+
+/**
+ * P1-9：主题三方对齐断言（THEMES / LABELS / common.css 主题块数量一致）
+ * 不一致时打印 ✗ 但不拦截构建（不影响页面可用性，仅提示修复）
+ */
+function checkThemeConsistency() {
+    const themeSrc = path.join(ROOT, 'theme.js');
+    if (!fs.existsSync(themeSrc)) return true;
+    const code = fs.readFileSync(themeSrc, 'utf-8');
+    const tm = code.match(/var THEMES = \[([^\]]+)\]/);
+    const lm = code.match(/var LABELS = \{([^}]+)\}/);
+    if (!tm || !lm) {
+        console.log('[断言] theme.js 结构无法解析，跳过主题对齐检查');
+        return true;
+    }
+    const themes = (tm[1].match(/'([^']+)'/g) || []).map(x => x.slice(1, -1));
+    const labels = (lm[1].match(/([A-Za-z_$][\w$]*):/g) || []).map(x => x.slice(0, -1));
+    let cssCount = 0;
+    const cssPath = path.join(ROOT, 'common.css');
+    if (fs.existsSync(cssPath)) {
+        const css = fs.readFileSync(cssPath, 'utf-8');
+        cssCount = (css.match(/\[data-theme="/g) || []).length;
+    }
+    const ok = themes.length === labels.length && themes.length === cssCount;
+    console.log('[断言] 主题三方对齐：THEMES ' + themes.length + ' / LABELS ' + labels.length + ' / CSS 块 ' + cssCount + (ok ? ' ✓' : ' ✗ 不一致，请检查 theme.js 与 common.css'));
+    return ok;
+}
+
+/**
+ * V2.0 主题变量化审计：构建后提示各页硬编码色规模（治理依据，不拦截）。
+ * 页面新改动一律引用 --zl-* 产品级 token，见 _theme_audit.js。
+ */
+function checkThemeAudit() {
+    try {
+        const audit = require(path.join(ROOT, '_theme_audit.js'));
+        const notV = audit.rows.filter(r => !r.usesVar).length;
+        console.log('[审计] 硬编码色 ' + audit.total + ' 处 / ' + audit.rows.length + ' 页，已接入变量 ' + audit.rows.filter(r => r.usesVar).length + ' 页，未接变量 ' + notV + ' 页（治理清单见 node _theme_audit.js）');
+    } catch (e) {
+        console.log('[审计] _theme_audit.js 执行失败：' + e.message);
+    }
+}
+
+/**
  * 自动全局挂载：扫描脚本内的 function 声明，在混淆载荷中追加 window.xxx 挂载。
  * 背景：混淆模板用 direct eval 执行，function 声明不会进入全局作用域，
  * 导致 HTML 内联事件属性（onclick="foo()"）按全局查找失败（ReferenceError）。
@@ -312,9 +375,9 @@ function preCheck(fileName, content) {
 
 function ensurePwaBlock(html, fileName) {
     const COMMON_CSS = '<link rel="stylesheet" href="common.css">';
-    const COMMON_JS = '<script src="common.js"></script>';
-    const THEME_JS = '<script src="theme.js"></script>';
-    const ZL_JS = '<script src="zl-features.js"></script>';
+    const COMMON_JS = '<script defer src="common.js"></script>';
+    const THEME_JS = '<script defer src="theme.js"></script>';
+    const ZL_JS = '<script defer src="zl-features.js"></script>';
     if (html.includes('rel="manifest"') && html.includes('orientation: landscape') && html.includes('src="common.js"') && html.includes('src="zl-features.js"') && html.includes('href="common.css"')) {
         return html;
     }
@@ -363,17 +426,15 @@ function obfuscateFile(fileName) {
         return { file: fileName, status: 'copy' };
     }
 
-    // 3. 安全检查：已经混淆过的不再二次混淆
-    if (content.includes('eval(function(_0x1){var _0x2=function(_0x3){return _0x3}')) {
-        fs.writeFileSync(dst, content, 'utf-8');
-        return { file: fileName, status: 'already-obfuscated' };
-    }
+    // 3. P0-2：不再整页跳过——含已混淆标记的脚本仅跳过该脚本本身，其余业务脚本照常混淆
+    const OBF_MARKER = 'eval(function(_0x1){var _0x2=function(_0x3){return _0x3}';
 
     // 4. 内联 script 混淆（防小白已外置到 common.js，此处只混淆业务脚本）
     const scriptRegex = /(<script(?![^>]*\bsrc=)[^>]*>)([\s\S]*?)(<\/script>)/gi;
     let matchCount = 0;
     const newContent = content.replace(scriptRegex, (match, openTag, jsCode, closeTag) => {
         if (!jsCode || jsCode.trim().length === 0) return match;
+        if (jsCode.includes(OBF_MARKER)) return match; // 已混淆脚本跳过，避免二次混淆
         matchCount++;
         const encoded = utf8ToBase64(autoAttachGlobals(jsCode));
         const obfuscatedJS = `eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("${encoded}");`;
@@ -458,6 +519,16 @@ function main() {
     fs.writeFileSync(path.join(ROOT, 'common.js'), ANTI_CHEAT_CODE + SW_REGISTER_CODE, 'utf-8');
     console.log('[公共] common.js 已刷新（防小白 + SW注册）\n');
 
+    // P0-4：17-data.js 随构建同步（防"改源不发布"）
+    const dataSrc = path.join(ROOT, SOURCE_DIR, '17-data.js');
+    if (fs.existsSync(dataSrc)) {
+        fs.copyFileSync(dataSrc, path.join(ROOT, '17-data.js'));
+        console.log('[公共] 17-data.js 已同步');
+    }
+
+    // P1-10：构建时从 ZL.PAGES 生成 sitemap.xml
+    genSitemap();
+
     let obf = 0, copy = 0, skip = 0;
     let preCheckBlocked = 0;
     for (const f of files) {
@@ -500,7 +571,48 @@ function main() {
     console.log(`  完成：混淆 ${obf}，复制/写入 ${copy}，跳过/失败 ${skip}`);
     if (preCheckBlocked > 0) console.log(`  预检拦截：${preCheckBlocked} 个文件（需修复后重新构建）`);
     console.log('========================================');
+    // P1-9：主题三方对齐断言（不拦截，仅提示）
+    checkThemeConsistency();
+    // M4：Service Worker 缓存版本随构建自动递增——公共层/页面更新后构建即发布，
+    // 防"改了文件但 SW 缓存优先导致用户一直拿旧版"回归
+    bumpServiceWorker();
+    // M4：全量冒烟自检（源码级模拟浏览器执行全部内联脚本，捕捉加载期崩溃；失败置 exitCode）
+    runSmokeTest();
+    // V2.0：主题变量化审计提示（治理依据，不拦截）
+    checkThemeAudit();
     if (preCheckBlocked > 0) process.exitCode = 1;
+}
+
+/* M4：冒烟自检——逐页执行内联脚本，任何页崩溃即提示（不阻断产物生成） */
+function runSmokeTest() {
+    const smokePath = path.join(ROOT, '_冒烟自检.js');
+    if (!fs.existsSync(smokePath)) return;
+    try {
+        const r = cp.execSync('node ' + JSON.stringify(smokePath), { stdio: 'pipe', encoding: 'utf-8', timeout: 120000 });
+        process.stdout.write(r);
+    } catch (e) {
+        const out = (e.stdout || '') + (e.stderr || '');
+        process.stdout.write(out);
+        console.log('[冒烟] 有页面自检失败（见上），请修复后重新构建！');
+        process.exitCode = 1;
+    }
+}
+
+/* M4：SW 缓存版本自动 bump（CACHE_NAME zhaolezi-vN → vN+1，顶部补注释行） */
+function bumpServiceWorker() {
+    const swPath = path.join(ROOT, 'service-worker.js');
+    if (!fs.existsSync(swPath)) return;
+    let sw;
+    try { sw = fs.readFileSync(swPath, 'utf-8'); } catch (e) { return; }
+    const m = sw.match(/zhaolezi-v(\d+)/);
+    if (!m) return;
+    const nv = +m[1] + 1;
+    const d = new Date();
+    const date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    sw = sw.replace(/zhaolezi-v\d+/, 'zhaolezi-v' + nv);
+    sw = sw.replace(/(const CACHE_NAME = 'zhaolezi-v\d+';)/, '// V' + nv + '：' + date + ' 自动构建（公共层/页面更新，缓存随构建递增）\n$1');
+    try { fs.writeFileSync(swPath, sw); console.log('[缓存] service-worker.js 已自动升版 V' + nv + '（构建即发布）'); }
+    catch (e) { console.log('[缓存] service-worker.js 升版失败：' + e.message); }
 }
 
 main();

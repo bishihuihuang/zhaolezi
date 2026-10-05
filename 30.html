@@ -337,6 +337,31 @@
             padding-left: 8px;
         }
 
+        /* V2.0.0 新版本更新提醒条（读 ZL.whatsNew，主题 Token 跟随） */
+        .whatsnew-card {
+            grid-column: 1 / -1;
+            margin-bottom: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: var(--zl-card);
+            border: 1px solid var(--zl-accent);
+            box-shadow: var(--zl-shadow);
+            font-size: 14px;
+            color: var(--zl-text);
+        }
+        .wn-head { font-weight: 800; font-size: 15px; margin-bottom: 8px; color: var(--zl-accent); }
+        .wn-item b { display: block; margin-bottom: 3px; color: var(--zl-accent); }
+        .wn-desc { line-height: 1.7; margin-bottom: 8px; color: var(--zl-muted); }
+        .wn-btn {
+            border: 1px solid var(--zl-border);
+            background: var(--zl-card-2);
+            color: var(--zl-btn-text);
+            padding: 6px 18px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
         /* ========== 跳转覆盖层 ========== */
         .overlay {
             position: fixed;
@@ -560,9 +585,9 @@
 <meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/30.html">
 
 <link rel="stylesheet" href="common.css">
-<script src="common.js"></script>
-<script src="theme.js"></script>
-<script src="zl-features.js"></script>
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
 </head>
 <body>
 
@@ -606,6 +631,11 @@
          * 按日期倒序排列显示
          * ================================================================ */
 const announcementsConfig = [
+            { date: '2026-10-06', content: 'V2.0.0：四模块升级——①主题设计 Token 层（新增 --zl-* 全站统一颜色接口，公共组件随主题联动）；②学习数据层（错题本自动记录学习动作，仪表盘新增「连续学习天数 / 今日学习 / 最近学习动态」实时联动）；③作业盒子一键转错题（41 页每条作业可一键转入错题本，自动识别科目，去 43 页补充答案即可复习）；④版本与数据迁移框架（数据自动规范化升级，新功能自动触达提醒）。' },
+            { date: '2026-10-06', content: 'V1.9.9：学习三页打通（错题本↔学习仪表盘↔知识图谱）——错题本复习改为真实作答（遮答案自评判定，答对间隔 1→2→4→7→15→30 天递进，连续答对 3 次自动掌握，答错重置进度明天再练，全程记录复习历史）；学习仪表盘新增「今日错题复习」卡，科目进度、错题掌握率、今日待复习数全部实时来自错题本真实数据，复习后跨页自动联动（事件同步，43/44/45 任意页操作其余页即时刷新）；知识图谱各科掌握状态改由错题数据反推（该科错题掌握率≥60% 标为已掌握）。' },
+            { date: '2026-10-06', content: 'V1.9.8：娱乐功能升级——五子棋困难档新增深度3搜索（α-β剪枝，候选限已有棋子2格邻域）；每日一题改为真实作答（题库扩至30题、四选一判定、答对才解锁成就）；井字棋新局轮换先手、支持键盘1-9落子；扫雷移动端长按标旗、新增秒表与剩余雷数；记忆配对数据迁移至 zl_ 前缀并打通成就；「今天玩什么」站内游戏一键直达；25页新增英文单词数统计；38页签到同步活跃日；反馈页邮箱防爬；首页/工具页移除占位空卡；主题标签对齐10套；构建工具自动生成 sitemap.xml。' },
+            { date: '2026-10-06', content: 'V1.9.7：错题本照片存储升级——照片从网页缓存（约5MB上限）迁移到浏览器照片库（IndexedDB，容量提升数十倍），单张上限提升至4MB；旧照片首次打开自动迁移（原数据备份在浏览器 zl_err_items_v1_bak，可自行清理），导出/导入功能同步适配。' },
+            { date: '2026-10-05', content: 'V1.9.6：全站安全加固——24/14/15/44页动态内容输出全面转义防注入（XSS）、44页导入数据自动清洗（科目名限长、颜色白名单）、1页跳转参数增加同源白名单校验；修复首页与31页「在线词典」入口断链（现指向23页）；公共脚本改为defer加载，页面打开更流畅；构建工具升级：45页恢复代码保护、词典数据构建时自动同步。' },
             { date: '2026-10-02', content: 'V1.9.5：防回归机制落地——构建期自动检查（node _混淆工具.js --check 扫描硬编码灰阶色，未接入主题体系即拦截发布）+ 运行时巡检（控制台 ZL.verifyAudit() 一键审计10主题对比度，34页实测全部通过）；《主题可读性防回归规范》升级完成，此后新增主题/页面不再出现可读性适配错误；缓存升级v13。' },
             { date: '2026-10-01', content: 'V1.9.4：全站可读性兜底修复——42页×10主题全面审计全部通过；修复深底暗字/浅底亮字、返回按钮与模式标签文字、右键菜单快捷键颜色；对比度引擎11项增强（渐变背景感知/alpha合成/具体色值防缓存/禁止过渡冻结/深色主题正文修正）；新增《主题可读性防回归规范》；缓存升级v12。' },
             { date: '2026-09-30', content: 'V1.9.3：主题精简——22套精选为10套（深色流光/经典蓝/鎏金/明亮/牛奶/国风/雪阳/赛博/极光/自定义），风格更精炼；缓存升级v11。' },
@@ -704,6 +734,10 @@ const announcementsConfig = [
             // 添加返回主页按钮
             grid.appendChild(createBackArea());
 
+            // V2.0.0 新版本更新提醒（读 ZL.whatsNew，未读才展示，点「知道了」消失）
+            const wn = createWhatsNew();
+            if (wn) grid.appendChild(wn);
+
             // 按日期倒序排列公告
             const sorted = [...announcementsConfig].sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -711,6 +745,40 @@ const announcementsConfig = [
             sorted.forEach((announcement, index) => {
                 grid.appendChild(createAnnouncementCard(announcement, index));
             });
+        }
+
+/* V2.0.0 新版本更新提醒条（DOM 构建，不依赖页面转义函数） */
+        function createWhatsNew() {
+            if (!window.ZL || !ZL.whatsNew || !ZL.markVersionSeen) return null;
+            const items = ZL.whatsNew();
+            if (!items.length) return null;
+            const div = document.createElement('div');
+            div.className = 'whatsnew-card';
+            const head = document.createElement('div');
+            head.className = 'wn-head';
+            head.textContent = '🆕 新版本更新提醒';
+            div.appendChild(head);
+            items.forEach(v => {
+                const it = document.createElement('div');
+                it.className = 'wn-item';
+                const b = document.createElement('b');
+                b.textContent = v.title;
+                const d = document.createElement('div');
+                d.className = 'wn-desc';
+                d.textContent = v.desc;
+                it.appendChild(b);
+                it.appendChild(d);
+                div.appendChild(it);
+            });
+            const ok = document.createElement('button');
+            ok.className = 'wn-btn';
+            ok.textContent = '知道了';
+            ok.addEventListener('click', function () {
+                if (window.ZL) ZL.markVersionSeen();
+                div.remove();
+            });
+            div.appendChild(ok);
+            return div;
         }
 
         /* ================================================================

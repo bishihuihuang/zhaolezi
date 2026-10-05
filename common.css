@@ -395,3 +395,50 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
 .mode-tab { color: var(--txt) !important; -webkit-text-fill-color: var(--txt) !important; }
 .mode-tab.active { color: #fff !important; -webkit-text-fill-color: #fff !important; }
 .terminal-titlebar .title, .disclaimer-content strong, .modal-content h3 { color: var(--txt); }
+
+/* ========== V2.0 设计 Token 别名层（全站产品级颜色接口） ==========
+ * 页面一律引用 --zl-* 别名，永远跟随当前主题（dark/blue/gold/... 自动适配）。
+ * 语义：bg=页面底 card=卡片面 text=主文字 muted=次要文字 border=分割线
+ *       accent=品牌强调色 ok=成功/正确 danger=危险/错误 link=链接
+ * 新增主题只需维护上方 --bg/--gold/... 原始块，别名层自动继承，无需改动。 */
+:root[data-theme] {
+    --zl-bg: var(--bg);
+    --zl-bg-dim: var(--bg-dim);
+    --zl-card: var(--card);
+    --zl-card-2: var(--card-2);
+    --zl-text: var(--txt);
+    --zl-muted: var(--dim);
+    --zl-border: var(--line);
+    --zl-accent: var(--gold);
+    --zl-accent-2: var(--gold-2);
+    --zl-accent-grad: var(--title-grad);
+    --zl-ok: var(--green);
+    --zl-danger: var(--red);
+    --zl-link: var(--blue);
+    --zl-glow: var(--glow);
+    --zl-radius: var(--radius);
+    --zl-shadow: var(--shadow);
+    --zl-btn-text: var(--btn-txt);
+}
+
+/* Toast 组件变量化（原 JS 内硬编码色迁入公共层，随主题联动） */
+.zl-toast {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2147483647;
+    background: var(--zl-card);
+    color: var(--zl-text);
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 14px;
+    box-shadow: var(--zl-shadow);
+    border: 1px solid var(--zl-border);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .3s;
+    max-width: 86%;
+    text-align: center;
+}
+.zl-toast.show { opacity: 1; }

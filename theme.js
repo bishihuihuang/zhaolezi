@@ -7,9 +7,7 @@
     var BGB_KEY = 'zl_custom_bg';
     var THEMES = ['dark', 'blue', 'gold', 'light', 'milk', 'guofeng', 'snowsun', 'cyber', 'aurora', 'custom'];
     var LABELS = { dark: '深色流光', blue: '经典蓝', gold: '鎏金', light: '明亮', milk: '牛奶',
-        guofeng: '国风', juju: '幽蓝', snowsun: '雪阳', nostalgia: '怀旧', garden: '花园',
-        coco: '可可', cyber: '赛博', ink: '水墨', nebula: '星云', sakura: '樱花', desert: '沙漠',
-        ocean: '海洋', aurora: '极光', steampunk: '蒸汽朋克', forest: '森林', moon: '月光', custom: '自定义' };
+        guofeng: '国风', snowsun: '雪阳', cyber: '赛博', aurora: '极光', custom: '自定义' };
     // 兼容旧主题：neon → cyber（最接近），light 保留；已下架主题自动回退 dark
     var LEGACY = { neon: 'cyber' };
     var current = localStorage.getItem(KEY) || 'dark';
