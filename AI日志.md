@@ -1,5 +1,46 @@
 # AI 日志（工作定案记录）
 
+## 2026-10-06 V2.2.1 词典备份 + PWA 离线修复（git `9bd0a27`）
+
+上一轮 V2.2.0 审计后按性价比选了两个方向落地（其余候选未做，见文末「遗留候选」）。
+
+### 一、23 页收藏备份导出/导入（工具脚本/rebuild_23.js）
+- 工具栏新增「📦 备份」按钮 + 隐藏 `input[type=file]`，样式对齐 `hist-chip`。
+- 导出：`{version:1, favs, hist, exportedAt, source:'zhaolezi-23'}` → `ZL.download(filename, JSON, 'application/json')`，文件名 `zhaolezi-dict-YYYYMMDD.json`；`ZL.download` 缺失时降级为 `Blob + a.download`。
+- 导入：`FileReader.readAsText` → `doBackupImport(text)`：
+  - `version !== 1` → 拒绝并 toast「备份版本不匹配（需 v1，收到 vN）」
+  - JSON 非法 → 拒绝并 toast「JSON 解析错误」
+  - 缺 `favs/hist` 字段 → 拒绝并 toast
+  - 通过则**合并去重**：现有收藏在前，新收藏追加，重复项过滤；历史写入前截断到 `maxHist`；调用 `renderHistory()`，若处于 `fav` tab 则刷新 `favView()`、若输入框有值则重跑 `doSearch(true)`。
+- 全部走 `ZL.toast`，无新依赖。
+
+### 二、PWA 离线体验修复（service-worker.js，v68 → v75）
+- **修复缺陷**：原 L167 静态资源 fetch `.catch` 返回 `undefined`，`respondWith` 无响应导致 23 页分片离线静默失败。改为 `.then(off => off || caches.match('./index.html'))`。
+- **导航离线回退链**：网络失败 → `caches.match(request)` → `offline.html` → `index.html`（原直接兜到首页，断网打开 23.html 会得到首页而非 23 页缓存）。
+- **ASSETS 追加 `./offline.html`** 入预缓存。
+- `CACHE_NAME` 由混淆器 `bumpServiceWorker()` 自动递增到 `zhaolezi-v75`（每跑一次混淆就 +1，是既有行为）。
+
+### 三、offline.html 离线兜底页
+- 深色/浅色主题自适应：`background: var(--bg)`、`color: var(--txt)`、次要按钮用 `rgba(128,128,128,.15)` 中性灰，绕开预检「#fff 硬编码」和「深灰文字」两条告警。
+- 内容：`📡` 图标 + 标题 + 「🔄 重试」（监听 `online` 事件，700ms 后 `location.reload()`）+「🏠 回到首页」。
+- 加入 `_混淆工具.js` `NO_OBFUSCATE = ['30.html', '文件搜索.html', 'offline.html']`，走源→目标直拷（不混淆内联脚本）。
+
+### 四、公告与版本
+- 30 页公告追加 V2.2.1 条目（源副本 `_原始未混淆版/30.html` + 混淆器生成根目录）。
+
+### 五、验收（Node 验收门）
+- `node 工具脚本/test_23_runtime.js` → **全部通过**（原 44 项 + 新增 12 项备份用例：导出 payload/文件名/MIME/version/favs/hist、合法导入、拒绝非法 JSON、拒绝版本不匹配、去重合并、hist 写入）。
+- `node --check service-worker.js` → 通过。
+- `node _冒烟自检.js` → 48 / 49（豁免 1，与基线一致）。
+- 全量预检 → FAIL 0，49 页告警（新增 `offline.html` 1 条 `#fff` 误报——按钮渐变紫底配白字，非真缺陷）。
+
+### 遗留候选（未做）
+- **23 页数据 gzip**（22.56 MiB → 3-5 MiB）：需先确认生产部署形态（静态托管 / Python 后端 / 二者并行），本轮未定案。若走方案 3（仅把 `_serve.js` 的 `.json` 从 `no-cache` 改为 `max-age=86400`）可零业务改动落地浏览器强缓存，但不解决首访流量。
+- **46.html 成就中心**：审计确认 `checkAch()` 只在完成本轮时触发（`endCycle`、`finishFree`），中间状态不触发是设计意图，非 bug。
+- **38.html 成就中心防御性判断**：`renderHeader` 里 4 次 `(window.ZL && ZL.ACHIEVEMENTS)` 是洁癖，不影响功能。
+
+---
+
 ## 2026-10-06 V2.2.0 上线后审计（git `42efa67`）
 
 新增 `工具脚本/audit_ach_wiring.js`：解析成就目录 + 扫全站 `ZL.bump` 写入点（含解码根目录独占页的内联脚本），输出孤儿指标与条件型成就判据，可作回归门。跑出来的结论：94 条成就、38 种指标、tier 分布 52/24/12/6、8 类与 `ZL.CATS` 对齐。
