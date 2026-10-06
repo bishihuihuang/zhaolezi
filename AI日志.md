@@ -14,11 +14,11 @@
   - 通过则**合并去重**：现有收藏在前，新收藏追加，重复项过滤；历史写入前截断到 `maxHist`；调用 `renderHistory()`，若处于 `fav` tab 则刷新 `favView()`、若输入框有值则重跑 `doSearch(true)`。
 - 全部走 `ZL.toast`，无新依赖。
 
-### 二、PWA 离线体验修复（service-worker.js，v68 → v75）
+### 二、PWA 离线体验修复（service-worker.js，v68 → v77）
 - **修复缺陷**：原 L167 静态资源 fetch `.catch` 返回 `undefined`，`respondWith` 无响应导致 23 页分片离线静默失败。改为 `.then(off => off || caches.match('./index.html'))`。
 - **导航离线回退链**：网络失败 → `caches.match(request)` → `offline.html` → `index.html`（原直接兜到首页，断网打开 23.html 会得到首页而非 23 页缓存）。
 - **ASSETS 追加 `./offline.html`** 入预缓存。
-- `CACHE_NAME` 由混淆器 `bumpServiceWorker()` 自动递增到 `zhaolezi-v75`（每跑一次混淆就 +1，是既有行为）。
+- `CACHE_NAME` 由混淆器 `bumpServiceWorker()` 每次运行混淆时自动 +1；本轮最终定案 `zhaolezi-v77`。30 页公告文案**不写死具体 SW 版本号**，避免后续混淆重跑后与实产物不一致（`_原始未混淆版/30.html` 已按此修订）。
 
 ### 三、offline.html 离线兜底页
 - 深色/浅色主题自适应：`background: var(--bg)`、`color: var(--txt)`、次要按钮用 `rgba(128,128,128,.15)` 中性灰，绕开预检「#fff 硬编码」和「深灰文字」两条告警。
