@@ -138,8 +138,11 @@
      * zl_app_version = {ver, at, read[]}：ver=数据已迁移到的版本，read=已读过的更新记录
      * 新功能发布流程：ZL.APP_VER 升版 → VERSION_LOG 补一条 → whatsNew() 自动触达用户
      * dataMigration(name, toVer, fn)：确保数据结构演进到 toVer，幂等，只执行一次 */
-    ZL.APP_VER = '2.0.0';
+    ZL.APP_VER = '2.2.0';
     ZL.VERSION_LOG = [
+        { ver: '2.2.0', title: '成就系统 V2.2 · 全站融合', desc: '94 项成就（基础52/中级24/高级12/隐藏6）· 成就积分与等级头衔 · 跨页弹卡与实时同步' },
+        { ver: '2.1.1', title: '词典中文反查 · 秒出', desc: '前 2 万高频词预置索引，常见中文反查免全库扫描' },
+        { ver: '2.1.0', title: '在线词典 30 万词', desc: 'ECDICT 26 分片懒加载，完整释义/词频/搭配' },
         { ver: '2.0.0', title: '学习数据层 · 跨页实时', desc: '学习动态/连续天数实时联动；作业盒子一键转错题；设计 Token 主题层' }
     ];
     function verState() {
@@ -248,43 +251,403 @@
         { f: '46.html', t: '学习计时与专注模式', k: '番茄钟 专注 计时 白噪音 成就 统计 休息' }
     ];
 
-    /* ========== 成就系统 ========== */
-    ZL.ACHIEVEMENTS = [
-        { id: 'first_login', t: '初来乍到', d: '完成第一次密码登录', icon: '🎯' },
-        { id: 'game_first', t: '小试身手', d: '任一游戏获胜一次', icon: '🎮' },
-        { id: 'gobang_win', t: '棋逢对手', d: '五子棋战胜AI', icon: '♟️' },
-        { id: 'mines_clear', t: '拆弹专家', d: '扫雷通关', icon: '💣' },
-        { id: 'memory_pair', t: '记忆大师', d: '记忆配对通关', icon: '🧠' },
-        { id: 'tool_10', t: '工具达人', d: '使用过10个不同工具', icon: '🛠️' },
-        { id: 'checkin_7', t: '持之以恒', d: '连续签到7天', icon: '📅' },
-        { id: 'daily_quiz', t: '每日一题', d: '完成今日答题', icon: '🧩' },
-        { id: 'typing_50', t: '快手', d: '打字测试达50WPM', icon: '⌨️' },
-        { id: 'tictac_win', t: '纵横四方', d: '井字棋获胜一局', icon: '⭕' },
-        { id: 'focus_25', t: '心流大师', d: '完成一次番茄专注', icon: '⏱️' }
+    /* ================================================================
+     * 成就系统 V2.2（多维度 94 条：基础52/中级24/高级12/隐藏6）
+     * 数据层：
+     *   zl_ach        已解锁 id 数组（兼容旧版）
+     *   zl_ach_meta   解锁时间戳 {id: ts}（0=迁移补记）
+     *   zl_ach_stats  计数指标 {metric: n}（bump 驱动）
+     *   zl_ach_new    新解锁队列（跨页弹卡消费）
+     * 判定模型：指标制（bump 累计/取最大）+ 条件制（cond 实时读各页真实数据）
+     * ================================================================ */
+    ZL.TIER_CFG = {
+        1: { nm: '基础', ic: '🥉', col: '#cd7f32' },
+        2: { nm: '中级', ic: '🥈', col: '#8fa3b8' },
+        3: { nm: '高级', ic: '🥇', col: '#f5b301' },
+        h: { nm: '隐藏', ic: '🎁', col: '#9b59b6' }
+    };
+    ZL.CATS = [
+        { id: 'explore', nm: '探索启程', ic: '🧭' },
+        { id: 'learn', nm: '学习成长', ic: '📚' },
+        { id: 'game', nm: '游戏竞技', ic: '🎮' },
+        { id: 'focus', nm: '效率专注', ic: '⏱️' },
+        { id: 'habit', nm: '习惯养成', ic: '📅' },
+        { id: 'tool', nm: '工具达人', ic: '🛠️' },
+        { id: 'create', nm: '收藏创作', ic: '🎨' },
+        { id: 'build', nm: '站点共建', ic: '🤝' }
+    ];
+    ZL.TIER_PTS = { 1: 10, 2: 30, 3: 100, h: 50 };
+    ZL.TITLES = [
+        { min: 0, nm: '探索新手', ic: '🐣' },
+        { min: 10, nm: '初窥门径', ic: '🌱' },
+        { min: 25, nm: '小有所成', ic: '🌟' },
+        { min: 40, nm: '渐入佳境', ic: '🔥' },
+        { min: 55, nm: '声名鹊起', ic: '💫' },
+        { min: 70, nm: '名扬四海', ic: '👑' },
+        { min: 82, nm: '传奇收集者', ic: '🏆' },
+        { min: 88, nm: '全站大师', ic: '⚡' }
     ];
 
-    ZL.getUnlocked = function () { return LS('zl_ach') || []; };
-    ZL.unlock = function (id) {
+    ZL.ACHIEVEMENTS = [
+        /* ---------- 基础（tier 1）：探索启程 ---------- */
+        { id: 'first_login', t: '初来乍到', d: '完成第一次密码登录', icon: '🎯', tier: 1, cat: 'explore', how: '在首页完成一次密码登录', metric: 'login_done', target: 1 },
+        { id: 'first_tool', t: '开门见山', d: '第一次使用任意工具', icon: '🧰', tier: 1, cat: 'explore', how: '访问任意一个工具/功能页', cond: function () { return pagesUsed() >= 1; }, cur: pagesUsed, target: 1 },
+        { id: 'first_ach', t: '初识徽章', d: '解锁第一个成就', icon: '🏅', tier: 1, cat: 'explore', how: '解锁任意 1 个成就', cond: function () { return unlockedCount() >= 1; }, cur: unlockedCount, target: 1 },
+        { id: 'visit_10', t: '环顾四周', d: '访问过 10 个不同页面', icon: '🗺️', tier: 1, cat: 'explore', how: '累计访问 10 个不同页面', cond: function () { return pagesUsed() >= 10; }, cur: pagesUsed, target: 10 },
+        { id: 'visit_30', t: '大半个站', d: '访问过 30 个不同页面', icon: '🧭', tier: 1, cat: 'explore', how: '累计访问 30 个不同页面', cond: function () { return pagesUsed() >= 30; }, cur: pagesUsed, target: 30 },
+        { id: 'search_first', t: '站内寻宝', d: '使用一次全站搜索', icon: '🔍', tier: 1, cat: 'explore', how: '按 / 呼出站内搜索并搜索关键词', metric: 'search_use', target: 1 },
+        { id: 'back_3', t: '常回来看看', d: '累计活跃 3 天', icon: '📆', tier: 1, cat: 'explore', how: '累计 3 天访问网站', cond: function () { return activeDays() >= 3; }, cur: activeDays, target: 3 },
+        { id: 'visit_night', t: '夜访者', d: '在深夜 22:00-06:00 打开网站', icon: '🌙', tier: 1, cat: 'explore', how: '深夜时段访问任意页面', metric: 'night_visit', target: 1 },
+        { id: 'game_first', t: '小试身手', d: '任一游戏获胜一次', icon: '🎮', tier: 1, cat: 'game', how: '五子棋/井字棋/扫雷/记忆配对任一首胜', cond: function () { return anyGameWin(); } },
+
+        /* ---------- 基础：学习成长 ---------- */
+        { id: 'dict_first', t: '查词启蒙', d: '词典完成首次查询', icon: '📖', tier: 1, cat: 'learn', how: '在词典输入单词查询', metric: 'dict_query', target: 1 },
+        { id: 'dict_cn', t: '中文反查', d: '首次使用中文反查', icon: '🇨🇳', tier: 1, cat: 'learn', how: '词典输入中文反查单词', metric: 'dict_cn', target: 1 },
+        { id: 'dict_speak', t: '会发音', d: '首次点击单词发音', icon: '🔊', tier: 1, cat: 'learn', how: '词典点击发音按钮', metric: 'dict_speak', target: 1 },
+        { id: 'dict_fav1', t: '首藏单词', d: '收藏第一个单词', icon: '⭐', tier: 1, cat: 'learn', how: '词典点击收藏按钮', metric: 'dict_fav', target: 1 },
+        { id: 'dict_fav5', t: '五词入囊', d: '收藏 5 个单词', icon: '📚', tier: 1, cat: 'learn', how: '词典累计收藏 5 个单词', metric: 'dict_fav', target: 5 },
+        { id: 'err_first', t: '错题首记', d: '错题本记录第一条错题', icon: '📝', tier: 1, cat: 'learn', how: '在错题本添加一条错题', metric: 'err_add', target: 1 },
+        { id: 'rv_first', t: '温故知新', d: '完成第一次错题复习', icon: '🔁', tier: 1, cat: 'learn', how: '在错题本完成一次复习', metric: 'rv_done', target: 1 },
+        { id: 'quiz_right5', t: '小有所成', d: '每日一题累计答对 5 题', icon: '✅', tier: 1, cat: 'learn', how: '每日一题累计答对 5 题', metric: 'quiz_right', target: 5 },
+        { id: 'learn_1d', t: '今日学习', d: '学习仪表盘记录首个学习动作', icon: '📅', tier: 1, cat: 'learn', how: '在学习仪表盘完成任意学习动作', metric: 'learn_day', target: 1 },
+
+        /* ---------- 基础：游戏竞技 ---------- */
+        { id: 'gobang_win', t: '棋逢对手', d: '五子棋战胜 AI', icon: '♟️', tier: 1, cat: 'game', how: '在五子棋页获胜一局', metric: 'gobang_win', target: 1 },
+        { id: 'gobang_win3', t: '三连决胜', d: '五子棋累计胜 3 局', icon: '🎯', tier: 1, cat: 'game', how: '五子棋累计获胜 3 局', metric: 'gobang_win', target: 3 },
+        { id: 'tictac_win', t: '纵横四方', d: '井字棋获胜一局', icon: '⭕', tier: 1, cat: 'game', how: '井字棋获胜一局', metric: 'tictac_win', target: 1 },
+        { id: 'mines_clear', t: '拆弹专家', d: '扫雷通关', icon: '💣', tier: 1, cat: 'game', how: '扫雷通关一次', metric: 'mines_clear', target: 1 },
+        { id: 'mines_3', t: '雷区老手', d: '扫雷累计通关 3 次', icon: '🧨', tier: 1, cat: 'game', how: '扫雷累计通关 3 次', metric: 'mines_clear', target: 3 },
+        { id: 'memory_pair', t: '记忆大师', d: '记忆配对通关', icon: '🧠', tier: 1, cat: 'game', how: '记忆配对通关一次', metric: 'memory_pair', target: 1 },
+        { id: 'daily_quiz', t: '每日一题', d: '完成今日答题', icon: '🧩', tier: 1, cat: 'game', how: '每日一题答对一次', metric: 'quiz_right', target: 1 },
+        { id: 'typing_30', t: '初露锋芒', d: '打字测试达 30 WPM', icon: '⌨️', tier: 1, cat: 'game', how: '打字测试速度达 30 WPM', metric: 'typing_best', target: 30, mode: 'max' },
+
+        /* ---------- 基础：效率专注 ---------- */
+        { id: 'focus_first', t: '心流初体验', d: '完成第一次专注', icon: '⏱️', tier: 1, cat: 'focus', how: '专注模式完成一次专注', metric: 'focus_done', target: 1 },
+        { id: 'focus_25', t: '深度专注', d: '完成一次 25 分钟专注', icon: '⏳', tier: 1, cat: 'focus', how: '完成一个完整的 25 分钟专注', metric: 'focus_25done', target: 1 },
+        { id: 'tomato_1', t: '番茄首果', d: '完成第一个完整番茄', icon: '🍅', tier: 1, cat: 'focus', how: '在 46 页完成一次番茄钟（25 分钟完整专注）', metric: 'focus_min', target: 25 },
+        { id: 'focus_amb', t: '白噪音', d: '首次使用环境白噪音', icon: '🎵', tier: 1, cat: 'focus', how: '在 46 页开启白噪音', metric: 'focus_amb', target: 1 },
+        { id: 'focus_free60', t: '深度马拉松', d: '单次自由专注满 60 分钟', icon: '🧘', tier: 1, cat: 'focus', how: '自由专注单次满 60 分钟', metric: 'focus_free60', target: 1 },
+        { id: 'typing_50', t: '快手', d: '打字测试达 50 WPM', icon: '⌨️', tier: 1, cat: 'focus', how: '打字测试速度达 50 WPM', metric: 'typing_best', target: 50, mode: 'max' },
+
+        /* ---------- 基础：习惯养成 ---------- */
+        { id: 'checkin_1', t: '初次签到', d: '完成第一次签到', icon: '✅', tier: 1, cat: 'habit', how: '在签到页点击签到', cond: function () { return checkinTotal() >= 1; }, cur: checkinTotal, target: 1 },
+        { id: 'checkin_3', t: '三日不辍', d: '连续签到 3 天', icon: '📅', tier: 1, cat: 'habit', how: '连续签到 3 天', cond: function () { return checkinStreak() >= 3; }, cur: checkinStreak, target: 3 },
+        { id: 'checkin_7', t: '持之以恒', d: '连续签到 7 天', icon: '🔥', tier: 1, cat: 'habit', how: '连续签到 7 天', cond: function () { return checkinStreak() >= 7; }, cur: checkinStreak, target: 7 },
+        { id: 'focus_7d', t: '专注七日', d: '连续专注 7 天', icon: '🗓️', tier: 1, cat: 'habit', how: '连续 7 天有专注记录', cond: function () { return focusStreak() >= 7; }, cur: focusStreak, target: 7 },
+        { id: 'tomato_10', t: '番茄达人', d: '单日完成 10 个番茄', icon: '🍅', tier: 1, cat: 'habit', how: '某一天内完成 10 个番茄钟', metric: 'tomato_day10', target: 1 },
+        { id: 'learn_3d', t: '学习三日连', d: '连续学习 3 天', icon: '📚', tier: 1, cat: 'habit', how: '连续 3 天有学习记录', cond: function () { return studyStreak() >= 3; }, cur: studyStreak, target: 3 },
+
+        /* ---------- 基础：工具达人 ---------- */
+        { id: 'tool_10', t: '工具达人', d: '使用过 10 个不同工具', icon: '🛠️', tier: 1, cat: 'tool', how: '累计使用 10 个不同工具', cond: function () { return pagesUsed() >= 10; }, cur: pagesUsed, target: 10 },
+        { id: 'tool_20', t: '百炼成钢', d: '使用过 20 个不同工具', icon: '🔧', tier: 1, cat: 'tool', how: '累计使用 20 个不同工具', cond: function () { return pagesUsed() >= 20; }, cur: pagesUsed, target: 20 },
+        { id: 'calc_first', t: '计算能手', d: '首次使用计算器', icon: '➗', tier: 1, cat: 'tool', how: '使用一次计算器', metric: 'calc_add', target: 1 },
+        { id: 'qr_first', t: '二维码匠', d: '首次生成二维码', icon: '🔳', tier: 1, cat: 'tool', how: '生成一次二维码', metric: 'qr_add', target: 1 },
+        { id: 'memo_first', t: '备忘录主', d: '写下第一条备忘录', icon: '📝', tier: 1, cat: 'tool', how: '保存第一条备忘录', metric: 'memo_add', target: 1 },
+        { id: 'pwd_first', t: '强密卫士', d: '首次生成强密码', icon: '🔐', tier: 1, cat: 'tool', how: '生成一次强密码', metric: 'pwd_add', target: 1 },
+
+        /* ---------- 基础：收藏创作 ---------- */
+        { id: 'share_first', t: '首张分享卡', d: '生成首张分享卡片', icon: '🎨', tier: 1, cat: 'create', how: '生成一张分享卡片', metric: 'share_add', target: 1 },
+        { id: 'morse_first', t: '摩斯电报', d: '首次摩斯密码转换', icon: '📡', tier: 1, cat: 'create', how: '进行一次摩斯密码转换', metric: 'morse_add', target: 1 },
+        { id: 'txt_first', t: '文本管家', d: '首次生成 txt 文件', icon: '📄', tier: 1, cat: 'create', how: '生成一个 txt 文件', metric: 'txt_add', target: 1 },
+        { id: 'freq_first', t: '词频侦探', d: '首次词频统计', icon: '🔤', tier: 1, cat: 'create', how: '进行一次词频统计', metric: 'freq_add', target: 1 },
+
+        /* ---------- 基础：站点共建 ---------- */
+        { id: 'fb_first', t: '建言献策', d: '首次打开反馈渠道', icon: '💬', tier: 1, cat: 'build', how: '打开反馈建议页', metric: 'fb_open', target: 1 },
+        { id: 'voice_first', t: '语音助手', d: '首次使用语音控制', icon: '🎙️', tier: 1, cat: 'build', how: '使用一次语音控制', metric: 'voice_cmd', target: 1 },
+        { id: 'sup_first', t: '支持作者', d: '浏览赞赏支持页', icon: '❤️', tier: 1, cat: 'build', how: '打开赞赏支持页', metric: 'sup_open', target: 1 },
+        { id: 'bag_first', t: '背包初启', d: '背包首次存入物品', icon: '🎒', tier: 1, cat: 'build', how: '在背包添加一个物品', metric: 'bag_add', target: 1 },
+
+        /* ---------- 中级（tier 2）：学习成长 ---------- */
+        { id: 'dict_fav50', t: '词库收藏家', d: '收藏 50 个单词', icon: '📚', tier: 2, cat: 'learn', how: '词典累计收藏 50 个单词', metric: 'dict_fav', target: 50 },
+        { id: 'dict_hist200', t: '学海无涯', d: '词典累计查询 200 次', icon: '🌊', tier: 2, cat: 'learn', how: '词典累计查询 200 次', metric: 'dict_query', target: 200 },
+        { id: 'err20', t: '错题达人', d: '错题本累计 20 条错题', icon: '📋', tier: 2, cat: 'learn', how: '错题本累计收录 20 条', metric: 'err_add', target: 20 },
+        { id: 'rv30', t: '复习标兵', d: '累计完成 30 次复习', icon: '🔁', tier: 2, cat: 'learn', how: '错题本累计复习 30 次', metric: 'rv_done', target: 30 },
+        { id: 'quiz_7d', t: '七天全对', d: '连续 7 天完成每日一题', icon: '📅', tier: 2, cat: 'learn', how: '每日一题连续 7 天', metric: 'quiz_streak', target: 7, mode: 'max' },
+        { id: 'learn_14d', t: '半月勤学', d: '连续学习 14 天', icon: '📖', tier: 2, cat: 'learn', how: '连续 14 天有学习记录', cond: function () { return studyStreak() >= 14; }, cur: studyStreak, target: 14 },
+        { id: 'master1', t: '科科精进', d: '任一科目错题掌握率≥60%', icon: '🎓', tier: 2, cat: 'learn', how: '任一科目错题掌握过半', cond: function () { return masteredSubj() >= 1; }, cur: masteredSubj, target: 1 },
+
+        /* ---------- 中级：游戏竞技 ---------- */
+        { id: 'gobang_win10', t: '百战不殆', d: '五子棋累计胜 10 局', icon: '⚔️', tier: 2, cat: 'game', how: '五子棋累计获胜 10 局', metric: 'gobang_win', target: 10 },
+        { id: 'tictac_10', t: '圈圈连珠', d: '井字棋累计胜 10 局', icon: '⭕', tier: 2, cat: 'game', how: '井字棋累计获胜 10 局', metric: 'tictac_win', target: 10 },
+        { id: 'mines_10', t: '扫雷十连', d: '扫雷累计通关 10 次', icon: '💣', tier: 2, cat: 'game', how: '扫雷累计通关 10 次', metric: 'mines_clear', target: 10 },
+        { id: 'memory_5', t: '记忆五冠', d: '记忆配对累计通关 5 次', icon: '🧠', tier: 2, cat: 'game', how: '记忆配对累计通关 5 次', metric: 'memory_pair', target: 5 },
+        { id: 'typing_60', t: '键盘舞者', d: '打字测试达 60 WPM', icon: '⌨️', tier: 2, cat: 'game', how: '打字测试速度达 60 WPM', metric: 'typing_best', target: 60, mode: 'max' },
+
+        /* ---------- 中级：效率专注 ---------- */
+        { id: 'focus_10', t: '心流常客', d: '累计完成 10 次专注', icon: '⏱️', tier: 2, cat: 'focus', how: '累计专注 10 次', metric: 'focus_done', target: 10 },
+        { id: 'focus_10h', t: '十时沉淀', d: '累计专注 10 小时', icon: '⏳', tier: 2, cat: 'focus', how: '累计专注满 600 分钟', metric: 'focus_min', target: 600 },
+        { id: 'focus_14d', t: '专注半月', d: '连续专注 14 天', icon: '🗓️', tier: 2, cat: 'focus', how: '连续 14 天有专注记录', cond: function () { return focusStreak() >= 14; }, cur: focusStreak, target: 14 },
+
+        /* ---------- 中级：习惯养成 ---------- */
+        { id: 'checkin_14', t: '半月打卡', d: '连续签到 14 天', icon: '📅', tier: 2, cat: 'habit', how: '连续签到 14 天', cond: function () { return checkinStreak() >= 14; }, cur: checkinStreak, target: 14 },
+        { id: 'checkin_30', t: '月度坚持', d: '累计签到 30 天', icon: '🔥', tier: 2, cat: 'habit', how: '累计签到 30 天', cond: function () { return checkinTotal() >= 30; }, cur: checkinTotal, target: 30 },
+
+        /* ---------- 中级：工具达人 / 探索 ---------- */
+        { id: 'tool_30', t: '三十而行', d: '使用过 30 个不同工具', icon: '🛠️', tier: 2, cat: 'tool', how: '累计使用 30 个不同工具', cond: function () { return pagesUsed() >= 30; }, cur: pagesUsed, target: 30 },
+        { id: 'visit_40', t: '全站通', d: '访问过 40 个不同页面', icon: '🗺️', tier: 2, cat: 'explore', how: '累计访问 40 个不同页面', cond: function () { return pagesUsed() >= 40; }, cur: pagesUsed, target: 40 },
+        { id: 'ach_20', t: '收藏家', d: '解锁 20 个成就', icon: '🏅', tier: 2, cat: 'explore', how: '解锁任意 20 个成就', cond: function () { return unlockedCount() >= 20; }, cur: unlockedCount, target: 20 },
+
+        /* ---------- 中级：收藏创作 / 站点共建 ---------- */
+        { id: 'memo_20', t: '备忘录老手', d: '备忘录累计 20 条', icon: '📝', tier: 2, cat: 'create', how: '备忘录累计 20 条', metric: 'memo_add', target: 20 },
+        { id: 'share_5', t: '分享达人', d: '累计生成 5 张分享卡', icon: '🎨', tier: 2, cat: 'create', how: '累计生成 5 张分享卡片', metric: 'share_add', target: 5 },
+        { id: 'voice_10', t: '语音老手', d: '累计使用语音命令 10 次', icon: '🎙️', tier: 2, cat: 'build', how: '语音控制累计 10 次', metric: 'voice_cmd', target: 10 },
+        { id: 'fb_sent', t: '反馈先锋', d: '提交过 1 次反馈', icon: '💬', tier: 2, cat: 'build', how: '提交一次反馈建议', metric: 'fb_sent', target: 1 },
+
+        /* ---------- 高级（tier 3） ---------- */
+        { id: 'dict_fav300', t: '词海拾贝', d: '词典累计收藏 300 词', icon: '📚', tier: 3, cat: 'learn', how: '词典累计收藏 300 个单词', metric: 'dict_fav', target: 300 },
+        { id: 'dict_1000', t: '千次求索', d: '词典累计查询 1000 次', icon: '🌊', tier: 3, cat: 'learn', how: '词典累计查询 1000 次', metric: 'dict_query', target: 1000 },
+        { id: 'err_master', t: '错题王者', d: '错题本累计掌握 30 题', icon: '📋', tier: 3, cat: 'learn', how: '错题累计标记掌握 30 题', metric: 'mastered', target: 30 },
+        { id: 'typing_100', t: '键圣', d: '打字测试达 100 WPM', icon: '⌨️', tier: 3, cat: 'game', how: '打字测试速度达 100 WPM', metric: 'typing_best', target: 100, mode: 'max' },
+        { id: 'quiz_30d', t: '月度全勤', d: '连续 30 天完成每日一题', icon: '📅', tier: 3, cat: 'learn', how: '每日一题连续 30 天', metric: 'quiz_streak', target: 30, mode: 'max' },
+        { id: 'gobang_hard', t: '神之一手', d: '五子棋困难档累计胜 10 局', icon: '♟️', tier: 3, cat: 'game', how: '困难难度累计获胜 10 局', metric: 'gobang_hard', target: 10 },
+        { id: 'game_all', t: '全栈玩家', d: '四大游戏全部通关', icon: '🎮', tier: 3, cat: 'game', how: '五子棋/井字棋/扫雷/记忆配对各通一次', cond: function () { return gameAll(); } },
+        { id: 'focus_100h', t: '时间领主', d: '累计专注 100 小时', icon: '⏳', tier: 3, cat: 'focus', how: '累计专注满 6000 分钟', metric: 'focus_min', target: 6000 },
+        { id: 'checkin_100', t: '百日坚持', d: '累计签到 100 天', icon: '📅', tier: 3, cat: 'habit', how: '累计签到 100 天', cond: function () { return checkinTotal() >= 100; }, cur: checkinTotal, target: 100 },
+        { id: 'learn_100d', t: '百日勤学', d: '连续学习 100 天', icon: '📖', tier: 3, cat: 'learn', how: '连续 100 天有学习记录', cond: function () { return studyStreak() >= 100; }, cur: studyStreak, target: 100 },
+        { id: 'all_pages', t: '全站大师', d: '访问全部 48 个页面', icon: '🗺️', tier: 3, cat: 'tool', how: '全部页面都访问过一遍', cond: function () { return pagesUsed() >= 48; }, cur: pagesUsed, target: 48 },
+        { id: 'ach_90', t: '几乎集齐', d: '成就收集率达 90%', icon: '🏆', tier: 3, cat: 'explore', how: '解锁成就总数的 90%', cond: function () { return unlockedCount() >= Math.ceil(ZL.ACHIEVEMENTS.length * 0.9); }, cur: unlockedCount, target: Math.ceil(94 * 0.9) },
+
+        /* ---------- 隐藏（tier h） ---------- */
+        { id: 'night_focus', t: '深夜书房', d: '在 22:00-02:00 完成一次专注', icon: '🌙', tier: 'h', cat: 'focus', how: '隐藏成就——深夜专注（解锁后可见）', hide: true },
+        { id: 'midnight_checkin', t: '午夜打卡', d: '在 00:00-01:00 完成签到', icon: '🌌', tier: 'h', cat: 'habit', how: '隐藏成就——午夜签到（解锁后可见）', hide: true },
+        { id: 'same_tool_7d', t: '形影不离', d: '连续 7 天使用同一页面', icon: '🕰️', tier: 'h', cat: 'tool', how: '隐藏成就——连续 7 天使用同一工具（解锁后可见）', hide: true, cond: function () { return sameTool7(); } },
+        { id: 'keyboard_easter', t: '密语入站', d: '在任意页面敲出隐藏密语', icon: '⌨️', tier: 'h', cat: 'explore', how: '隐藏成就——输入神秘字母序列（解锁后可见）', hide: true },
+        { id: 'not_found', t: '迷路彩蛋', d: '访问一个不存在的页面', icon: '🧭', tier: 'h', cat: 'explore', how: '隐藏成就——找到 404 页面（解锁后可见）', hide: true, cond: function () { return is404Page(); } },
+        { id: 'anni_day', t: '周年之约', d: '在网站周年纪念日使用', icon: '🎂', tier: 'h', cat: 'explore', how: '隐藏成就——在 9月19日 周年纪念日登录（解锁后可见）', hide: true, cond: function () { return isAnni(); } }
+    ];
+
+    ZL.byId = function (id) { for (var i = 0; i < ZL.ACHIEVEMENTS.length; i++) { if (ZL.ACHIEVEMENTS[i].id === id) return ZL.ACHIEVEMENTS[i]; } return null; };
+    ZL.getUnlocked = function () { var u = LS('zl_ach'); return (Array.isArray(u)) ? u : []; };
+    ZL.getStats = function () { var s = LS('zl_ach_stats'); return (s && typeof s === 'object') ? s : {}; };
+
+    /* 条件成就的数据读取助手（全部容错，读各页真实数据） */
+    function pagesUsed() { var u = LS('zl_used'); return (Array.isArray(u)) ? u.length : 0; }
+    function unlockedCount() { return ZL.getUnlocked().length; }
+    function activeDays() { var d = LS('zl_daily_days'); return (Array.isArray(d)) ? d.length : 0; }
+    function checkinData() { try { var c = JSON.parse(localStorage.getItem('zl_checkin') || 'null'); return c || {}; } catch (e) { return {}; } }
+    function checkinTotal() { return checkinData().total || 0; }
+    function checkinStreak() { return checkinData().streak || 0; }
+    function studyStreak() { try { return (ZL.studyLog && ZL.studyLog.streakDays) ? ZL.studyLog.streakDays() : 0; } catch (e) { return 0; } }
+    function anyGameWin() {
+        var s = ZL.getStats();
+        return ((s.gobang_win || 0) + (s.tictac_win || 0) + (s.mines_clear || 0) + (s.memory_pair || 0)) >= 1;
+    }
+    function gameAll() {
         var u = ZL.getUnlocked();
-        if (u.indexOf(id) < 0) {
-            u.push(id);
-            SS('zl_ach', u);
-            var meta = null;
-            for (var i = 0; i < ZL.ACHIEVEMENTS.length; i++) { if (ZL.ACHIEVEMENTS[i].id === id) { meta = ZL.ACHIEVEMENTS[i]; break; } }
-            ZL.showToast('🏆 解锁成就：' + (meta ? meta.icon + ' ' + meta.t : id));
+        return ['gobang_win', 'tictac_win', 'mines_clear', 'memory_pair'].every(function (id) { return u.indexOf(id) >= 0; });
+    }
+    function focusStreak() {
+        try {
+            var S = JSON.parse(localStorage.getItem('zhaolezi_46_focus') || 'null');
+            if (!S || !S.stats || !S.stats.days) return 0;
+            var days = S.stats.days, cur = new Date(), n = 0;
+            function key(dd) { return dd.getFullYear() + '-' + (dd.getMonth() + 1) + '-' + dd.getDate(); }
+            var today = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate());
+            if (!(days[key(today)] && days[key(today)].min > 0)) today.setDate(today.getDate() - 1);
+            while (days[key(today)] && days[key(today)].min > 0) { n++; today.setDate(today.getDate() - 1); }
+            return n;
+        } catch (e) { return 0; }
+    }
+    function masteredSubj() {
+        try {
+            var items = JSON.parse(localStorage.getItem('zl_err_items_v1') || '[]');
+            if (!Array.isArray(items) || !items.length) return 0;
+            var by = {}, cnt = 0;
+            for (var i = 0; i < items.length; i++) {
+                var it = items[i] || {}, sub = it.subject || '';
+                if (!sub) continue;
+                by[sub] = by[sub] || { total: 0, mastered: 0 };
+                by[sub].total++;
+                if (it.status === 'mastered' || it.status === '掌握' || it.mastered || it.stage === 'mastered') by[sub].mastered++;
+            }
+            for (var k in by) { if (by[k].total > 0 && by[k].mastered / by[k].total >= 0.6) cnt++; }
+            return cnt;
+        } catch (e) { return 0; }
+    }
+    function sameTool7() {
+        try {
+            var pd = LS('zl_page_days');
+            if (!pd || typeof pd !== 'object') return false;
+            for (var k in pd) {
+                var list = (Array.isArray(pd[k]) ? pd[k] : []).slice().sort(), run = 1;
+                for (var i = 1; i < list.length; i++) {
+                    var a = String(list[i - 1]).split('-'), b = String(list[i]).split('-');
+                    if (a.length !== 3 || b.length !== 3) continue;
+                    var diff = Math.round((new Date(+b[0], +b[1] - 1, +b[2]) - new Date(+a[0], +a[1] - 1, +a[2])) / 86400000);
+                    run = (diff === 1) ? run + 1 : 1;
+                    if (run >= 7) return true;
+                }
+            }
+        } catch (e) {}
+        return false;
+    }
+    function is404Page() { try { var b = document.body; return !!b && /^404\b/.test((b.textContent || '').trim()); } catch (e) { return false; } }
+    function isAnni() { var d = new Date(); return d.getMonth() === 8 && d.getDate() === 19; }
+
+    /* 解锁：写 zl_ach + zl_ach_meta + zl_ach_new，广播，消费弹卡 */
+    var _checking = false;
+    ZL.unlock = function (id, silent) {
+        var u = ZL.getUnlocked();
+        if (u.indexOf(id) >= 0) return false;
+        u.push(id); SS('zl_ach', u);
+        var meta = LS('zl_ach_meta') || {};
+        if (!meta || typeof meta !== 'object') meta = {};
+        meta[id] = Date.now(); SS('zl_ach_meta', meta);
+        var q = LS('zl_ach_new');
+        if (!Array.isArray(q)) q = [];
+        q.push(id); SS('zl_ach_new', q);
+        ZL.emit('ach.unlocked', { id: id });
+        if (!silent) {
+            if (!_checking) ZL.checkAll(false);
+            ZL.drainNew();
         }
+        return true;
     };
 
-    /* 工具使用计数（跨页统计，去重） */
-    ZL.trackPage = function (pageKey) {
-        if (!pageKey) return;
-        var used = LS('zl_used') || [];
-        if (used.indexOf(pageKey) < 0) {
-            used.push(pageKey);
-            SS('zl_used', used);
+    /* 全量检查：指标达标 or 条件成立即解锁；多趟收敛（本趟新解锁可触发后续条件成就）；
+     * silent=true 只入队不弹卡 */
+    ZL.checkAll = function (silent) {
+        if (_checking) return [];
+        _checking = true;
+        var newly = [];
+        for (var pass = 0; pass < 3; pass++) {
+            var u = ZL.getUnlocked(), s = ZL.getStats(), added = false;
+            for (var i = 0; i < ZL.ACHIEVEMENTS.length; i++) {
+                var a = ZL.ACHIEVEMENTS[i];
+                if (u.indexOf(a.id) >= 0) continue;
+                var hit = false;
+                if (a.metric) hit = (s[a.metric] || 0) >= a.target;
+                else if (a.cond) { try { hit = !!a.cond(); } catch (e) {} }
+                if (hit) { ZL.unlock(a.id, true); newly.push(a.id); added = true; }
+            }
+            if (!added) break;
         }
-        if (used.length >= 10) ZL.unlock('tool_10');
+        _checking = false;
+        return newly;
     };
+
+    /* 指标驱动：add 累加 / max 取最高值，命中后弹卡 */
+    ZL.bump = function (metric, n, mode) {
+        n = (n == null) ? 1 : n;
+        var s = ZL.getStats();
+        if (mode === 'max') { if ((s[metric] || 0) >= n) return []; s[metric] = n; }
+        else { s[metric] = (s[metric] || 0) + n; }
+        SS('zl_ach_stats', s);
+        var newly = ZL.checkAll(false);
+        if (newly.length) ZL.drainNew();
+        return newly;
+    };
+
+    /* 单条成就详情（供墙/卡片渲染）：进度 cur / 目标 target / 解锁时间 ts */
+    ZL.achInfo = function (id) {
+        var a = ZL.byId(id);
+        if (!a) return null;
+        var unlocked = ZL.getUnlocked().indexOf(id) >= 0;
+        var meta = LS('zl_ach_meta') || {};
+        var cur = null;
+        if (a.metric) cur = ZL.getStats()[a.metric] || 0;
+        else if (a.cur) { try { cur = a.cur(); } catch (e) { cur = null; } }
+        return { id: id, unlocked: unlocked, ts: meta[id] || 0, cur: cur, target: (a.target != null) ? a.target : null, tier: a.tier, cat: a.cat, hide: !!a.hide, name: a.t, d: a.d, how: a.how, icon: a.icon };
+    };
+
+    /* 成就积分：基础10 / 中级30 / 高级100 / 隐藏50 */
+    ZL.getPoints = function () {
+        var u = ZL.getUnlocked(), p = 0;
+        for (var i = 0; i < u.length; i++) { var a = ZL.byId(u[i]); if (a) p += ZL.TIER_PTS[a.tier] || 0; }
+        return p;
+    };
+
+    /* 等级头衔：按解锁数量取当前头衔与下一头衔 */
+    ZL.getTitle = function () {
+        var c = ZL.getUnlocked().length, cur = ZL.TITLES[0], next = null;
+        for (var i = 0; i < ZL.TITLES.length; i++) {
+            if (c >= ZL.TITLES[i].min) { cur = ZL.TITLES[i]; next = ZL.TITLES[i + 1] || null; }
+            else break;
+        }
+        return { cur: cur, next: next, count: c };
+    };
+
+    /* 弹卡队列：消费 zl_ach_new，右上角依次弹出（跨页排队）。DOM 未就绪时不消费也不清队，等下次 drain */
+    ZL.drainNew = function () {
+        var q = LS('zl_ach_new');
+        if (!Array.isArray(q) || !q.length) return;
+        if (typeof document === 'undefined' || !document.body) return;
+        SS('zl_ach_new', []);
+        for (var i = 0; i < q.length; i++) {
+            (function (id, idx) {
+                setTimeout(function () { ZL._showAchCard(id); }, 500 + idx * 900);
+            })(q[i], i);
+        }
+    };
+    ZL._showAchCard = function (id) {
+        try {
+            var a = ZL.byId(id);
+            if (!a || typeof document === 'undefined' || !document.body) return;
+            var cfg = ZL.TIER_CFG[a.tier] || ZL.TIER_CFG[1];
+            var card = document.createElement('div');
+            card.style.cssText = 'position:fixed;top:16px;right:16px;z-index:2147483647;min-width:240px;max-width:320px;padding:12px 14px;border-radius:14px;background:var(--card,#fff);color:var(--txt,#333);box-shadow:0 14px 44px rgba(0,0,0,.4);border-left:4px solid ' + cfg.col + ';display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.4;opacity:0;transform:translateX(30px);transition:all .35s ease;cursor:pointer;';
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.title = '点击打开成就中心';
+            card.innerHTML = '<div style="font-size:30px;flex:none;">' + a.icon + '</div><div style="flex:1;"><div style="font-weight:bold;font-size:15px;">🏆 ' + a.t + ' <span style="font-size:11px;color:' + cfg.col + ';border:1px solid ' + cfg.col + ';border-radius:8px;padding:0 5px;margin-left:4px;">' + cfg.ic + cfg.nm + '</span></div><div style="color:var(--dim,#888);font-size:12px;margin-top:3px;">' + a.d + '</div></div>';
+            document.body.appendChild(card);
+            /* 点击卡片 → 跳转成就中心（并立即关闭本卡） */
+            function closeAndGo() { try { card.remove(); window.location.href = '38.html'; } catch (e) {} }
+            card.addEventListener('click', closeAndGo);
+            card.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); closeAndGo(); } });
+            setTimeout(function () { try { card.style.opacity = '1'; card.style.transform = 'translateX(0)'; } catch (e) {} }, 30);
+            setTimeout(function () { try { card.remove(); } catch (e) {} }, 5000);
+        } catch (e) {}
+    };
+
+    /* 工具使用计数（跨页统计：去重页面 / 活跃日 / 每页使用日 / 深夜访问） */
+    ZL.trackPage = function (pageKey, silent) {
+        if (!pageKey) return;
+        var used = LS('zl_used');
+        if (!Array.isArray(used)) used = [];
+        if (used.indexOf(pageKey) < 0) { used.push(pageKey); SS('zl_used', used); }
+        var d = new Date(), dk = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+        var days = LS('zl_daily_days');
+        if (!Array.isArray(days)) days = [];
+        if (days.indexOf(dk) < 0) { days.push(dk); SS('zl_daily_days', days); }
+        var pd = LS('zl_page_days');
+        if (!pd || typeof pd !== 'object') pd = {};
+        var list = (Array.isArray(pd[pageKey])) ? pd[pageKey] : [];
+        if (list.indexOf(dk) < 0) { list.push(dk); pd[pageKey] = list; SS('zl_page_days', pd); }
+        var h = d.getHours();
+        if (h >= 22 || h < 6) ZL.bump('night_visit', 1);
+        ZL.checkAll(!!silent);
+        if (!silent) ZL.drainNew();
+    };
+
+    /* 成就系统初始化：迁移补记 + 静默检查 + 消费队列 + 密语监听 */
+    ZL.dataMigration('ach_v2', '2.2.0', function () {
+        var u = ZL.getUnlocked();
+        if (!Array.isArray(u)) { u = []; SS('zl_ach', u); }
+        var meta = LS('zl_ach_meta');
+        if (!meta || typeof meta !== 'object') meta = {};
+        var changed = false;
+        for (var i = 0; i < u.length; i++) { if (meta[u[i]] == null) { meta[u[i]] = 0; changed = true; } }
+        if (changed) SS('zl_ach_meta', meta);
+        if (!LS('zl_ach_stats')) SS('zl_ach_stats', {});
+        if (!LS('zl_ach_new')) SS('zl_ach_new', []);
+    });
+    ZL.checkAll(true);
+    (function () {
+        function go() { setTimeout(function () { ZL.drainNew(); }, 600); }
+        try { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go(); } catch (e) { go(); }
+    })();
+    /* 隐藏成就：密语 'zhaolezi'（全站任意页可敲出） */
+    try {
+        var _easterBuf = '';
+        document.addEventListener('keydown', function (e) {
+            if (!e || typeof e.key !== 'string') return;
+            if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+                _easterBuf = (_easterBuf + e.key.toLowerCase()).slice(-8);
+                if (_easterBuf === 'zhaolezi') { _easterBuf = ''; ZL.unlock('keyboard_easter'); }
+            } else if (e.key === 'Escape') { _easterBuf = ''; }
+        });
+    } catch (e) {}
 
     /* ========== 站内搜索 ========== */
     ZL.search = function (q) {
@@ -318,6 +681,7 @@
             var q = input.value;
             var list = ZL.search(q);
             if (!q) { results.innerHTML = '<div style="padding:20px;text-align:center;color:var(--dim);font-size:13px;">输入关键词开始搜索全站功能</div>'; return; }
+            if (window.ZL && ZL.bump) ZL.bump('search_use', 1);
             if (!list.length) { results.innerHTML = '<div style="padding:20px;text-align:center;color:var(--dim);">未找到相关功能</div>'; return; }
             results.innerHTML = '';
             for (var i = 0; i < list.length; i++) {

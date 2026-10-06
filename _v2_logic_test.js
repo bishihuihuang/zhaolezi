@@ -64,14 +64,14 @@ ctx.ZL.studyLog.add({ type: 'add', itemId: 'e3', at: Date.now() - 86400000 * 2 }
 T('streakDays 断更回退为 1（前天记录不连今天）', ctx.ZL.studyLog.streakDays() === 1);
 
 /* ---------- 3. 版本与迁移框架 ---------- */
-T('dataMigration 推进数据版本到 2.0.0', (() => { try { return JSON.parse(ctx.store['zl_app_version']).ver === '2.0.0'; } catch (e) { return false; } })());
+T('dataMigration 推进数据版本到当前 APP_VER', (() => { try { return JSON.parse(ctx.store['zl_app_version']).ver === ctx.ZL.APP_VER; } catch (e) { return false; } })());
 const before = ctx.store['zl_app_version'];
 ctx.ZL.dataMigration('dup', '2.0.0', function () { ctx.ZL._migratedTwice = true; });
 T('dataMigration 幂等（同版本跳过不重复执行）', ctx.ZL._migratedTwice !== true);
 T('whatsNew 有未读版本条目', ctx.ZL.whatsNew().length >= 1);
 ctx.ZL.markVersionSeen();
 T('markVersionSeen 后 whatsNew 清空', ctx.ZL.whatsNew().length === 0);
-T('APP_VER=2.0.0', ctx.ZL.APP_VER === '2.0.0');
+T('APP_VER 与 VERSION_LOG 首条一致', ctx.ZL.APP_VER === (ctx.ZL.VERSION_LOG[0] && ctx.ZL.VERSION_LOG[0].ver), 'APP_VER=' + ctx.ZL.APP_VER);
 
 /* ---------- 4. 源码埋点断言（四模块落地点） ---------- */
 const src43 = fs.readFileSync(path.join(SRC, '43.html'), 'utf8');

@@ -255,6 +255,7 @@ const SCRIPT = `
                 u.lang = 'en-US'; u.rate = 0.9;
                 window.speechSynthesis.cancel();
                 window.speechSynthesis.speak(u);
+                if (window.ZL && ZL.bump) ZL.bump('dict_speak', 1);
             } catch (e) {}
         }
         function isFavWord(w) { return getFav().indexOf(w) >= 0; }
@@ -263,7 +264,7 @@ const SCRIPT = `
             var i = fav.indexOf(word);
             var on;
             if (i >= 0) { fav.splice(i, 1); on = false; }
-            else { fav.push(word); on = true; }
+            else { fav.push(word); on = true; if (window.ZL && ZL.bump) ZL.bump('dict_fav', 1); }
             setFav(fav);
             if (btn) btn.classList.toggle('active', on);
             if (currentType === 'fav') favView();
@@ -425,6 +426,7 @@ const SCRIPT = `
         }
 
         function searchWord(kw, type, resetPage) {
+            if (window.ZL && ZL.bump) ZL.bump('dict_query', 1);
             var letter = letterOf(kw);
             var first = letter ? loadLetter(letter) : Promise.resolve([]);
             first.then(function (shard) {
@@ -451,6 +453,7 @@ const SCRIPT = `
            （zh_top.json 约 2MB）在内存里跑 matchTrans，常见词反查秒出、免 21MB 全库扫描；
            索引未命中退回 progressiveScan 全库渐进扫描，30 万词全覆盖不受影响。 */
         function searchChinese(kw, type, resetPage) {
+            if (window.ZL && ZL.bump) ZL.bump('dict_cn', 1);
             if (!allLoaded && /^[\u4e00-\u9fff]+$/.test(kw)) {
                 loadZhTop().then(function (top) {
                     if (top && top.length) {

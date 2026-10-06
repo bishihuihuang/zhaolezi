@@ -1203,6 +1203,24 @@
             font-size: 11px;
         }
 
+        /* ---- 全局成就条（V2.2 成就中心入口） ---- */
+        .g-ach {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: 10px 12px; margin: 0 0 12px;
+            background: linear-gradient(120deg, rgba(255,182,72,.13), rgba(140,109,255,.13));
+            border: 1px solid rgba(127,127,127,.22); border-radius: 12px;
+            font-size: 13px;
+        }
+        .g-ach .gi { font-size: 20px; line-height: 1; }
+        .g-ach .gt { flex: 1 1 auto; min-width: 0; color: var(--txt); }
+        .g-ach .gt b { font-weight: 700; }
+        .g-ach .gl {
+            flex: 0 0 auto; padding: 5px 12px; border-radius: 999px;
+            background: rgba(140,109,255,.16); border: 1px solid rgba(140,109,255,.34);
+            color: var(--txt); font-size: 12px; text-decoration: none; white-space: nowrap;
+        }
+        .g-ach .gl:hover { background: rgba(140,109,255,.26); }
+
         /* ---- 成就 ---- */
         .ach-grid {
             display: grid;
@@ -1761,6 +1779,11 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
                     <span class="sec-sub" id="achSub">已解锁 0 / 6</span>
                     <span class="sec-line"></span>
                 </div>
+                <div class="g-ach" id="gAch">
+                    <span class="gi">🏆</span>
+                    <span class="gt" id="gAchTxt">全站成就加载中…</span>
+                    <a class="gl" href="38.html">查看成就中心 →</a>
+                </div>
                 <div class="ach-grid" id="achGrid"></div>
             </div>
 
@@ -1989,7 +2012,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             ambGrid: $('ambGrid'), volIn: $('volIn'), volVal: $('volVal'), volIc: $('volIc'),
             kpiGrid: $('kpiGrid'), bars: $('bars'), weekSub: $('weekSub'),
             donutTom: $('donutTom'), donutFree: $('donutFree'), donutLeg: $('donutLeg'), modeSub: $('modeSub'),
-            achGrid: $('achGrid'), achSub: $('achSub'),
+            achGrid: $('achGrid'), achSub: $('achSub'), gAchTxt: $('gAchTxt'),
             logBody: $('logBody'), logSub: $('logSub'),
             brkMask: $('brkMask'), brkTime: $('brkTime'), brkStep: $('brkStep'), brkIc: $('brkIc'), brkTitle: $('brkTitle'),
             brkSkip: $('brkSkip'), brkStay: $('brkStay'),
@@ -2182,6 +2205,19 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             if (S.stats.totalMin >= 6000) unlock('h100');
             var t = new Date().getHours();
             if (t >= 22 || t < 2) unlock('night');
+            gach();
+        }
+
+        /* V2.2 并轨：把本页专注/番茄行为写进全站成就指标（46 页专用，不依赖外部埋点） */
+        function gach(m, freeSecs, dayTom) {
+            if (!window.ZL || !ZL.bump) return;
+            try {
+                ZL.bump('focus_done', 1);
+                if (m > 0) ZL.bump('focus_min', m);
+                if (freeSecs >= 3600) ZL.bump('focus_free60', Math.round(freeSecs / 60), 'max');
+                if (typeof dayTom === 'number') ZL.bump('tomato_day10', dayTom >= 10 ? 1 : 0);
+            } catch (e) { }
+            if (ZL.checkAll) { try { ZL.checkAll(true); } catch (e) { } }
         }
 
         /* ==================== 环形进度绘制 ==================== */
@@ -2282,9 +2318,10 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
                 S.stats.totalTom += 1;
                 S.stats.totalMin += mins;
                 ensureDay(mins, 1);
+                var dayTom = (S.stats.days[todayStr()] || { tom: 0 }).tom;
+                gach(mins, 0, dayTom);
                 checkAch();
                 var isLong = (S.stats.cyc > 0 && S.stats.cyc % 4 === 0);
-                var dayTom = (S.stats.days[todayStr()] || { tom: 0 }).tom;
                 toast('🍅 第 ' + dayTom + ' 个番茄完成！' + (isLong ? ' 进入 ' + S.settings.long + ' 分钟长休息' : ''), 'ok');
                 ding();
             } else {
@@ -2329,6 +2366,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
                 S.stats.totalMin += mins;
                 ensureDay(mins, 0);
                 if (secs >= 3600) unlock('free60');
+                gach(mins, secs, 0);
                 checkAch();
                 save();
                 toast('✅ 自由专注 ' + mins + ' 分钟已记录', 'ok');
@@ -2579,6 +2617,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             if (Sound.start(id)) {
                 S.settings.amb = id;
                 S.settings.vol = Math.round(Sound.vol * 100);
+                if (window.ZL && ZL.bump) { try { ZL.bump('focus_amb', 1); } catch (e) { } }
                 save();
                 renderAmb();
                 var nm = '';
@@ -2930,6 +2969,18 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             }
             el.achGrid.innerHTML = html;
             el.achSub.textContent = '已解锁 ' + got + ' / ' + ACHS.length;
+            renderGAch();
+        }
+
+        /* V2.2 全站成就条：显示累计解锁数 / 积分 / 当前头衔 */
+        function renderGAch() {
+            if (!el.gAchTxt) return;
+            if (!window.ZL || !ZL.getTitle) { el.gAchTxt.textContent = '全站成就即将上线'; return; }
+            try {
+                var ti = ZL.getTitle(), pts = ZL.getPoints(), all = ZL.ACHIEVEMENTS.length;
+                el.gAchTxt.innerHTML = '全站已解锁 <b>' + ti.count + '</b> / ' + all + '　·　积分 <b>' + pts + '</b>　·　头衔 <b>' + ti.cur.ic + ' ' + ti.cur.nm + '</b>' +
+                    (ti.next ? '（再解锁 ' + (ti.next.min - ti.count) + ' 个升「' + ti.next.nm + '」）' : '（最高头衔）');
+            } catch (e) { el.gAchTxt.textContent = '全站成就统计暂不可用'; }
         }
 
         /* ==================== 专注日志 ==================== */
@@ -3131,6 +3182,15 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
 
             /* 站点工具使用计数（用于 42 页的成就解锁统计） */
             try { if (window.ZL && ZL.trackPage) ZL.trackPage('46.html'); } catch (e) { }
+
+            /* V2.2 成就：页面加载时补判条件成就 + 消费跨页弹卡队列；新成就到达时刷新成就条 */
+            try {
+                if (window.ZL) {
+                    if (ZL.checkAll) ZL.checkAll(true);
+                    if (ZL.drainNew) setTimeout(function () { ZL.drainNew(); }, 700);
+                    if (ZL.on) ZL.on('ach.unlocked', function () { renderGAch(); });
+                }
+            } catch (e) { }
 
             /* 上次播放的环境音不会自动续播（浏览器禁止自动播放），提示一句 */
             if (S.settings.amb) {
