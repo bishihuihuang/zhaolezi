@@ -102,6 +102,7 @@ function mkEl(tag, attrs, text) {
     for (const k in (attrs || {})) {
         if (k.indexOf('data-') === 0) el.dataset[k.slice(5).replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); })] = attrs[k];
     }
+    if (attrs && 'type' in attrs) el.type = attrs.type;
     return el;
 }
 function register(el) {
@@ -226,7 +227,11 @@ const sandbox = {
     Image: class { }, Worker: undefined,
     Blob: class { constructor(p) { this._p = p; } },
     URL: { createObjectURL: () => 'blob:mock', revokeObjectURL() {} },
-    FormData: class { append() {} }, FileReader: class { readAsDataURL() {} },
+    FormData: class { append() {} },
+    FileReader: class {
+        readAsDataURL() {}
+        readAsText(txt) { const t = this; setTimeout(function () { t.result = txt; if (t.onload) t.onload({ target: t }); }, 0); }
+    },
     TextEncoder: class { encode(s) { return Buffer.from(String(s || ''), 'utf8'); } },
     TextDecoder: class { decode(b) { return Buffer.from(b).toString('utf8'); } },
     structuredClone: v => JSON.parse(JSON.stringify(v))
@@ -241,6 +246,12 @@ sandbox.document = {
     createEvent: () => ({ initEvent() {} }), cookie: ''
 };
 sandbox.globalThis = sandbox; sandbox.window = sandbox; sandbox.self = sandbox;
+/* ZL 运行时 mock：捕获 ZL.download 调用以验证收藏导出内容 */
+sandbox.__zlCalls = { toast: [], download: [] };
+sandbox.ZL = {
+    toast: function (m, k) { sandbox.__zlCalls.toast.push({ m: m, k: k }); },
+    download: function (name, text, mime) { sandbox.__zlCalls.download.push({ name: name, text: text, mime: mime }); }
+};
 vm.createContext(sandbox);
 
 /* ================= 工具 ================= */
@@ -429,6 +440,88 @@ ok('脚本同步执行无异常', true, scripts.length + ' 块');
     const allTab2 = tabBtn('all');
     if (allTab2) { fire(allTab2, 'click'); await flush(200); }
     ok('清空搜索回到首页', /欢迎使用/.test(listHtml()), listHtml().slice(0, 160));
+
+    /* 9b. 收藏备份：导出 + 导入（V2.2.1 新增） */
+    // 先切回 all tab，避免备份时 currentType=fav 影响后续断言
+    if (allTab) { fire(allTab, 'click'); await flush(150); }
+    store.set('zl_dict_fav_v1', JSON.stringify(['apple', 'government']));
+    store.set('zl_dict_hist_v1', JSON.stringify(['apple', 'cat']));
+    const backupBtn = byId.get('backupBtn') || getEl('backupBtn');
+    const restoreFile = byId.get('restoreFile') || getEl('restoreFile');
+    ok('备份按钮存在', !!backupBtn && backupBtn.id === 'backupBtn');
+    ok('隐藏 file input 存在', !!restoreFile && restoreFile.type === 'file');
+
+    /* 导出：ZL.download 应被调用，payload 含 version / favs / hist */
+    sandbox.__zlCalls.download = []; sandbox.__zlCalls.toast = [];
+    fire(backupBtn, 'click');
+    await flush(60);
+    ok('点击 📦 备份 触发导出（ZL.download 被调用）', sandbox.__zlCalls.download.length === 1,
+        sandbox.__zlCalls.download.length + ' 次');
+    if (sandbox.__zlCalls.download.length) {
+        const dl = sandbox.__zlCalls.download[0];
+        ok('导出文件名带日期戳', /^zhaolezi-dict-\d{8}\.json$/.test(dl.name), dl.name);
+        ok('导出 MIME 为 application/json', dl.mime === 'application/json', dl.mime);
+        const pl = JSON.parse(dl.text);
+        ok('导出 payload version === 1', pl.version === 1, pl.version);
+        ok('导出 payload favs 包含 apple/government',
+            pl.favs.indexOf('apple') >= 0 && pl.favs.indexOf('government') >= 0, JSON.stringify(pl.favs));
+        ok('导出 payload hist 包含 apple', pl.hist.indexOf('apple') >= 0, JSON.stringify(pl.hist));
+    }
+
+    /* 导入：sandbox FileReader 用 __text 约定接收模拟文件，onload 异步触发 */
+    store.clear();
+    sandbox.FileReader = class {
+        readAsDataURL() {}
+        readAsText(arg) {
+            var t = this;
+            var txt = (typeof arg === 'string') ? arg : (arg && typeof arg.__text === 'string' ? arg.__text : String(arg));
+            setTimeout(function () { t.result = txt; if (t.onload) t.onload({ target: t }); }, 0);
+        }
+    };
+    const goodPayload = JSON.stringify({ version: 1, favs: ['apple', 'cat'], hist: ['apple'], exportedAt: '2026-10-06T00:00:00Z' });
+    restoreFile.files = [{ __text: goodPayload }];
+    restoreFile.value = 'backup.json';
+    fire(restoreFile, 'change');
+    await flush(80);
+    ok('导入合法备份写入 favs', JSON.parse(store.get('zl_dict_fav_v1') || '[]').indexOf('apple') >= 0,
+        store.get('zl_dict_fav_v1') || '(空)');
+    ok('导入历史写入 hist', JSON.parse(store.get('zl_dict_hist_v1') || '[]').indexOf('apple') >= 0);
+
+    /* 导入：版本不匹配应被拒绝 */
+    store.clear();
+    restoreFile.files = [{ __text: JSON.stringify({ version: 99, favs: ['x'], hist: [] }) }];
+    restoreFile.value = 'bad-ver.json';
+    sandbox.__zlCalls.toast = [];
+    fire(restoreFile, 'change');
+    await flush(80);
+    ok('拒绝版本不匹配的备份', (JSON.parse(store.get('zl_dict_fav_v1') || '[]') || []).length === 0,
+        store.get('zl_dict_fav_v1') || '(空)');
+    ok('版本不匹配给出错误提示', sandbox.__zlCalls.toast.some(function (t) { return /版本|不匹配/.test(t.m); }),
+        JSON.stringify(sandbox.__zlCalls.toast));
+
+    /* 导入：JSON 非法应被拒绝 */
+    store.clear();
+    restoreFile.files = [{ __text: 'not-json{' }];
+    restoreFile.value = 'bad.json';
+    sandbox.__zlCalls.toast = [];
+    fire(restoreFile, 'change');
+    await flush(80);
+    ok('拒绝非法 JSON', (JSON.parse(store.get('zl_dict_fav_v1') || '[]') || []).length === 0);
+    ok('非法 JSON 给出错误提示', sandbox.__zlCalls.toast.some(function (t) { return /JSON|解析|失败/.test(t.m); }),
+        JSON.stringify(sandbox.__zlCalls.toast));
+
+    /* 导入：与现有收藏去重合并 */
+    store.set('zl_dict_fav_v1', JSON.stringify(['apple']));
+    store.set('zl_dict_hist_v1', JSON.stringify([]));
+    restoreFile.files = [{ __text: JSON.stringify({ version: 1, favs: ['apple', 'cat', 'dog'], hist: ['cat'] }) }];
+    restoreFile.value = 'merge.json';
+    fire(restoreFile, 'change');
+    await flush(80);
+    const mergedFav = JSON.parse(store.get('zl_dict_fav_v1') || '[]');
+    ok('导入去重：apple 只出现一次', mergedFav.filter(function (w) { return w === 'apple'; }).length === 1,
+        JSON.stringify(mergedFav));
+    ok('导入合并：fav 总数为 3', mergedFav.length === 3, mergedFav.length + ' 条 ' + JSON.stringify(mergedFav));
+    ok('导入合并：hist 写入 cat', JSON.parse(store.get('zl_dict_hist_v1') || '[]').indexOf('cat') >= 0);
 
     /* 10. 空库与边界 */
     await search('zzzzzzzzzz');

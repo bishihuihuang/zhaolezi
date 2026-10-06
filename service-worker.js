@@ -57,7 +57,14 @@
 // V66：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
 // V67：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
 // V68：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v68';
+// V69：2026-10-06 PWA 离线体验修复（静态资源失败回落 offline.html 兜底页 + 导航离线改走 offline.html 而非首页；ASSETS 追加 offline.html）
+// V70：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V71：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V72：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V73：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V74：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V75：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v75';
 const ASSETS = [
   './',
   './index.html',
@@ -71,6 +78,7 @@ const ASSETS = [
   './43.html', './44.html', './45.html', './46.html',
   './文件搜索.html',
   './verify.html',
+  './offline.html',
   './manifest.json',
   './17-data.js',
   './common.css',
@@ -123,7 +131,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
 
-  // 导航请求（页面文档）：网络优先，失败回退缓存/首页
+  // 导航请求（页面文档）：网络优先，失败回退缓存 → offline.html → 首页
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -135,10 +143,13 @@ self.addEventListener('fetch', (event) => {
           }
           return response;
         })
-        .catch(() =>
-          caches.match(event.request)
-            .then((cached) => cached || caches.match('./index.html'))
-        )
+        .catch(() => {
+          // 网络失败：先看当前页面缓存，再回落到离线提示页，最后首页
+          return caches.match(event.request).then((cached) => {
+            if (cached) return cached;
+            return caches.match('./offline.html').then((off) => off || caches.match('./index.html'));
+          });
+        })
     );
     return;
   }
@@ -160,10 +171,9 @@ self.addEventListener('fetch', (event) => {
             return response;
           })
           .catch(() => {
-            // 离线且无缓存：导航请求回退首页（此处主要为兜底）
-            if (event.request.mode === 'navigate') {
-              return caches.match('./index.html');
-            }
+            // 离线且无缓存：先回退到 offline.html 兜底页，miss 再走首页
+            // 此前此处返回 undefined 会让 respondWith 无响应，导致 23 页分片离线时静默失败
+            return caches.match('./offline.html').then((off) => off || caches.match('./index.html'));
           });
       })
   );

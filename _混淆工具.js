@@ -19,7 +19,7 @@ const path = require('path');
 
 const SOURCE_DIR = '_原始未混淆版';
 const ROOT = __dirname;
-const NO_OBFUSCATE = ['30.html', '文件搜索.html'];
+const NO_OBFUSCATE = ['30.html', '文件搜索.html', 'offline.html'];
 
 const PWA_BLOCK = `
 <!-- PWA支持 -->

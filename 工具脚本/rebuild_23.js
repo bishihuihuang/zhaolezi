@@ -49,6 +49,8 @@ const EXTRA_CSS = `
     .history-bar .label { font-size: 13px; color: #999; }
     .hist-chip { padding: 4px 12px; border-radius: 14px; background: #f0f2ff; color: #4b57b8; font-size: 12px; cursor: pointer; border: none; transition: all .18s; }
     .hist-chip:hover { background: #dfe4ff; }
+    .backup-btn { padding: 4px 12px; border-radius: 14px; background: #e8eef9; color: #4b57b8; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid #c9d2ff; transition: all .18s; white-space: nowrap; }
+    .backup-btn:hover { background: #dfe4ff; transform: translateY(-1px); }
     .home-intro { text-align: center; color: #888; font-size: 15px; padding: 8px 0 2px; }
     .home-intro b { color: #667eea; font-size: 18px; }
     .hot-title { font-size: 15px; font-weight: 800; color: #555; margin: 12px 0 8px; }
@@ -108,9 +110,11 @@ const BODY = `    <main>
                         <button class="tab-btn" data-type="fav" aria-label="我的收藏">⭐ 收藏</button>
                     </div>
 
-                    <div class="tool-row">
+                        <div class="tool-row">
                         <div class="dict-stats" id="dictStats">词库加载中…</div>
                         <div class="history-bar" id="historyBar"></div>
+                        <button class="backup-btn" id="backupBtn" type="button" title="导出收藏为 JSON 文件">📦 备份</button>
+                        <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
                     </div>
 
                     <div class="result-list" id="resultList" aria-live="polite">
@@ -147,6 +151,7 @@ const SCRIPT = `
         var pageTitle = document.getElementById('pageTitle');
 
         var USER_KEY = { fav: 'zl_dict_fav_v1', hist: 'zl_dict_hist_v1', maxHist: 10 };
+        var BACKUP_VER = 1;
         var cache = {};      // letter -> 词条数组
         var loading = {};    // letter -> Promise
         var allLoaded = false;
@@ -185,6 +190,54 @@ const SCRIPT = `
         function setFav(f) { lsSet(USER_KEY.fav, f); }
         function getHist() { var h = lsGet(USER_KEY.hist); return Array.isArray(h) ? h : []; }
         function setHist(h) { lsSet(USER_KEY.hist, h.slice(0, USER_KEY.maxHist)); }
+
+        /* 收藏备份：导出为 JSON 文件 / 从 JSON 文件导入（合并去重，version 不匹配则拒绝） */
+        function pad2(n) { return (n < 10 ? '0' : '') + n; }
+        function toast23(msg, kind) {
+            if (window.ZL && typeof ZL.toast === 'function') ZL.toast(msg, kind);
+            else if (window.alert) window.alert(msg);
+        }
+        function exportBackup() {
+            var favs = getFav(), hist = getHist();
+            var data = { version: BACKUP_VER, favs: favs, hist: hist, exportedAt: new Date().toISOString(), source: 'zhaolezi-23' };
+            var d = new Date();
+            var stamp = d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate());
+            var filename = 'zhaolezi-dict-' + stamp + '.json';
+            if (window.ZL && typeof ZL.download === 'function') ZL.download(filename, JSON.stringify(data, null, 2), 'application/json');
+            else {
+                try {
+                    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a'); a.href = url; a.download = filename;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+                } catch (e) { toast23('导出失败：' + e.message, 'err'); return; }
+            }
+            toast23('📦 已导出 ' + favs.length + ' 条收藏 / ' + hist.length + ' 条历史', 'ok');
+        }
+        function doBackupImport(text) {
+            var obj;
+            try { obj = JSON.parse(text); } catch (e) { toast23('导入失败：JSON 解析错误', 'err'); return; }
+            if (!obj || typeof obj !== 'object') { toast23('导入失败：文件内容为空或格式错误', 'err'); return; }
+            if (obj.version !== BACKUP_VER) {
+                toast23('导入失败：备份版本不匹配（需 v' + BACKUP_VER + '，收到 v' + obj.version + '）', 'err'); return;
+            }
+            var inFavs = Array.isArray(obj.favs) ? obj.favs : null;
+            var inHist = Array.isArray(obj.hist) ? obj.hist : null;
+            if (!inFavs && !inHist) { toast23('导入失败：备份文件缺少 favs/hist 字段', 'err'); return; }
+            var curFav = getFav(), curHist = getHist();
+            var mergedFav = curFav.slice();
+            if (inFavs) inFavs.forEach(function (w) { if (typeof w === 'string' && w && mergedFav.indexOf(w) < 0) mergedFav.push(w); });
+            var mergedHist = curHist.slice();
+            if (inHist) inHist.forEach(function (w) { if (typeof w === 'string' && w && mergedHist.indexOf(w) < 0) mergedHist.push(w); });
+            setFav(mergedFav);
+            setHist(mergedHist.slice(0, USER_KEY.maxHist));
+            renderHistory();
+            if (currentType === 'fav') { favView(); }
+            else if (searchInput && searchInput.value.trim()) { doSearch(true); }
+            var added = mergedFav.length - curFav.length;
+            toast23('✅ 导入成功：新增 ' + added + ' 条收藏，当前共 ' + mergedFav.length + ' 条', 'ok');
+        }
 
         function letterOf(w) { var c = String(w || '').charAt(0).toLowerCase(); return /^[a-z]$/.test(c) ? c : ''; }
         function baseDir() {
@@ -672,6 +725,22 @@ const SCRIPT = `
                 }
             }
         });
+        /* 收藏备份：导出按钮直接触发下载，导入走隐藏 input[type=file] */
+        function initBackup() {
+            var exportBtn = document.getElementById('backupBtn');
+            var fileInput = document.getElementById('restoreFile');
+            if (exportBtn) exportBtn.addEventListener('click', exportBackup);
+            if (fileInput) fileInput.addEventListener('change', function () {
+                var f = fileInput.files && fileInput.files[0];
+                if (!f) return;
+                var reader = new FileReader();
+                reader.onload = function (ev) { doBackupImport(ev.target.result); };
+                reader.onerror = function () { toast23('读取文件失败', 'err'); };
+                reader.readAsText(f);
+                fileInput.value = '';
+            });
+        }
+        initBackup();
 
         var isTransitioning = false;
         if (backHome) backHome.addEventListener('click', function (e) {
