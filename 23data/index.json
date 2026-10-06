@@ -108,5 +108,9 @@
       "bytes": 11862
     }
   },
-  "totalBytes": 21607565
+  "totalBytes": 21607565,
+  "zh_top": {
+    "count": 20000,
+    "bytes": 2023682
+  }
 }

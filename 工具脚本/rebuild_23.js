@@ -150,6 +150,7 @@ const SCRIPT = `
         var cache = {};      // letter -> 词条数组
         var loading = {};    // letter -> Promise
         var allLoaded = false;
+        var zhTop = null, zhTopLoading = null;   // 前2万高频词预置数组（中文反查快速路径）
         var currentLevel = '';
         var currentType = 'all';
         var lastKw = '';
@@ -219,6 +220,16 @@ const SCRIPT = `
                 })(letters[i]);
             }
             return Promise.all(tasks).then(function () { if (ok > 0) allLoaded = true; });
+        }
+        /* 懒加载前 2 万高频词预置数组（中文反查快速路径用）；失败置空以便下次重试 */
+        function loadZhTop() {
+            if (zhTop) return Promise.resolve(zhTop);
+            if (zhTopLoading) return zhTopLoading;
+            zhTopLoading = fetch(baseDir() + '23data/zh_top.json')
+                .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+                .then(function (arr) { zhTop = Array.isArray(arr) && arr.length ? arr : null; return zhTop; })
+                .catch(function () { zhTop = null; return null; });
+            return zhTopLoading;
         }
 
         function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -436,13 +447,29 @@ const SCRIPT = `
                 setList('<div class="empty-state">词库分片加载失败，请检查网络后重试</div>');
             });
         }
+        /* V2.1.1 快速路径：纯中文关键词且未全量加载时，先用「前 2 万高频词」预置数组
+           （zh_top.json 约 2MB）在内存里跑 matchTrans，常见词反查秒出、免 21MB 全库扫描；
+           索引未命中退回 progressiveScan 全库渐进扫描，30 万词全覆盖不受影响。 */
+        function searchChinese(kw, type, resetPage) {
+            if (!allLoaded && /^[\u4e00-\u9fff]+$/.test(kw)) {
+                loadZhTop().then(function (top) {
+                    if (top && top.length) {
+                        var found = matchTrans(top, kw);
+                        if (found.length) { finishSearch(found, kw, type, resetPage); return; }
+                    }
+                    progressiveScan(kw, type, resetPage);
+                });
+                return;
+            }
+            progressiveScan(kw, type, resetPage);
+        }
         /* 中文反查要扫全库 26 片（约 20MB），一次性等完会长时间只显示进度条。
            这里改为边加载边反查：每到位 4 片就渲染一次已有结果，用户立刻能看到命中词条。 */
         function progBlockHtml(d, n) {
             var pct = Math.round(d / n * 100);
             return '<div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="progFill" style="width:' + pct + '%"></div></div><span id="progText">' + d + ' / ' + n + '</span></div>';
         }
-        function searchChinese(kw, type, resetPage) {
+        function progressiveScan(kw, type, resetPage) {
             if (allLoaded) { finishSearch(matchTrans(allEntries(), kw), kw, type, resetPage); return; }
             var letters = 'abcdefghijklmnopqrstuvwxyz';
             var n = letters.length;

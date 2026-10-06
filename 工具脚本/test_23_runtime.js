@@ -188,8 +188,13 @@ const localStorage = {
 };
 
 /* ================= fetch：直接喂真实分片 ================= */
+const fetched = [];
 function serve(url) {
-    const m = String(url).match(/23data\/([a-z])\.json/);
+    const u = String(url);
+    fetched.push(u);
+    const z = u.match(/23data\/zh_top\.json/);
+    if (z) return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(JSON.parse(fs.readFileSync(path.join(ROOT, '23data', 'zh_top.json'), 'utf8'))) });
+    const m = u.match(/23data\/([a-z])\.json/);
     if (m) return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(JSON.parse(fs.readFileSync(path.join(ROOT, '23data', m[1] + '.json'), 'utf8'))) });
     return Promise.reject(new Error('未预期的请求: ' + url));
 }
@@ -303,11 +308,23 @@ ok('脚本同步执行无异常', true, scripts.length + ' 块');
     ok('子串检索 pple 有结果', cardCount() > 0, cardCount() + ' 张');
     ok('子串检索结果均含 pple', [...listHtml().matchAll(/word">([^<]+)</g)].slice(0, 50).every(x => x[1].toLowerCase().indexOf('pple') >= 0));
 
-    /* 4. 中文反查（渐进渲染 + 全库扫描） */
+    /* 4. 中文反查（V2.1.1 快速路径：zh_top 索引秒出；未命中退回全库渐进扫描） */
+    const beforeZh = fetched.length;
     await search('猫');
+    ok('中文反查快速路径只拉 zh_top 索引（免全库扫描）',
+        fetched.length - beforeZh === 1 && /zh_top\.json$/.test(fetched[fetched.length - 1] || ''),
+        '新增请求 ' + fetched.slice(beforeZh).join(',') || '(无新请求)');
     ok('中文反查「猫」出结果', cardCount() > 0, cardCount() + ' 张');
     ok('中文反查「猫」首词是 cat', /class="result-card"[^>]*>[\s\S]{0,120}word">cat</.test(listHtml()));
     ok('中文反查释义均含「猫」', [...listHtml().matchAll(/meaning">([^<]*)</g)].slice(0, 40).every(x => /猫/.test(x[1])));
+
+    /* 4b. 索引未命中 → 退回全库渐进扫描（30 万词全覆盖） */
+    const beforeFull = fetched.length;
+    await search('计算机科学');
+    await flush(600);
+    ok('索引未命中触发全库扫描（多分片请求）', fetched.length - beforeFull > 3,
+        '新增请求 ' + (fetched.length - beforeFull) + ' 个');
+    ok('全库扫描兜底出结果', cardCount() > 0, cardCount() + ' 张');
 
     /* 5. 等级筛选 */
     const all = (await (async () => { await search('govern'); return cardCount(); })());

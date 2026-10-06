@@ -143,6 +143,28 @@ ok('中文反查结果整体按词频升序', matchTrans(big, '学习').every(fu
     return i === 0 || freqScore(a[i - 1].item) <= freqScore(r.item);
 }));
 
+/* ===== 中文反查快速索引 zh_top（前 2 万高频词，常见词反查免全库扫描） ===== */
+const zhTop = JSON.parse(fs.readFileSync(path.join(DATA, 'zh_top.json'), 'utf8'));
+ok('zh_top 为数组且 20,000 条', Array.isArray(zhTop) && zhTop.length === 20000, zhTop.length + ' 条');
+ok('zh_top 词条结构与分片一致', zhTop.every(e => Array.isArray(e) && e.length === 6 && typeof e[0] === 'string' && e[0]));
+ok('zh_top 首词为高频词 the', zhTop.length > 0 && zhTop[0][0] === 'the', zhTop[0] && zhTop[0][0]);
+const fullSet = new Set(big.map(e => e[0]));
+ok('zh_top 全部来自全库（子集校验）', zhTop.every(e => fullSet.has(e[0])));
+const ZH_TOP_EXPECT = { '苹果': 'apple', '计算机': 'computer', '幸福': 'happy', '猫': 'cat', '学习': 'study' };
+for (const kw of Object.keys(ZH_TOP_EXPECT)) {
+    const rIdx = matchTrans(zhTop, kw);
+    const rFull = matchTrans(big, kw);
+    const exp = ZH_TOP_EXPECT[kw];
+    ok('索引反查「' + kw + '」有结果', rIdx.length > 0, rIdx.length + ' 条');
+    /* 用例必须显式给出期望词——漏配不能静默跳过 */
+    ok('索引反查「' + kw + '」已配置期望首词', !!exp, '期望词：' + exp);
+    ok('索引反查「' + kw + '」期望词在前列', !!exp && rIdx.map(x => x.item[0]).indexOf(exp) < 6,
+        '期望 ' + exp + ' 在索引 ' + rIdx.map(x => x.item[0]).indexOf(exp));
+    ok('索引反查「' + kw + '」结果 ⊆ 全库结果', rIdx.every(x => rFull.some(y => y.item[0] === x.item[0])));
+    ok('索引反查「' + kw + '」首词与全库一致', rFull.length > 0 && rIdx.length > 0 && rIdx[0].item[0] === rFull[0].item[0],
+        rIdx[0] ? rIdx[0].item[0] + ' / 全库 ' + (rFull[0] && rFull[0].item[0]) : '(索引空)');
+}
+
 /* ===== 首页高频精选：a/b/t 三片取前 12 ===== */
 const hot = shards.a.concat(shards.b, shards.t)
     .slice()
