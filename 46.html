@@ -2197,16 +2197,10 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             return false;
         }
 
-        function checkAch() {
-            if (anyFocus()) unlock('first');
-            var today = S.stats.days[todayStr()];
-            if (today && (today.tom || 0) >= 10) unlock('t10');
-            if (streak() >= 7) unlock('streak7');
-            if (S.stats.totalMin >= 6000) unlock('h100');
-            var t = new Date().getHours();
-            if (t >= 22 || t < 2) unlock('night');
-            gach();
-        }
+        /* 旧本地成就判断已删除：原先末尾调用 gachAch() 但该函数从未定义，
+           每次 checkAch() 都抛 ReferenceError，连带计时完成后的收尾流程一起中断。
+           判断逻辑已并入全站成就目录（tomato_1/10、focus_7d/14d、focus_100h），
+           由下方 gach() 写指标后 checkAll 统一判定。 */
 
         /* V2.2 并轨：把本页专注/番茄行为写进全站成就指标（46 页专用，不依赖外部埋点） */
         function gach(m, freeSecs, dayTom) {
@@ -2214,6 +2208,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             try {
                 ZL.bump('focus_done', 1);
                 if (m > 0) ZL.bump('focus_min', m);
+                if (m >= 25) ZL.bump('focus_25done', 1);
                 if (freeSecs >= 3600) ZL.bump('focus_free60', Math.round(freeSecs / 60), 'max');
                 if (typeof dayTom === 'number') ZL.bump('tomato_day10', dayTom >= 10 ? 1 : 0);
             } catch (e) { }
@@ -2320,7 +2315,6 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
                 ensureDay(mins, 1);
                 var dayTom = (S.stats.days[todayStr()] || { tom: 0 }).tom;
                 gach(mins, 0, dayTom);
-                checkAch();
                 var isLong = (S.stats.cyc > 0 && S.stats.cyc % 4 === 0);
                 toast('🍅 第 ' + dayTom + ' 个番茄完成！' + (isLong ? ' 进入 ' + S.settings.long + ' 分钟长休息' : ''), 'ok');
                 ding();
@@ -2367,7 +2361,6 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
                 ensureDay(mins, 0);
                 if (secs >= 3600) unlock('free60');
                 gach(mins, secs, 0);
-                checkAch();
                 save();
                 toast('✅ 自由专注 ' + mins + ' 分钟已记录', 'ok');
             } else {
