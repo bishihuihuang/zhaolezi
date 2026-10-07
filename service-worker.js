@@ -68,7 +68,8 @@
 // V77：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
 // V78：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
 // V79：2026-10-06 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v79';
+// V82：2026-10-07 液态玻璃层 V2.3.0（M3 修复：筛选胶囊初始文本 + 放大收起恢复背景滚动）
+const CACHE_NAME = 'zhaolezi-v82';
 const ASSETS = [
   './',
   './index.html',
@@ -89,6 +90,7 @@ const ASSETS = [
   './common.js',
   './theme.js',
   './zl-features.js',
+  './zl-glass.js',
   './favicon.ico',
   './favicon.svg',
   './favicon-48.png',

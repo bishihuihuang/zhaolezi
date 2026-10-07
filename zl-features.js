@@ -1004,3 +1004,17 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHomeBtn);
     else initHomeBtn();
 })();
+
+/* ========== V2.3.0 液态玻璃层：动态加载 zl-glass.js（全站生效，无需改各页） ========== */
+(function () {
+    function loadGlass() {
+        var s = document.createElement('script');
+        s.src = 'zl-glass.js';
+        s.async = true;
+        s.onload = function () { try { window.ZL && ZL.glass && ZL.glass.init(); } catch (e) {} };
+        s.onerror = function () {}; // 离线/加载失败静默降级，不影响主功能
+        document.head.appendChild(s);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadGlass);
+    else loadGlass();
+})();
