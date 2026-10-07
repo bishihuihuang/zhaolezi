@@ -20,6 +20,7 @@
     /* ===================== 配置 ===================== */
     var CFG = {
         skipPages: ['1.html', '2.html', '3.html', '4.html', '28.html', '29.html', '30.html', '10.html', 'verify.html', 'offline.html'],
+        gateUrl: function (f) { return (window.ZL && ZL.gateUrl) ? ZL.gateUrl(f) : f; },
         pillKey: 'zl_glass_last',        // 记忆上一次激活项，供跨页水滴滑入
         dockIcons: [
             { f: 'index.html',  t: '首页',      ic: '🏠' },
@@ -151,7 +152,8 @@
         '.zl-sum-num{font-size:23px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25;color:var(--txt,#333)}' +
         '.zl-sum-lbl{font-size:11px;color:var(--dim,#8b93a7);margin-top:3px}' +
         '@media (prefers-reduced-motion:reduce){.zl-sum-num{transition:none !important}}' +
-        /* ---------- V2.3.1 四条增强 ---------- */
+        /* ---------- V2.3.2 门禁收口 ---------- */
+        /* V2.3.1 四条增强 */
         '@keyframes zlBreathe{0%,100%{box-shadow:0 0 6px color-mix(in srgb,var(--glow,#667eea) 28%,transparent)}50%{box-shadow:0 0 20px color-mix(in srgb,var(--glow,#667eea) 88%,transparent)}}' +
         '.zl-dock-item.on.active{animation:zlBreathe 2.4s ease-in-out infinite}' +
         '@media (prefers-reduced-motion:reduce){.zl-dock-item.on.active{animation:none}}' +
@@ -208,7 +210,7 @@
         for (var i = 0; i < CFG.dockIcons.length; i++) {
             var it = CFG.dockIcons[i];
             var on = it.f === cur ? ' on active' : '';
-            itemsHtml += '<a class="zl-dock-item' + on + '" data-f="' + it.f + '" href="' + it.f + '" title="' + it.t + '" aria-label="' + it.t + '">' + it.ic + '</a>';
+            itemsHtml += '<a class="zl-dock-item' + on + '" data-f="' + it.f + '" href="' + CFG.gateUrl(it.f) + '" title="' + it.t + '" aria-label="' + it.t + '">' + it.ic + '</a>';
         }
         dock.innerHTML = itemsHtml + '<div class="zl-pill"></div>';
         var openBtn = document.createElement('button');
@@ -242,7 +244,7 @@
             ctxEl.className = 'zl-ctx';
             var title = item.getAttribute('title') || '相关入口';
             var h = '<div class="zl-ctx-title">' + title + ' · 二级入口</div>';
-            for (var g = 0; g < grp.length; g++) h += '<a class="zl-ctx-item" href="' + grp[g].f + '"><span class="ci-ic">' + grp[g].ic + '</span>' + grp[g].t + '</a>';
+            for (var g = 0; g < grp.length; g++) h += '<a class="zl-ctx-item" href="' + CFG.gateUrl(grp[g].f) + '"><span class="ci-ic">' + grp[g].ic + '</span>' + grp[g].t + '</a>';
             ctxEl.innerHTML = h;
             document.body.appendChild(ctxEl);
             var r = item.getBoundingClientRect();
@@ -376,7 +378,7 @@
             if (idx >= 0) hl = t.slice(0, idx) + '<mark>' + t.slice(idx, idx + ql.length) + '</mark>' + t.slice(idx + ql.length);
             var a = document.createElement('a');
             a.className = 'zl-palette-item';
-            a.href = p.f;
+            a.href = CFG.gateUrl(p.f);
             a.setAttribute('data-i', String(i));
             a.innerHTML = '<span class="pi-t">' + hl + '</span><span class="pi-k">' + (k || '') + '</span>';
             a.addEventListener('mouseenter', function () { selTo(Number(this.getAttribute('data-i'))); });
@@ -407,7 +409,7 @@
     function goTo(f) {
         recordRecent(f);
         closePalette();
-        setTimeout(function () { window.location.href = f; }, 60);
+        setTimeout(function () { window.location.href = CFG.gateUrl(f); }, 60);
     }
     /* 最近访问记录：上限 6，最新在前，同页去重 */
     function recordRecent(f) {
@@ -813,7 +815,7 @@
 
     /* ===================== 挂载器 ===================== */
     ZL.glass = {
-        version: '2.3.1',
+        version: '2.3.2',
         init: function () {
             try {
                 injectStyle();

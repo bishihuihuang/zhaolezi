@@ -72,7 +72,8 @@
 // V83：2026-10-07 自动构建（公共层/页面更新，缓存随构建递增）
 // V84：2026-10-07 液态玻璃层 V2.3.1（四条增强：Dock 呼吸灯+长按二级入口 / Ctrl+K 最近访问+热词 / 放大态键盘切换 / 44 打卡即时刷新）
 // V85：2026-10-07 液态玻璃层 V2.3.1（修复：Ctrl+K 被 common.js 键盘保护拦截，改 capture 阶段注册）
-const CACHE_NAME = 'zhaolezi-v85';
+// V86：2026-10-07 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v86';
 const ASSETS = [
   './',
   './index.html',

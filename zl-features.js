@@ -251,6 +251,24 @@
         { f: '46.html', t: '学习计时与专注模式', k: '番茄钟 专注 计时 白噪音 成就 统计 休息' }
     ];
 
+    /* ========== 体系门禁：受保护页只能经密码门户进入 ==========
+     * 1-8 体系（2-8.html）→ 经 1.html（密码登录）
+     * 看看作业体系（41/42.html）→ 经 verify.html（密码验证）
+     * 其余页直链；1.html/verify.html 本身是门户不拦截。
+     * ZL.gateUrl(f) 返回实际跳转地址（保持 f 语义用于高亮/分组/最近）。 */
+    var GATE_MAP = {
+        '2.html': '1.html?go=2.html',
+        '3.html': '1.html?go=3.html',
+        '4.html': '1.html?go=4.html',
+        '5.html': '1.html?go=5.html',
+        '6.html': '1.html?go=6.html',
+        '7.html': '1.html?go=7.html',
+        '8.html': '1.html?go=8.html',
+        '41.html': 'verify.html?go=41.html',
+        '42.html': 'verify.html?go=42.html'
+    };
+    ZL.gateUrl = function (f) { return GATE_MAP[f] || f; };
+
     /* ================================================================
      * 成就系统 V2.2（多维度 94 条：基础52/中级24/高级12/隐藏6）
      * 数据层：
@@ -686,7 +704,7 @@
             results.innerHTML = '';
             for (var i = 0; i < list.length; i++) {
                 var a = document.createElement('a');
-                a.href = list[i].f;
+                a.href = ZL.gateUrl(list[i].f);
                 a.style.cssText = 'display:block;padding:12px 18px;text-decoration:none;color:var(--txt);font-size:15px;';
                 a.innerHTML = '<span style="color:var(--blue);font-weight:bold;">' + list[i].t + '</span>';
                 a.onmouseenter = function () { this.style.background = 'var(--card-2)'; };
@@ -698,7 +716,7 @@
         input.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 var list = ZL.search(input.value);
-                if (list.length) { window.location.href = list[0].f; }
+                if (list.length) { window.location.href = ZL.gateUrl(list[0].f); }
             } else if (e.key === 'Escape') { box.remove(); }
         });
         document.getElementById('zlSearchClose').onclick = function () { box.remove(); };
