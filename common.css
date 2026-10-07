@@ -104,7 +104,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: linear-gradient(rgba(122,168,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(122,168,255,.05) 1px,transparent 1px),radial-gradient(circle at 20% 14%,rgba(122,168,255,.16),transparent 46%),radial-gradient(circle at 82% 20%,rgba(180,140,255,.12),transparent 42%),radial-gradient(circle at 58% 78%,rgba(77,163,255,.08),transparent 52%);
         --bg-pattern-size: 36px 36px,36px 36px,auto,auto,auto;
     
-        --bg-image: url(images/bg-blue.jpg);
+        --bg-image: url(pages/images/bg-blue.jpg);
     }
     :root[data-theme="gold"] {
         --bg: #0d0a05; --bg-dim: linear-gradient(rgba(0,0,0,.06),rgba(0,0,0,.14));
@@ -127,7 +127,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: repeating-linear-gradient(45deg,rgba(245,197,66,.03) 0 1px,transparent 1px 16px),radial-gradient(circle at 50% -10%,rgba(245,197,66,.16),transparent 55%),radial-gradient(circle at 85% 32%,rgba(230,168,23,.08),transparent 46%);
         --bg-pattern-size: auto,auto,auto;
     
-        --bg-image: url(images/bg-gold.jpg);
+        --bg-image: url(pages/images/bg-gold.jpg);
     }
     :root[data-theme="light"] {
         --bg: #f4f6fb; --bg-dim: none;
@@ -150,7 +150,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: radial-gradient(circle at 50% -4%,rgba(147,197,253,.30),transparent 55%),radial-gradient(circle at 18% 82%,rgba(196,181,253,.16),transparent 46%),radial-gradient(rgba(59,130,246,.09) 1px,transparent 1px);
         --bg-pattern-size: auto,auto,22px 22px;
     
-        --bg-image: url(images/bg-light.jpg);
+        --bg-image: url(pages/images/bg-light.jpg);
     }
     :root[data-theme="milk"] {
         --bg: #f5edd9; --bg-dim: linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.12));
@@ -173,7 +173,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: repeating-linear-gradient(0deg,rgba(201,162,39,.05) 0 1px,transparent 1px 32px),radial-gradient(circle at 50% -8%,rgba(214,175,80,.18),transparent 55%),radial-gradient(circle at 16% 86%,rgba(255,240,200,.16),transparent 44%);
         --bg-pattern-size: auto,auto,auto;
     
-        --bg-image: url(images/bg-milk.jpg);
+        --bg-image: url(pages/images/bg-milk.jpg);
     }
     :root[data-theme="guofeng"] {
         --bg: #160b08; --bg-dim: linear-gradient(rgba(10,4,2,.18),rgba(10,4,2,.30));
@@ -196,7 +196,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: repeating-linear-gradient(45deg,rgba(224,60,40,.05) 0 1px,transparent 1px 18px);
         --bg-pattern-size: auto;
     
-        --bg-image: url(images/bg-guofeng.jpg);
+        --bg-image: url(pages/images/bg-guofeng.jpg);
     }
     :root[data-theme="snowsun"] {
         --bg: #0a0f1c; --bg-dim: linear-gradient(rgba(4,8,16,.20),rgba(4,8,16,.34));
@@ -219,7 +219,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 1px,transparent 1px 22px);
         --bg-pattern-size: auto;
     
-        --bg-image: url(images/bg-snowsun.jpg);
+        --bg-image: url(pages/images/bg-snowsun.jpg);
     }
     :root[data-theme="cyber"] {
         --bg: #070714; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -242,7 +242,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: repeating-linear-gradient(45deg,rgba(0,217,255,.05) 0 1px,transparent 1px 20px);
         --bg-pattern-size: auto;
     
-        --bg-image: url(images/bg-cyber.jpg);
+        --bg-image: url(pages/images/bg-cyber.jpg);
     }
     :root[data-theme="aurora"] {
         --bg: #071018; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -265,7 +265,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: repeating-linear-gradient(45deg,rgba(125,255,176,.05) 0 1px,transparent 1px 20px);
         --bg-pattern-size: auto;
     
-        --bg-image: url(images/bg-aurora.jpg);
+        --bg-image: url(pages/images/bg-aurora.jpg);
     }
     :root[data-theme="custom"] {
         --bg: #0b0e1a; --bg-dim: linear-gradient(rgba(2,6,16,.18));
@@ -288,7 +288,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: linear-gradient(rgba(122,168,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(122,168,255,.05) 1px,transparent 1px),radial-gradient(circle at 20% 14%,rgba(122,168,255,.16),transparent 46%),radial-gradient(circle at 82% 20%,rgba(180,140,255,.12),transparent 42%),radial-gradient(circle at 58% 78%,rgba(77,163,255,.08),transparent 52%);
         --bg-pattern-size: 36px 36px,36px 36px,auto,auto,auto;
     
-        --bg-image: var(--custom-bg, url(images/bg-custom.jpg));
+        --bg-image: var(--custom-bg, url(pages/images/bg-custom.jpg));
     }
 
 /* ============ V1.4 主题面板样式 ============ */

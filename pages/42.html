@@ -1,0 +1,608 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>看看作业——更新公告</title>
+    <style>
+        /* ========== 全局重置 ========== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ========== 背景流光层（20秒无缝循环） ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: var(--flow-grad);
+            background-size: 400% 400%;
+            animation: flowGradient 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%;
+            left: -40%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(ellipse at 30% 70%,
+                    rgba(255, 140, 100, .35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%,
+                    rgba(120, 180, 255, .3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%,
+                    rgba(220, 130, 250, .25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(255, 200, 130, .15), transparent 60%),
+                radial-gradient(circle at 20% 80%,
+                    rgba(80, 220, 200, .2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes flowGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+        }
+
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* ========== 悬浮球（透明、漂浮、旋转） ========== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                    rgba(255, 255, 255, .3),
+                    rgba(255, 255, 255, .1) 50%,
+                    transparent 70%);
+            box-shadow: 0 0 60px rgba(255, 255, 255, .08),
+                inset 0 0 30px rgba(255, 255, 255, .04);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+        .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+
+        @keyframes orbFloatA {
+            0% { transform: translate(0,0) scale(1); opacity:.6; }
+            30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+            60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+            100% { transform: translate(0,0) scale(1); opacity:.6; }
+        }
+
+        @keyframes orbFloatB {
+            0% { transform: translate(0,0) scale(1); opacity:.5; }
+            35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+            70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+            100% { transform: translate(0,0) scale(1); opacity:.5; }
+        }
+
+        @keyframes orbSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== 头部（固定在顶部） ========== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            text-align: center;
+            padding: 18px 20px;
+            background: linear-gradient(180deg, rgba(8,10,30,.9), rgba(10,14,39,.5), transparent);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            box-shadow: 0 4px 40px rgba(0,0,0,.3);
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 3s linear infinite;
+            display: inline-block;
+            text-shadow: 0 0 30px rgba(246,211,101,.3);
+        }
+
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* ========== 主体布局 ========== */
+        main {
+            padding-top: 100px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-bottom: 50px;
+        }
+
+        /* ========== 白色容器（80%宽，可滚动） ========== */
+        .container {
+            width: 80%;
+            max-width: 1440px;
+            background: rgba(245,247,255,.96);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.3), inset 0 1px 0 rgba(255,255,255,.6);
+            max-height: calc(100vh - 130px);
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .container::-webkit-scrollbar { width: 10px; }
+        .container::-webkit-scrollbar-track { background: rgba(0,0,0,.04); border-radius: 12px; }
+        .container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 12px; border: 2px solid rgba(255,255,255,.4); }
+
+        /* ========== 网格布局（6列） ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            padding: 6px;
+        }
+
+        /* ========== 标题区（前2行前4列） ========== */
+        .title-area {
+            grid-column: 1 / 5;
+            grid-row: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+            background-size: 300% 300%;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(255,150,50,.35), inset 0 1px 0 rgba(255,255,255,.2);
+            animation: titleGradient 6s ease infinite;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s ease;
+        }
+
+        .title-area:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 18px 60px rgba(255,150,50,.5), 0 0 50px rgba(255,200,100,.25);
+        }
+
+        .title-area h2 {
+            font-size: 46px;
+            font-weight: 900;
+            text-align: center;
+            line-height: 1.3;
+            letter-spacing: 5px;
+            color: #fff;
+            text-shadow: 2px 2px 10px rgba(0,0,0,.3);
+        }
+
+        @keyframes titleGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ========== 返回主页（前2行第5-6列） ========== */
+        .back-area {
+            grid-column: 5 / 7;
+            grid-row: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: #fff;
+            font-size: 24px;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(17,153,142,.4), inset 0 1px 0 rgba(255,255,255,.2);
+            transition: transform .3s, box-shadow .3s;
+            cursor: pointer;
+        }
+
+        .back-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 50px rgba(17,153,142,.5);
+        }
+
+        .back-area:active {
+            transform: translateY(-2px) scale(.96);
+        }
+
+        /* ========== 公告卡片（内容区，从第3行开始，占满6列） ========== */
+        .announcement-card {
+            grid-column: 1 / 7;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,.1);
+            border: 2px solid #e8e8e8;
+            position: relative;
+            overflow: hidden;
+            transition: transform .3s, box-shadow .3s, border-color .3s;
+            cursor: default;
+            animation: cardFadeIn .5s ease-out both;
+        }
+
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .announcement-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #ff6b6b, #ffa500);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .announcement-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,.15);
+            border-color: #ffd700;
+        }
+
+        .announcement-card .date {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(255,107,107,.3);
+            transition: transform .2s;
+        }
+
+        .announcement-card:hover .date {
+            transform: scale(1.05);
+        }
+
+        .announcement-card .content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #444;
+            padding-left: 8px;
+        }
+
+        /* ========== 跳转覆盖层 ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8,10,25,.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,.1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== 响应式适配：平板端（4列） ========== */
+        @media (max-width: 1024px) {
+            .container { width: 92%; padding: 14px; }
+            .grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 100px; }
+            .title-area h2 { font-size: 32px; letter-spacing: 3px; }
+            .announcement-card { grid-column: 1 / -1; }
+        }
+
+        /* ========== 响应式适配：手机大屏（3列） ========== */
+        @media (max-width: 768px) {
+            header { padding: 14px 16px; }
+            header h1 { font-size: 20px; letter-spacing: 2px; }
+            main { padding-top: 80px; padding-bottom: 30px; }
+            .container { width: 94%; padding: 12px; max-height: none; border-radius: 18px; }
+            .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 80px; border-radius: 16px; }
+            .title-area h2 { font-size: 26px; letter-spacing: 2px; }
+            .back-area { font-size: 20px; }
+            .announcement-card { grid-column: 1 / -1; padding: 14px; border-radius: 14px; }
+            .announcement-card .date { font-size: 13px; padding: 3px 10px; }
+            .announcement-card .content { font-size: 15px; line-height: 1.7; }
+            /* 手机端去除hover效果，使用active */
+            .announcement-card:hover { transform: none; box-shadow: 0 6px 20px rgba(0,0,0,.1); border-color: #e8e8e8; }
+            .announcement-card:active { transform: scale(.98); }
+            .title-area:hover { transform: none; }
+            .back-area:hover { transform: none; }
+            .back-area:active { transform: scale(.96); }
+        }
+
+        /* ========== 响应式适配：手机中屏（2列） ========== */
+        @media (max-width: 600px) {
+            header h1 { font-size: 18px; letter-spacing: 1px; }
+            .container { width: 95%; padding: 10px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 70px; }
+            .title-area h2 { font-size: 24px; letter-spacing: 1px; }
+            .back-area { font-size: 18px; }
+            .announcement-card { grid-column: 1 / -1; padding: 12px; }
+            .announcement-card .content { font-size: 14px; line-height: 1.7; }
+            /* 手机端简化背景动画，提升性能 */
+            .bg-flow-2, .bg-flow-3 { display: none; }
+            .orb-3, .orb-4, .orb-5 { display: none; }
+        }
+
+        /* ========== 响应式适配：手机小屏（1列） ========== */
+        @media (max-width: 400px) {
+            header { padding: 12px 12px; }
+            header h1 { font-size: 16px; letter-spacing: 1px; }
+            main { padding-top: 70px; }
+            .container { width: 96%; padding: 8px; border-radius: 14px; }
+            .grid { grid-template-columns: 1fr; gap: 6px; padding: 2px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 60px; border-radius: 12px; }
+            .title-area h2 { font-size: 20px; letter-spacing: 1px; }
+            .back-area { font-size: 16px; }
+            .announcement-card { grid-column: 1 / -1; padding: 10px; border-radius: 12px; }
+            .announcement-card .date { font-size: 12px; padding: 2px 8px; margin-bottom: 8px; }
+            .announcement-card .content { font-size: 13px; line-height: 1.7; padding-left: 6px; }
+            .announcement-card::before { width: 3px; }
+            .loader-wrap { width: 140px; height: 140px; }
+            .loader-text { font-size: 18px; letter-spacing: 2px; }
+        }
+
+        /* ========== 触摸设备优化 ========== */
+        @media (hover: none) and (pointer: coarse) {
+            .announcement-card:hover, .title-area:hover, .back-area:hover {
+                transform: none;
+            }
+            .announcement-card:active {
+                transform: scale(.98);
+                transition: transform .1s;
+            }
+            .back-area:active {
+                transform: scale(.96);
+                transition: transform .1s;
+            }
+        }
+
+        /* ========== 安全区域适配（刘海屏） ========== */
+        @supports (padding: max(0px)) {
+            header {
+                padding-left: max(18px, env(safe-area-inset-left));
+                padding-right: max(18px, env(safe-area-inset-right));
+                padding-top: max(18px, env(safe-area-inset-top));
+            }
+            main {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+                padding-bottom: max(50px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——看看作业——更新公告，趣味工具与小游戏合集">
+<meta property="og:title" content="看看作业——更新公告">
+<meta property="og:description" content="找乐子——看看作业——更新公告，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/42.html">
+
+<link rel="stylesheet" href="../common.css">
+<script defer src="../common.js"></script>
+<script defer src="../theme.js"></script>
+<script defer src="../zl-features.js"></script>
+</head>
+<body>
+
+    <!-- 背景流光层 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <!-- 悬浮球 -->
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 头部 -->
+    <header>
+        <h1>看看作业——更新公告</h1>
+    </header>
+
+    <!-- 主体内容 -->
+    <main>
+        <div class="container">
+            <div class="grid" id="grid"></div>
+        </div>
+    </main>
+
+    <!-- 跳转覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("CiAgICAgICAgLyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogICAgICAgICAqIOWFrOWRiuaVsOaNrumFjee9ru+8iOWQjuacn+aJqeWxle+8iQogICAgICAgICAqIOavj+adoeWFrOWRiuWMheWQq++8mmRhdGXvvIjml6XmnJ/vvInvvIxjb250ZW5077yI5YaF5a6577yJCiAgICAgICAgICog5oyJ5pel5pyf5YCS5bqP5o6S5YiX5pi+56S6CiAgICAgICAgICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLwpjb25zdCBhbm5vdW5jZW1lbnRzQ29uZmlnID0gWwogICAgICAgICAgICB7IGRhdGU6ICcyMDI2LTEwLTAzJywgY29udGVudDogJ+abtOaWsOS6huS7peWunueOm+WIqeeahOS9nOaWhycgfSwKICAgICAgICAgICAgeyBkYXRlOiAnMjAyNi0xMC0wMycsIGNvbnRlbnQ6ICfkvJjljJbmiYvmnLrniYjkvZPpqownIH0sCiAgICAgICAgICAgIHsgZGF0ZTogJzIwMjYtMTAtMDInLCBjb250ZW50OiAn5pu05paw5LqG56Kn5LiW6L6J54WM55qE5b6B5paH44CK5a6Y6YC85rCR5Y+N55qE5Y+m5LiA56eN55yf55u444CLJyB9LAogICAgICAgICAgICB7IGRhdGU6ICcyMDI2LTEwLTAyJywgY29udGVudDogJ+abtOaWsOWbveW6huWkmuenkeS9nOS4micgfSwKICAgICAgICAgICAgeyBkYXRlOiAnMjAyNi0xMC0wMicsIGNvbnRlbnQ6ICflj43ppojmuKDpgZPmm7TmlrAnIH0sCiAgICAgICAgICAgIHsgZGF0ZTogJzIwMjYtMTAtMDEnLCBjb250ZW50OiAn55yL55yL5L2c5Lia572R6aG15ZCv5YqoJyB9LAoKICAgICAgICBdOwoKICAgICAgICAvKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgICAgICAgICog5Yib5bu65qCH6aKY5Yy6CiAgICAgICAgICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLwogICAgICAgIGZ1bmN0aW9uIGNyZWF0ZVRpdGxlQXJlYSgpIHsKICAgICAgICAgICAgY29uc3QgZGl2ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7CiAgICAgICAgICAgIGRpdi5jbGFzc05hbWUgPSAndGl0bGUtYXJlYSc7CiAgICAgICAgICAgIGRpdi5pbm5lckhUTUwgPSAnPGgyPueci+eci+S9nOS4muKAlOKAlOabtOaWsOWFrOWRijwvaDI+JzsKICAgICAgICAgICAgcmV0dXJuIGRpdjsKICAgICAgICB9CgogICAgICAgIC8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KICAgICAgICAgKiDliJvlu7rov5Tlm57kuLvpobXmjInpkq4KICAgICAgICAgKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICovCiAgICAgICAgZnVuY3Rpb24gY3JlYXRlQmFja0FyZWEoKSB7CiAgICAgICAgICAgIGNvbnN0IGEgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdhJyk7CiAgICAgICAgICAgIGEuY2xhc3NOYW1lID0gJ2JhY2stYXJlYSc7CiAgICAgICAgICAgIGEuaHJlZiA9ICc0MS5odG1sJzsKICAgICAgICAgICAgYS50ZXh0Q29udGVudCA9ICfov5Tlm57kuLvpobUnOwogICAgICAgICAgICBhLnNldEF0dHJpYnV0ZSgnYXJpYS1sYWJlbCcsICfov5Tlm57kuLvpobUnKTsKICAgICAgICAgICAgYS50aXRsZSA9ICfov5Tlm57kuLvpobUnOwogICAgICAgICAgICAvLyDngrnlh7vkuovku7bvvJrpmLvmraLpu5jorqTvvIzmmL7npLrovazlnLrliqjnlLvlkI7ot7PovawKICAgICAgICAgICAgYS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uKGUpIHsKICAgICAgICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgICAgICAgICAgICAgIHNob3dMb2FkaW5nT3ZlcmxheSgnNDEuaHRtbCcpOwogICAgICAgICAgICB9KTsKICAgICAgICAgICAgcmV0dXJuIGE7CiAgICAgICAgfQoKICAgICAgICAvKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgICAgICAgICog5Yib5bu65YWs5ZGK5Y2h54mHCiAgICAgICAgICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLwogICAgICAgIGZ1bmN0aW9uIGNyZWF0ZUFubm91bmNlbWVudENhcmQoYW5ub3VuY2VtZW50LCBpbmRleCkgewogICAgICAgICAgICBjb25zdCBjYXJkID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7CiAgICAgICAgICAgIGNhcmQuY2xhc3NOYW1lID0gJ2Fubm91bmNlbWVudC1jYXJkJzsKICAgICAgICAgICAgLy8g5Yqo5oCB6K6+572u5YWl5Zy65Yqo55S75bu26L+f77yI5q+P5byg5Y2h54mH5L6d5qyh5bu26L+fMC4x56eS77yJCiAgICAgICAgICAgIGNhcmQuc3R5bGUuYW5pbWF0aW9uRGVsYXkgPSAoMC4xICsgaW5kZXggKiAwLjEpICsgJ3MnOwoKICAgICAgICAgICAgY29uc3QgZGF0ZVNwYW4gPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdzcGFuJyk7CiAgICAgICAgICAgIGRhdGVTcGFuLmNsYXNzTmFtZSA9ICdkYXRlJzsKICAgICAgICAgICAgZGF0ZVNwYW4udGV4dENvbnRlbnQgPSBhbm5vdW5jZW1lbnQuZGF0ZTsKCiAgICAgICAgICAgIGNvbnN0IGNvbnRlbnREaXYgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTsKICAgICAgICAgICAgY29udGVudERpdi5jbGFzc05hbWUgPSAnY29udGVudCc7CiAgICAgICAgICAgIGNvbnRlbnREaXYudGV4dENvbnRlbnQgPSBhbm5vdW5jZW1lbnQuY29udGVudDsKCiAgICAgICAgICAgIGNhcmQuYXBwZW5kQ2hpbGQoZGF0ZVNwYW4pOwogICAgICAgICAgICBjYXJkLmFwcGVuZENoaWxkKGNvbnRlbnREaXYpOwogICAgICAgICAgICByZXR1cm4gY2FyZDsKICAgICAgICB9CgogICAgICAgIC8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KICAgICAgICAgKiDmuLLmn5PkuLvlh73mlbAKICAgICAgICAgKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICovCiAgICAgICAgZnVuY3Rpb24gcmVuZGVyQW5ub3VuY2VtZW50cygpIHsKICAgICAgICAgICAgY29uc3QgZ3JpZCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdncmlkJyk7CiAgICAgICAgICAgIGdyaWQuaW5uZXJIVE1MID0gJyc7CgogICAgICAgICAgICAvLyDmt7vliqDmoIfpopjljLrln58KICAgICAgICAgICAgZ3JpZC5hcHBlbmRDaGlsZChjcmVhdGVUaXRsZUFyZWEoKSk7CgogICAgICAgICAgICAvLyDmt7vliqDov5Tlm57kuLvpobXmjInpkq4KICAgICAgICAgICAgZ3JpZC5hcHBlbmRDaGlsZChjcmVhdGVCYWNrQXJlYSgpKTsKCiAgICAgICAgICAgIC8vIOaMieaXpeacn+WAkuW6j+aOkuWIl+WFrOWRigogICAgICAgICAgICBjb25zdCBzb3J0ZWQgPSBbLi4uYW5ub3VuY2VtZW50c0NvbmZpZ10uc29ydCgoYSwgYikgPT4gbmV3IERhdGUoYi5kYXRlKSAtIG5ldyBEYXRlKGEuZGF0ZSkpOwoKICAgICAgICAgICAgLy8g5re75Yqg5YWs5ZGK5Y2h54mH77yI5LuO56ysM+ihjOW8gOWni++8jOiHquWKqOWNoOaNruWQjue7reihjO+8iQogICAgICAgICAgICBzb3J0ZWQuZm9yRWFjaCgoYW5ub3VuY2VtZW50LCBpbmRleCkgPT4gewogICAgICAgICAgICAgICAgZ3JpZC5hcHBlbmRDaGlsZChjcmVhdGVBbm5vdW5jZW1lbnRDYXJkKGFubm91bmNlbWVudCwgaW5kZXgpKTsKICAgICAgICAgICAgfSk7CiAgICAgICAgfQoKICAgICAgICAvKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgICAgICAgICog6Lez6L2s6KaG55uW5bGC5Yqo55S7CiAgICAgICAgICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLwogICAgICAgIGxldCBvdmVybGF5VGltZXIgPSBudWxsOwoKICAgICAgICBmdW5jdGlvbiBzaG93TG9hZGluZ092ZXJsYXkodXJsKSB7CiAgICAgICAgICAgIGNvbnN0IG92ZXJsYXkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnb3ZlcmxheScpOwogICAgICAgICAgICBvdmVybGF5LmNsYXNzTGlzdC5hZGQoJ2FjdGl2ZScpOwoKICAgICAgICAgICAgaWYgKG92ZXJsYXlUaW1lcikgewogICAgICAgICAgICAgICAgY2xlYXJUaW1lb3V0KG92ZXJsYXlUaW1lcik7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIG92ZXJsYXlUaW1lciA9IHNldFRpbWVvdXQoKCkgPT4gewogICAgICAgICAgICAgICAgb3ZlcmxheS5jbGFzc0xpc3QucmVtb3ZlKCdhY3RpdmUnKTsKICAgICAgICAgICAgICAgIGlmICh1cmwgJiYgdXJsICE9PSAnIycpIHsKICAgICAgICAgICAgICAgICAgICB3aW5kb3cubG9jYXRpb24uaHJlZiA9IHVybDsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfSwgMTAwMCk7CiAgICAgICAgfQoKICAgICAgICAvKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgICAgICAgICog5Yid5aeL5YyWCiAgICAgICAgICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLwogICAgICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ0RPTUNvbnRlbnRMb2FkZWQnLCBmdW5jdGlvbigpIHsKICAgICAgICAgICAgcmVuZGVyQW5ub3VuY2VtZW50cygpOwoKICAgICAgICAgICAgLy8g5ZCO5pyf5Yi35paw5YWs5ZGK55qE5pa55rOVCiAgICAgICAgICAgIHdpbmRvdy5yZWZyZXNoQW5ub3VuY2VtZW50cyA9IGZ1bmN0aW9uKG5ld0NvbmZpZykgewogICAgICAgICAgICAgICAgaWYgKG5ld0NvbmZpZyAmJiBBcnJheS5pc0FycmF5KG5ld0NvbmZpZykpIHsKICAgICAgICAgICAgICAgICAgICBhbm5vdW5jZW1lbnRzQ29uZmlnLmxlbmd0aCA9IDA7CiAgICAgICAgICAgICAgICAgICAgYW5ub3VuY2VtZW50c0NvbmZpZy5wdXNoKC4uLm5ld0NvbmZpZyk7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICByZW5kZXJBbm5vdW5jZW1lbnRzKCk7CiAgICAgICAgICAgIH07CiAgICAgICAgfSk7CiAgICAKCi8qIOiHquWKqOWFqOWxgOaMgui9ve+8iOS+m+WGheiBlOS6i+S7tuWxnuaAp+iwg+eUqO+8iSAqLwppZighKCdjcmVhdGVUaXRsZUFyZWEnIGluIHdpbmRvdykpd2luZG93LmNyZWF0ZVRpdGxlQXJlYT1jcmVhdGVUaXRsZUFyZWE7CmlmKCEoJ2NyZWF0ZUJhY2tBcmVhJyBpbiB3aW5kb3cpKXdpbmRvdy5jcmVhdGVCYWNrQXJlYT1jcmVhdGVCYWNrQXJlYTsKaWYoISgnY3JlYXRlQW5ub3VuY2VtZW50Q2FyZCcgaW4gd2luZG93KSl3aW5kb3cuY3JlYXRlQW5ub3VuY2VtZW50Q2FyZD1jcmVhdGVBbm5vdW5jZW1lbnRDYXJkOwppZighKCdyZW5kZXJBbm5vdW5jZW1lbnRzJyBpbiB3aW5kb3cpKXdpbmRvdy5yZW5kZXJBbm5vdW5jZW1lbnRzPXJlbmRlckFubm91bmNlbWVudHM7CmlmKCEoJ3Nob3dMb2FkaW5nT3ZlcmxheScgaW4gd2luZG93KSl3aW5kb3cuc2hvd0xvYWRpbmdPdmVybGF5PXNob3dMb2FkaW5nT3ZlcmxheTs=");
+</script>
+</body>
+</html>

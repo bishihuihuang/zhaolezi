@@ -1,0 +1,633 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日期计算器 - 找乐子</title>
+    <style>
+        /* ========== 全局重置（采用index.html风格） ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            overflow-x: hidden;
+        }
+
+        /* ========== 背景流光（20秒无缝循环，与index.html完全一致） ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -150%;
+            left: -100%;
+            width: 350%;
+            height: 350%;
+            background: var(--flow-grad);
+            background-size: 400% 400%;
+            animation: flowGrad 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -80%;
+            left: -60%;
+            width: 260%;
+            height: 260%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), 
+                        radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%);
+            animation: flowSpin 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGrad {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(5%, -3%) scale(1.08) rotate(6deg); }
+            100% { transform: translate(-2%, 4%) scale(.94) rotate(-6deg); }
+        }
+        @keyframes flowSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.06); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* ========== 悬浮球（与index.html完全一致） ========== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), rgba(255,255,255,.12) 45%, transparent 75%);
+            box-shadow: 0 0 60px rgba(255,255,255,.1), inset 0 0 30px rgba(255,255,255,.05);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 { width: 260px; height: 260px; top: 10%; left: 5%; animation: orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 78%; animation: orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 70%; left: 18%; animation: orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite; }
+        .orb-4 { width: 200px; height: 200px; top: 28%; left: 62%; animation: orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 82%; left: 45%; animation: orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite; }
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0,0); opacity:.5; }
+            30% { transform: translate(20px,-25px); opacity:.8; }
+            60% { transform: translate(-12px,15px); opacity:.4; }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0,0); opacity:.6; }
+            50% { transform: translate(-18px,14px); opacity:.3; }
+        }
+        @keyframes orbRotate { to { transform: rotate(360deg); } }
+
+        /* ========== 主体容器（采用index.html的大长方形样式） ========== */
+        main {
+            padding-top: 20px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background: rgba(245, 247, 255, .97);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px rgba(255, 255, 255, .3);
+            padding: 24px;
+            backdrop-filter: blur(4px);
+            margin-top: 30px;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        /* ========== 网格布局（6列8行） ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 14px;
+            padding: 8px;
+        }
+
+        /* 通用格子样式 */
+        .cell {
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            transition: transform .3s, box-shadow .3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+            border: 3px solid transparent;
+        }
+        .cell:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 0 20px rgba(255, 255, 255, .15);
+        }
+
+        /* ===== 标题区（1-2行，1-4列） ===== */
+        .title-area {
+            grid-row: 1 / 3;
+            grid-column: 1 / 5;
+            background: linear-gradient(135deg, #1a1a4e, #2d1b69, #1a1a4e);
+            border-color: #f6d365;
+            cursor: default;
+        }
+        .title-area h1 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            background: linear-gradient(90deg, #f6d365, #fff, #a78bfa, #f6d365);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+        @keyframes titleShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ===== 返回主页（1-2行，5-6列） ===== */
+        .back-area {
+            grid-row: 1 / 3;
+            grid-column: 5 / 7;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: #fff;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 3px;
+            text-decoration: none;
+            border-color: #a78bfa;
+            cursor: pointer;
+        }
+        .back-area:hover {
+            background: linear-gradient(135deg, #2b4a9e, #4b8ef6);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+        }
+
+        /* ===== 计算器主体区（第3-8行，全部6列） ===== */
+        .calculator-body {
+            grid-row: 3 / 9;
+            grid-column: 1 / 7;
+            background: rgba(255, 255, 255, .95);
+            border-radius: 14px;
+            border: 3px solid #81c784;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+        /* 左侧输入区 */
+        .input-panel {
+            flex: 1 1 45%;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+        }
+        .input-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #5a5a72;
+            letter-spacing: 0.5px;
+        }
+        .date-input,
+        .number-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid #e8e0f0;
+            background: #fafafc;
+            font-size: 15px;
+            color: #1a1a2e;
+            outline: none;
+            transition: all .3s ease;
+        }
+        .date-input:focus,
+        .number-input:focus {
+            border-color: #be2edd;
+            box-shadow: 0 0 0 4px rgba(190, 46, 221, 0.12);
+        }
+        .date-input::-webkit-calendar-picker-indicator { cursor: pointer; }
+        .number-input::-webkit-inner-spin-button,
+        .number-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .capsule-btn {
+            padding: 10px 16px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            transition: all .28s ease;
+            flex: 1 1 auto;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            min-height: 44px; /* 修复：确保触摸目标 ≥44px */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .capsule-btn:hover { transform: translateY(-2px); }
+        .capsule-btn:active { transform: scale(0.96); }
+        .btn-blue { background: linear-gradient(145deg, #4a6cf7, #3b5ce0); }
+        .btn-green { background: linear-gradient(145deg, #10b981, #0d9668); }
+        .btn-purple { background: linear-gradient(145deg, #8b5cf6, #7c3aed); }
+
+        /* 右侧输出区 */
+        .output-panel {
+            flex: 1 1 45%;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(160deg, #fdf8fe, #f8f2fc);
+            border-radius: 18px;
+            padding: 20px;
+            border: 2px solid rgba(224, 86, 253, 0.1);
+        }
+        .output-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #5a5a72;
+            letter-spacing: 1.5px;
+        }
+        .result-display {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+            word-break: break-all;
+            text-align: center;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: #fff;
+            border: 2px solid #e8e0f0;
+            min-height: 60px;
+            line-height: 1.6;
+            user-select: text;
+        }
+        .result-display.placeholder {
+            color: #b0a8c0;
+            font-weight: 500;
+        }
+        .result-display.highlight {
+            border-color: #d4b8e0;
+            box-shadow: 0 0 20px rgba(224, 86, 253, 0.12);
+        }
+
+        /* ========== 转场覆盖层（index.html通用样式） ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 16px; }
+            .calculator-body { flex-direction: column; }
+            .title-area h1 { font-size: 28px; }
+            .back-area { font-size: 18px; }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+
+        /* ========== 手机端针对性修复：日期计算器按钮对称 ========== */
+        @media (max-width: 768px) {
+            .button-row {
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 10px !important;
+                justify-content: center !important;
+            }
+            .capsule-btn {
+                flex: 1 1 calc(50% - 10px) !important;
+                min-width: 0 !important;
+                margin: 0 !important;
+                font-size: 14px !important;
+                padding: 12px 16px !important;
+            }
+            .calculator-body {
+                padding: 16px 12px !important;
+                gap: 12px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .capsule-btn {
+                flex: 1 1 100% !important;
+            }
+        }
+</style>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="日期计算器 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:title" content="日期计算器 - 找乐子">
+<meta property="og:description" content="日期计算器 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/13.html">
+
+<link rel="stylesheet" href="../common.css">
+<script defer src="../common.js"></script>
+<script defer src="../theme.js"></script>
+<script defer src="../zl-features.js"></script>
+</head>
+<body>
+
+    <!-- 背景流光层 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 主体 -->
+    <main>
+        <div class="container">
+            <div class="grid">
+                <!-- 标题区 -->
+                <div class="cell title-area">
+                    <h1>日期计算器</h1>
+                </div>
+                <!-- 返回主页 -->
+                <a href="32.html" class="cell back-area" id="backHome">返回<br>主页</a>
+                
+                <!-- 计算器主体 -->
+                <div class="calculator-body">
+                    <!-- 左侧输入面板 -->
+                    <div class="input-panel">
+                        <label class="input-label" for="dateStart">起始日期</label>
+                        <input type="date" id="dateStart" class="date-input" aria-label="起始日期">
+                        <label class="input-label" for="dateEnd">结束日期</label>
+                        <input type="date" id="dateEnd" class="date-input" aria-label="结束日期">
+                        <label class="input-label" for="daysInput">推算天数（可正负）</label>
+                        <input type="number" id="daysInput" class="number-input" placeholder="输入天数" step="1" aria-label="推算天数">
+                        <div class="button-row">
+                            <button class="capsule-btn btn-blue" id="diffBtn">📅 相差天数</button>
+                            <button class="capsule-btn btn-green" id="targetBtn">🎯 目标日期</button>
+                            <button class="capsule-btn btn-purple" id="timestampBtn">⏰ 时间戳</button>
+                        </div>
+                    </div>
+                    <!-- 右侧输出面板 -->
+                    <div class="output-panel">
+                        <div class="output-label">计算结果</div>
+                        <div class="result-display placeholder" id="resultDisplay">请选择日期后点击按钮</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 转场遮罩 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("CiAgICAgICAgKGZ1bmN0aW9uKCkgewogICAgICAgICAgICAndXNlIHN0cmljdCc7CiAgICAgICAgICAgIGNvbnN0IGRhdGVTdGFydCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkYXRlU3RhcnQnKTsKICAgICAgICAgICAgY29uc3QgZGF0ZUVuZCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkYXRlRW5kJyk7CiAgICAgICAgICAgIGNvbnN0IGRheXNJbnB1dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkYXlzSW5wdXQnKTsKICAgICAgICAgICAgY29uc3QgZGlmZkJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkaWZmQnRuJyk7CiAgICAgICAgICAgIGNvbnN0IHRhcmdldEJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0YXJnZXRCdG4nKTsKICAgICAgICAgICAgY29uc3QgdGltZXN0YW1wQnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RpbWVzdGFtcEJ0bicpOwogICAgICAgICAgICBjb25zdCByZXN1bHREaXNwbGF5ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Jlc3VsdERpc3BsYXknKTsKICAgICAgICAgICAgY29uc3QgYmFja0hvbWUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmFja0hvbWUnKTsKICAgICAgICAgICAgY29uc3Qgb3ZlcmxheSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdvdmVybGF5Jyk7CiAgICAgICAgICAgIGxldCB0cmFuc2l0aW9uVGltZXIgPSBudWxsOwoKICAgICAgICAgICAgLy8g6Kej5p6Q5pel5pyf5a2X56ym5Liy5Li65pys5Zyw5pel5pyfCiAgICAgICAgICAgIGZ1bmN0aW9uIHBhcnNlRGF0ZShzdHIpIHsKICAgICAgICAgICAgICAgIGlmICghc3RyKSByZXR1cm4gbnVsbDsKICAgICAgICAgICAgICAgIGNvbnN0IHBhcnRzID0gc3RyLnNwbGl0KCctJyk7CiAgICAgICAgICAgICAgICBpZiAocGFydHMubGVuZ3RoICE9PSAzKSByZXR1cm4gbnVsbDsKICAgICAgICAgICAgICAgIHJldHVybiBuZXcgRGF0ZShwYXJzZUludChwYXJ0c1swXSksIHBhcnNlSW50KHBhcnRzWzFdKSAtIDEsIHBhcnNlSW50KHBhcnRzWzJdKSk7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIC8vIOagvOW8j+WMluaXpeacnwogICAgICAgICAgICBmdW5jdGlvbiBmb3JtYXREYXRlKGRhdGUpIHsKICAgICAgICAgICAgICAgIGNvbnN0IHkgPSBkYXRlLmdldEZ1bGxZZWFyKCk7CiAgICAgICAgICAgICAgICBjb25zdCBtID0gU3RyaW5nKGRhdGUuZ2V0TW9udGgoKSArIDEpLnBhZFN0YXJ0KDIsICcwJyk7CiAgICAgICAgICAgICAgICBjb25zdCBkID0gU3RyaW5nKGRhdGUuZ2V0RGF0ZSgpKS5wYWRTdGFydCgyLCAnMCcpOwogICAgICAgICAgICAgICAgcmV0dXJuIHkgKyAnLScgKyBtICsgJy0nICsgZDsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g6K6+572u57uT5p6cCiAgICAgICAgICAgIGZ1bmN0aW9uIHNldFJlc3VsdCh0ZXh0LCBwbGFjZWhvbGRlciA9IGZhbHNlKSB7CiAgICAgICAgICAgICAgICByZXN1bHREaXNwbGF5LnRleHRDb250ZW50ID0gdGV4dDsKICAgICAgICAgICAgICAgIHJlc3VsdERpc3BsYXkuY2xhc3NMaXN0LnRvZ2dsZSgncGxhY2Vob2xkZXInLCBwbGFjZWhvbGRlcik7CiAgICAgICAgICAgICAgICBpZiAoIXBsYWNlaG9sZGVyKSB7CiAgICAgICAgICAgICAgICAgICAgcmVzdWx0RGlzcGxheS5jbGFzc0xpc3QuYWRkKCdoaWdobGlnaHQnKTsKICAgICAgICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICAgICAgICAgcmVzdWx0RGlzcGxheS5jbGFzc0xpc3QucmVtb3ZlKCdoaWdobGlnaHQnKTsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g5Yqf6IO9Me+8muiuoeeul+ebuOW3ruWkqeaVsAogICAgICAgICAgICBmdW5jdGlvbiBjYWxjRGlmZigpIHsKICAgICAgICAgICAgICAgIGNvbnN0IHN0YXJ0ID0gcGFyc2VEYXRlKGRhdGVTdGFydC52YWx1ZSk7CiAgICAgICAgICAgICAgICBjb25zdCBlbmQgPSBwYXJzZURhdGUoZGF0ZUVuZC52YWx1ZSk7CiAgICAgICAgICAgICAgICBpZiAoIXN0YXJ0IHx8ICFlbmQpIHsKICAgICAgICAgICAgICAgICAgICBzZXRSZXN1bHQoJ+ivt+WFiOmAieaLqei1t+Wni+WSjOe7k+adn+aXpeacnycsIHRydWUpOwogICAgICAgICAgICAgICAgICAgIHJldHVybjsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGNvbnN0IGRpZmYgPSBNYXRoLmZsb29yKChlbmQuZ2V0VGltZSgpIC0gc3RhcnQuZ2V0VGltZSgpKSAvIDg2NDAwMDAwKTsKICAgICAgICAgICAgICAgIGNvbnN0IGFicyA9IE1hdGguYWJzKGRpZmYpOwogICAgICAgICAgICAgICAgY29uc3QgZGlyID0gZGlmZiA+PSAwID8gJ+S5i+WQjicgOiAn5LmL5YmNJzsKICAgICAgICAgICAgICAgIHNldFJlc3VsdChg55u45beuICR7YWJzfSDlpKlcbu+8iOe7k+adn+aXpeacn+WcqOi1t+Wni+aXpeacnyR7ZGlyfe+8iWApOwogICAgICAgICAgICB9CgogICAgICAgICAgICAvLyDlip/og70y77ya5o6o566X55uu5qCH5pel5pyfCiAgICAgICAgICAgIGZ1bmN0aW9uIGNhbGNUYXJnZXQoKSB7CiAgICAgICAgICAgICAgICBjb25zdCBiYXNlID0gcGFyc2VEYXRlKGRhdGVTdGFydC52YWx1ZSk7CiAgICAgICAgICAgICAgICBjb25zdCBkYXlzID0gcGFyc2VJbnQoZGF5c0lucHV0LnZhbHVlLCAxMCk7CiAgICAgICAgICAgICAgICBpZiAoIWJhc2UpIHsKICAgICAgICAgICAgICAgICAgICBzZXRSZXN1bHQoJ+ivt+WFiOmAieaLqei1t+Wni+aXpeacnycsIHRydWUpOwogICAgICAgICAgICAgICAgICAgIHJldHVybjsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGlmIChpc05hTihkYXlzKSkgewogICAgICAgICAgICAgICAgICAgIHNldFJlc3VsdCgn6K+36L6T5YWl5o6o566X5aSp5pWw77yI5Y+v5q2j5Y+v6LSf77yJJywgdHJ1ZSk7CiAgICAgICAgICAgICAgICAgICAgcmV0dXJuOwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgY29uc3QgdGFyZ2V0ID0gbmV3IERhdGUoYmFzZS5nZXRUaW1lKCkgKyBkYXlzICogODY0MDAwMDApOwogICAgICAgICAgICAgICAgc2V0UmVzdWx0KGDnm67moIfml6XmnJ/vvJoke2Zvcm1hdERhdGUodGFyZ2V0KX1cbu+8iCR7YmFzZS5nZXRGdWxsWWVhcigpfeW5tCR7YmFzZS5nZXRNb250aCgpKzF95pyIJHtiYXNlLmdldERhdGUoKX3ml6UgJHtkYXlzID49IDAgPyAnKycgOiAnJ30ke2RheXN9IOWkqe+8iWApOwogICAgICAgICAgICB9CgogICAgICAgICAgICAvLyDlip/og70z77ya5pe26Ze05oiz6L2s5o2iCiAgICAgICAgICAgIGZ1bmN0aW9uIGNvbnZlcnRUcygpIHsKICAgICAgICAgICAgICAgIGNvbnN0IHRzID0gZGF5c0lucHV0LnZhbHVlLnRyaW0oKTsKICAgICAgICAgICAgICAgIGlmICghdHMpIHsKICAgICAgICAgICAgICAgICAgICBzZXRSZXN1bHQoJ+ivt+WcqOaOqOeul+WkqeaVsOi+k+WFpeahhuS4rei+k+WFpeaXtumXtOaIs++8iOavq+enku+8iScsIHRydWUpOwogICAgICAgICAgICAgICAgICAgIHJldHVybjsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGNvbnN0IG51bSA9IE51bWJlcih0cyk7CiAgICAgICAgICAgICAgICBpZiAoaXNOYU4obnVtKSkgewogICAgICAgICAgICAgICAgICAgIHNldFJlc3VsdCgn6K+36L6T5YWl5pyJ5pWI55qE5pWw5a2X5pe26Ze05oizJywgdHJ1ZSk7CiAgICAgICAgICAgICAgICAgICAgcmV0dXJuOwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgY29uc3QgZGF0ZSA9IG5ldyBEYXRlKG51bSk7CiAgICAgICAgICAgICAgICBpZiAoaXNOYU4oZGF0ZS5nZXRUaW1lKCkpKSB7CiAgICAgICAgICAgICAgICAgICAgc2V0UmVzdWx0KCfml6DmlYjnmoTml7bpl7TmiLMnLCB0cnVlKTsKICAgICAgICAgICAgICAgICAgICByZXR1cm47CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBzZXRSZXN1bHQoZGF0ZS50b0xvY2FsZVN0cmluZygnemgtQ04nLCB7IHllYXI6ICdudW1lcmljJywgbW9udGg6ICcyLWRpZ2l0JywgZGF5OiAnMi1kaWdpdCcsIGhvdXI6ICcyLWRpZ2l0JywgbWludXRlOiAnMi1kaWdpdCcsIHNlY29uZDogJzItZGlnaXQnLCBob3VyMTI6IGZhbHNlIH0pKTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g6L+U5Zue5Li76aG16L2s5Zy677yIaW5kZXguaHRtbOmAmueUqO+8iQogICAgICAgICAgICBmdW5jdGlvbiBnb0hvbWUoKSB7CiAgICAgICAgICAgICAgICBpZiAob3ZlcmxheS5jbGFzc0xpc3QuY29udGFpbnMoJ2FjdGl2ZScpKSByZXR1cm47CiAgICAgICAgICAgICAgICBvdmVybGF5LmNsYXNzTGlzdC5hZGQoJ2FjdGl2ZScpOwogICAgICAgICAgICAgICAgc2V0VGltZW91dCgoKSA9PiB7CiAgICAgICAgICAgICAgICAgICAgd2luZG93LmxvY2F0aW9uLmhyZWYgPSAnMzIuaHRtbCc7CiAgICAgICAgICAgICAgICB9LCAxMDAwKTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g57uR5a6a5LqL5Lu2CiAgICAgICAgICAgIGRpZmZCdG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBjYWxjRGlmZik7CiAgICAgICAgICAgIHRhcmdldEJ0bi5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGNhbGNUYXJnZXQpOwogICAgICAgICAgICB0aW1lc3RhbXBCdG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBjb252ZXJ0VHMpOwogICAgICAgICAgICBiYWNrSG9tZS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uKGUpIHsKICAgICAgICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgICAgICAgICAgICAgIGdvSG9tZSgpOwogICAgICAgICAgICB9KTsKCiAgICAgICAgICAgIC8vIOWIneWni+WMluaXpeacn+S4uuS7iuWkqQogICAgICAgICAgICBjb25zdCB0b2RheSA9IG5ldyBEYXRlKCk7CiAgICAgICAgICAgIGNvbnN0IHRvZGF5U3RyID0gZm9ybWF0RGF0ZSh0b2RheSk7CiAgICAgICAgICAgIGRhdGVTdGFydC52YWx1ZSA9IHRvZGF5U3RyOwogICAgICAgICAgICBkYXRlRW5kLnZhbHVlID0gdG9kYXlTdHI7CiAgICAgICAgICAgIGRheXNJbnB1dC52YWx1ZSA9ICcnOwoKICAgICAgICAgICAgLy8g6ZSu55uY5pSv5oyBRVND6L+U5ZueCiAgICAgICAgICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbihlKSB7CiAgICAgICAgICAgICAgICBpZiAoZS5rZXkgPT09ICdFc2NhcGUnKSB7CiAgICAgICAgICAgICAgICAgICAgZ29Ib21lKCk7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0pOwogICAgICAgIH0pKCk7CiAgICAKCi8qIOiHquWKqOWFqOWxgOaMgui9ve+8iOS+m+WGheiBlOS6i+S7tuWxnuaAp+iwg+eUqO+8iSAqLwppZighKCdwYXJzZURhdGUnIGluIHdpbmRvdykpd2luZG93LnBhcnNlRGF0ZT1wYXJzZURhdGU7CmlmKCEoJ2Zvcm1hdERhdGUnIGluIHdpbmRvdykpd2luZG93LmZvcm1hdERhdGU9Zm9ybWF0RGF0ZTsKaWYoISgnc2V0UmVzdWx0JyBpbiB3aW5kb3cpKXdpbmRvdy5zZXRSZXN1bHQ9c2V0UmVzdWx0OwppZighKCdjYWxjRGlmZicgaW4gd2luZG93KSl3aW5kb3cuY2FsY0RpZmY9Y2FsY0RpZmY7CmlmKCEoJ2NhbGNUYXJnZXQnIGluIHdpbmRvdykpd2luZG93LmNhbGNUYXJnZXQ9Y2FsY1RhcmdldDsKaWYoISgnY29udmVydFRzJyBpbiB3aW5kb3cpKXdpbmRvdy5jb252ZXJ0VHM9Y29udmVydFRzOwppZighKCdnb0hvbWUnIGluIHdpbmRvdykpd2luZG93LmdvSG9tZT1nb0hvbWU7");
+</script>
+</body>
+</html>

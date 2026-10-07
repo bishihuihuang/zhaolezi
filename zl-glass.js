@@ -435,7 +435,7 @@
         if (recent.length) {
             html += '<div class="zl-palette-sec"><div class="zl-palette-sec-t">🕘 最近访问</div><div class="zl-chips">';
             for (var r = 0; r < recent.length; r++) {
-                html += '<a class="zl-chip" href="' + recent[r].f + '" data-f="' + recent[r].f + '"><span>' + recent[r].ic + '</span>' + escTxt(recent[r].t || recent[r].f) + '</a>';
+                html += '<a class="zl-chip" href="' + CFG.gateUrl(recent[r].f) + '" data-f="' + recent[r].f + '"><span>' + recent[r].ic + '</span>' + escTxt(recent[r].t || recent[r].f) + '</a>';
             }
             html += '</div></div>';
         }

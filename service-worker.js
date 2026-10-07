@@ -73,23 +73,36 @@
 // V84：2026-10-07 液态玻璃层 V2.3.1（四条增强：Dock 呼吸灯+长按二级入口 / Ctrl+K 最近访问+热词 / 放大态键盘切换 / 44 打卡即时刷新）
 // V85：2026-10-07 液态玻璃层 V2.3.1（修复：Ctrl+K 被 common.js 键盘保护拦截，改 capture 阶段注册）
 // V86：2026-10-07 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v86';
+// V87：2026-10-07 自动构建（公共层/页面更新，缓存随构建递增）
+// V2.3.3 顶层精简：业务页入 pages/，公共层与本文件留根（SW scope 覆盖 /，含 /pages/*）。
+// 注册改绝对路径——register() 的相对路径基准是当前文档 URL 而非 SW 自身 URL，
+// pages/ 页写裸 'service-worker.js' 会解析成 /pages/service-worker.js，外层 catch 静默吞错致 SW 永远装不上。
+// V88：2026-10-08 自动构建（公共层/页面更新，缓存随构建递增）
+// V89：2026-10-08 自动构建（公共层/页面更新，缓存随构建递增）
+// V90：2026-10-08 自动构建（公共层/页面更新，缓存随构建递增）
+// V91：2026-10-08 自动构建（公共层/页面更新，缓存随构建递增）
+// V92：2026-10-08 自动构建（公共层/页面更新，缓存随构建递增）
+// V93：2026-10-08 自动构建（公共层/页面更新，缓存随构建递增）
+// V94：2026-10-08 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v94';
 const ASSETS = [
   './',
   './index.html',
-  './1.html', './2.html', './3.html', './4.html', './5.html', './6.html',
-  './7.html', './8.html', './9.html', './10.html', './11.html', './12.html',
-  './13.html', './14.html', './15.html', './16.html', './17.html', './18.html',
-  './19.html', './20.html', './21.html', './22.html', './23.html', './24.html',
-  './25.html', './26.html', './27.html', './28.html', './29.html', './30.html',
-  './31.html', './32.html', './33.html', './34.html', './35.html', './36.html',
-  './37.html', './38.html', './39.html', './40.html', './41.html', './42.html',
-  './43.html', './44.html', './45.html', './46.html',
-  './文件搜索.html',
-  './verify.html',
-  './offline.html',
+  // V2.3.3 顶层精简：业务页迁 pages/（index.html 留根，PWA start_url 与站点根 URL 不变）；
+  // cache.addAll 全成功或全失败，任一路径写错则 SW 无法安装，故与目录搬迁同提交修改
+  './pages/1.html', './pages/2.html', './pages/3.html', './pages/4.html', './pages/5.html', './pages/6.html',
+  './pages/7.html', './pages/8.html', './pages/9.html', './pages/10.html', './pages/11.html', './pages/12.html',
+  './pages/13.html', './pages/14.html', './pages/15.html', './pages/16.html', './pages/17.html', './pages/18.html',
+  './pages/19.html', './pages/20.html', './pages/21.html', './pages/22.html', './pages/23.html', './pages/24.html',
+  './pages/25.html', './pages/26.html', './pages/27.html', './pages/28.html', './pages/29.html', './pages/30.html',
+  './pages/31.html', './pages/32.html', './pages/33.html', './pages/34.html', './pages/35.html', './pages/36.html',
+  './pages/37.html', './pages/38.html', './pages/39.html', './pages/40.html', './pages/41.html', './pages/42.html',
+  './pages/43.html', './pages/44.html', './pages/45.html', './pages/46.html',
+  './pages/文件搜索.html',
+  './pages/verify.html',
+  './pages/offline.html',
+  './pages/17-data.js',
   './manifest.json',
-  './17-data.js',
   './common.css',
   './common.js',
   './theme.js',
@@ -100,15 +113,15 @@ const ASSETS = [
   './favicon-48.png',
   './robots.txt',
   './sitemap.xml',
-  './images/bg-blue.jpg',
-  './images/bg-gold.jpg',
-  './images/bg-light.jpg',
-  './images/bg-milk.jpg',
-  './images/bg-guofeng.jpg',
-  './images/bg-snowsun.jpg',
-  './images/bg-cyber.jpg',
-  './images/bg-aurora.jpg',
-  './images/bg-custom.jpg'
+  './pages/images/bg-blue.jpg',
+  './pages/images/bg-gold.jpg',
+  './pages/images/bg-light.jpg',
+  './pages/images/bg-milk.jpg',
+  './pages/images/bg-guofeng.jpg',
+  './pages/images/bg-snowsun.jpg',
+  './pages/images/bg-cyber.jpg',
+  './pages/images/bg-aurora.jpg',
+  './pages/images/bg-custom.jpg'
 ];
 
 // 安装：预缓存核心资源
@@ -157,7 +170,7 @@ self.addEventListener('fetch', (event) => {
           // 网络失败：先看当前页面缓存，再回落到离线提示页，最后首页
           return caches.match(event.request).then((cached) => {
             if (cached) return cached;
-            return caches.match('./offline.html').then((off) => off || caches.match('./index.html'));
+            return caches.match('./pages/offline.html').then((off) => off || caches.match('./index.html'));
           });
         })
     );
@@ -183,7 +196,7 @@ self.addEventListener('fetch', (event) => {
           .catch(() => {
             // 离线且无缓存：先回退到 offline.html 兜底页，miss 再走首页
             // 此前此处返回 undefined 会让 respondWith 无响应，导致 23 页分片离线时静默失败
-            return caches.match('./offline.html').then((off) => off || caches.match('./index.html'));
+            return caches.match('./pages/offline.html').then((off) => off || caches.match('./index.html'));
           });
       })
   );

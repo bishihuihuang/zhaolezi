@@ -175,7 +175,7 @@
 (function(){
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register('service-worker.js').catch(function(err){});
+            navigator.serviceWorker.register(location.origin + '/service-worker.js').catch(function(err){});
         });
     }
 })();

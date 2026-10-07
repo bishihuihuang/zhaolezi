@@ -8,13 +8,13 @@ Service Worker 离线可用，GitHub Pages 部署。
 ```
 zhaolezi/
 ├── _原始未混淆版/        构建输入（唯一手改区，README 见其内部）
-├── *.html                构建产物（混淆后，勿手改）
+├── index.html            首页（唯一留根的业务页；PWA start_url 与站点根 URL 均指向它）
+├── pages/                构建产物（混淆后，勿手改）+ 页面专属资源（17-data.js、images/、audio/、23data/、看看作业/）
 ├── theme.js / common.js / zl-features.js   公共层（根目录维护，构建时同步）
 ├── service-worker.js     离线缓存（构建自动升版，勿手改版本号）
 ├── _混淆工具.js          构建管道：混淆 + PWA 注入 + preCheck + 断言 + sitemap + 冒烟 + SW 升版
 ├── _冒烟自检.js          全量冒烟测试（构建自动执行；可单独跑）
-├── manifest.json / sitemap.xml / robots.txt
-└── 17-data.js            词典数据（构建自动同步）
+└── manifest.json / sitemap.xml / robots.txt
 ```
 
 ## 命令

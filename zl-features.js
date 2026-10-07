@@ -251,11 +251,13 @@
         { f: '46.html', t: '学习计时与专注模式', k: '番茄钟 专注 计时 白噪音 成就 统计 休息' }
     ];
 
-    /* ========== 体系门禁：受保护页只能经密码门户进入 ==========
-     * 1-8 体系（2-8.html）→ 经 1.html（密码登录）
-     * 看看作业体系（41/42.html）→ 经 verify.html（密码验证）
-     * 其余页直链；1.html/verify.html 本身是门户不拦截。
-     * ZL.gateUrl(f) 返回实际跳转地址（保持 f 语义用于高亮/分组/最近）。 */
+    /* ========== 体系门禁 + 目录分层解析 ==========
+     * 门禁：1-8 体系（2-8.html）→ 经 1.html（密码登录）；
+     *       看看作业体系（41/42.html）→ 经 verify.html（密码验证）；
+     *       其余页直链；1.html/verify.html 本身是门户不拦截。
+     * 分层（V2.3.3）：业务页在 pages/，首页 index.html 留根。
+     *   pages/ 内页面跳首页需上一级；根级首页跳业务页需加 pages/ 前缀。
+     * ZL.resolve(f) 是唯一入口，返回可直接赋给 href/location 的地址。 */
     var GATE_MAP = {
         '2.html': '1.html?go=2.html',
         '3.html': '1.html?go=3.html',
@@ -267,7 +269,17 @@
         '41.html': 'verify.html?go=41.html',
         '42.html': 'verify.html?go=42.html'
     };
-    ZL.gateUrl = function (f) { return GATE_MAP[f] || f; };
+    /* 当前页是否在 pages/ 子目录（pathname 结尾 /pages/xxx，兼容 file:// 绝对路径） */
+    var IN_PAGES = /\/pages\/[^/]+$/i.test(location.pathname);
+    /* 根级公共资源的相对前缀（zl-glass.js 等运行时动态注入用，与 ZL.resolve 的页面解析分离） */
+    ZL.assetPrefix = IN_PAGES ? '../' : '';
+    ZL.resolve = function (f) {
+        if (f === 'index.html') return IN_PAGES ? '../index.html' : 'index.html';
+        var g = GATE_MAP[f] || f;
+        return IN_PAGES ? g : 'pages/' + g;
+    };
+    /* 兼容旧调用方：门禁解析与目录分层一并完成 */
+    ZL.gateUrl = function (f) { return ZL.resolve(f); };
 
     /* ================================================================
      * 成就系统 V2.2（多维度 94 条：基础52/中级24/高级12/隐藏6）
@@ -610,7 +622,7 @@
             card.innerHTML = '<div style="font-size:30px;flex:none;">' + a.icon + '</div><div style="flex:1;"><div style="font-weight:bold;font-size:15px;">🏆 ' + a.t + ' <span style="font-size:11px;color:' + cfg.col + ';border:1px solid ' + cfg.col + ';border-radius:8px;padding:0 5px;margin-left:4px;">' + cfg.ic + cfg.nm + '</span></div><div style="color:var(--dim,#888);font-size:12px;margin-top:3px;">' + a.d + '</div></div>';
             document.body.appendChild(card);
             /* 点击卡片 → 跳转成就中心（并立即关闭本卡） */
-            function closeAndGo() { try { card.remove(); window.location.href = '38.html'; } catch (e) {} }
+            function closeAndGo() { try { card.remove(); window.location.href = ZL.resolve('38.html'); } catch (e) {} }
             card.addEventListener('click', closeAndGo);
             card.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); closeAndGo(); } });
             setTimeout(function () { try { card.style.opacity = '1'; card.style.transform = 'translateX(0)'; } catch (e) {} }, 30);
@@ -1008,7 +1020,8 @@
     function initHomeBtn() {
         var cur = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
         if (cur === 'index.html' || cur === '') return;
-        if (document.querySelector('a[href="index.html"], a[href="./index.html"], a[href="./"], a[href$="/zhaolezi/"]')) return;
+        /* V2.3.3：业务页在 pages/ 内，页面内回首页链接是 ../index.html（或注入器写的 .back-home），一并识别避免重复按钮 */
+        if (document.querySelector('a[href="index.html"], a[href="./index.html"], a[href="../index.html"], a[href$="/index.html"], a[href="./"], a.back-home, a[href$="/zhaolezi/"]')) return;
         var b = document.createElement('button');
         b.id = 'zlHomeBtn';
         b.type = 'button';
@@ -1016,7 +1029,8 @@
         b.title = '返回首页';
         b.style.cssText = 'position:fixed;left:16px;bottom:76px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line,#ddd);background:var(--card,#fff);color:var(--txt,#333);font-size:20px;line-height:1;cursor:pointer;z-index:2147483000;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;padding:0;';
         b.textContent = '🏠';
-        b.onclick = function () { location.href = 'index.html'; };
+        /* V2.3.3：业务页在 pages/ 下，首页在根，硬编码 index.html 会落到 pages/index.html 404 */
+        b.onclick = function () { location.href = (window.ZL && window.ZL.resolve) ? window.ZL.resolve('index.html') : 'index.html'; };
         document.body.appendChild(b);
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHomeBtn);
@@ -1027,7 +1041,8 @@
 (function () {
     function loadGlass() {
         var s = document.createElement('script');
-        s.src = 'zl-glass.js';
+        // pages/ 页需上一级取根级 zl-glass.js；首页留根则同目录
+        s.src = (window.ZL && ZL.assetPrefix || '') + 'zl-glass.js';
         s.async = true;
         s.onload = function () { try { window.ZL && ZL.glass && ZL.glass.init(); } catch (e) {} };
         s.onerror = function () {}; // 离线/加载失败静默降级，不影响主功能

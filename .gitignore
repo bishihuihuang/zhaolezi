@@ -8,6 +8,9 @@ node_modules/
 .env
 exec_log.json
 
+# ===== 一次性验收/诊断脚本（跑完即删；前缀统一 _临时_，整类不入库）=====
+/_临时_*
+
 # ===== 临时截图/调试图（根目录不入库；images/ 下正式资源不受影响）=====
 /Camera_*.jpg
 /Camera_*.png
@@ -44,7 +47,6 @@ upload_pwa.js
 /_v2_logic_test.js
 /一键自动化发布.bat
 /备份当前版本.bat
-/文件搜索.html
 /AI日志.md
 /维护说明.txt
 /主题可读性防回归规范.md
