@@ -94,7 +94,8 @@
 // V102：2026-10-11 移除「/」站内搜索浮层（zl-features.js 删 ZL.openSearch 与 / 快捷键；Ctrl+K 命令面板保留，ZL.search/ZL.PAGES 仍供 zl-glass.js 使用）
 // V103：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
 // V104：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v104';
+// V105：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v105';
 const ASSETS = [
   './',
   './index.html',
