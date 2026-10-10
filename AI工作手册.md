@@ -30,7 +30,7 @@
 index.html ← 混淆后首页（线上用，勿改）
 pages\ ← 混淆后全部子页面（1.html~46.html + 文件搜索/verify/offline），images\（42）、audio\（19）、看看作业\（19）
 _原始未混淆版\ ← 【修改入口】原始未混淆文件（50 个页面），已被 .gitignore 忽略，源码不公开
-_混淆工具.js ← 混淆脚本（根页面→根目录，其余→pages\，自动刷新 common.js）
+构建工具\_混淆工具.js ← 混淆脚本（根页面→根目录，其余→pages\，自动刷新 common.js）
 common.css / common.js / theme.js / zl-features.js / zl-glass.js ← 公共层（V2 界面）
 service-worker.js / manifest.json ← PWA
 一键自动化发布.bat / 备份当前版本.bat ← 发布与备份
@@ -41,7 +41,7 @@ service-worker.js / manifest.json ← PWA
 1) 每次改前先双击 备份当前版本.bat（镜像到 E:\全面备份\zhaolezi备份）
 2) 改  _原始未混淆版\ 里的 HTML（用记事本/VS Code）
 3) 图片放 pages\images\、音频放 pages\audio\，引用相对路径
-4) 混淆：node _混淆工具.js（或直接双击 一键自动化发布.bat 全自动）
+4) 混淆：node 构建工具\_混淆工具.js（或直接双击 一键自动化发布.bat 全自动）
 5) 临时文件放 .tmp\，完成后归档（见铁律）
 
 ## 4. 发布流程
@@ -54,7 +54,7 @@ service-worker.js / manifest.json ← PWA
 
 · 不要直接改根目录或 pages\ 里的 HTML（是混淆产物，改了会损坏/被覆盖）
 · 不要手动 git push（统一走 bat）
-· 不要删 _混淆工具.js、_原始未混淆版\、common.js、common.css
+· 不要删 构建工具\_混淆工具.js、_原始未混淆版\、common.js、common.css
 · .zcode\（交接报告）、工具脚本\ 为参考归档，勿动
 · 临时文件一律 .tmp\
 
