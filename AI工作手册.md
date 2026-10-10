@@ -64,3 +64,24 @@ service-worker.js / manifest.json ← PWA
 · _原始未混淆版\ 已被 .gitignore 忽略，不会上传 GitHub
 · 改了 41/42 等页面，线上看 pages\41.html（不是根目录）
 · 升级/大改看 .zcode\交接报告_V2.3.3.md
+
+---
+
+
+## 7. 全站统一跳转动画（2026-10-11 新增）
+
+所有跳转按键（`<a href="*.html">` 和 `onclick="location.*='***.html'"`）点击后会显示统一的 zhaolezi 圆环转圈动画（绿色 #38ef7d 圆环 + 半透明黑背景）。
+
+**中心文字规则**：
+- 跳 `index.html` → 按当前站点品牌显示（zhaolezi=找乐子 / creativity=创意引擎 / xiandaihua=现代化 / all-file-saver=全能文件保存 / ai-prompts=AI 提示词库）
+- 其他跳转 → 目标 HTML 的 `<title>` 剥离品牌名后取最长段（如"主板与 CPU - 现代化·知识学习站"→"主板与 CPU"）
+
+**Hook 实现位置**：构建工具/_混淆工具.js 里的 JUMP_ANIM_CODE 常量，每次混淆自动写入 common.js
+
+**禁止事项**：
+- 不要删除 hook 代码（含 `__JUMP_ANIM_INIT__` 标记）
+- 不要手动改 hook 里的动画样式或文字规则（跨 5 站共享）
+- 跳动画播放 900ms 期间重复点击会被锁住（`jumpLocked` 机制），属正常行为
+- 启动屏自动跳转（`setTimeout` 内的 `location.replace`）**不会**被拦截，属预期
+
+**回滚方式**：删除 hook 代码段（含 `__JUMP_ANIM_INIT__` 标记的整段 IIFE）即可恢复原跳转行为。
