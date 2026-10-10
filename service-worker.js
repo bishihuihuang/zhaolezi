@@ -106,7 +106,9 @@
 // V114：2026-10-11 移除 Ctrl+K 命令面板与停靠栏 🔍 按钮（zl-glass.js 删 openPalette/buildPalette/renderPalette + CSS；zl-features.js 删成就 search_first 与 ZL.search；/ 站内搜索此前 V102 已删）
 // V115：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
 // V116：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v116';
+// V117：2026-10-11 JS 脚本改为网络优先（原静态资源统一缓存优先，导致发版后 SW 缓存里旧 JS 拦截，用户强刷无效；现 JS 走网络优先+失败回退缓存，与 HTML 导航同策略；其他静态资源仍缓存优先）
+// V118：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v118';
 const ASSETS = [
   './',
   './index.html',
@@ -199,7 +201,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 静态资源：缓存优先，网络回退并写缓存
+  // V117 新增：JS 脚本走网络优先（与 HTML 导航同策略），失败回退缓存
+  // 原因：原静态资源统一"缓存优先"，发版后 SW 缓存里旧 JS 会拦截新 JS，用户强刷无效
+  // 适用范围：仅 .js 后缀的同源脚本；CSS/图片/音频等其他静态资源仍缓存优先
+  if (url.pathname.endsWith('.js')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => cache.put(event.request, responseToCache));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // 静态资源（非 JS）：缓存优先，网络回退并写缓存
   event.respondWith(
     caches.match(event.request)
       .then((cached) => {
