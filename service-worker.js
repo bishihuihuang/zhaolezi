@@ -103,7 +103,10 @@
 // V111：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
 // V112：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
 // V113：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v113';
+// V114：2026-10-11 移除 Ctrl+K 命令面板与停靠栏 🔍 按钮（zl-glass.js 删 openPalette/buildPalette/renderPalette + CSS；zl-features.js 删成就 search_first 与 ZL.search；/ 站内搜索此前 V102 已删）
+// V115：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+// V116：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v116';
 const ASSETS = [
   './',
   './index.html',

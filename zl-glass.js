@@ -73,27 +73,6 @@
         'background:color-mix(in srgb,var(--glow,#667eea) 58%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);' +
         'box-shadow:0 0 16px color-mix(in srgb,var(--glow,#667eea) 70%,transparent);border:1px solid color-mix(in srgb,var(--glow,#667eea) 45%,transparent);' +
         'transition:transform .58s cubic-bezier(.2,1.3,.36,1);}' +
-        '.zl-dock-open{flex:0 0 auto;width:46px;height:46px;border-radius:14px;border:1px solid color-mix(in srgb,var(--line,#eee) 50%,transparent);background:color-mix(in srgb,var(--card-2,#fff) 40%,transparent);' +
-        '-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:var(--txt,#333);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:6px;transition:transform .2s;}' +
-        '.zl-dock-open:active{transform:scale(.9)}' +
-        '@media (hover:hover) and (pointer:fine){.zl-dock-open:hover{transform:scale(1.15)}}' +
-        '.zl-mask{position:fixed;inset:0;z-index:2147483646;background:rgba(6,8,24,.45);-webkit-backdrop-filter:blur(6px) saturate(1.2);backdrop-filter:blur(6px) saturate(1.2);display:flex;align-items:flex-start;justify-content:center;padding-top:13vh;opacity:0;visibility:hidden;transition:opacity .24s,visibility .24s;}' +
-        '.zl-mask.show{opacity:1;visibility:visible}' +
-        '.zl-palette{width:min(580px,92vw);border-radius:20px;overflow:hidden;background:color-mix(in srgb,var(--card,#fff) 78%,transparent);-webkit-backdrop-filter:blur(26px) saturate(1.6);backdrop-filter:blur(26px) saturate(1.6);' +
-        'border:1px solid color-mix(in srgb,var(--line,#eee) 55%,transparent);box-shadow:0 28px 90px rgba(0,0,0,.45);transform:translateY(-14px) scale(.98);transition:transform .26s cubic-bezier(.2,1.25,.4,1);}' +
-        '.zl-mask.show .zl-palette{transform:translateY(0) scale(1)}' +
-        '.zl-palette-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid color-mix(in srgb,var(--line,#eee) 55%,transparent);}' +
-        '.zl-palette-head span{font-size:18px;opacity:.9}' +
-        '.zl-palette-input{flex:1;border:none;outline:none;background:transparent;font-size:16px;color:var(--txt,#333);}' +
-        '.zl-palette-input::placeholder{color:var(--dim,#8b93a7)}' +
-        '.zl-palette-hint{font-size:11px;color:var(--dim,#8b93a7);white-space:nowrap}' +
-        '.zl-palette-list{max-height:46vh;overflow-y:auto;padding:6px;}' +
-        '.zl-palette-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;text-decoration:none;color:var(--txt,#333);cursor:pointer;}' +
-        '.zl-palette-item.active{background:color-mix(in srgb,var(--glow,#667eea) 20%,transparent);}' +
-        '.zl-palette-item .pi-t{flex:1;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
-        '.zl-palette-item .pi-k{font-size:11px;color:var(--dim,#8b93a7);max-width:38%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
-        '.zl-palette-item mark{background:color-mix(in srgb,var(--gold,#ffd700) 55%,transparent);color:var(--txt,#333);border-radius:3px;padding:0 2px}' +
-        '.zl-palette-empty{padding:22px;text-align:center;color:var(--dim,#8b93a7);font-size:13px}' +
         /* ---------- M2 鼠标跟随光（柔光 + 边框局部提亮 + 3D 倾斜） ---------- */
         '.zl-glow{position:relative}' +
         '.zl-glow::before,.zl-glow::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0}' +
@@ -106,7 +85,7 @@
         '@media (hover:none),(pointer:coarse){.zl-tilt{transition:transform .18s ease-out}.zl-tilt.zl-touch-on{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(0)}}' +
         '@media (prefers-reduced-motion:reduce){.zl-tilt,.zl-glow::before,.zl-glow::after{transition:none !important}}' +
         '@media (hover:none),(pointer:coarse){.zl-dock{gap:2px;padding:6px 6px 8px;border-radius:22px;max-width:calc(100vw - 12px)}.zl-dock-item{width:48px;height:48px;font-size:22px}.zl-pill{width:48px;bottom:5px}}' +
-        '@media (prefers-reduced-motion:reduce){.zl-pill,.zl-dock-item,.zl-mask,.zl-palette{transition:none !important}}' +
+        '@media (prefers-reduced-motion:reduce){.zl-pill,.zl-dock-item{transition:none !important}}' +
         /* ---------- M3 模块就地放大（44 仪表盘） ---------- */
         '.zl-zoom-btn{position:absolute;top:10px;right:10px;z-index:5;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;cursor:pointer;color:var(--txt,#333);' +
         'border:1px solid color-mix(in srgb,var(--line,#eee) 55%,transparent);background:color-mix(in srgb,var(--card-2,#fff) 52%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);' +
@@ -166,8 +145,6 @@
         '.zl-ctx-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:11px;font-size:13.5px;color:var(--txt,#333);text-decoration:none}' +
         '.zl-ctx-item:hover{background:color-mix(in srgb,var(--glow,#667eea) 16%,transparent)}' +
         '.zl-ctx-item .ci-ic{font-size:16px}' +
-        '.zl-palette-sec{padding:10px 14px}' +
-        '.zl-palette-sec-t{font-size:11px;color:var(--dim,#8b93a7);margin-bottom:8px}' +
         '.zl-chips{display:flex;flex-wrap:wrap;gap:8px}' +
         '.zl-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;font-size:13px;cursor:pointer;color:var(--txt,#333);' +
         'border:1px solid color-mix(in srgb,var(--line,#eee) 55%,transparent);background:color-mix(in srgb,var(--card-2,#fff) 55%,transparent);' +
@@ -213,14 +190,6 @@
             itemsHtml += '<a class="zl-dock-item' + on + '" data-f="' + it.f + '" href="' + CFG.gateUrl(it.f) + '" title="' + it.t + '" aria-label="' + it.t + '">' + it.ic + '</a>';
         }
         dock.innerHTML = itemsHtml + '<div class="zl-pill"></div>';
-        var openBtn = document.createElement('button');
-        openBtn.type = 'button';
-        openBtn.className = 'zl-dock-open';
-        openBtn.setAttribute('aria-label', '打开命令面板');
-        openBtn.title = '命令面板 (Ctrl+K)';
-        openBtn.textContent = '🔍';
-        openBtn.addEventListener('click', function () { openPalette(); });
-        dock.appendChild(openBtn);
         document.body.appendChild(dock);
 
         // 与既有悬浮“回首页”按钮协调：Dock 已含首页项，移除旧按钮
@@ -318,99 +287,7 @@
         }
     }
 
-    /* ===================== 5. Ctrl+K 命令面板（玻璃搜索） ===================== */
-    var paletteEl = null, paletteInput = null, paletteList = null, palIdx = -1, palItems = [];
-    function openPalette() {
-        if (!paletteEl) buildPalette();
-        paletteEl.classList.add('show');
-        setTimeout(function () { if (paletteInput) paletteInput.focus(); }, 60);
-        renderPalette('');
-    }
-    function closePalette() {
-        if (paletteEl) paletteEl.classList.remove('show');
-        if (paletteInput) paletteInput.value = '';
-    }
-    function buildPalette() {
-        paletteEl = document.createElement('div');
-        paletteEl.className = 'zl-mask';
-        paletteEl.innerHTML =
-            '<div class="zl-palette" role="dialog" aria-modal="true" aria-label="命令面板">' +
-            '<div class="zl-palette-head"><span>🔍</span><input class="zl-palette-input" placeholder="搜索页面/功能：五子棋、计算器、词典、学习…" autocomplete="off" spellcheck="false"><span class="zl-palette-hint">↑↓ 选择 · Enter 跳转 · Esc 关闭</span></div>' +
-            '<div class="zl-palette-list"></div></div>';
-        document.body.appendChild(paletteEl);
-        paletteInput = paletteEl.querySelector('.zl-palette-input');
-        paletteList = paletteEl.querySelector('.zl-palette-list');
-
-        paletteEl.addEventListener('click', function (e) { if (e.target === paletteEl) closePalette(); });
-        paletteInput.addEventListener('input', function () {
-            if (window.ZL && ZL.bump) ZL.bump('search_use', 1); // 与站内搜索一致，触发寻宝成就
-            renderPalette(paletteInput.value);
-        });
-        paletteInput.addEventListener('keydown', function (e) {
-            if (e.key === 'ArrowDown') { e.preventDefault(); moveSel(1); }
-            else if (e.key === 'ArrowUp') { e.preventDefault(); moveSel(-1); }
-            else if (e.key === 'Enter') { e.preventDefault(); jumpSel(); }
-            else if (e.key === 'Escape') { e.preventDefault(); closePalette(); }
-        });
-    }
-    function renderPalette(q) {
-        if (!paletteList) return;
-        q = (q || '').trim();
-        var list = window.ZL && ZL.search ? ZL.search(q) : [];
-        palItems = list.slice(0, 12);
-        palIdx = -1;
-        if (!q) {
-            renderSuggest();
-            return;
-        }
-        if (!palItems.length) {
-            paletteList.innerHTML = '<div class="zl-palette-empty">未找到相关功能，换个词试试</div>';
-            return;
-        }
-        var frag = document.createDocumentFragment();
-        var ql = q.toLowerCase();
-        for (var i = 0; i < palItems.length; i++) {
-            var p = palItems[i];
-            var t = p.t, k = p.k || '';
-            var hl = t;
-            var lo = t.toLowerCase();
-            var idx = lo.indexOf(ql);
-            if (idx >= 0) hl = t.slice(0, idx) + '<mark>' + t.slice(idx, idx + ql.length) + '</mark>' + t.slice(idx + ql.length);
-            var a = document.createElement('a');
-            a.className = 'zl-palette-item';
-            a.href = CFG.gateUrl(p.f);
-            a.setAttribute('data-i', String(i));
-            a.innerHTML = '<span class="pi-t">' + hl + '</span><span class="pi-k">' + (k || '') + '</span>';
-            a.addEventListener('mouseenter', function () { selTo(Number(this.getAttribute('data-i'))); });
-            a.addEventListener('click', function (e) { e.preventDefault(); goTo(palItems[Number(this.getAttribute('data-i'))].f); });
-            frag.appendChild(a);
-        }
-        paletteList.innerHTML = '';
-        paletteList.appendChild(frag);
-        selTo(0);
-    }
-    function moveSel(d) {
-        if (!palItems.length) return;
-        var n = palItems.length;
-        palIdx = (palIdx + d + n) % n;
-        paintSel();
-    }
-    function selTo(i) { palIdx = i; paintSel(); }
-    function paintSel() {
-        var els = paletteList.querySelectorAll('.zl-palette-item');
-        for (var i = 0; i < els.length; i++) {
-            els[i].classList.toggle('active', i === palIdx);
-            if (i === palIdx) { try { els[i].scrollIntoView({ block: 'nearest' }); } catch (e) {} }
-        }
-    }
-    function jumpSel() {
-        if (palItems.length) goTo(palItems[Math.max(0, palIdx)].f);
-    }
-    function goTo(f) {
-        recordRecent(f);
-        closePalette();
-        setTimeout(function () { window.location.href = CFG.gateUrl(f); }, 60);
-    }
+    /* ===================== 5. 最近访问记录（V114：Ctrl+K 命令面板已移除） ===================== */
     /* 最近访问记录：上限 6，最新在前，同页去重 */
     function recordRecent(f) {
         if (!f || isSkipPage()) return;
@@ -425,48 +302,8 @@
         if (arr.length > 6) arr.length = 6;
         ss(CFG.recentKey, arr);
     }
-    /* 面板空态：最近访问 + 热词推荐（降低空查询感） */
-    function renderSuggest() {
-        if (!paletteList) return;
-        palItems = [];
-        palIdx = -1;
-        var recent = ls(CFG.recentKey) || [];
-        var html = '';
-        if (recent.length) {
-            html += '<div class="zl-palette-sec"><div class="zl-palette-sec-t">🕘 最近访问</div><div class="zl-chips">';
-            for (var r = 0; r < recent.length; r++) {
-                html += '<a class="zl-chip" href="' + CFG.gateUrl(recent[r].f) + '" data-f="' + recent[r].f + '"><span>' + recent[r].ic + '</span>' + escTxt(recent[r].t || recent[r].f) + '</a>';
-            }
-            html += '</div></div>';
-        }
-        html += '<div class="zl-palette-sec"><div class="zl-palette-sec-t">🔥 热门功能</div><div class="zl-chips">';
-        for (var h = 0; h < CFG.hotTerms.length; h++) html += '<button class="zl-chip" type="button" data-hot="' + escTxt(CFG.hotTerms[h]) + '">' + escTxt(CFG.hotTerms[h]) + '</button>';
-        html += '</div></div>';
-        if (!recent.length && !CFG.hotTerms.length) html = '<div class="zl-palette-empty">输入关键词，搜索全站 48 个功能</div>';
-        paletteList.innerHTML = html;
-        paletteList.querySelectorAll('a.zl-chip').forEach(function (a) {
-            a.addEventListener('click', function (e) { e.preventDefault(); goTo(a.getAttribute('data-f')); });
-        });
-        paletteList.querySelectorAll('button.zl-chip').forEach(function (b) {
-            b.addEventListener('click', function () {
-                paletteInput.value = b.getAttribute('data-hot');
-                renderPalette(paletteInput.value);
-            });
-        });
-    }
-    function escTxt(s) {
-        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
     function initPalette() {
         recordRecent(curPage()); // 每次加载记录当前页进最近访问
-        document.addEventListener('keydown', function (e) {
-            if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === 'k' || e.key === 'K')) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (paletteEl && paletteEl.classList.contains('show')) closePalette();
-                else openPalette();
-            }
-        }, true); // capture：抢在 common.js 全局键盘保护（stopImmediatePropagation 拦 Ctrl+K）之前处理
     }
 
     /* ===================== M2. 鼠标跟随光（柔光 + 边框提亮 + 3D 倾斜，触控等效） ===================== */
@@ -634,7 +471,7 @@
         }
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && zoomed) closeZoom();
-            else if (zoomed && (e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !(paletteEl && paletteEl.classList.contains('show'))) {
+            else if (zoomed && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
                 e.preventDefault();
                 var idx = -1;
                 for (var z = 0; z < secs.length; z++) if (secs[z] === zoomed) idx = z;

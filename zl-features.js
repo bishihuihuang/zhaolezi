@@ -325,7 +325,6 @@
         { id: 'first_ach', t: '初识徽章', d: '解锁第一个成就', icon: '🏅', tier: 1, cat: 'explore', how: '解锁任意 1 个成就', cond: function () { return unlockedCount() >= 1; }, cur: unlockedCount, target: 1 },
         { id: 'visit_10', t: '环顾四周', d: '访问过 10 个不同页面', icon: '🗺️', tier: 1, cat: 'explore', how: '累计访问 10 个不同页面', cond: function () { return pagesUsed() >= 10; }, cur: pagesUsed, target: 10 },
         { id: 'visit_30', t: '大半个站', d: '访问过 30 个不同页面', icon: '🧭', tier: 1, cat: 'explore', how: '累计访问 30 个不同页面', cond: function () { return pagesUsed() >= 30; }, cur: pagesUsed, target: 30 },
-        { id: 'search_first', t: '站内寻宝', d: '使用一次全站搜索', icon: '🔍', tier: 1, cat: 'explore', how: '按 Ctrl+K 呼出搜索面板并搜索关键词', metric: 'search_use', target: 1 },
         { id: 'back_3', t: '常回来看看', d: '累计活跃 3 天', icon: '📆', tier: 1, cat: 'explore', how: '累计 3 天访问网站', cond: function () { return activeDays() >= 3; }, cur: activeDays, target: 3 },
         { id: 'visit_night', t: '夜访者', d: '在深夜 22:00-06:00 打开网站', icon: '🌙', tier: 1, cat: 'explore', how: '深夜时段访问任意页面', metric: 'night_visit', target: 1 },
         { id: 'game_first', t: '小试身手', d: '任一游戏获胜一次', icon: '🎮', tier: 1, cat: 'game', how: '五子棋/井字棋/扫雷/记忆配对任一首胜', cond: function () { return anyGameWin(); } },
@@ -678,20 +677,6 @@
             } else if (e.key === 'Escape') { _easterBuf = ''; }
         });
     } catch (e) {}
-
-    /* ========== 站内搜索 ========== */
-    ZL.search = function (q) {
-        q = (q || '').trim().toLowerCase();
-        if (!q) return [];
-        var out = [];
-        for (var i = 0; i < ZL.PAGES.length; i++) {
-            var p = ZL.PAGES[i];
-            if ((p.t + ' ' + p.k).toLowerCase().indexOf(q) >= 0) {
-                out.push(p);
-            }
-        }
-        return out;
-    };
 
     /* ========== 最近记录面板（#8 优化：二维码/摩斯/暗号等） ========== */
     ZL.RECENT_MAP = {
