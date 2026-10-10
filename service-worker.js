@@ -91,7 +91,9 @@
 // V99：2026-10-10 自动构建（公共层/页面更新，缓存随构建递增）
 // V100：2026-10-10 自动构建（公共层/页面更新，缓存随构建递增）
 // V101：2026-10-10 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v101';
+// V102：2026-10-11 移除「/」站内搜索浮层（zl-features.js 删 ZL.openSearch 与 / 快捷键；Ctrl+K 命令面板保留，ZL.search/ZL.PAGES 仍供 zl-glass.js 使用）
+// V103：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v103';
 const ASSETS = [
   './',
   './index.html',

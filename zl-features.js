@@ -325,7 +325,7 @@
         { id: 'first_ach', t: '初识徽章', d: '解锁第一个成就', icon: '🏅', tier: 1, cat: 'explore', how: '解锁任意 1 个成就', cond: function () { return unlockedCount() >= 1; }, cur: unlockedCount, target: 1 },
         { id: 'visit_10', t: '环顾四周', d: '访问过 10 个不同页面', icon: '🗺️', tier: 1, cat: 'explore', how: '累计访问 10 个不同页面', cond: function () { return pagesUsed() >= 10; }, cur: pagesUsed, target: 10 },
         { id: 'visit_30', t: '大半个站', d: '访问过 30 个不同页面', icon: '🧭', tier: 1, cat: 'explore', how: '累计访问 30 个不同页面', cond: function () { return pagesUsed() >= 30; }, cur: pagesUsed, target: 30 },
-        { id: 'search_first', t: '站内寻宝', d: '使用一次全站搜索', icon: '🔍', tier: 1, cat: 'explore', how: '按 / 呼出站内搜索并搜索关键词', metric: 'search_use', target: 1 },
+        { id: 'search_first', t: '站内寻宝', d: '使用一次全站搜索', icon: '🔍', tier: 1, cat: 'explore', how: '按 Ctrl+K 呼出搜索面板并搜索关键词', metric: 'search_use', target: 1 },
         { id: 'back_3', t: '常回来看看', d: '累计活跃 3 天', icon: '📆', tier: 1, cat: 'explore', how: '累计 3 天访问网站', cond: function () { return activeDays() >= 3; }, cur: activeDays, target: 3 },
         { id: 'visit_night', t: '夜访者', d: '在深夜 22:00-06:00 打开网站', icon: '🌙', tier: 1, cat: 'explore', how: '深夜时段访问任意页面', metric: 'night_visit', target: 1 },
         { id: 'game_first', t: '小试身手', d: '任一游戏获胜一次', icon: '🎮', tier: 1, cat: 'game', how: '五子棋/井字棋/扫雷/记忆配对任一首胜', cond: function () { return anyGameWin(); } },
@@ -692,61 +692,6 @@
         }
         return out;
     };
-
-    ZL.openSearch = function () {
-        if (document.getElementById('zlSearchBox')) { document.getElementById('zlSearchBox').focus(); return; }
-        var box = document.createElement('div');
-        box.id = 'zlSearchBox';
-        box.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:2147483646;background:rgba(8,10,30,.55);display:flex;align-items:flex-start;justify-content:center;padding-top:12vh;';
-        box.innerHTML = '<div style="width:min(560px,92%);background:var(--card);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden;">' +
-            '<div style="display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);">' +
-            '<span style="font-size:18px;margin-right:10px;">🔍</span>' +
-            '<input id="zlSearchInput" placeholder="搜索页面/功能，如：五子棋、计算器、购物…" style="flex:1;border:none;outline:none;font-size:16px;background:transparent;color:var(--txt);">' +
-            '<button id="zlSearchClose" style="border:none;background:none;font-size:20px;cursor:pointer;color:var(--dim);padding:2px 6px;">✕</button></div>' +
-            '<div id="zlSearchResults" style="max-height:52vh;overflow-y:auto;padding:6px 0;"></div></div>';
-        document.body.appendChild(box);
-        var input = document.getElementById('zlSearchInput');
-        var results = document.getElementById('zlSearchResults');
-        function render() {
-            var q = input.value;
-            var list = ZL.search(q);
-            if (!q) { results.innerHTML = '<div style="padding:20px;text-align:center;color:var(--dim);font-size:13px;">输入关键词开始搜索全站功能</div>'; return; }
-            if (window.ZL && ZL.bump) ZL.bump('search_use', 1);
-            if (!list.length) { results.innerHTML = '<div style="padding:20px;text-align:center;color:var(--dim);">未找到相关功能</div>'; return; }
-            results.innerHTML = '';
-            for (var i = 0; i < list.length; i++) {
-                var a = document.createElement('a');
-                a.href = ZL.gateUrl(list[i].f);
-                a.style.cssText = 'display:block;padding:12px 18px;text-decoration:none;color:var(--txt);font-size:15px;';
-                a.innerHTML = '<span style="color:var(--blue);font-weight:bold;">' + list[i].t + '</span>';
-                a.onmouseenter = function () { this.style.background = 'var(--card-2)'; };
-                a.onmouseleave = function () { this.style.background = ''; };
-                results.appendChild(a);
-            }
-        }
-        input.addEventListener('input', render);
-        input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                var list = ZL.search(input.value);
-                if (list.length) { window.location.href = ZL.gateUrl(list[0].f); }
-            } else if (e.key === 'Escape') { box.remove(); }
-        });
-        document.getElementById('zlSearchClose').onclick = function () { box.remove(); };
-        box.onclick = function (e) { if (e.target === box) box.remove(); };
-        input.focus();
-    };
-
-    /* 快捷键 "/" 呼出搜索（输入框内不拦截） */
-    document.addEventListener('keydown', function (e) {
-        if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
-            var tag = (document.activeElement && document.activeElement.tagName) || '';
-            if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
-                e.preventDefault();
-                e.stopPropagation();
-                ZL.openSearch();
-            }
-        }
-    });
 
     /* ========== 最近记录面板（#8 优化：二维码/摩斯/暗号等） ========== */
     ZL.RECENT_MAP = {
