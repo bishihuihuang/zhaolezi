@@ -111,7 +111,8 @@
 // V119：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
 // V120：2026-10-11 移除底部玻璃停靠栏（zl-glass.js 删 initDock()/recordRecent()/initPalette() + .zl-dock/.zl-dock-item/.zl-pill/.zl-dock-hide/.zl-ctx CSS + ls/ss 辅助函数 + 放大态收起 Dock 逻辑；CFG 只保留 skipPages；保留 M2 光效/M3 放大+筛选+汇总）
 // V121：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v121';
+// V122：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v122';
 const ASSETS = [
   './',
   './index.html',
