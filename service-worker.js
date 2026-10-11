@@ -109,7 +109,9 @@
 // V117：2026-10-11 JS 脚本改为网络优先（原静态资源统一缓存优先，导致发版后 SW 缓存里旧 JS 拦截，用户强刷无效；现 JS 走网络优先+失败回退缓存，与 HTML 导航同策略；其他静态资源仍缓存优先）
 // V118：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
 // V119：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v119';
+// V120：2026-10-11 移除底部玻璃停靠栏（zl-glass.js 删 initDock()/recordRecent()/initPalette() + .zl-dock/.zl-dock-item/.zl-pill/.zl-dock-hide/.zl-ctx CSS + ls/ss 辅助函数 + 放大态收起 Dock 逻辑；CFG 只保留 skipPages；保留 M2 光效/M3 放大+筛选+汇总）
+// V121：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v121';
 const ASSETS = [
   './',
   './index.html',

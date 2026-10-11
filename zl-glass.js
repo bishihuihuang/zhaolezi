@@ -18,61 +18,15 @@
     var ZL = window.ZL = window.ZL || {};
 
     /* ===================== 配置 ===================== */
+    /* V119 精简：停靠栏已移除，CFG 只保留 isSkipPage 消费的 skipPages */
     var CFG = {
-        skipPages: ['1.html', '2.html', '3.html', '4.html', '28.html', '29.html', '30.html', '10.html', 'verify.html', 'offline.html'],
-        gateUrl: function (f) { return (window.ZL && ZL.gateUrl) ? ZL.gateUrl(f) : f; },
-        pillKey: 'zl_glass_last',        // 记忆上一次激活项，供跨页水滴滑入
-        dockIcons: [
-            { f: 'index.html',  t: '首页',      ic: '🏠' },
-            { f: '7.html',      t: '优质工具箱', ic: '🧰' },
-            { f: '44.html',     t: '学习仪表盘', ic: '📚' },
-            { f: '43.html',     t: '错题本',    ic: '✍️' },
-            { f: '31.html',     t: '娱乐游戏',  ic: '🎮' },
-            { f: '33.html',     t: '随机乐子',  ic: '🎲' },
-            { f: '23.html',     t: '在线词典',  ic: '📖' },
-            { f: '12.html',     t: '基础计算器', ic: '🧮' },
-            { f: '35.html',     t: '番茄专注',  ic: '⏱️' },
-            { f: '19.html',     t: '网页备忘录', ic: '📝' },
-            { f: '38.html',     t: '成就中心',  ic: '🏅' },
-            { f: '41.html',     t: '看看作业',  ic: '📷' }
-        ],
-        recentKey: 'zl_glass_recent',    // 最近访问（Ctrl+K 空态推荐）
-        hotTerms: ['词典', '计算器', '游戏', '错题', '打卡', '番茄', '五子棋', '二维码'],
-        dockGroups: {   // 长按 Dock 图标弹出的同分类二级入口
-            'index.html': [{ f: '5.html', t: '媒体池', ic: '🎬' }, { f: '6.html', t: '作者介绍', ic: '👤' }, { f: '11.html', t: '赞赏支持', ic: '💛' }],
-            '7.html': [{ f: '32.html', t: '找乐子工具', ic: '🧩' }, { f: '34.html', t: '打字速度', ic: '⌨️' }, { f: '9.html', t: '纯文本生成', ic: '📄' }],
-            '44.html': [{ f: '43.html', t: '错题本', ic: '✍️' }, { f: '45.html', t: '知识图谱', ic: '🕸️' }, { f: '46.html', t: '学习计时', ic: '⏳' }],
-            '43.html': [{ f: '45.html', t: '知识图谱', ic: '🕸️' }, { f: '46.html', t: '学习计时', ic: '⏳' }, { f: '44.html', t: '学习仪表盘', ic: '📚' }],
-            '31.html': [{ f: '20.html', t: '五子棋', ic: '⚫' }, { f: '22.html', t: '扫雷', ic: '💣' }, { f: '36.html', t: '双人井字棋', ic: '⭕' }],
-            '33.html': [{ f: '37.html', t: '每日一题', ic: '❓' }, { f: '34.html', t: '打字速度', ic: '⌨️' }, { f: '39.html', t: '分享卡片', ic: '🖼️' }],
-            '23.html': [{ f: '24.html', t: '词频统计', ic: '📊' }, { f: '25.html', t: '字数统计', ic: '🔢' }, { f: '26.html', t: '二维码', ic: '▦' }],
-            '12.html': [{ f: '13.html', t: '日期计算器', ic: '📅' }, { f: '18.html', t: '单位换算', ic: '📐' }, { f: '15.html', t: '强密码', ic: '🔐' }],
-            '35.html': [{ f: '46.html', t: '学习计时', ic: '⏳' }, { f: '37.html', t: '每日一题', ic: '❓' }, { f: '40.html', t: '语音控制', ic: '🎙️' }],
-            '19.html': [{ f: '39.html', t: '分享卡片', ic: '🖼️' }, { f: '26.html', t: '二维码', ic: '▦' }, { f: '9.html', t: '纯文本生成', ic: '📄' }],
-            '38.html': [{ f: '44.html', t: '学习仪表盘', ic: '📚' }, { f: '37.html', t: '每日一题', ic: '❓' }, { f: '30.html', t: '更新公告', ic: '📢' }],
-            '41.html': [{ f: '42.html', t: '作业更新公告', ic: '📢' }, { f: '43.html', t: '错题本', ic: '✍️' }, { f: '44.html', t: '学习仪表盘', ic: '📚' }]
-        }
+        skipPages: ['1.html', '2.html', '3.html', '4.html', '28.html', '29.html', '30.html', '10.html', 'verify.html', 'offline.html']
     };
 
     /* ===================== 样式注入（全用主题变量，不动 common.css，主题断言零风险） ===================== */
     var CSS =
         '/* ---------- V2.3.0 液态玻璃层 ---------- */' +
-        '.zl-dock{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147483001;display:flex;align-items:flex-end;gap:4px;padding:8px 10px 10px;border-radius:26px;' +
-        'background:color-mix(in srgb,var(--card,#fff) 62%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);' +
-        'border:1px solid color-mix(in srgb,var(--line,#eee) 45%,transparent);box-shadow:0 12px 40px rgba(0,0,0,.32);max-width:min(640px,calc(100vw - 20px));overflow-x:auto;overflow-y:visible;scrollbar-width:none;}' +
-        '.zl-dock::-webkit-scrollbar{display:none}' +
-        '.zl-dock-item{position:relative;flex:0 0 auto;width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:24px;line-height:1;' +
-        'transition:transform .2s cubic-bezier(.3,1.4,.5,1),background .2s;will-change:transform;-webkit-tap-highlight-color:transparent;}' +
-        '.zl-dock-item:active{transform:scale(.92)}' +
-        '@media (hover:hover) and (pointer:fine){' +
-        '.zl-dock-item:hover{transform:scale(1.42);background:color-mix(in srgb,var(--card-2,#fff) 55%,transparent);z-index:2}' +
-        '.zl-dock-item:hover~.zl-dock-item,.zl-dock-item:has(+ .zl-dock-item:hover){transform:scale(1.16)}' +
-        '}' +
-        '.zl-dock-item.on{transform:translateY(-3px)}' +
-        '.zl-pill{position:absolute;bottom:6px;left:0;width:52px;height:11px;border-radius:6px;pointer-events:none;will-change:transform;' +
-        'background:color-mix(in srgb,var(--glow,#667eea) 58%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);' +
-        'box-shadow:0 0 16px color-mix(in srgb,var(--glow,#667eea) 70%,transparent);border:1px solid color-mix(in srgb,var(--glow,#667eea) 45%,transparent);' +
-        'transition:transform .58s cubic-bezier(.2,1.3,.36,1);}' +
+        /* V119 精简：.zl-dock / .zl-dock-item / .zl-pill 已随 initDock() 一并删除 */
         /* ---------- M2 鼠标跟随光（柔光 + 边框局部提亮 + 3D 倾斜） ---------- */
         '.zl-glow{position:relative}' +
         '.zl-glow::before,.zl-glow::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0}' +
@@ -84,8 +38,7 @@
         '@media (hover:hover) and (pointer:fine){.zl-tilt:hover{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(0)}}' +
         '@media (hover:none),(pointer:coarse){.zl-tilt{transition:transform .18s ease-out}.zl-tilt.zl-touch-on{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(0)}}' +
         '@media (prefers-reduced-motion:reduce){.zl-tilt,.zl-glow::before,.zl-glow::after{transition:none !important}}' +
-        '@media (hover:none),(pointer:coarse){.zl-dock{gap:2px;padding:6px 6px 8px;border-radius:22px;max-width:calc(100vw - 12px)}.zl-dock-item{width:48px;height:48px;font-size:22px}.zl-pill{width:48px;bottom:5px}}' +
-        '@media (prefers-reduced-motion:reduce){.zl-pill,.zl-dock-item{transition:none !important}}' +
+        /* V119 精简：hover:none dock 与 reduced-motion dock 规则已删 */
         /* ---------- M3 模块就地放大（44 仪表盘） ---------- */
         '.zl-zoom-btn{position:absolute;top:10px;right:10px;z-index:5;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;cursor:pointer;color:var(--txt,#333);' +
         'border:1px solid color-mix(in srgb,var(--line,#eee) 55%,transparent);background:color-mix(in srgb,var(--card-2,#fff) 52%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);' +
@@ -96,7 +49,6 @@
         '.zl-zoom-open{position:fixed !important;left:14px !important;right:14px !important;top:58px !important;bottom:14px !important;width:auto !important;max-width:none !important;height:auto !important;max-height:none !important;margin:0 !important;z-index:2147483002;overflow:auto !important;' +
         'transition:transform .4s cubic-bezier(.22,1.2,.36,1),opacity .28s;will-change:transform,opacity;box-shadow:0 26px 80px rgba(0,0,0,.5)}' +
         '.zl-zoom-away{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility .3s}' +
-        '.zl-dock-hide{opacity:0;transform:translateX(-50%) translateY(18px);pointer-events:none;transition:transform .24s,opacity .24s}' +
         '.zl-zoom-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:2147483003;display:flex;align-items:center;gap:6px;padding:7px 9px;border-radius:20px;max-width:calc(100vw - 16px);overflow-x:auto;scrollbar-width:none;' +
         'background:color-mix(in srgb,var(--card,#fff) 68%,transparent);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);' +
         'border:1px solid color-mix(in srgb,var(--line,#eee) 45%,transparent);box-shadow:0 12px 36px rgba(0,0,0,.3);opacity:0;visibility:hidden;transition:opacity .24s,visibility .24s}' +
@@ -131,27 +83,14 @@
         '.zl-sum-num{font-size:23px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25;color:var(--txt,#333)}' +
         '.zl-sum-lbl{font-size:11px;color:var(--dim,#8b93a7);margin-top:3px}' +
         '@media (prefers-reduced-motion:reduce){.zl-sum-num{transition:none !important}}' +
-        /* ---------- V2.3.2 门禁收口 ---------- */
-        /* V2.3.1 四条增强 */
-        '@keyframes zlBreathe{0%,100%{box-shadow:0 0 6px color-mix(in srgb,var(--glow,#667eea) 28%,transparent)}50%{box-shadow:0 0 20px color-mix(in srgb,var(--glow,#667eea) 88%,transparent)}}' +
-        '.zl-dock-item.on.active{animation:zlBreathe 2.4s ease-in-out infinite}' +
-        '@media (prefers-reduced-motion:reduce){.zl-dock-item.on.active{animation:none}}' +
-        '.zl-ctx{position:fixed;z-index:2147483005;min-width:158px;padding:8px;border-radius:16px;' +
-        'background:color-mix(in srgb,var(--card,#fff) 78%,transparent);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);' +
-        'border:1px solid color-mix(in srgb,var(--line,#eee) 50%,transparent);box-shadow:0 18px 50px rgba(0,0,0,.38);' +
-        'opacity:0;transform:translateY(8px) scale(.92);transition:opacity .2s,transform .24s cubic-bezier(.2,1.25,.4,1);pointer-events:none}' +
-        '.zl-ctx.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}' +
-        '.zl-ctx-title{padding:4px 10px 6px;font-size:11px;color:var(--dim,#8b93a7)}' +
-        '.zl-ctx-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:11px;font-size:13.5px;color:var(--txt,#333);text-decoration:none}' +
-        '.zl-ctx-item:hover{background:color-mix(in srgb,var(--glow,#667eea) 16%,transparent)}' +
-        '.zl-ctx-item .ci-ic{font-size:16px}' +
+        /* V119 精简：zlBreathe 呼吸动画 + .zl-ctx 长按气泡 CSS 已随 initDock() 一并删除 */
         '.zl-chips{display:flex;flex-wrap:wrap;gap:8px}' +
         '.zl-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;font-size:13px;cursor:pointer;color:var(--txt,#333);' +
         'border:1px solid color-mix(in srgb,var(--line,#eee) 55%,transparent);background:color-mix(in srgb,var(--card-2,#fff) 55%,transparent);' +
         'transition:transform .18s,background .2s;text-decoration:none}' +
         '.zl-chip:hover{background:color-mix(in srgb,var(--glow,#667eea) 18%,transparent)}' +
         '.zl-chip:active{transform:scale(.94)}' +
-        '@media (prefers-reduced-motion:reduce){.zl-ctx,.zl-chip{transition:none !important}}';
+        '@media (prefers-reduced-motion:reduce){.zl-chip{transition:none !important}}';
 
     function injectStyle() {
         try {
@@ -171,139 +110,9 @@
         for (var i = 0; i < CFG.skipPages.length; i++) if (c === CFG.skipPages[i]) return true;
         return false;
     }
-    function ls(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
-    function ss(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+    /* V119 精简：ls / ss 辅助函数已随 initDock/recordRecent 一并删除 */
     function reduced() {
         try { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; }
-    }
-
-    /* ===================== 1+2. 底部玻璃停靠栏 + 液态高亮胶囊 ===================== */
-    function initDock() {
-        var cur = curPage();
-        var dock = document.createElement('nav');
-        dock.className = 'zl-dock';
-        dock.setAttribute('aria-label', '站点导航停靠栏');
-        var itemsHtml = '';
-        for (var i = 0; i < CFG.dockIcons.length; i++) {
-            var it = CFG.dockIcons[i];
-            var on = it.f === cur ? ' on active' : '';
-            itemsHtml += '<a class="zl-dock-item' + on + '" data-f="' + it.f + '" href="' + CFG.gateUrl(it.f) + '" title="' + it.t + '" aria-label="' + it.t + '">' + it.ic + '</a>';
-        }
-        dock.innerHTML = itemsHtml + '<div class="zl-pill"></div>';
-        document.body.appendChild(dock);
-
-        // 与既有悬浮“回首页”按钮协调：Dock 已含首页项，移除旧按钮
-        var home = document.getElementById('zlHomeBtn');
-        if (home && home.parentNode) home.parentNode.removeChild(home);
-
-        var items = dock.querySelectorAll('.zl-dock-item');
-        var pill = dock.querySelector('.zl-pill');
-
-        /* 长按二级入口气泡：按住当前分类图标 800ms 弹出同分类页面 */
-        var ctxEl = null;
-        function closeCtx() {
-            if (ctxEl) { ctxEl.classList.remove('show'); var c = ctxEl; setTimeout(function () { if (c.parentNode) c.parentNode.removeChild(c); }, 240); ctxEl = null; }
-        }
-        function openCtx(item) {
-            var f = item.getAttribute('data-f');
-            var grp = CFG.dockGroups[f];
-            if (!grp || !grp.length) return;
-            closeCtx();
-            ctxEl = document.createElement('div');
-            ctxEl.className = 'zl-ctx';
-            var title = item.getAttribute('title') || '相关入口';
-            var h = '<div class="zl-ctx-title">' + title + ' · 二级入口</div>';
-            for (var g = 0; g < grp.length; g++) h += '<a class="zl-ctx-item" href="' + CFG.gateUrl(grp[g].f) + '"><span class="ci-ic">' + grp[g].ic + '</span>' + grp[g].t + '</a>';
-            ctxEl.innerHTML = h;
-            document.body.appendChild(ctxEl);
-            var r = item.getBoundingClientRect();
-            var w = ctxEl.offsetWidth, hh = ctxEl.offsetHeight;
-            var left = Math.min(Math.max(6, r.left + r.width / 2 - w / 2), window.innerWidth - w - 6);
-            var top = r.top - hh - 10;
-            if (top < 6) top = r.bottom + 10;
-            ctxEl.style.left = left + 'px';
-            ctxEl.style.top = top + 'px';
-            requestAnimationFrame(function () { ctxEl.classList.add('show'); });
-            ctxEl.addEventListener('click', function (e) { if (e.target.closest('.zl-ctx-item')) closeCtx(); });
-        }
-        for (var p = 0; p < items.length; p++) (function (it) {
-            var timer = null, sx = 0, sy = 0, armed = false;
-            function cancel() { if (timer) { clearTimeout(timer); timer = null; } }
-            it.addEventListener('pointerdown', function (e) {
-                if (e.pointerType === 'mouse' && e.button !== 0) return;
-                cancel();
-                sx = e.clientX; sy = e.clientY; armed = true;
-                timer = setTimeout(function () {
-                    if (!armed) return;
-                    openCtx(it);
-                    it.__ctxOpen = true;
-                }, 800);
-            });
-            it.addEventListener('pointermove', function (e) {
-                if (!armed) return;
-                if (Math.abs(e.clientX - sx) > 10 || Math.abs(e.clientY - sy) > 10) { cancel(); armed = false; }
-            });
-            it.addEventListener('pointerup', cancel);
-            it.addEventListener('pointercancel', cancel);
-            it.addEventListener('click', function (e) {
-                if (it.__ctxOpen) { e.preventDefault(); e.stopPropagation(); it.__ctxOpen = false; } // 长按弹出后松手不跳转
-            });
-            it.addEventListener('dragstart', function (e) { if (it.__ctxOpen) e.preventDefault(); });
-        })(items[p]);
-        document.addEventListener('pointerdown', function (e) {
-            if (ctxEl && !ctxEl.contains(e.target) && !e.target.closest('.zl-dock-item')) closeCtx();
-        });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && ctxEl) closeCtx();
-        });
-
-        /* 液态胶囊定位：只在 transform 上动，64fps 友好 */
-        function placePill(idx, animate) {
-            var el = items[idx];
-            if (!el || !pill) return;
-            var t = animate ? '' : 'none';
-            pill.style.transition = reduced() ? 'none' : t;
-            pill.style.transform = 'translateX(' + (el.offsetLeft + (el.offsetWidth - pill.offsetWidth) / 2) + 'px)';
-        }
-
-        // 跨页水滴滑入：从记忆中的上一项位置滑向当前项（弹回）
-        var last = ls(CFG.pillKey);
-        var curIdx = -1;
-        for (var j = 0; j < items.length; j++) if (items[j].className.indexOf('on') >= 0) curIdx = j;
-        ss(CFG.pillKey, cur > -1 ? cur : 'index.html');
-
-        if (curIdx >= 0) {
-            var lastIdx = -1;
-            for (var k = 0; k < CFG.dockIcons.length; k++) if (CFG.dockIcons[k].f === last) lastIdx = k;
-            if (lastIdx >= 0 && lastIdx !== curIdx) {
-                // 先瞬移到旧位置，下一帧再水滴滴到新位置
-                placePill(lastIdx, false);
-                requestAnimationFrame(function () {
-                    requestAnimationFrame(function () { placePill(curIdx, true); });
-                });
-            } else {
-                placePill(curIdx, false);
-            }
-        }
-    }
-
-    /* ===================== 5. 最近访问记录（V114：Ctrl+K 命令面板已移除） ===================== */
-    /* 最近访问记录：上限 6，最新在前，同页去重 */
-    function recordRecent(f) {
-        if (!f || isSkipPage()) return;
-        var arr = ls(CFG.recentKey) || [];
-        arr = arr.filter(function (x) { return x.f !== f; });
-        var t = f, ic = '📍';
-        if (window.ZL && ZL.PAGES) {
-            for (var p = 0; p < ZL.PAGES.length; p++) if (ZL.PAGES[p].f === f) t = ZL.PAGES[p].t;
-        }
-        for (var d = 0; d < CFG.dockIcons.length; d++) if (CFG.dockIcons[d].f === f) ic = CFG.dockIcons[d].ic;
-        arr.unshift({ f: f, t: t, ic: ic });
-        if (arr.length > 6) arr.length = 6;
-        ss(CFG.recentKey, arr);
-    }
-    function initPalette() {
-        recordRecent(curPage()); // 每次加载记录当前页进最近访问
     }
 
     /* ===================== M2. 鼠标跟随光（柔光 + 边框提亮 + 3D 倾斜，触控等效） ===================== */
@@ -455,8 +264,7 @@
             hideOthers(sec);
             updateThumbs();
             bar.classList.add('show');
-            var dk = document.querySelector('.zl-dock');
-            if (dk) dk.classList.add('zl-dock-hide'); // 放大态收起底部 Dock，避免与缩略条重叠
+            // V119：Dock 已删除，放大态不再需要收起停靠栏
         }
         function closeZoom() {
             if (!zoomed) return;
@@ -466,8 +274,6 @@
             for (var c = 0; c < secs.length; c++) secs[c].classList.remove('zl-zoom-away');
             flipClose(cur, false);
             if (bar) bar.classList.remove('show');
-            var dk = document.querySelector('.zl-dock');
-            if (dk) dk.classList.remove('zl-dock-hide');
         }
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && zoomed) closeZoom();
@@ -657,8 +463,7 @@
             try {
                 injectStyle();
                 if (isSkipPage()) return; // 门禁/授权/离线页不注入 UI
-                initDock();
-                initPalette();
+                /* V119 精简：initDock()/initPalette() 已随停靠栏删除 */
                 initGlow();
                 initFocus();
                 initFilter();
