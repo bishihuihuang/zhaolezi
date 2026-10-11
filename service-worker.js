@@ -115,7 +115,9 @@
 // V123：2026-10-11 首页成就提示横条改为左上角悬浮奖杯入口（index.html 删 .ach-widget CSS/HTML/renderAchWidget()，加 .ach-trophy 悬浮按钮+解锁数角标，点击跳 38.html 成就中心）
 // V124：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
 // V125：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v125';
+// V126：2026-10-11 右上角刷新按键（zl-glass.js 新增 initRefresh()：🔄 按钮+Toast，混合策略=SW 更新检查+抽样比对 5 关键资源，30 分钟节流，进页默认静默跑一次）
+// V127：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v127';
 const ASSETS = [
   './',
   './index.html',

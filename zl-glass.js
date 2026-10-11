@@ -90,7 +90,26 @@
         'transition:transform .18s,background .2s;text-decoration:none}' +
         '.zl-chip:hover{background:color-mix(in srgb,var(--glow,#667eea) 18%,transparent)}' +
         '.zl-chip:active{transform:scale(.94)}' +
-        '@media (prefers-reduced-motion:reduce){.zl-chip{transition:none !important}}';
+        '@media (prefers-reduced-motion:reduce){.zl-chip{transition:none !important}}' +
+        /* ---------- V125 右上角刷新按键 + Toast ---------- */
+        '.zl-refresh{position:fixed;top:14px;right:14px;z-index:2147483007;display:inline-flex;align-items:center;justify-content:center;' +
+        'width:44px;height:44px;border-radius:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;' +
+        'background:color-mix(in srgb,var(--card,#fff) 62%,transparent);border:1px solid color-mix(in srgb,var(--line,#eee) 45%,transparent);' +
+        'box-shadow:0 6px 20px rgba(0,0,0,.18);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);' +
+        'transition:transform .2s cubic-bezier(.3,1.4,.5,1),background .2s}' +
+        '.zl-refresh .zrf-ic{font-size:20px;line-height:1}' +
+        '.zl-refresh.zrf-loading{pointer-events:none}' +
+        '.zl-refresh.zrf-loading .zrf-ic{display:inline-block;animation:zrfSpin .8s linear infinite}' +
+        '@keyframes zrfSpin{to{transform:rotate(360deg)}}' +
+        '@media (hover:hover) and (pointer:fine){.zl-refresh:hover{transform:scale(1.12);background:color-mix(in srgb,var(--card-2,#fff) 70%,transparent)}}' +
+        '.zl-refresh:active{transform:scale(.92)}' +
+        '.zl-rf-toast{position:fixed;top:68px;right:14px;z-index:2147483008;padding:8px 14px;border-radius:12px;font-size:12px;line-height:1.4;' +
+        'color:var(--txt,#333);background:color-mix(in srgb,var(--card,#fff) 78%,transparent);' +
+        'border:1px solid color-mix(in srgb,var(--line,#eee) 50%,transparent);box-shadow:0 8px 24px rgba(0,0,0,.2);' +
+        '-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);' +
+        'opacity:0;transform:translateY(-8px);transition:opacity .28s,transform .28s;pointer-events:none;max-width:220px}' +
+        '.zl-rf-toast.zrf-show{opacity:1;transform:translateY(0)}' +
+        '@media (prefers-reduced-motion:reduce){.zl-refresh,.zl-refresh .zrf-ic,.zl-rf-toast{transition:none !important;animation:none !important}}';
 
     function injectStyle() {
         try {
@@ -456,9 +475,135 @@
         }, 5000);
     }
 
+    /* ===================== V125 右上角刷新按键 ===================== */
+    /* 节流：30 分钟一次（对应 CDN max-age=600 + 留余量） */
+    var RF_KEY = 'zl_rf_ts';
+    var RF_INTERVAL = 30 * 60 * 1000;
+    /* 抽样比对的关键资源（覆盖 JS 链 + 全站样式） */
+    var RF_ASSETS = ['common.css', 'common.js', 'theme.js', 'zl-features.js', 'zl-glass.js'];
+
+    function rfToast(msg, ms) {
+        var t = document.getElementById('zlRfToast');
+        if (!t) {
+            t = document.createElement('div');
+            t.id = 'zlRfToast';
+            t.className = 'zl-rf-toast';
+            document.body.appendChild(t);
+        }
+        t.textContent = msg;
+        t.classList.add('zrf-show');
+        clearTimeout(t._t);
+        t._t = setTimeout(function () { t.classList.remove('zrf-show'); }, ms || 2800);
+    }
+
+    /* 抽样比对关键资源：网络版 vs 缓存版，不同则覆盖缓存条目 */
+    function rfCheckAssets() {
+        if (!('caches' in window)) return Promise.resolve(0);
+        var cb = Date.now();
+        var pfx = (window.ZL && ZL.assetPrefix) || '';
+        return caches.keys()
+            .then(function (keys) {
+                if (!keys.length) return Promise.resolve(0);
+                var cn = keys[keys.length - 1];
+                return caches.open(cn).then(function (cache) {
+                    return Promise.all(RF_ASSETS.map(function (a) {
+                        var url = pfx + a;
+                        return cache.match(url)
+                            .then(function (cached) {
+                                if (!cached) return 0;
+                                return fetch(url + '?cb=' + cb, { cache: 'no-store' })
+                                    .then(function (net) {
+                                        if (!net || net.status !== 200) return 0;
+                                        return Promise.all([cached.arrayBuffer(), net.arrayBuffer()])
+                                            .then(function (b) {
+                                                var o = new Uint8Array(b[0]), n = new Uint8Array(b[1]);
+                                                if (o.length === n.length) {
+                                                    var same = true;
+                                                    for (var i = 0; i < o.length; i++) if (o[i] !== n[i]) { same = false; break; }
+                                                    if (same) return 0;
+                                                }
+                                                var fresh = new Response(b[1], { status: net.status, statusText: net.statusText, headers: net.headers });
+                                                return cache.put(url, fresh)
+                                                    .then(function () { return cache.delete(url + '?cb=' + cb); })
+                                                    .then(function () { return 1; });
+                                            });
+                                    })
+                                    .catch(function () { return 0; });
+                            });
+                    })).then(function (r) { return r.reduce(function (a, v) { return a + v; }, 0); });
+                });
+            })
+            .catch(function () { return 0; });
+    }
+
+    /* 核心：检查 SW 新版本 → 抽样比对资源 → 报告 */
+    function rfCheck(silent) {
+        var btn = document.getElementById('zlRfBtn');
+        if (btn) btn.classList.add('zrf-loading');
+        var done = function () {
+            if (btn) btn.classList.remove('zrf-loading');
+            try { localStorage.setItem(RF_KEY, String(Date.now())); } catch (e) {}
+        };
+
+        if (!('serviceWorker' in navigator)) { if (!silent) rfToast('当前浏览器不支持 Service Worker'); done(); return Promise.resolve(); }
+
+        var p = navigator.serviceWorker.ready
+            .then(function (reg) {
+                return reg.update().then(function () {
+                    var inst = reg.installing;
+                    if (inst && inst !== reg.waiting && inst !== reg.active) {
+                        return new Promise(function (res) {
+                            inst.addEventListener('statechange', function onS() {
+                                if (inst.state === 'installed') {
+                                    inst.removeEventListener('statechange', onS);
+                                    if (navigator.serviceWorker.controller && inst !== reg.active) {
+                                        inst.addEventListener('controlling', function () { res(true); });
+                                    } else { res(true); }
+                                }
+                            });
+                            setTimeout(function () { res(false); }, 5000);
+                        });
+                    }
+                    return false;
+                });
+            });
+
+        p.then(function (hasNewSW) {
+            if (hasNewSW) { rfToast('发现新版本，正在更新…'); setTimeout(function () { location.reload(); }, 1200); done(); return; }
+            rfCheckAssets().then(function (n) {
+                if (n > 0) { rfToast('已更新 ' + n + ' 项'); if (!silent) setTimeout(function () { location.reload(); }, 1500); }
+                else if (!silent) rfToast('已是最新');
+                done();
+            }).catch(function () { if (!silent) rfToast('检查失败'); done(); });
+        }).catch(function () { if (!silent) rfToast('检查失败'); done(); });
+        return p;
+    }
+
+    function initRefresh() {
+        var btn = document.createElement('div');
+        btn.id = 'zlRfBtn';
+        btn.className = 'zl-refresh';
+        btn.setAttribute('role', 'button');
+        btn.setAttribute('tabindex', '0');
+        btn.setAttribute('aria-label', '刷新缓存');
+        btn.setAttribute('title', '全面比旧缓存，自动刷新有修改的地方');
+        btn.innerHTML = '<span class="zrf-ic">🔄</span>';
+        btn.addEventListener('click', function () { rfCheck(false); });
+        btn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); rfCheck(false); } });
+        document.body.appendChild(btn);
+
+        /* 进页默认跑一次（节流：30 分钟内不重复） */
+        try {
+            var last = parseInt(localStorage.getItem(RF_KEY) || '0', 10);
+            if (Date.now() - last > RF_INTERVAL) {
+                setTimeout(function () { rfCheck(true); }, 1500);
+            }
+        } catch (e) {}
+    }
+
     /* ===================== 挂载器 ===================== */
     ZL.glass = {
-        version: '2.3.2',
+        version: '2.3.3',
         init: function () {
             try {
                 injectStyle();
@@ -467,6 +612,7 @@
                 initGlow();
                 initFocus();
                 initFilter();
+                initRefresh(); /* V125：右上角刷新按键 + 进页自动检查 */
             } catch (e) {}
         }
     };
