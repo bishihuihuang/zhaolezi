@@ -65,6 +65,7 @@ service-worker.js / manifest.json ← PWA
 · 改了 41/42 等页面，线上看 pages\41.html（不是根目录）
 · 升级/大改看 .zcode\交接报告_V2.3.3.md
 · **SW 缓存策略（V117 起）**：`service-worker.js` 里 HTML 导航 + JS 脚本走网络优先，CSS/图片/音频等其他静态资源走缓存优先。JS 是版本敏感代码，走缓存优先会导致"发版后 SW 缓存里旧 JS 拦截新 JS，用户强刷无效"（V116 前踩过这个坑）。CACHE_NAME 每次构建自动 +1；如需手工介入，先手 bump 一次再跑混淆工具，工具再自动 +1。
+· **V120 停靠栏移除**：`zl-glass.js` 里底部玻璃停靠栏（`.zl-dock`）已整块删除——`initDock()` 函数、`.zl-dock`/`.zl-dock-item`/`.zl-pill`/`.zl-dock-hide`/`.zl-ctx` CSS、`zlBreathe` 呼吸动画、`ls`/`ss` 辅助函数、放大态收起 Dock 逻辑全部清零。CFG 只保留 `skipPages`（供 `isSkipPage()` 判断门禁页）。M2 鼠标光效、M3 模块放大+水滴筛选+汇总指标不受影响。
 · **线上部署验证**：GitHub Pages 用 Fastly CDN，静态资源 `Cache-Control: max-age=600`（10 分钟）。推送后立刻 curl 可能拿到 CDN 缓存的旧文件；等 10 分钟或用 `?v=随机数` 绕过。
 
 ---
