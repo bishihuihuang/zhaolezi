@@ -114,7 +114,8 @@
 // V122：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
 // V123：2026-10-11 首页成就提示横条改为左上角悬浮奖杯入口（index.html 删 .ach-widget CSS/HTML/renderAchWidget()，加 .ach-trophy 悬浮按钮+解锁数角标，点击跳 38.html 成就中心）
 // V124：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v124';
+// V125：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v125';
 const ASSETS = [
   './',
   './index.html',
