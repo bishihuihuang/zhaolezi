@@ -112,7 +112,9 @@
 // V120：2026-10-11 移除底部玻璃停靠栏（zl-glass.js 删 initDock()/recordRecent()/initPalette() + .zl-dock/.zl-dock-item/.zl-pill/.zl-dock-hide/.zl-ctx CSS + ls/ss 辅助函数 + 放大态收起 Dock 逻辑；CFG 只保留 skipPages；保留 M2 光效/M3 放大+筛选+汇总）
 // V121：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
 // V122：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v122';
+// V123：2026-10-11 首页成就提示横条改为左上角悬浮奖杯入口（index.html 删 .ach-widget CSS/HTML/renderAchWidget()，加 .ach-trophy 悬浮按钮+解锁数角标，点击跳 38.html 成就中心）
+// V124：2026-10-11 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v124';
 const ASSETS = [
   './',
   './index.html',
