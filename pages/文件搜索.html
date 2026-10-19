@@ -341,11 +341,11 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
                         handle: entry,
                         type: getFileType(entry.name)
                     });
-                }catch(e){}
+                }catch(e){ /* 单项读取失败时静默：跳过该文件继续扫描 */ }
             }else if(entry.kind === 'directory'){
                 await scanDirectory(entry, fullPath);
             }
-            if((i+1) % 20 === 0) await new Promise(r => setTimeout(r, 0));
+            if((i+1) % 20 === 0) await new Promise(resolve => setTimeout(resolve, 0));
         }
     }
 
@@ -378,9 +378,9 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
             resultCount.textContent = allFiles.length + ' 个';
             return;
         }
-        const matched = allFiles.filter(f =>
-            f.name.toLowerCase().includes(keyword) ||
-            f.path.toLowerCase().includes(keyword)
+        const matched = allFiles.filter(file =>
+            file.name.toLowerCase().includes(keyword) ||
+            file.path.toLowerCase().includes(keyword)
         );
         renderResults(matched, keyword);
         infoMatch.textContent = matched.length;
@@ -402,8 +402,8 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
         }
     });
 
-function escapeHtml(s){
-        return String(s)
+function escapeHtml(text){
+        return String(text)
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
@@ -434,14 +434,14 @@ function escapeHtml(s){
         }
         const display = files.slice(0, 500);
         let html = '';
-        for(const f of display){
+        for(const file of display){
 html += '<div class="result-item">' +
-                '<span class="icon">' + escapeHtml(f.type) + '</span>' +
+                '<span class="icon">' + escapeHtml(file.type) + '</span>' +
                 '<div class="info">' +
-                    '<div class="name">' + highlight(f.name, keyword) + '</div>' +
-                    '<div class="path">' + highlight(f.path, keyword) + '</div>' +
+                    '<div class="name">' + highlight(file.name, keyword) + '</div>' +
+                    '<div class="path">' + highlight(file.path, keyword) + '</div>' +
                 '</div>' +
-                '<span class="size">' + formatSize(f.size) + '</span>' +
+                '<span class="size">' + formatSize(file.size) + '</span>' +
                 '<button class="open-btn">打开</button>' +
             '</div>';
         }

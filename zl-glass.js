@@ -303,7 +303,7 @@
                 if (idx < 0) return;
                 var nxt = e.key === 'ArrowRight' ? (idx + 1) % secs.length : (idx - 1 + secs.length) % secs.length;
                 focusSec(secs[nxt]);
-                if (thumbs[nxt]) { try { thumbs[nxt].scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (err) {} }
+                if (thumbs[nxt]) { try { thumbs[nxt].scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch {} }
             }
         });
         for (i = 0; i < secs.length; i++) (function (sec) {

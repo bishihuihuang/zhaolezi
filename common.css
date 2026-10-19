@@ -82,6 +82,17 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --btn-grad: linear-gradient(135deg, #667eea, #764ba2);
         --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
         --scroll-thumb: linear-gradient(180deg, #667eea, #764ba2);
+        /* ---- V2.4 装饰调色板令牌（M2 收编：全站复制粘贴的装饰色与渐变，集中入口） ---- */
+        --cream: #f6d365;
+        --coral: #fda085;
+        --violet: #a78bfa;
+        --teal: #2dd4bf;
+        --rose: #fb7185;
+        --magenta: #e73c7e;
+        --sunset-grad: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+        --neon-grad: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        --deep-blue-grad: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        --gold-3-grad: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700);
     }
     :root[data-theme="blue"] {
         --bg: #0b0e1a; --bg-dim: linear-gradient(rgba(2,6,16,.18),rgba(2,6,16,.32));

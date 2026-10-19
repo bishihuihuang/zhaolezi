@@ -690,18 +690,18 @@ const announcementsConfig = [
          * 创建返回主页按钮
          * ================================================================ */
         function createBackArea() {
-            const a = document.createElement('a');
-            a.className = 'back-area';
-            a.href = '../index.html';
-            a.textContent = '返回主页';
-            a.setAttribute('aria-label', '返回主页');
-            a.title = '返回主页';
+            const linkEl = document.createElement('a');
+            linkEl.className = 'back-area';
+            linkEl.href = '../index.html';
+            linkEl.textContent = '返回主页';
+            linkEl.setAttribute('aria-label', '返回主页');
+            linkEl.title = '返回主页';
             // 点击事件：阻止默认，显示转场动画后跳转
-            a.addEventListener('click', function(e) {
+            linkEl.addEventListener('click', function(e) {
                 e.preventDefault();
                 showLoadingOverlay('../index.html');
             });
-            return a;
+            return linkEl;
         }
 
         /* ================================================================
@@ -744,7 +744,7 @@ const announcementsConfig = [
             if (wn) grid.appendChild(wn);
 
             // 按日期倒序排列公告
-            const sorted = [...announcementsConfig].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const sorted = [...announcementsConfig].sort((x, y) => new Date(y.date) - new Date(x.date));
 
             // 添加公告卡片（从第3行开始，自动占据后续行）
             sorted.forEach((announcement, index) => {
@@ -763,16 +763,16 @@ const announcementsConfig = [
             head.className = 'wn-head';
             head.textContent = '🆕 新版本更新提醒';
             div.appendChild(head);
-            items.forEach(v => {
+            items.forEach(item => {
                 const it = document.createElement('div');
                 it.className = 'wn-item';
-                const b = document.createElement('b');
-                b.textContent = v.title;
-                const d = document.createElement('div');
-                d.className = 'wn-desc';
-                d.textContent = v.desc;
-                it.appendChild(b);
-                it.appendChild(d);
+                const titleEl = document.createElement('b');
+                titleEl.textContent = item.title;
+                const descEl = document.createElement('div');
+                descEl.className = 'wn-desc';
+                descEl.textContent = item.desc;
+                it.appendChild(titleEl);
+                it.appendChild(descEl);
                 div.appendChild(it);
             });
             const ok = document.createElement('button');

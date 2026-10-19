@@ -228,14 +228,14 @@
         return '找乐子';
     }
     function extractTitle(text){
-        var m = text.match(/<title[^>]*>([^<]+)</title>/i);
+        var m = text.match(/<title[^>]*>([^<]+)<\/title>/i);
         return m ? m[1].trim() : '';
     }
     function cleanTitleForLabel(title, fallback){
         var brands = ['找乐子','现代化·知识学习站','AI 提示词库','AI提示词库','创意引擎','全能文件保存','现代化','创意'];
         var t = title;
         for(var i=0;i<brands.length;i++){ t = t.split(brands[i]).join(' '); }
-        var segs = t.split(/[-|｜·•—–]+|s{2,}/).map(function(s){return s.trim();}).filter(Boolean);
+        var segs = t.split(/[-|｜·•—–]+|\s{2,}/).map(function(s){return s.trim();}).filter(Boolean);
         segs.sort(function(a,b){return b.length - a.length;});
         return segs[0] || fallback;
     }
@@ -245,8 +245,8 @@
         ensureStyle();
         var o = ensureOverlay();
         var labelEl = o.querySelector('.zl-jump-label');
-        var fallback = target.replace(/?.*$/,'').replace(/.html$/,'');
-        if(/(^|/)index.html(?|$)/i.test(target)){
+        var fallback = target.replace(/\?.*$/,'').replace(/\.html$/,'');
+        if(/(^|\/)index\.html(\?|$)/i.test(target)){
             labelEl.textContent = pickBrandForIndex();
         } else {
             labelEl.textContent = '跳转中...';
@@ -269,7 +269,7 @@
         var a = e.target.closest && e.target.closest('a[href]');
         if(a){
             var href = a.getAttribute('href') || '';
-            if(/.(html|htm)(?|$)/i.test(href) && !/^https?:///i.test(href) && !href.startsWith('/') && !href.startsWith('#') && !href.startsWith('mailto:')){
+            if(/\.(html|htm)(\?|$)/i.test(href) && !/^https?:\/\//i.test(href) && !href.startsWith('/') && !href.startsWith('#') && !href.startsWith('mailto:')){
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -281,10 +281,10 @@
         var btn = e.target.closest && e.target.closest('[onclick]');
         if(btn){
             var oc = btn.getAttribute('onclick') || '';
-            var m = oc.match(/(?:location.hrefs*=s*["']([^"']+.html[^"']*)["']|location.replace(s*["']([^"']+.html[^"']*)["']s*)|location.assign(s*["']([^"']+.html[^"']*)["']s*)|window.locations*=s*["']([^"']+.html[^"']*)["'])/i);
+            var m = oc.match(/(?:location\.href\s*=\s*["']([^"']+\.html[^"']*)["']|location\.replace\(\s*["']([^"']+\.html[^"']*)["']\s*\)|location\.assign\(\s*["']([^"']+\.html[^"']*)["']\s*\)|window\.location\s*=\s*["']([^"']+\.html[^"']*)["'])/i);
             if(m){
                 var t = (m[1]||m[2]||m[3]||m[4]||'');
-                if(t && !/^https?:///i.test(t) && !t.startsWith('/')){
+                if(t && !/^https?:\/\//i.test(t) && !t.startsWith('/')){
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
