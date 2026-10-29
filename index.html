@@ -1,858 +1,298 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>找乐子——优质工具库</title>
-    <link rel="icon" href="favicon.ico" sizes="any">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="favicon-48.png">
-    <link rel="canonical" href="https://bishihuihuang.github.io/zhaolezi/">
-    <style>
-        /* ========== 全局重置 ========== */
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>找乐子——优质工具库</title>
+<meta name="description" content="找乐子优质工具库：一站式工具导航，学习、效率、创意、娱乐，22 款实用工具点开即用，免登录。">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://bishihuihuang.github.io/zhaolezi/">
+<meta property="og:title" content="找乐子——优质工具库">
+<meta property="og:description" content="一站式工具导航：学习、效率、创意、娱乐，22 款实用工具点开即用。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23F6D365'/%3E%3Ccircle cx='16' cy='16' r='8' fill='%23181818'/%3E%3C/svg%3E">
+<style>
+/* ============================================================
+   找乐子 · 优质工具库 · 提升版
+   基于 landing-page-design skill 视觉系统（B1-B11）
+   设计方向：深色 flat + 金色 accent（方案 A）
+   ============================================================ */
 
-        body {
-            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
-            min-height: 100vh;
-            background: var(--bg);
-            color: #fff;
-            overflow-x: hidden;
-            position: relative;
-        }
+/* ---------- 设计 token（B2 间距表 / B3 圆角 / B1 字阶） ---------- */
+:root {
+  --bg: #000000;
+  --surface: #181818;
+  --surface-2: #1F1F1F;
+  --line: #272727;
+  --text: #FFFFFF;
+  --text-dim: #9B9B9B;
+  --text-mute: #6E6E6E;
+  --accent: #F6D365;
+  --accent-2: #FDA085;
+  --accent-ink: #181818;
+  --sp-0: 0; --sp-25: 2px; --sp-50: 4px; --sp-75: 8px; --sp-100: 12px;
+  --sp-200: 16px; --sp-300: 24px; --sp-400: 32px; --sp-500: 40px;
+  --sp-600: 48px; --sp-700: 64px; --sp-800: 80px;
+  --r-lg: 16px;      /* 外层 rounded-2xl */
+  --r-md: 8px;       /* 内层 = 16 - 8(gap) = 8 rounded-lg */
+  --r-sm: 4px;       /* 小元素 rounded */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 500ms;      /* 布局/位置变化 */
+  --dur-fast: 300ms; /* 颜色/透明度 hover */
+  --font: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+}
 
-        /* ========== 背景流光层（20秒无缝循环） ========== */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }
+/* ---------- 重置（B1 无连字符、无超粗、系统字体） ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  font-size: 16px;          /* text-base */
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+::selection { background: var(--accent); color: var(--accent-ink); }
 
-        .bg-flow-1 {
-            position: absolute;
-            top: -100%;
-            left: -100%;
-            width: 300%;
-            height: 300%;
-            background: var(--flow-grad);
-            background-size: 400% 400%;
-            animation: flowGradient 20s ease-in-out infinite;
-            will-change: background-position;
-        }
+/* ---------- 焦点可见（B9 可访问性要求） ---------- */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
 
-        .bg-flow-2 {
-            position: absolute;
-            top: -60%;
-            left: -40%;
-            width: 220%;
-            height: 220%;
-            background: radial-gradient(ellipse at 30% 70%,
-                    rgba(255, 140, 100, .35), transparent 50%),
-                radial-gradient(ellipse at 65% 35%,
-                    rgba(120, 180, 255, .3), transparent 45%),
-                radial-gradient(ellipse at 80% 80%,
-                    rgba(220, 130, 250, .25), transparent 40%);
-            animation: flowDrift 20s ease-in-out infinite alternate;
-            will-change: transform;
-        }
+/* ---------- 跳转链接（B10） ---------- */
+.skip-link {
+  position: absolute; left: var(--sp-100); top: -100%;
+  z-index: 99999;
+  background: var(--accent); color: var(--accent-ink);
+  padding: var(--sp-75) var(--sp-200);
+  border-radius: var(--r-md);
+  font-weight: 600; font-size: 14px;
+  transition: top var(--dur) var(--ease);
+}
+.skip-link:focus { top: var(--sp-100); }
 
-        .bg-flow-3 {
-            position: absolute;
-            top: -30%;
-            left: -20%;
-            width: 180%;
-            height: 180%;
-            background: radial-gradient(circle at 50% 50%,
-                    rgba(255, 200, 130, .15), transparent 60%),
-                radial-gradient(circle at 20% 80%,
-                    rgba(80, 220, 200, .2), transparent 50%);
-            animation: flowRotate 20s linear infinite;
-            will-change: transform;
-        }
+/* ---------- 背景：flat 深色 + 静态径向光斑（B4 无渐变背景；只 anim transform/opacity） ---------- */
+.bg-ambient {
+  position: fixed; inset: 0; z-index: 0;
+  overflow: hidden; pointer-events: none;
+  background: var(--bg);
+}
+.glow {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px);
+  opacity: .16;
+  will-change: transform, opacity;
+}
+.glow-1 { width: 520px; height: 520px; top: -140px; left: -120px; background: radial-gradient(circle, #F6D365, transparent 65%); animation: driftA 22s var(--ease) infinite alternate; }
+.glow-2 { width: 460px; height: 460px; top: 30%; right: -160px; background: radial-gradient(circle, #FDA085, transparent 65%); animation: driftB 26s var(--ease) infinite alternate; }
+.glow-3 { width: 400px; height: 400px; bottom: -180px; left: 22%; background: radial-gradient(circle, #667eea, transparent 65%); opacity: .12; animation: driftA 30s var(--ease) infinite alternate-reverse; }
+@keyframes driftA { from { transform: translate3d(0,0,0); } to { transform: translate3d(40px, 30px, 0); } }
+@keyframes driftB { from { transform: translate3d(0,0,0); } to { transform: translate3d(-36px, 24px, 0); } }
 
-        @keyframes flowGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+/* ---------- 头部（B7 导航：悬浮条、半透明、模糊） ---------- */
+.site-header {
+  position: fixed; top: var(--sp-100); left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex; align-items: center; gap: var(--sp-400);
+  max-width: 1440px; width: calc(100% - 48px);
+  padding: var(--sp-100) var(--sp-300);
+  border-radius: var(--r-lg);
+  background: rgba(24, 24, 24, .72);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line);
+}
+.brand { font-size: 20px; font-weight: 700; letter-spacing: .04em; white-space: nowrap; }
+.brand b { color: var(--accent); font-weight: 700; }
+.site-nav { display: flex; gap: var(--sp-200); margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+.site-nav::-webkit-scrollbar { display: none; }
+.site-nav a {
+  font-size: 14px; color: var(--text-dim); padding: var(--sp-50) var(--sp-100);
+  border-radius: var(--r-md); transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.site-nav a:hover { color: var(--text); background: var(--surface-2); }
 
-        @keyframes flowDrift {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-            50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
-            100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
-        }
+/* ---------- 成就奖杯入口（保留，扁平化） ---------- */
+.ach-trophy {
+  position: fixed; top: var(--sp-200); left: var(--sp-200);
+  z-index: 1001;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; border-radius: var(--r-lg);
+  background: var(--surface); border: 1px solid var(--line);
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.ach-trophy:hover { transform: scale(1.08); background: var(--surface-2); }
+.ach-trophy:active { transform: scale(.94); }
+.ach-trophy .at-ic { font-size: 22px; line-height: 1; }
+.ach-trophy .at-badge {
+  position: absolute; bottom: -6px; right: -8px;
+  padding: 1px 6px; border-radius: var(--r-md);
+  background: var(--accent); color: var(--accent-ink);
+  font-size: 11px; font-weight: 700; line-height: 1.3;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
 
-        @keyframes flowRotate {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.08); }
-            100% { transform: rotate(360deg) scale(1); }
-        }
+/* ---------- Hero（B5：标题白→灰渐变、max-width 680px、balance） ---------- */
+main { position: relative; z-index: 1; padding-top: 120px; }
+.hero {
+  max-width: 680px; margin: 0 auto;
+  padding: var(--sp-700) var(--sp-300) var(--sp-600);
+  text-align: center;
+}
+.hero-kicker {
+  font-size: 14px; font-weight: 600; letter-spacing: .18em;
+  color: var(--accent); text-transform: uppercase;
+  margin-bottom: var(--sp-200);
+}
+.hero-title {
+  font-size: 60px; font-weight: 700; line-height: 1.05;
+  letter-spacing: -.01em; text-wrap: balance;
+  background: linear-gradient(90deg, #FFFFFF, #9B9B9B);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.hero-sub {
+  margin: var(--sp-300) auto 0; max-width: 560px;
+  font-size: 20px; line-height: 1.5; color: var(--text-dim);
+  text-wrap: pretty;
+}
+.hero-actions { margin-top: var(--sp-400); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: var(--sp-100) var(--sp-300);
+  font-size: 16px; font-weight: 600; border-radius: var(--r-md);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background var(--dur-fast) var(--ease);
+}
+.btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 24px rgba(246, 211, 101, .18); }
+.btn-primary:hover { background: #FDE08A; box-shadow: 0 12px 32px rgba(246, 211, 101, .28); }
+.btn-primary:active { transform: scale(.98); }
+.hero-proof {
+  margin-top: var(--sp-300); font-size: 14px; color: var(--text-mute);
+  font-variant-numeric: tabular-nums;
+}
 
-        /* ========== 悬浮球（透明、漂浮、旋转） ========== */
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%,
-                    rgba(255, 255, 255, .3),
-                    rgba(255, 255, 255, .1) 50%,
-                    transparent 70%);
-            box-shadow: 0 0 60px rgba(255, 255, 255, .08),
-                inset 0 0 30px rgba(255, 255, 255, .04);
-            pointer-events: none;
-            will-change: transform, opacity;
-        }
+/* ---------- 工具区（分区 + 网格） ---------- */
+.tools-wrap { max-width: 1440px; margin: 0 auto; padding: 0 var(--sp-300) var(--sp-800); }
+.section { margin-bottom: var(--sp-700); scroll-margin-top: 110px; }
+.section-title {
+  display: flex; align-items: center; gap: var(--sp-100);
+  font-size: 24px; font-weight: 700; margin-bottom: var(--sp-300);
+}
+.section-title::before {
+  content: ''; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); flex: none;
+}
+.section-title .count { font-size: 14px; font-weight: 400; color: var(--text-mute); }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--sp-200);
+}
+@supports not (display: grid) {
+  .grid { display: flex; flex-wrap: wrap; gap: var(--sp-200); }
+  .tool-box { flex: 1 1 calc(16.66% - 16px); min-width: 130px; }
+}
 
-        .orb-1 {
-            width: 260px;
-            height: 260px;
-            top: 12%;
-            left: 8%;
-            animation: orbFloatA 18s ease-in-out infinite,
-                orbSpin 40s linear infinite;
-        }
+/* ---------- 工具框（B4 flat 表面、B3 圆角、B9 状态） ---------- */
+.tool-box {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 128px; padding: var(--sp-200) var(--sp-100);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  transition: transform var(--dur) var(--ease), border-color var(--dur-fast) var(--ease), box-shadow var(--dur) var(--ease);
+  will-change: transform;
+}
+.tool-box:hover {
+  transform: translateY(-6px);
+  border-color: rgba(246, 211, 101, .5);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .4), 0 0 0 1px rgba(246, 211, 101, .18);
+}
+.tool-box:active { transform: scale(.97); transition-duration: .1s; }
+.tool-box .tool-icon { font-size: 26px; line-height: 1; margin-bottom: var(--sp-100); }
+.tool-box .tool-title { font-size: 16px; font-weight: 600; text-align: center; line-height: 1.4; }
+.tool-box .tooltip {
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--line);
+  padding: var(--sp-75) var(--sp-100);
+  border-radius: var(--r-md);
+  font-size: 12px; line-height: 1.45; white-space: nowrap;
+  max-width: 260px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), visibility var(--dur-fast);
+  z-index: 9;
+}
+.tool-box:hover .tooltip,
+.tool-box:focus-visible .tooltip { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 
-        .orb-2 {
-            width: 160px;
-            height: 160px;
-            top: 55%;
-            left: 75%;
-            animation: orbFloatB 22s ease-in-out infinite,
-                orbSpin 55s linear infinite;
-        }
+/* ---------- 底部（B10 footer 链接） ---------- */
+.site-footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--line);
+  padding: var(--sp-600) var(--sp-300);
+  text-align: center;
+}
+.site-footer .f-links { display: flex; flex-wrap: wrap; gap: var(--sp-200); justify-content: center; margin-bottom: var(--sp-300); }
+.site-footer .f-links a { font-size: 14px; color: var(--text-dim); transition: color var(--dur-fast) var(--ease); }
+.site-footer .f-links a:hover { color: var(--text); }
+.site-footer .f-copy { font-size: 14px; color: var(--text-mute); }
 
-        .orb-3 {
-            width: 110px;
-            height: 110px;
-            top: 68%;
-            left: 20%;
-            animation: orbFloatA 16s ease-in-out infinite reverse,
-                orbSpin 35s linear infinite;
-        }
+/* ---------- 跳转覆盖层（保留品牌加载动画） ---------- */
+.overlay {
+  position: fixed; inset: 0; z-index: 999999;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, .72);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity var(--dur) var(--ease), visibility var(--dur);
+}
+.overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+.loader-wrap { position: relative; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
+.loader-ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, .12);
+  border-top-color: var(--accent); border-right-color: var(--accent-2);
+  animation: ringSpin .8s linear infinite;
+}
+.loader-ring::before {
+  content: ''; position: absolute; inset: 14px; border-radius: 50%;
+  border: 2px solid transparent; border-bottom-color: #A78BFA; border-left-color: #667EEA;
+  animation: ringSpin 1.4s linear infinite reverse;
+}
+.loader-text { position: relative; z-index: 2; font-size: 22px; font-weight: 700; letter-spacing: .1em; color: var(--accent); }
+@keyframes ringSpin { to { transform: rotate(360deg); } }
 
-        .orb-4 {
-            width: 220px;
-            height: 220px;
-            top: 28%;
-            left: 60%;
-            animation: orbFloatB 20s ease-in-out infinite reverse,
-                orbSpin 50s linear infinite;
-        }
+/* ---------- 响应式（B2/B3 归一，6→4→3→2 列） ---------- */
+@media (max-width: 1280px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 900px)  { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 720px)  {
+  .site-header { width: calc(100% - 32px); gap: var(--sp-200); padding: var(--sp-100) var(--sp-200); }
+  .hero { padding-top: var(--sp-600); }
+  .hero-title { font-size: 40px; }
+  .hero-sub { font-size: 18px; }
+  .tools-wrap { padding: 0 var(--sp-200) var(--sp-600); }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-100); }
+  .tool-box .tooltip { display: none; }
+  .ach-trophy { top: var(--sp-100); left: var(--sp-100); width: 44px; height: 44px; }
+}
+@media (max-width: 400px) { .hero-title { font-size: 32px; } }
 
-        .orb-5 {
-            width: 80px;
-            height: 80px;
-            top: 80%;
-            left: 45%;
-            animation: orbFloatA 14s ease-in-out infinite,
-                orbSpin 30s linear infinite;
-        }
-
-        @keyframes orbFloatA {
-            0% {
-                transform: translate(0, 0) scale(1);
-                opacity: .6;
-            }
-            30% {
-                transform: translate(18px, -22px) scale(1.04);
-                opacity: .8;
-            }
-            60% {
-                transform: translate(-12px, 10px) scale(.96);
-                opacity: .5;
-            }
-            100% {
-                transform: translate(0, 0) scale(1);
-                opacity: .6;
-            }
-        }
-
-        @keyframes orbFloatB {
-            0% {
-                transform: translate(0, 0) scale(1);
-                opacity: .5;
-            }
-            35% {
-                transform: translate(-20px, 12px) scale(1.06);
-                opacity: .7;
-            }
-            70% {
-                transform: translate(14px, -15px) scale(.94);
-                opacity: .4;
-            }
-            100% {
-                transform: translate(0, 0) scale(1);
-                opacity: .5;
-            }
-        }
-
-        @keyframes orbSpin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ========== 头部 ========== */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            text-align: center;
-            padding: 18px 20px;
-            background: linear-gradient(180deg,
-                    rgba(8, 10, 30, .9),
-                    rgba(10, 14, 39, .5),
-                    transparent);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(255, 255, 255, .06);
-            box-shadow: 0 4px 40px rgba(0, 0, 0, .3);
-        }
-
-        header h1 {
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: 5px;
-            background: linear-gradient(90deg,
-                    #f6d365, #fda085, #f6d365,
-                    #fda085, #f6d365);
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: textShine 3s linear infinite;
-            display: inline-block;
-            text-shadow: 0 0 30px rgba(246, 211, 101, .3);
-        }
-
-        @keyframes textShine {
-            0% {
-                background-position: 0% 50%;
-            }
-            100% {
-                background-position: 200% 50%;
-            }
-        }
-
-        /* ========== 主体布局 ========== */
-        main {
-            padding-top: 100px;
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-bottom: 50px;
-        }
-
-        /* ========== 白色容器（80%宽，可滚动） ========== */
-        .container {
-            width: 80%;
-            max-width: 1440px;
-            background: var(--card);
-            border-radius: 24px;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, .35),
-                0 0 0 1px rgba(255, 255, 255, .3),
-                inset 0 1px 0 rgba(255, 255, 255, .6);
-            max-height: calc(100vh - 130px);
-            overflow-y: auto;
-            padding: 20px;
-            scroll-behavior: smooth;
-        }
-
-        .container::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .container::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, .04);
-            border-radius: 12px;
-        }
-
-        .container::-webkit-scrollbar-thumb {
-            background: var(--scroll-thumb);
-            border-radius: 12px;
-            border: 2px solid rgba(255, 255, 255, .4);
-        }
-
-        /* ========== 网格布局（6列） ========== */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 12px;
-            padding: 6px;
-        }
-
-        /* 回退：不支持 grid 时使用 flex（兼容旧浏览器） */
-        @supports not (display: grid) {
-            .grid {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 12px;
-            }
-            .title-area {
-                flex: 1 1 100%;
-                min-height: 100px;
-            }
-            .back-area {
-                flex: 1 1 100%;
-                min-height: 80px;
-            }
-            .tool-box {
-                flex: 1 1 calc(16.66% - 12px);
-                min-width: 120px;
-            }
-        }
-
-        /* ========== 标题区域（前2行前4列） ========== */
-        .title-area {
-            grid-column: 1 / 5;
-            grid-row: 1 / 3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg,
-                    #101430, #1a1a4e, #2d1b69, #1a1a4e);
-            background-size: 300% 300%;
-            border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(20, 15, 80, .45),
-                inset 0 1px 0 rgba(255, 255, 255, .12);
-            position: relative;
-            overflow: hidden;
-            cursor: default;
-            transition: transform .4s cubic-bezier(.34, 1.56, .64, 1),
-                box-shadow .4s ease;
-        }
-
-        .title-area:hover {
-            transform: translateY(-6px) scale(1.01);
-            box-shadow: 0 18px 60px rgba(30, 25, 100, .5),
-                0 0 50px rgba(102, 126, 234, .25);
-        }
-
-        .title-area:active {
-            transform: translateY(-2px) scale(.98);
-            transition-duration: .1s;
-        }
-
-        .title-area h2 {
-            font-size: 46px;
-            font-weight: 900;
-            text-align: center;
-            line-height: 1.3;
-            letter-spacing: 5px;
-            background: linear-gradient(90deg,
-                    #f6d365, #ffffff, #a78bfa, #f6d365);
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: titleShine 4s ease-in-out infinite;
-        }
-
-        .title-area::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg,
-                    transparent 30%,
-                    rgba(255, 255, 255, .12) 50%,
-                    transparent 70%);
-            animation: titleSweep 5s ease-in-out infinite;
-        }
-
-        @keyframes titleShine {
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        @keyframes titleSweep {
-            0% {
-                transform: translateX(-60%) rotate(0deg);
-            }
-            100% {
-                transform: translateX(60%) rotate(0deg);
-            }
-        }
-
-        /* ========== 工具框（超链接格子） ========== */
-        .tool-box {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 112px;
-            height: 112px;
-            border-radius: 14px;
-            padding: 12px 8px;
-            text-decoration: none;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, .18),
-                inset 0 1px 0 rgba(255, 255, 255, .15);
-            transition: transform .35s cubic-bezier(.34, 1.56, .64, 1),
-                box-shadow .35s ease;
-            cursor: pointer;
-            will-change: transform;
-            overflow: hidden;
-            isolation: isolate;
-        }
-
-        .tool-box::before {
-            content: '';
-            position: absolute;
-            top: -80%;
-            left: -80%;
-            width: 260%;
-            height: 260%;
-            background: linear-gradient(45deg,
-                    transparent 40%,
-                    rgba(255, 255, 255, .18) 50%,
-                    transparent 60%);
-            transform: rotate(45deg) translateX(-100%);
-            transition: transform .6s ease;
-            z-index: 0;
-        }
-
-        .tool-box:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 14px 35px rgba(0, 0, 0, .25),
-                0 0 40px rgba(120, 150, 255, .2);
-        }
-
-        .tool-box:hover::before {
-            transform: rotate(45deg) translateX(100%);
-        }
-
-        .tool-box:active {
-            transform: translateY(-2px) scale(.94);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
-            transition-duration: .1s;
-        }
-
-        /* 工具框颜色变体 */
-        .color-0 {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-        }
-
-        .color-1 {
-            background: linear-gradient(135deg, #6d28d9, #a78bfa);
-        }
-
-        .color-2 {
-            background: linear-gradient(135deg, #0f766e, #2dd4bf);
-        }
-
-        .color-3 {
-            background: linear-gradient(135deg, #b45309, #fbbf24);
-        }
-
-        .color-4 {
-            background: linear-gradient(135deg, #be123c, #fb7185);
-        }
-
-        /* 工具框内容 */
-        .tool-box .tool-icon {
-            font-size: 24px;
-            line-height: 1;
-            margin-bottom: 6px;
-            position: relative;
-            z-index: 2;
-            display: block;
-        }
-
-        .tool-box .tool-icon:empty {
-            display: none;
-        }
-
-        .tool-box .tool-title {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            text-align: center;
-            line-height: 1.4;
-            font-size: 14px;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, .2);
-            word-break: normal;
-            overflow-wrap: anywhere;
-            -webkit-line-break: after-white-space;
-            line-break: strict;
-            min-height: 2.8em;
-        }
-
-        /* ========== 悬停浮窗（tooltip） ========== */
-        .tool-box .tooltip {
-            position: absolute;
-            bottom: calc(100% + 10px);
-            left: 50%;
-            transform: translateX(-50%) translateY(8px) scale(.9);
-            background: rgba(15, 18, 40, .95);
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 12px;
-            font-size: 12px;
-            line-height: 1.4;
-            white-space: nowrap;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, .4),
-                0 0 0 1px rgba(255, 255, 255, .1);
-            pointer-events: none;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity .3s ease, transform .3s ease, visibility .3s;
-            z-index: 9999;
-        }
-
-        .tool-box .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: rgba(15, 18, 40, .95);
-        }
-
-        .tool-box:hover .tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0) scale(1);
-        }
-
-        /* ========== 跳转覆盖层 ========== */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 999999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(8, 10, 25, .72);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity .4s ease, visibility .4s ease;
-            pointer-events: none;
-        }
-
-        .overlay.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
-        /* 转圈动画 */
-        .loader-wrap {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .loader-ring {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, .1);
-            border-top-color: #f6d365;
-            border-right-color: #fda085;
-            animation: ringSpin .8s linear infinite;
-            box-sizing: border-box;
-        }
-
-        .loader-ring::before {
-            content: '';
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            right: 12px;
-            bottom: 12px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            border-bottom-color: #a78bfa;
-            border-left-color: #667eea;
-            animation: ringSpin 1.4s linear infinite reverse;
-        }
-
-        .loader-ring::after {
-            content: '';
-            position: absolute;
-            top: 28px;
-            left: 28px;
-            right: 28px;
-            bottom: 28px;
-            border-radius: 50%;
-            border: 1px solid transparent;
-            border-top-color: #fb7185;
-            border-right-color: #2dd4bf;
-            animation: ringSpin 2s linear infinite;
-        }
-
-        .loader-text {
-            position: relative;
-            z-index: 5;
-            font-size: 24px;
-            font-weight: 900;
-            letter-spacing: 4px;
-            background: linear-gradient(90deg,
-                    #f6d365, #fda085, #f6d365);
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: textShine 1.5s linear infinite;
-        }
-
-        @keyframes ringSpin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ========== 响应式适配：平板端（3列） ========== */
-        @media (max-width: 1024px) {
-            .container {
-                width: 92%;
-                padding: 14px;
-            }
-            .grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 10px;
-            }
-            .title-area {
-                grid-column: 1 / -1;
-                grid-row: auto;
-                min-height: 120px;
-            }
-            .title-area h2 {
-                font-size: 32px;
-                letter-spacing: 3px;
-            }
-        }
-
-        /* ========== 响应式适配：手机大屏（3列） ========== */
-        @media (max-width: 768px) {
-            header {
-                padding: 14px 16px;
-            }
-            header h1 {
-                font-size: 20px;
-                letter-spacing: 2px;
-            }
-            main {
-                padding-top: 80px;
-            }
-            .container {
-                width: 94%;
-                max-width: 100%;
-                padding: 12px;
-                max-height: none;
-                border-radius: 18px;
-            }
-            .grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-                padding: 4px;
-            }
-            .title-area {
-                grid-column: 1 / -1;
-                grid-row: auto;
-                min-height: 100px;
-                border-radius: 16px;
-            }
-            .title-area h2 {
-                font-size: 26px;
-                letter-spacing: 2px;
-            }
-            .tool-box {
-                min-height: 96px;
-                height: auto;
-                padding: 10px 6px;
-                border-radius: 12px;
-            }
-            .tool-box .tool-icon {
-                font-size: 22px;
-                margin-bottom: 4px;
-            }
-            .tool-box .tool-title {
-                font-size: 12px;
-                line-height: 1.35;
-                min-height: auto;
-                letter-spacing: 0.5px;
-            }
-            .tool-box .tooltip {
-                display: none;
-            }
-        }
-
-        /* ========== 响应式适配：手机小屏（2列） ========== */
-        @media (max-width: 480px) {
-            header h1 {
-                font-size: 18px;
-                letter-spacing: 1px;
-            }
-            .container {
-                width: 96%;
-                padding: 10px;
-            }
-            .grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-            .title-area {
-                min-height: 90px;
-            }
-            .title-area h2 {
-                font-size: 22px;
-                letter-spacing: 1px;
-            }
-            .tool-box {
-                min-height: 100px;
-                padding: 12px 8px;
-            }
-            .tool-box .tool-icon {
-                font-size: 24px;
-            }
-            .tool-box .tool-title {
-                font-size: 13px;
-                line-height: 1.4;
-            }
-        }
-
-        /* ========== 网格回退：不支持grid的旧浏览器 ========== */
-        @supports not (display: grid) {
-            .grid {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 12px;
-            }
-            .title-area {
-                flex: 1 1 100%;
-                min-height: 100px;
-            }
-            .tool-box {
-                flex: 1 1 calc(16.66% - 12px);
-                min-width: 120px;
-            }
-            @media (max-width: 768px) {
-                .grid {
-                    flex-direction: row;
-                }
-                .tool-box {
-                    flex: 1 1 calc(33.33% - 8px);
-                    min-width: 0;
-                }
-            }
-            @media (max-width: 480px) {
-                .tool-box {
-                    flex: 1 1 calc(50% - 8px);
-                }
-            }
-        }
-    
-        /* 手机端标题换行标签：电脑端隐藏，手机端显示 */
-        .mobile-break {
-            display: none;
-        }
-        @media (max-width: 768px) {
-            .mobile-break {
-                display: block;
-            }
-        }
-
-        /* ========== 成就奖杯入口（V122：左上角悬浮 + 解锁数角标） ========== */
-        .ach-trophy {
-            position: fixed;
-            top: 14px;
-            left: 14px;
-            z-index: 2147483006;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            background: color-mix(in srgb, var(--card, #fff) 62%, transparent);
-            border: 1px solid color-mix(in srgb, var(--line, #eee) 45%, transparent);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, .18);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            text-decoration: none;
-            transition: transform .2s cubic-bezier(.3, 1.4, .5, 1), background .2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .ach-trophy .at-ic {
-            font-size: 22px;
-            line-height: 1;
-        }
-        .ach-trophy .at-badge {
-            position: absolute;
-            bottom: -4px;
-            right: -6px;
-            padding: 1px 5px;
-            border-radius: 8px;
-            background: rgba(140, 109, 255, .92);
-            color: #fff;
-            font-size: 10px;
-            font-weight: 700;
-            line-height: 1.2;
-            font-variant-numeric: tabular-nums;
-            white-space: nowrap;
-            border: 1px solid rgba(255, 255, 255, .35);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
-        }
-        @media (hover: hover) and (pointer: fine) {
-            .ach-trophy:hover {
-                transform: scale(1.12);
-                background: color-mix(in srgb, var(--card-2, #fff) 70%, transparent);
-            }
-        }
-        .ach-trophy:active {
-            transform: scale(.92);
-        }
-        @media (prefers-reduced-motion: reduce) {
-            .ach-trophy { transition: none !important; }
-        }
+/* ---------- 减少动效（B7 尊重 prefers-reduced-motion） ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
 </style>
-
 <script>
 eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
 </script>
@@ -896,47 +336,70 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
 </head>
 <body>
 
-    <!-- 成就奖杯入口（V122）：左上角悬浮，点击跳成就中心 -->
-    <a class="ach-trophy" id="achTrophy" href="pages/38.html" aria-label="成就中心" title="成就中心">
-        <span class="at-ic">🏆</span>
-        <span class="at-badge" id="awBadge">0/93</span>
-    </a>
+<a class="skip-link" href="#main">跳到主要内容</a>
 
-    <!-- 背景流光层 -->
-    <div class="bg-animation">
-        <div class="bg-flow-1"></div>
-        <div class="bg-flow-2"></div>
-        <div class="bg-flow-3"></div>
-        <!-- 悬浮球 -->
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-        <div class="orb orb-5"></div>
+<!-- 成就奖杯入口（保留，跳转线上成就中心） -->
+<a class="ach-trophy" id="achTrophy" href="https://bishihuihuang.github.io/zhaolezi/38.html" aria-label="成就中心" title="成就中心">
+  <span class="at-ic">🏆</span>
+  <span class="at-badge" id="awBadge">0/93</span>
+</a>
+
+<!-- 背景光斑（flat 深色，仅 transform/opacity 动效） -->
+<div class="bg-ambient" aria-hidden="true">
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <div class="glow glow-3"></div>
+</div>
+
+<!-- 头部 -->
+<header class="site-header">
+  <div class="brand">找<b>乐子</b></div>
+  <nav class="site-nav" aria-label="分区导航">
+    <a href="#sec-hot">热门</a>
+    <a href="#sec-study">学习</a>
+    <a href="#sec-work">效率</a>
+    <a href="#sec-fun">娱乐</a>
+    <a href="#sec-more">更多</a>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- Hero -->
+  <section class="hero" aria-label="介绍">
+    <p class="hero-kicker">优质工具库</p>
+    <h1 class="hero-title">找乐子——优质工具库</h1>
+    <p class="hero-sub">一站式工具导航：学习、效率、创意、娱乐，22 款实用工具点开即用，免登录。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#sec-hot">开始使用</a>
     </div>
+    <p class="hero-proof">22+ 工具 · 5 大分区 · 免登录</p>
+  </section>
 
-    <!-- 头部 -->
-    <header>
-        <h1>找乐子——优质工具库</h1>
-    </header>
+  <!-- 工具区（JS 渲染） -->
+  <div class="tools-wrap" id="tools"></div>
+</main>
 
-    <!-- 主体内容 -->
-    <main>
-        <div class="container">
-            <div class="grid" id="grid"></div>
-        </div>
-    </main>
+<!-- 底部 -->
+<footer class="site-footer">
+  <div class="f-links">
+    <a href="https://bishihuihuang.github.io/zhaolezi/30.html">更新公告</a>
+    <a href="https://bishihuihuang.github.io/zhaolezi/29.html">反馈通道</a>
+    <a href="https://bishihuihuang.github.io/zhaolezi/11.html">一起来赞赏</a>
+    <a href="https://bishihuihuang.github.io/zhaolezi/28.html">免责声明</a>
+  </div>
+  <p class="f-copy">© 2026 找乐子 · 优质工具库 · 免登录使用</p>
+</footer>
 
-    <!-- 跳转覆盖层 -->
-    <div class="overlay" id="overlay">
-        <div class="loader-wrap">
-            <div class="loader-ring"></div>
-            <div class="loader-text">找乐子～</div>
-        </div>
-    </div>
+<!-- 跳转覆盖层 -->
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="loader-wrap">
+    <div class="loader-ring"></div>
+    <div class="loader-text">找乐子～</div>
+  </div>
+</div>
 
-    <script>
-eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("CiAgICAgICAgLyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogICAgICAgICAqIOW3peWFt+mFjee9ruaVsOe7hO+8iOWQjuacn+aJqeWxle+8iQogICAgICAgICAqID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8KICAgICAgICBjb25zdCB0b29sc0NvbmZpZyA9IFsKICB7CiAgICAgICAgICAgICAgICB0aXRsZTogJ+KAlOKAlOaJvuS5kOWtkCDvvIjng63pl6jvvInigJTigJRBSeaPkOekuuivjScsCiAgICAgICAgICAgICAgICBkZXNjOiAn5YWo6Z2i55qEQUnmj5DnpLror43nvZHpobUnLAogICAgICAgICAgICAgICAgbGluazogJ2h0dHBzOi8vYmlzaGlodWlodWFuZy5naXRodWIuaW8vYWktcHJvbXB0cy8nLAogICAgICAgICAgICAgICAgaWNvbjogJ/CfkqwnCiAgICAgICAgICAgIH0sCiB7CiAgICAgICAgICAgICAgICB0aXRsZTogJ+KAlOKAlOaJvuS5kOWtkO+8iOivvueoi++8ieKAlOKAlOeOsOS7o+WMlicsCiAgICAgICAgICAgICAgICBkZXNjOiAn5Li65oKo55qE5Yib5oSP5bim5p2l54G15oSfJywKICAgICAgICAgICAgICAgIGxpbms6ICdodHRwczovL2Jpc2hpaHVpaHVhbmcuZ2l0aHViLmlvL3hpYW5kYWlodWEvJywKICAgICAgICAgICAgICAgIGljb246ICfwn46TJwogICAgICAgICAgICB9LAogewogICAgICAgICAgICAgICAgdGl0bGU6ICfigJTigJTmib7kuZDlrZDvvIjliJvmhI/vvIkg4oCU4oCU54G15oSf5Yib5oSP5Lit5b+DJywKICAgICAgICAgICAgICAgIGRlc2M6ICfkuLrmgqjnmoTliJvmhI/luKbmnaXngbXmhJ8nLAogICAgICAgICAgICAgICAgbGluazogJ2h0dHBzOi8vYmlzaGlodWlodWFuZy5naXRodWIuaW8vY3JlYXRpdml0eS8nLAogICAgICAgICAgICAgICAgaWNvbjogJ/CfjqgnCiAgICAgICAgICAgIH0sCiAgewogICAgICAgICAgICAgICAgdGl0bGU6ICfigJTigJTmib7kuZDlrZDvvIjln7rnoYDvvIkg4oCU4oCU5YWo6IO95paH5Lu25L+d5a2YJywKICAgICAgICAgICAgICAgIGRlc2M6ICflnKjnvZHpobXkuK3kv53lrZjkvaDnmoTmlofku7YnLAogICAgICAgICAgICAgICAgbGluazogJ2h0dHBzOi8vYmlzaGlodWlodWFuZy5naXRodWIuaW8vYWxsLWZpbGUtc2F2ZXIvJywKICAgICAgICAgICAgICAgIGljb246ICfwn5K+JwogICAgICAgICAgICB9LAoKCgogewogICAgICAgICAgICAgICAgdGl0bGU6ICfigJTigJTigJTigJTmib7kuZDlrZAg4oCU4oCU4oCU4oCU572R6aG15aSH5b+Y5b2VJywKICAgICAgICAgICAgICAgIGRlc2M6ICfnu5nkuojmgqjmg7Pkv53nlZnnmoTnvZHlnYDkvZzlv6vmjbfmiZPlvIDmlrnlvI8nLAogICAgICAgICAgICAgICAgbGluazogJzE5Lmh0bWwnLAogICAgICAgICAgICAgICAgaWNvbjogJ/Cfk50nCiAgICAgICAgICAgIH0sCiB7CiAgICAgICAgICAgICAgICB0aXRsZTogJ+KAlOKAlOKAlOKAlOaJvuS5kOWtkOKAlOKAlOKAlOKAlOS6jOe7tOeggeeUn+aIkOWZqCcsCiAgICAgICAgICAgICAgICBkZXNjOiAn5YWo6Ieq5Yqo55Sf5oiQ5LqM57u056CB56CBJywKICAgICAgICAgICAgICAgIGxpbms6ICcyNi5odG1sJywKICAgICAgICAgICAgICAgIGljb246ICfwn5SyJwogICAgICAgICAgICB9LCAgICAKIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU4oCU5om+5LmQ5a2QIOKAlOKAlOKAlOKAlOWoseS5kOa4uOaIjycsCiAgICAgICAgICAgICAgICBkZXNjOiAn5aSa56eN5aW9546p55qE5aix5LmQ5ri45oiPJywKICAgICAgICAgICAgICAgIGxpbms6ICczMS5odG1sJywKICAgICAgICAgICAgICAgIGljb246ICfwn46uJwogICAgICAgICAgICB9LCAgIAogICAgIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU4oCU5om+5LmQ5a2Q4oCU4oCU4oCU4oCU5LyY6LSo5bel5YW3566xJywKICAgICAgICAgICAgICAgIGRlc2M6ICflt6XlhbflkIjpm4blhaXlj6MnLAogICAgICAgICAgICAgICAgbGluazogJzMyLmh0bWwnLAogICAgICAgICAgICAgICAgaWNvbjogJ/Cfp60nCiAgICAgICAgICAgIH0sCiB7CiAgICAgICAgICAgICAgICB0aXRsZTogJ+KAlOKAlOKAlOKAlOaJvuS5kOWtkCDigJTigJTigJTigJTnrb7liLDCt+aIkOWwseW+veeroOWimScsCiAgICAgICAgICAgICAgICBkZXNjOiAn5q+P5pel562+5Yiw77yM5pS26ZuG5YWo6YOo5oiQ5bCx5b6956ugJywKICAgICAgICAgICAgICAgIGxpbms6ICczOC5odG1sJywKICAgICAgICAgICAgICAgIGljb246ICfwn4+FJwogICAgICAgICAgICB9LAoKIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU4oCU5om+5LmQ5a2QIOKAlOKAlOKAlOKAlOS7iuWkqeeOqeS7gOS5iMK36ZqP5py65LmQ5a2QJywKICAgICAgICAgICAgICAgIGRlc2M6ICfnuqDnu5Pnl4fmlZHmmJ/vvIzkuIDplK7pmo/mnLrlhrPlrprku4rlpKnnjqnku4DkuYgnLAogICAgICAgICAgICAgICAgbGluazogJzMzLmh0bWwnLAogICAgICAgICAgICAgICAgaWNvbjogJ/CfjrAnCiAgICAgICAgICAgIH0sCgogewogICAgICAgICAgICAgICAgdGl0bGU6ICfigJTigJTigJTigJTmib7kuZDlrZAg4oCU4oCU4oCU4oCU55Wq6IyE5LiT5rOowrfnmb3lmarpn7MnLAogICAgICAgICAgICAgICAgZGVzYzogJ+eVquiMhOmSnyvnmb3lmarpn7PvvIzkuJPms6jlrabkuaDlt6XkvZznpZ7lmagnLAogICAgICAgICAgICAgICAgbGluazogJzM1Lmh0bWwnLAogICAgICAgICAgICAgICAgaWNvbjogJ/CfjYUnCiAgICAgICAgICAgIH0sCgoKCiB7CiAgICAgICAgICAgICAgICB0aXRsZTogJ+KAlOKAlOKAlOKAlOaJvuS5kOWtkCDigJTigJTigJTigJTor63pn7PmjqfliLYnLAogICAgICAgICAgICAgICAgZGVzYzogJ+aUtumbhuS9oOeahOmUmemimO+8jOenr+e0r+e7j+mqjCcsCiAgICAgICAgICAgICAgICBsaW5rOiAnNDAuaHRtbCcsCiAgICAgICAgICAgICAgICBpY29uOiAn8J+ToicKICAgICAgICAgICAgfSwgICAKCiB7CiAgICAgICAgICAgICAgICB0aXRsZTogJ+KAlOKAlOKAlOKAlOaJvuS5kOWtkCDigJTigJTigJTigJTplJnpopjmnKwnLAogICAgICAgICAgICAgICAgZGVzYzogJ+eUqOivremfs+aMh+aMpeaJvuS5kOWtkO+8jOivtOaJk+W8gFhY5bCx6Lez6L2sJywKICAgICAgICAgICAgICAgIGxpbms6ICc0My5odG1sJywKICAgICAgICAgICAgICAgIGljb246ICfwn5OaJwogICAgICAgICAgICB9LCAgIAoKIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU4oCU5om+5LmQ5a2QIOKAlOKAlOKAlOKAlOWtpuS5oOS7quihqOebmCcsCiAgICAgICAgICAgICAgICBkZXNjOiAn5a2m5Lmg5Luq6KGo55uYJywKICAgICAgICAgICAgICAgIGxpbms6ICc0NC5odG1sJywKICAgICAgICAgICAgICAgIGljb246ICfwn5OKJwogICAgICAgICAgICB9LCAgIAoKIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU4oCU5om+5LmQ5a2QIOKAlOKAlOKAlOKAlOefpeivhuWbvuiwsScsCiAgICAgICAgICAgICAgICBkZXNjOiAn5a2m5Lmg6LWE5paZ55+l6K+G5Zu+6LCxJywKICAgICAgICAgICAgICAgIGxpbms6ICc0NS5odG1sJywKICAgICAgICAgICAgICAgIGljb246ICfwn6egJwogICAgICAgICAgICB9LCAgIAoKICAgICAKCgoKICAgICB7CiAgICAgICAgICAgICAgICB0aXRsZTogJ+KAlOKAlOKAlOKAlOaJvuS5kOWtkOKAlOKAlOKAlOKAlOWcqOe6v+ivjeWFuCcsCiAgICAgICAgICAgICAgICBkZXNjOiAn5p+l6K+N57+76K+R5LiA54K55bCx6YCaJywKICAgICAgICAgICAgICAgIGxpbms6ICcyMy5odG1sJywKICAgICAgICAgICAgICAgIGljb246ICfwn5OVJwogICAgICAgICAgICB9LAogICAgIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU4oCU5om+5LmQ5a2Q4oCU4oCU4oCU4oCU55yL55yL5L2c5LiaJywKICAgICAgICAgICAgICAgIGRlc2M6ICfku4XpmZDlhoXpg6jkurrlkZjkvb/nlKgnLAogICAgICAgICAgICAgICAgbGluazogJ3ZlcmlmeS5odG1sJywKICAgICAgICAgICAgICAgIGljb246ICfinIUnCiAgICAgICAgICAgIH0sCgoKCgogCgogIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU4oCU5om+5LmQ5a2Q4oCU4oCU4oCU4oCU5pu05paw5YWs5ZGKJywKICAgICAgICAgICAgICAgIGRlc2M6ICfmm7TmlrDlhazlkYonLAogICAgICAgICAgICAgICAgbGluazogJzMwLmh0bWwnLAogICAgICAgICAgICAgICAgaWNvbjogJ/CflJQnCiAgICAgICAgICAgIH0sCgogIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU4oCU5om+5LmQ5a2Q4oCU4oCU4oCU4oCU5Y+N6aaI6YCa6YGTJywKICAgICAgICAgICAgICAgIGRlc2M6ICfnu5nkuojkvZzogIXkuIDkupvlj43ppognLAogICAgICAgICAgICAgICAgbGluazogJzI5Lmh0bWwnLAogICAgICAgICAgICAgICAgaWNvbjogJ/Cfk64nCiAgICAgICAgICAgIH0sCgogIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU5LiA6LW35p2l6LWe6LWP4oCU4oCU4oCU57uZ5LqI5L2c6ICF5LiA54K55pSv5oyBJywKICAgICAgICAgICAgICAgIGRlc2M6ICfnu5nkuojkvZzogIXkuIDngrnmlK/mjIHkuI7liqjlipsnLAogICAgICAgICAgICAgICAgbGluazogJzExLmh0bWwnLAogICAgICAgICAgICAgICAgaWNvbjogJ/CfkpYnCiAgICAgICAgICAgIH0sCiAgewogICAgICAgICAgICAgICAgdGl0bGU6ICfigJTigJTlkI7lj7Dkv67mlLnnqIvluo8g4oCU4oCU77yI5byA5Y+R6ICF5Yqf6IO977yJJywKICAgICAgICAgICAgICAgIGRlc2M6ICflvIDlj5HogIXlip/og73vvIznlKjkuo7kvZzogIXlvIDlj5HnvZHpobUnLAogICAgICAgICAgICAgICAgbGluazogJzEwLmh0bWwnLAogICAgICAgICAgICAgICAgaWNvbjogJ/Cfm6DvuI8nCiAgICAgICAgICAgIH0sCgogICAgIHsKICAgICAgICAgICAgICAgIHRpdGxlOiAn4oCU4oCU4oCU4oCU5om+5LmQ5a2Q4oCU4oCU4oCU4oCU5YWN6LSj5aOw5piOJywKICAgICAgICAgICAgICAgIGRlc2M6ICflhY3otKPlo7DmmI4nLAogICAgICAgICAgICAgICAgbGluazogJzI4Lmh0bWwnLAogICAgICAgICAgICAgICAgaWNvbjogJ+KaoO+4jycKICAgICAgICAgICAgfSwKCgoKCgoKICAgICAgICBdOwoKICAgICAgICAvKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgICAgICAgICog6ZO+5o6l6KeE6IyD5YyW77ya5peg5Y2P6K6u572R5Z2A6Ieq5Yqo6KGl5YWoIGh0dHBzOi8vCiAgICAgICAgICogVjIuMy4z77yaaW5kZXguaHRtbCDnlZnmoLnjgIHkuJrliqHpobXlt7Lov4HlhaUgcGFnZXMv44CC55u45a+56aG16Z2i5paH5Lu257uf5LiA6LWwCiAgICAgICAgICogWkwucmVzb2x2ZSDooaUgcGFnZXMvIOWJjee8gO+8iOmhuuW4pui/h+mXqOemge+8ie+8jOe7neWvuSBVUkwgLyDplJrngrnkv53mjIHljp/moLfjgIIKICAgICAgICAgKiBsaW5rRWwuaHJlZiDkuI4gc2hvd0xvYWRpbmdPdmVybGF5IOS4pOWkhOa2iOi0uemDvee7j+atpOWHveaVsO+8jOWNleeCueaUtuWPo+OAggogICAgICAgICAqID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8KICAgICAgICBmdW5jdGlvbiBub3JtYWxpemVMaW5rKGxpbmspIHsKICAgICAgICAgICAgaWYgKCFsaW5rKSByZXR1cm4gJyMnOwogICAgICAgICAgICBpZiAoL153d3dcLi9pLnRlc3QobGluaykpIHJldHVybiAnaHR0cHM6Ly8nICsgbGluazsKICAgICAgICAgICAgaWYgKC9eW0EtWmEtejAtOV8lXHU0ZTAwLVx1OWZhNVwtXStcLmh0bWwkLy50ZXN0KGxpbmspKSB7CiAgICAgICAgICAgICAgICByZXR1cm4gKHdpbmRvdy5aTCAmJiBaTC5yZXNvbHZlKSA/IFpMLnJlc29sdmUobGluaykgOiAncGFnZXMvJyArIGxpbms7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgcmV0dXJuIGxpbms7CiAgICAgICAgfQoKICAgICAgICAvKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgICAgICAgICog5Yib5bu65Y2V5Liq5bel5YW35qGG77yI5aKe5Yqg5Y+v6K6/6Zeu5oCn5LyY5YyW77yJCiAgICAgICAgICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLwogICAgICAgIGZ1bmN0aW9uIGNyZWF0ZVRvb2xCb3goaW5kZXgpIHsKICAgICAgICAgICAgY29uc3QgbGlua0VsID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnYScpOwogICAgICAgICAgICBsaW5rRWwuY2xhc3NOYW1lID0gJ3Rvb2wtYm94IGNvbG9yLScgKyAoaW5kZXggJSA1KTsKICAgICAgICAgICAgbGlua0VsLmRhdGFzZXQuaW5kZXggPSBpbmRleDsKCiAgICAgICAgICAgIGNvbnN0IGNvbmZpZyA9IHRvb2xzQ29uZmlnW2luZGV4XTsKCiAgICAgICAgICAgIGNvbnN0IGljb25TcGFuID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOwogICAgICAgICAgICBpY29uU3Bhbi5jbGFzc05hbWUgPSAndG9vbC1pY29uJzsKCiAgICAgICAgICAgIGNvbnN0IHRpdGxlU3BhbiA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ3NwYW4nKTsKICAgICAgICAgICAgdGl0bGVTcGFuLmNsYXNzTmFtZSA9ICd0b29sLXRpdGxlJzsKCiAgICAgICAgICAgIGNvbnN0IHRvb2x0aXBTcGFuID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOwogICAgICAgICAgICB0b29sdGlwU3Bhbi5jbGFzc05hbWUgPSAndG9vbHRpcCc7CgogICAgICAgICAgICBpZiAoY29uZmlnICYmIGNvbmZpZy50aXRsZSkgewogICAgICAgICAgICAgICAgaWNvblNwYW4udGV4dENvbnRlbnQgPSBjb25maWcuaWNvbiB8fCAnJzsKICAgICAgICAgICAgICAgIHZhciB0aXRsZVRleHQgPSBjb25maWcudGl0bGU7CiAgICAgICAgICAgICAgICB2YXIgbGFzdERhc2hJZHggPSB0aXRsZVRleHQubGFzdEluZGV4T2YoJ+KAlOKAlCcpOwogICAgICAgICAgICAgICAgaWYgKGxhc3REYXNoSWR4ICE9PSAtMSAmJiBsYXN0RGFzaElkeCArIDIgPCB0aXRsZVRleHQubGVuZ3RoKSB7CiAgICAgICAgICAgICAgICAgICAgdGl0bGVTcGFuLmlubmVySFRNTCA9IHRpdGxlVGV4dC5zdWJzdHJpbmcoMCwgbGFzdERhc2hJZHggKyAyKSArICc8YnIgY2xhc3M9Im1vYmlsZS1icmVhayI+JyArIHRpdGxlVGV4dC5zdWJzdHJpbmcobGFzdERhc2hJZHggKyAyKTsKICAgICAgICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICAgICAgICAgdGl0bGVTcGFuLnRleHRDb250ZW50ID0gdGl0bGVUZXh0OwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgdG9vbHRpcFNwYW4udGV4dENvbnRlbnQgPSBjb25maWcuZGVzYyB8fCAn5pWs6K+35pyf5b6F772eJzsKICAgICAgICAgICAgICAgIGxpbmtFbC5ocmVmID0gbm9ybWFsaXplTGluayhjb25maWcubGluayk7CiAgICAgICAgICAgICAgICAvLyDmt7vliqAgQVJJQSDmoIfnrb7lkowgdGl0bGUg5bGe5oCn5o+Q5Y2H5Y+v6K6/6Zeu5oCnCiAgICAgICAgICAgICAgICBsaW5rRWwuc2V0QXR0cmlidXRlKCdhcmlhLWxhYmVsJywgY29uZmlnLnRpdGxlICsgKGNvbmZpZy5kZXNjID8gJyAtICcgKyBjb25maWcuZGVzYyA6ICcnKSk7CiAgICAgICAgICAgICAgICBsaW5rRWwuc2V0QXR0cmlidXRlKCd0aXRsZScsIGNvbmZpZy5kZXNjIHx8IGNvbmZpZy50aXRsZSk7CiAgICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICAgICBpY29uU3Bhbi50ZXh0Q29udGVudCA9ICcnOwogICAgICAgICAgICAgICAgdGl0bGVTcGFuLnRleHRDb250ZW50ID0gJ+aVrOivt+acn+W+he+9nic7CiAgICAgICAgICAgICAgICB0b29sdGlwU3Bhbi50ZXh0Q29udGVudCA9ICfmlazor7fmnJ/lvoXvvZ4nOwogICAgICAgICAgICAgICAgbGlua0VsLmhyZWYgPSAnIyc7CiAgICAgICAgICAgICAgICBsaW5rRWwuc2V0QXR0cmlidXRlKCdhcmlhLWxhYmVsJywgJ+aVrOivt+acn+W+he+9nicpOwogICAgICAgICAgICAgICAgbGlua0VsLnNldEF0dHJpYnV0ZSgndGl0bGUnLCAn5pWs6K+35pyf5b6F772eJyk7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGxpbmtFbC5hcHBlbmRDaGlsZChpY29uU3Bhbik7CiAgICAgICAgICAgIGxpbmtFbC5hcHBlbmRDaGlsZCh0aXRsZVNwYW4pOwogICAgICAgICAgICBsaW5rRWwuYXBwZW5kQ2hpbGQodG9vbHRpcFNwYW4pOwoKICAgICAgICAgICAgbGlua0VsLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oZSkgewogICAgICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgICAgICAgICAgICAgY29uc3QgdXJsID0gKGNvbmZpZyAmJiBjb25maWcubGluaykgPyBjb25maWcubGluayA6ICcnOwogICAgICAgICAgICAgICAgc2hvd0xvYWRpbmdPdmVybGF5KHVybCk7CiAgICAgICAgICAgIH0pOwoKICAgICAgICAgICAgcmV0dXJuIGxpbmtFbDsKICAgICAgICB9CgogICAgICAgIC8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KICAgICAgICAgKiDmuLLmn5PkuLvlh73mlbAKICAgICAgICAgKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICovCiAgICAgICAgZnVuY3Rpb24gcmVuZGVyVG9vbHMoKSB7CiAgICAgICAgICAgIGNvbnN0IGdyaWQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ3JpZCcpOwogICAgICAgICAgICBncmlkLmlubmVySFRNTCA9ICcnOwoKICAgICAgICAgICAgY29uc3QgdGl0bGVBcmVhID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7CiAgICAgICAgICAgIHRpdGxlQXJlYS5jbGFzc05hbWUgPSAndGl0bGUtYXJlYSc7CiAgICAgICAgICAgIHRpdGxlQXJlYS5pbm5lckhUTUwgPSAnPGgyPuaJvuS5kOWtkOKAlOKAlOS8mOi0qOW3peWFt+W6kzwvaDI+JzsKICAgICAgICAgICAgZ3JpZC5hcHBlbmRDaGlsZCh0aXRsZUFyZWEpOwoKICAgICAgICAgICAgZm9yIChsZXQgaSA9IDA7IGkgPCA0OyBpKyspIHsKICAgICAgICAgICAgICAgIGdyaWQuYXBwZW5kQ2hpbGQoY3JlYXRlVG9vbEJveChpKSk7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGZvciAobGV0IGkgPSA0OyBpIDwgdG9vbHNDb25maWcubGVuZ3RoOyBpKyspIHsKICAgICAgICAgICAgICAgIGdyaWQuYXBwZW5kQ2hpbGQoY3JlYXRlVG9vbEJveChpKSk7CiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIC8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KICAgICAgICAgKiDmiJDlsLHlpZbmna/op5LmoIfvvIhWMTIy77yJ77ya5LuF5Yi35paw5bem5LiK6KeS5oKs5rWu5aWW5p2v5LiK55qE44CM5bey6Kej6ZSBL+aAu+aVsOOAjQogICAgICAgICAqID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8KICAgICAgICBmdW5jdGlvbiB1cGRhdGVBY2hUcm9waHkoKSB7CiAgICAgICAgICAgIHZhciBiYWRnZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhd0JhZGdlJyk7CiAgICAgICAgICAgIGlmICghd2luZG93LlpMIHx8ICFaTC5nZXRUaXRsZSB8fCAhWkwuQUNISUVWRU1FTlRTKSByZXR1cm47CiAgICAgICAgICAgIHZhciB0aXRsZUluZm8gPSBaTC5nZXRUaXRsZSgpOwogICAgICAgICAgICBpZiAoIXRpdGxlSW5mbykgcmV0dXJuOwogICAgICAgICAgICBiYWRnZS50ZXh0Q29udGVudCA9IHRpdGxlSW5mby5jb3VudCArICcvJyArIFpMLkFDSElFVkVNRU5UUy5sZW5ndGg7CiAgICAgICAgfQoKICAgICAgICAvKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgICAgICAgICog6Lez6L2s6KaG55uW5bGC5Yqo55S7CiAgICAgICAgICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLwogICAgICAgIGxldCBvdmVybGF5VGltZXIgPSBudWxsOwoKICAgICAgICBmdW5jdGlvbiBzaG93TG9hZGluZ092ZXJsYXkodXJsKSB7CiAgICAgICAgICAgIGNvbnN0IG92ZXJsYXkgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnb3ZlcmxheScpOwoKICAgICAgICAgICAgb3ZlcmxheS5jbGFzc0xpc3QuYWRkKCdhY3RpdmUnKTsKCiAgICAgICAgICAgIGlmIChvdmVybGF5VGltZXIpIHsKICAgICAgICAgICAgICAgIGNsZWFyVGltZW91dChvdmVybGF5VGltZXIpOwogICAgICAgICAgICB9CgogICAgICAgICAgICBvdmVybGF5VGltZXIgPSBzZXRUaW1lb3V0KCgpID0+IHsKICAgICAgICAgICAgICAgIG92ZXJsYXkuY2xhc3NMaXN0LnJlbW92ZSgnYWN0aXZlJyk7CiAgICAgICAgICAgICAgICBpZiAoIXVybCB8fCB1cmwgPT09ICcjJykgcmV0dXJuOwogICAgICAgICAgICAgICAgY29uc3QgdGFyZ2V0ID0gbm9ybWFsaXplTGluayh1cmwpOwogICAgICAgICAgICAgICAgaWYgKC9eaHR0cHM/OlwvXC8vaS50ZXN0KHRhcmdldCkpIHsKICAgICAgICAgICAgICAgICAgICAvLyDlpJbpg6jnvZHlnYDvvJrmlrDmoIfnrb7pobXmiZPlvIDvvIzkv53nlZnpppbpobUKICAgICAgICAgICAgICAgICAgICB3aW5kb3cubG9jYXRpb24uaHJlZiA9IHRhcmdldDsKICAgICAgICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICAgICAgICAgLy8g5ZCM55uu5b2VIGh0bWwg5paH5Lu277ya5b2T5YmN6aG16Lez6L2sCiAgICAgICAgICAgICAgICAgICAgd2luZG93LmxvY2F0aW9uLmhyZWYgPSB0YXJnZXQ7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0sIDEwMDApOwogICAgICAgIH0KCiAgICAgICAgLyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogICAgICAgICAqIOWIneWni+WMlgogICAgICAgICAqID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8KICAgICAgICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdET01Db250ZW50TG9hZGVkJywgZnVuY3Rpb24oKSB7CiAgICAgICAgICAgIHJlbmRlclRvb2xzKCk7CiAgICAgICAgICAgIHVwZGF0ZUFjaFRyb3BoeSgpOwogICAgICAgICAgICBpZiAod2luZG93LlpMICYmIFpMLm9uKSBaTC5vbignYWNoLnVubG9ja2VkJywgdXBkYXRlQWNoVHJvcGh5KTsKCiAgICAgICAgICAgIHdpbmRvdy5yZWZyZXNoVG9vbHMgPSBmdW5jdGlvbihuZXdDb25maWcpIHsKICAgICAgICAgICAgICAgIGlmIChuZXdDb25maWcgJiYgQXJyYXkuaXNBcnJheShuZXdDb25maWcpKSB7CiAgICAgICAgICAgICAgICAgICAgdG9vbHNDb25maWcubGVuZ3RoID0gMDsKICAgICAgICAgICAgICAgICAgICB0b29sc0NvbmZpZy5wdXNoKC4uLm5ld0NvbmZpZyk7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICByZW5kZXJUb29scygpOwogICAgICAgICAgICB9OwogICAgICAgIH0pOwogICAgCgovKiDoh6rliqjlhajlsYDmjILovb3vvIjkvpvlhoXogZTkuovku7blsZ7mgKfosIPnlKjvvIkgKi8KaWYoISgnbm9ybWFsaXplTGluaycgaW4gd2luZG93KSl3aW5kb3cubm9ybWFsaXplTGluaz1ub3JtYWxpemVMaW5rOwppZighKCdjcmVhdGVUb29sQm94JyBpbiB3aW5kb3cpKXdpbmRvdy5jcmVhdGVUb29sQm94PWNyZWF0ZVRvb2xCb3g7CmlmKCEoJ3JlbmRlclRvb2xzJyBpbiB3aW5kb3cpKXdpbmRvdy5yZW5kZXJUb29scz1yZW5kZXJUb29sczsKaWYoISgndXBkYXRlQWNoVHJvcGh5JyBpbiB3aW5kb3cpKXdpbmRvdy51cGRhdGVBY2hUcm9waHk9dXBkYXRlQWNoVHJvcGh5OwppZighKCdzaG93TG9hZGluZ092ZXJsYXknIGluIHdpbmRvdykpd2luZG93LnNob3dMb2FkaW5nT3ZlcmxheT1zaG93TG9hZGluZ092ZXJsYXk7");
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("Ci8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogICDlt6XlhbfphY3nva7vvIgyMiDmrL4gwrcgNSDliIbljLogwrcg6ZO+5o6l5oyH5ZCR57q/5LiK5Y6f56uZ77yJCiAgIOaPkOWNh+eCue+8muWOuyAi4oCU4oCU4oCU4oCUIiDoo4XppbDliY3nvIDjgIHkv67mraPor63pn7PmjqfliLYv6ZSZ6aKY5pysIGRlc2Mg6ZSZ5L2N44CBCiAgICAgICAgICAg5o+P6L+w5YW35L2T5YyW44CB6ZO+5o6l57ud5a+55YyW77yI6Ieq5YyF5ZCr6JC955uY5ZCO54K55Ye75LuN5Y+v55So77yJCiAgID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLwpjb25zdCBzZWN0aW9ucyA9IFsKICB7CiAgICBpZDogJ3NlYy1ob3QnLCB0aXRsZTogJ+eDremXqOeyvumAiScsCiAgICBpdGVtczogWwogICAgICB7IHQ6ICdBSSDmj5DnpLror40nLCAgICAgICAgZDogJ+WFqOmdoueahCBBSSDmj5DnpLror43nvZHpobXvvIznm7TmjqXlpZfnlKgnLCAgICAgICAgICAgICAgICAgbDogJ2h0dHBzOi8vYmlzaGlodWlodWFuZy5naXRodWIuaW8vYWktcHJvbXB0cy8nLCAgaTogJ/CfkqwnIH0sCiAgICAgIHsgdDogJ+eOsOS7o+WMluivvueoiycsICAgICAgIGQ6ICfnjrDku6PljJbliJvmhI/or77nqIvvvIzmv4Dlj5HngbXmhJ8nLCAgICAgICAgICAgICAgICAgICAgICAgbDogJ2h0dHBzOi8vYmlzaGlodWlodWFuZy5naXRodWIuaW8veGlhbmRhaWh1YS8nLCBpOiAn8J+OkycgfSwKICAgICAgeyB0OiAn54G15oSf5Yib5oSP5Lit5b+DJywgICAgIGQ6ICfliJvmhI/ngbXmhJ/ogZrlkIjvvIzpmo/ml7blj5bnlKgnLCAgICAgICAgICAgICAgICAgICAgICAgICBsOiAnaHR0cHM6Ly9iaXNoaWh1aWh1YW5nLmdpdGh1Yi5pby9jcmVhdGl2aXR5LycsIGk6ICfwn46oJyB9LAogICAgICB7IHQ6ICflhajog73mlofku7bkv53lrZgnLCAgICAgZDogJ+WcqOe9kemhteS4reS/neWtmOS9oOeahOaWh+S7ticsICAgICAgICAgICAgICAgICAgICAgICAgICAgbDogJ2h0dHBzOi8vYmlzaGlodWlodWFuZy5naXRodWIuaW8vYWxsLWZpbGUtc2F2ZXIvJywgaTogJ/Cfkr4nIH0KICAgIF0KICB9LAogIHsKICAgIGlkOiAnc2VjLXN0dWR5JywgdGl0bGU6ICflrabkuaDlt6XlhbcnLAogICAgaXRlbXM6IFsKICAgICAgeyB0OiAn5Zyo57q/6K+N5YW4JywgICAgICAgICBkOiAn5p+l6K+N57+76K+R5LiA54K55bCx6YCaJywgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbDogJzIzLmh0bWwnLCAgaTogJ/Cfk5UnIH0sCiAgICAgIHsgdDogJ+mUmemimOacrCcsICAgICAgICAgICBkOiAn5pS26ZuG5L2g55qE6ZSZ6aKY77yM56ev57Sv57uP6aqMJywgICAgICAgICAgICAgICAgICAgICAgICAgbDogJzQzLmh0bWwnLCAgaTogJ/Cfk5onIH0sCiAgICAgIHsgdDogJ+WtpuS5oOS7quihqOebmCcsICAgICAgIGQ6ICflrabkuaDmlbDmja7lj6/op4bljJbku6rooajnm5gnLCAgICAgICAgICAgICAgICAgICAgICAgICAgIGw6ICc0NC5odG1sJywgIGk6ICfwn5OKJyB9LAogICAgICB7IHQ6ICfnn6Xor4blm77osLEnLCAgICAgICAgIGQ6ICflrabkuaDotYTmlpnnn6Xor4blm77osLEnLCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsOiAnNDUuaHRtbCcsICBpOiAn8J+noCcgfSwKICAgICAgeyB0OiAn55Wq6IyE5LiT5rOoIMK3IOeZveWZqumfsycsIGQ6ICfnlarojITpkp8gKyDnmb3lmarpn7PvvIzkuJPms6jlrabkuaDlt6XkvZwnLCAgICAgICAgICAgICAgICAgbDogJzM1Lmh0bWwnLCAgaTogJ/CfjYUnIH0sCiAgICAgIHsgdDogJ+eci+eci+S9nOS4micsICAgICAgICAgZDogJ+WGhemDqOS4k+eUqO+8jOmqjOivgeWQjuS9v+eUqCcsICAgICAgICAgICAgICAgICAgICAgICAgICAgbDogJ3ZlcmlmeS5odG1sJywgaTogJ+KchScgfQogICAgXQogIH0sCiAgewogICAgaWQ6ICdzZWMtd29yaycsIHRpdGxlOiAn5pWI546H5bel5YW3JywKICAgIGl0ZW1zOiBbCiAgICAgIHsgdDogJ+e9kemhteWkh+W/mOW9lScsICAgICAgIGQ6ICfmlLbol4/nvZHlnYDvvIzkuIDplK7lv6vmjbfmiZPlvIAnLCAgICAgICAgICAgICAgICAgICAgICAgICBsOiAnMTkuaHRtbCcsICBpOiAn8J+TnScgfSwKICAgICAgeyB0OiAn5LqM57u056CB55Sf5oiQ5ZmoJywgICAgIGQ6ICflhajoh6rliqjnlJ/miJDkuoznu7TnoIEnLCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsOiAnMjYuaHRtbCcsICBpOiAn8J+UsicgfSwKICAgICAgeyB0OiAn6K+t6Z+z5o6n5Yi2JywgICAgICAgICBkOiAn55So6K+t6Z+z5oyH5oyl5om+5LmQ5a2Q77yM6K+05omT5byA5Y2z6Lez6L2sJywgICAgICAgICAgICAgICAgIGw6ICc0MC5odG1sJywgIGk6ICfwn5OiJyB9LAogICAgICB7IHQ6ICfkvJjotKjlt6XlhbfnrrEnLCAgICAgICBkOiAn5bel5YW35ZCI6ZuG57uf5LiA5YWl5Y+jJywgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbDogJzMyLmh0bWwnLCAgaTogJ/Cfp60nIH0KICAgIF0KICB9LAogIHsKICAgIGlkOiAnc2VjLWZ1bicsIHRpdGxlOiAn5aix5LmQ5LyR6ZeyJywKICAgIGl0ZW1zOiBbCiAgICAgIHsgdDogJ+WoseS5kOa4uOaIjycsICAgICAgICAgZDogJ+WkmuenjeWlveeOqeeahOWoseS5kOWwj+a4uOaIjycsICAgICAgICAgICAgICAgICAgICAgICAgICAgbDogJzMxLmh0bWwnLCAgaTogJ/Cfjq4nIH0sCiAgICAgIHsgdDogJ+S7iuWkqeeOqeS7gOS5iCDCtyDpmo/mnLrkuZDlrZAnLCBkOiAn57qg57uT55eH5pWR5pif77yM5LiA6ZSu6ZqP5py65Yaz5a6aJywgICAgICAgICAgICAgICAgICBsOiAnMzMuaHRtbCcsICBpOiAn8J+OsCcgfSwKICAgICAgeyB0OiAn562+5YiwIMK3IOaIkOWwseW+veeroOWimScsIGQ6ICfmr4/ml6Xnrb7liLDvvIzpm4bpvZDmiJDlsLHlvr3nq6AnLCAgICAgICAgICAgICAgICAgICAgICAgIGw6ICczOC5odG1sJywgIGk6ICfwn4+FJyB9CiAgICBdCiAgfSwKICB7CiAgICBpZDogJ3NlYy1tb3JlJywgdGl0bGU6ICfmm7TlpJogwrcg56uZ5YqhJywKICAgIGl0ZW1zOiBbCiAgICAgIHsgdDogJ+abtOaWsOWFrOWRiicsICAgICAgICAgZDogJ+aJvuS5kOWtkOabtOaWsOWKqOaAgScsICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbDogJzMwLmh0bWwnLCAgaTogJ/CflJQnIH0sCiAgICAgIHsgdDogJ+WPjemmiOmAmumBkycsICAgICAgICAgZDogJ+WQkeS9nOiAheWPjemmiOW7uuiuricsICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbDogJzI5Lmh0bWwnLCAgaTogJ/Cfk64nIH0sCiAgICAgIHsgdDogJ+S4gOi1t+adpei1nui1jycsICAgICAgIGQ6ICfnu5nkvZzogIXkuIDngrnmlK/mjIHkuI7liqjlipsnLCAgICAgICAgICAgICAgICAgICAgICAgICAgIGw6ICcxMS5odG1sJywgIGk6ICfwn5KWJyB9LAogICAgICB7IHQ6ICflkI7lj7Dkv67mlLnnqIvluo8nLCAgICAgZDogJ+W8gOWPkeiAheWKn+iDve+8jOS7heS9nOiAheS9v+eUqCcsICAgICAgICAgICAgICAgICAgICAgICAgIGw6ICcxMC5odG1sJywgIGk6ICfwn5ug77iPJyB9LAogICAgICB7IHQ6ICflhY3otKPlo7DmmI4nLCAgICAgICAgIGQ6ICfkvb/nlKjliY3or7fpmIXor7vlhY3otKPlo7DmmI4nLCAgICAgICAgICAgICAgICAgICAgICAgICAgIGw6ICcyOC5odG1sJywgIGk6ICfimqDvuI8nIH0KICAgIF0KICB9Cl07CgovKiDpk77mjqXnu53lr7nljJbvvJrlpJbpg6ggVVJMIOWOn+agt++8jOebuOWvuSBodG1sIOihpee6v+S4iuWOn+ermeWJjee8gCAqLwpmdW5jdGlvbiBhYnNVcmwodSkgewogIGlmICghdSkgcmV0dXJuICcjJzsKICBpZiAoL14oaHR0cHM/Oik/XC9cLy9pLnRlc3QodSkpIHJldHVybiB1OwogIHJldHVybiAncGFnZXMvJyArIHU7Cn0KCi8qIOWIm+W7uuWNleS4quW3peWFt+ahhiAqLwpmdW5jdGlvbiBjcmVhdGVUb29sQm94KGl0ZW0pIHsKICBjb25zdCBsaW5rRWwgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdhJyk7CiAgbGlua0VsLmNsYXNzTmFtZSA9ICd0b29sLWJveCc7CiAgbGlua0VsLmhyZWYgPSBhYnNVcmwoaXRlbS5sKTsKCiAgY29uc3QgaWNvbiA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ3NwYW4nKTsKICBpY29uLmNsYXNzTmFtZSA9ICd0b29sLWljb24nOwogIGljb24udGV4dENvbnRlbnQgPSBpdGVtLmkgfHwgJyc7CgogIGNvbnN0IHRpdGxlID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOwogIHRpdGxlLmNsYXNzTmFtZSA9ICd0b29sLXRpdGxlJzsKICB0aXRsZS50ZXh0Q29udGVudCA9IGl0ZW0udDsKCiAgY29uc3QgdGlwID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOwogIHRpcC5jbGFzc05hbWUgPSAndG9vbHRpcCc7CiAgdGlwLnRleHRDb250ZW50ID0gaXRlbS5kIHx8ICfmlazor7fmnJ/lvoUnOwoKICBsaW5rRWwuc2V0QXR0cmlidXRlKCdhcmlhLWxhYmVsJywgaXRlbS50ICsgKGl0ZW0uZCA/ICfvvIwnICsgaXRlbS5kIDogJycpKTsKICBsaW5rRWwudGl0bGUgPSBpdGVtLmQgfHwgaXRlbS50OwoKICBsaW5rRWwuYXBwZW5kQ2hpbGQoaWNvbik7CiAgbGlua0VsLmFwcGVuZENoaWxkKHRpdGxlKTsKICBsaW5rRWwuYXBwZW5kQ2hpbGQodGlwKTsKCiAgbGlua0VsLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKGUpIHsKICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgIHNob3dMb2FkaW5nT3ZlcmxheShhYnNVcmwoaXRlbS5sKSk7CiAgfSk7CiAgcmV0dXJuIGE7Cn0KCi8qIOa4suafk+WIhuWMuiArIOe9keagvCAqLwpmdW5jdGlvbiByZW5kZXJUb29scygpIHsKICBjb25zdCB3cmFwID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Rvb2xzJyk7CiAgd3JhcC5pbm5lckhUTUwgPSAnJzsKICBsZXQgdG90YWwgPSAwOwogIHNlY3Rpb25zLmZvckVhY2goZnVuY3Rpb24gKHNlYykgewogICAgY29uc3Qgc2VjdGlvbiA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ3NlY3Rpb24nKTsKICAgIHNlY3Rpb24uY2xhc3NOYW1lID0gJ3NlY3Rpb24nOwogICAgc2VjdGlvbi5pZCA9IHNlYy5pZDsKICAgIHNlY3Rpb24uc2V0QXR0cmlidXRlKCdhcmlhLWxhYmVsJywgc2VjLnRpdGxlKTsKCiAgICBjb25zdCBoMiA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2gyJyk7CiAgICBoMi5jbGFzc05hbWUgPSAnc2VjdGlvbi10aXRsZSc7CiAgICBoMi50ZXh0Q29udGVudCA9IHNlYy50aXRsZTsKICAgIGNvbnN0IGNvdW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnc3BhbicpOwogICAgY291bnQuY2xhc3NOYW1lID0gJ2NvdW50JzsKICAgIGNvdW50LnRleHRDb250ZW50ID0gJ8K3ICcgKyBzZWMuaXRlbXMubGVuZ3RoICsgJyDmrL4nOwogICAgaDIuYXBwZW5kQ2hpbGQoY291bnQpOwogICAgc2VjdGlvbi5hcHBlbmRDaGlsZChoMik7CgogICAgY29uc3QgZ3JpZCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpOwogICAgZ3JpZC5jbGFzc05hbWUgPSAnZ3JpZCc7CiAgICBzZWMuaXRlbXMuZm9yRWFjaChmdW5jdGlvbiAoaXRlbSkgeyBncmlkLmFwcGVuZENoaWxkKGNyZWF0ZVRvb2xCb3goaXRlbSkpOyB9KTsKICAgIHNlY3Rpb24uYXBwZW5kQ2hpbGQoZ3JpZCk7CiAgICB3cmFwLmFwcGVuZENoaWxkKHNlY3Rpb24pOwogICAgdG90YWwgKz0gc2VjLml0ZW1zLmxlbmd0aDsKICB9KTsKICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcuaGVyby1wcm9vZicpLnRleHRDb250ZW50ID0gdG90YWwgKyAnIOW3peWFtyDCtyAnICsgc2VjdGlvbnMubGVuZ3RoICsgJyDlpKfliIbljLogwrcg5YWN55m75b2VJzsKfQoKLyog5oiQ5bCx5b6956ug77ya5LyY5YWI6K+757q/5LiKIFpM77yI6Iul5rOo5YWl77yJ77yM5ZCm5YiZ5L+d5oyBIDAvOTMgKi8KZnVuY3Rpb24gdXBkYXRlQWNoVHJvcGh5KCkgewogIHZhciBiYWRnZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhd0JhZGdlJyk7CiAgaWYgKCFiYWRnZSkgcmV0dXJuOwogIGlmICh3aW5kb3cuWkwgJiYgWkwuZ2V0VGl0bGUgJiYgWkwuQUNISUVWRU1FTlRTKSB7CiAgICB2YXIgaW5mbyA9IFpMLmdldFRpdGxlKCk7CiAgICBpZiAoaW5mbykgeyBiYWRnZS50ZXh0Q29udGVudCA9IGluZm8uY291bnQgKyAnLycgKyBaTC5BQ0hJRVZFTUVOVFMubGVuZ3RoOyB9CiAgfQp9CgovKiDot7Povazopobnm5blsYIgKi8KdmFyIG92ZXJsYXlUaW1lciA9IG51bGw7CmZ1bmN0aW9uIHNob3dMb2FkaW5nT3ZlcmxheSh1cmwpIHsKICB2YXIgb3ZlcmxheSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdvdmVybGF5Jyk7CiAgb3ZlcmxheS5jbGFzc0xpc3QuYWRkKCdhY3RpdmUnKTsKICBpZiAob3ZlcmxheVRpbWVyKSBjbGVhclRpbWVvdXQob3ZlcmxheVRpbWVyKTsKICBvdmVybGF5VGltZXIgPSBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsKICAgIG92ZXJsYXkuY2xhc3NMaXN0LnJlbW92ZSgnYWN0aXZlJyk7CiAgICBpZiAoIXVybCB8fCB1cmwgPT09ICcjJykgcmV0dXJuOwogICAgd2luZG93LmxvY2F0aW9uLmhyZWYgPSB1cmw7CiAgfSwgMTAwMCk7Cn0KCi8qIOWIneWni+WMliAqLwpkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdET01Db250ZW50TG9hZGVkJywgZnVuY3Rpb24gKCkgewogIHJlbmRlclRvb2xzKCk7CiAgdXBkYXRlQWNoVHJvcGh5KCk7CiAgaWYgKHdpbmRvdy5aTCAmJiBaTC5vbikgWkwub24oJ2FjaC51bmxvY2tlZCcsIHVwZGF0ZUFjaFRyb3BoeSk7Cn0pOwoKCi8qIOiHquWKqOWFqOWxgOaMgui9ve+8iOS+m+WGheiBlOS6i+S7tuWxnuaAp+iwg+eUqO+8iSAqLwppZighKCdhYnNVcmwnIGluIHdpbmRvdykpd2luZG93LmFic1VybD1hYnNVcmw7CmlmKCEoJ2NyZWF0ZVRvb2xCb3gnIGluIHdpbmRvdykpd2luZG93LmNyZWF0ZVRvb2xCb3g9Y3JlYXRlVG9vbEJveDsKaWYoISgncmVuZGVyVG9vbHMnIGluIHdpbmRvdykpd2luZG93LnJlbmRlclRvb2xzPXJlbmRlclRvb2xzOwppZighKCd1cGRhdGVBY2hUcm9waHknIGluIHdpbmRvdykpd2luZG93LnVwZGF0ZUFjaFRyb3BoeT11cGRhdGVBY2hUcm9waHk7CmlmKCEoJ3Nob3dMb2FkaW5nT3ZlcmxheScgaW4gd2luZG93KSl3aW5kb3cuc2hvd0xvYWRpbmdPdmVybGF5PXNob3dMb2FkaW5nT3ZlcmxheTs=");
 </script>
 </body>
 </html>
