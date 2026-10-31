@@ -7,14 +7,14 @@
     var KEY = 'zl_theme';
     var BGB_KEY = 'zl_custom_bg';
     var LUM_KEY = 'zl_custom_bg_lum';   // V126d：背景图平均亮度（0-255），≥150 视为亮图切浅色前景
-    var THEMES = ['dark', 'blue', 'gold', 'light', 'snowsun', 'aurora', 'custom'];
-    var LABELS = { dark: '深色流光', blue: '经典蓝', gold: '鎏金', light: '明亮',
+    var THEMES = ['zhaolezi', 'blue', 'gold', 'light', 'snowsun', 'aurora', 'custom'];
+    var LABELS = { zhaolezi: '找乐子', blue: '经典蓝', gold: '鎏金', light: '明亮',
         snowsun: '雪阳', aurora: '极光', custom: '自定义' };
-    // 兼容旧主题：neon → aurora（最接近），已下架主题自动回退 dark
-    var LEGACY = { neon: 'aurora' };
-    var current = localStorage.getItem(KEY) || 'dark';
+    // 兼容旧主题：neon → aurora，dark（深色流光已下架）→ zhaolezi（同为深色系）
+    var LEGACY = { neon: 'aurora', dark: 'zhaolezi' };
+    var current = localStorage.getItem(KEY) || 'zhaolezi';
     if (LEGACY[current]) current = LEGACY[current];
-    if (THEMES.indexOf(current) < 0) current = 'dark';
+    if (THEMES.indexOf(current) < 0) current = 'zhaolezi';
 
     var panel = null;
 
@@ -50,7 +50,7 @@
     }
 
     function dotBg(t) {
-        if (t === 'dark') return 'linear-gradient(135deg,#0a0e27,#331d6e)';
+        if (t === 'zhaolezi') return 'linear-gradient(135deg,#000000,#F6D365)';
         var prev = document.documentElement.getAttribute('data-theme');
         document.documentElement.setAttribute('data-theme', t);
         var s = getComputedStyle(document.documentElement);

@@ -57,31 +57,32 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
 
 /* ============ V1.4 多主题变量体系（默认深色流光 + 21 主题，源自 AI提示词/全能文件保存） ============ */
     :root {
-        --bg: #0a0e27;
-        --bg-dim: #161a3d;
-        --card: rgba(245, 247, 255, .96);
-        --card-2: #ffffff;
-        --txt: #333333;
-        --dim: #8b93a7;
-        --line: #e8e8e8;
-        --gold: #ff6b6b;
-        --gold-2: #ffd700;
-        --gold-grad: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+        /* V2.4.8 默认主题「找乐子」：对齐首页视觉（纯黑底 + 深卡 + 金橙强调 + 白字），原深色流光已下架 */
+        --bg: #000000;
+        --bg-dim: #181818;
+        --card: rgba(24, 24, 24, .92);
+        --card-2: #1f1f1f;
+        --txt: #ffffff;
+        --dim: #9b9b9b;
+        --line: #272727;
+        --gold: #f6d365;
+        --gold-2: #fda085;
+        --gold-grad: linear-gradient(135deg, #f6d365, #fda085, #f6d365);
         --blue: #667eea;
         --green: #11998e;
         --purple: #764ba2;
-        --red: #ff6b6b;
-        --glow: #667eea;
-        --glow-2: #ffa500;
+        --red: #fb7185;
+        --glow: #f6d365;
+        --glow-2: #fda085;
         --glow-3: #38ef7d;
         --radius: 16px;
-        --shadow: 0 25px 70px rgba(0, 0, 0, .35);
-        --btn-txt: #ffffff;
-        --title-grad: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+        --shadow: 0 25px 70px rgba(0, 0, 0, .55);
+        --btn-txt: #181818;
+        --title-grad: linear-gradient(135deg, #f6d365, #fda085, #f6d365);
         --back-grad: linear-gradient(135deg, #11998e, #38ef7d);
-        --btn-grad: linear-gradient(135deg, #667eea, #764ba2);
-        --flow-grad: linear-gradient(125deg, #0a0e27, #161a3d, #1f1652, #331d6e, #1d1b4b, #0f122f, #241a54);
-        --scroll-thumb: linear-gradient(180deg, #667eea, #764ba2);
+        --btn-grad: linear-gradient(135deg, #f6d365, #fda085);
+        --flow-grad: linear-gradient(125deg, #000000, #181818, #101010, #1f1f1f, #141414, #0d0d0d, #181818);
+        --scroll-thumb: linear-gradient(180deg, #f6d365, #fda085);
         /* ---- V2.4 装饰调色板令牌（M2 收编：全站复制粘贴的装饰色与渐变，集中入口） ---- */
         --cream: #f6d365;
         --coral: #fda085;
@@ -317,7 +318,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
 /* ============ V1.4 主题面板样式 ============ */
 
 /* V1.4.3 非深色流光主题：背景图片 = 顶部光晕 + 纹理图案（源自 AI提示词） */
-:root[data-theme]:not([data-theme="dark"]) .bg-flow-1 {
+:root[data-theme]:not([data-theme="dark"]):not([data-theme="zhaolezi"]) .bg-flow-1 {
     background-image: var(--bg-image), var(--bg-dim, transparent), var(--bg-glow), var(--bg-pattern);
     background-size: cover, cover, auto, auto;
     background-position: center, center, center, center;
