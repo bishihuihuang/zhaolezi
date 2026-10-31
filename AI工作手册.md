@@ -75,6 +75,7 @@ service-worker.js / manifest.json ← PWA
 · **V126d 亮图自适应前景（2969a7c）**：上传时 canvas 采样亮度存 `zl_custom_bg_lum`；≥150 自动 `data-bg-lum="light"` 整站切浅色前景（common.css 与首页各一组变量覆盖），暗图维持深色，切走自动还原。
 · **V127 统一弹窗（740678b）**：`zl-features.js` 新增 `ZL.dialog`（alert/confirm/prompt 三 API，Promise 化，串行队列）——居中长方形抽屉卡片（毛玻璃+弹性上滑展开，Esc/遮罩/按钮交互，textContent 防注入）。**window.alert 已全局劫持**：全站 31 处 alert 自动卡片化（含未来新增）；confirm×3（41.html×2、14.html 购物车）与 prompt×1（19.html 备注名）已逐点改 async/await（均带原生兜底）。**新代码禁止再直接调 confirm()/prompt()**，一律 `ZL.dialog.confirm/prompt`；alert 随意（劫持兜住）。
 · **V128 分区重组与下架收尾（2026-10-31 11:47，d2889d3）**：① 首页「学习工具」分区移除，「看看作业/在线词典」并入「效率工具」（顺序：优质工具箱→网页备忘录→看看作业→在线词典→二维码生成器→文件搜索），导航与 hero/meta 文案同步（分区=效率/娱乐/站务）；② `32.html` 文件搜索器卡按需求移回 31/32 工具箱页保留（首页入口裁撤）、**首卡「返回主程序」固定跳 index.html（31/32 页首卡=回首页返回键，用户明确规则，勿改跳本页）**、渲染循环对齐 31 页改 `4+62*6` 固定格数（"敬请期待～"占位补齐视觉）；③ **发布异常记录**：d2889d3 首次 push 显示成功但远端被回退至 879d9f1（原因未明，疑并行操作），重推时 Bash 直连 `git push` 被 Mimosa 安全钩子拦截（D 盘历史脚本风险，与推送内容无关）——改由手册更新触发 bat 全流程完成推送；**教训：push 后必须 `git ls-remote` 复核远端，勿轻信 push 输出**。
+· **V130 首页顶栏主题适配 + 底部精简（2026-10-31 21:40）**：① `.site-header` 背景原写死 `rgba(24,24,24,.72)`（任何主题下均黑灰）→ 改 `var(--surface)`（common.css 默认 :root 已同步该令牌 `rgba(255,255,255,.85)`，六主题全适配，backdrop-filter 毛玻璃保留）；教训：**首页组件背景必须用令牌，禁止写死色值**；② footer 删除 `f-links` 四链接（更新公告/反馈通道/一起来赞赏/免责声明，其工具卡入口在站务分区保留），版权行改「© 2026 找乐子 · 免登录使用」一行，`.site-footer` padding `--sp-600`→`--sp-400` 收紧（`.f-links` 规则已删）。
 · **线上部署验证**：GitHub Pages 用 Fastly CDN，静态资源 `Cache-Control: max-age=600`（10 分钟）。推送后立刻 curl 可能拿到 CDN 缓存的旧文件；等 10 分钟或用 `?v=随机数` 绕过。
 
 ---

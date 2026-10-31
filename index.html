@@ -121,7 +121,7 @@ img { max-width: 100%; display: block; }
   max-width: 1440px; width: calc(100% - 48px);
   padding: var(--sp-100) var(--sp-300);
   border-radius: var(--r-lg);
-  background: rgba(24, 24, 24, .72);
+  background: var(--surface);
   backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--line);
 }
@@ -231,16 +231,13 @@ main { position: relative; z-index: 1; padding-top: 120px; }
 .tool-box:hover .tooltip,
 .tool-box:focus-visible .tooltip { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 
-/* ---------- 底部（B10 footer 链接） ---------- */
+/* ---------- 底部（B10 footer 版权一行） ---------- */
 .site-footer {
   position: relative; z-index: 1;
   border-top: 1px solid var(--line);
-  padding: var(--sp-600) var(--sp-300);
+  padding: var(--sp-400) var(--sp-300);
   text-align: center;
 }
-.site-footer .f-links { display: flex; flex-wrap: wrap; gap: var(--sp-200); justify-content: center; margin-bottom: var(--sp-300); }
-.site-footer .f-links a { font-size: 14px; color: var(--text-dim); transition: color var(--dur-fast) var(--ease); }
-.site-footer .f-links a:hover { color: var(--text); }
 .site-footer .f-copy { font-size: 14px; color: var(--text-mute); }
 
 /* ---------- 跳转覆盖层（保留品牌加载动画） ---------- */
@@ -368,13 +365,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
 
 <!-- 底部 -->
 <footer class="site-footer">
-  <div class="f-links">
-    <a href="pages/30.html">更新公告</a>
-    <a href="pages/29.html">反馈通道</a>
-    <a href="pages/11.html">一起来赞赏</a>
-    <a href="pages/28.html">免责声明</a>
-  </div>
-  <p class="f-copy">© 2026 找乐子 · 优质工具库 · 免登录使用</p>
+  <p class="f-copy">© 2026 找乐子 · 免登录使用</p>
 </footer>
 
 <!-- 跳转覆盖层 -->
