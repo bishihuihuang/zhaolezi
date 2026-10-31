@@ -1,4 +1,4 @@
-﻿// 找乐子工具箱 - Service Worker（V4：V1.4.4 真实背景图片内嵌 common.css）
+// 找乐子工具箱 - Service Worker（V4：V1.4.4 真实背景图片内嵌 common.css）
 // V8：2026-09-30 33.html 体验重构（14类350条+心情筛选+详情卡+收藏+倒计时）修复 common.js 防小白 head 加载 appendChild 缺陷
 // V12：2026-10-01 全站可读性兜底修复（对比度引擎11项修复+42页×10主题审计全部通过）
 // V13：2026-10-02 防回归机制 b+c 落地（构建期 preCheck + 运行时 ZL.verifyAudit）
@@ -197,7 +197,9 @@
 // V205：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
 // V206：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
 // V207：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v207';
+// V208：2026-11-01 自动构建（公共层/页面更新，缓存随构建递增）
+// V209：2026-11-01 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v209';
 const ASSETS = [
   './',
   './index.html',
@@ -226,11 +228,16 @@ const ASSETS = [
   './favicon-48.png',
   './robots.txt',
   './sitemap.xml',
-  './pages/images/bg-blue.jpg',
-  './pages/images/bg-gold.jpg',
-  './pages/images/bg-light.jpg',
-  './pages/images/bg-snowsun.jpg',
-  './pages/images/bg-aurora.jpg'
+  './pages/images/bg-blue-pc.jpg',
+  './pages/images/bg-blue-mobile.jpg',
+  './pages/images/bg-gold-pc.jpg',
+  './pages/images/bg-gold-mobile.jpg',
+  './pages/images/bg-light-pc.jpg',
+  './pages/images/bg-light-mobile.jpg',
+  './pages/images/bg-snowsun-pc.jpg',
+  './pages/images/bg-snowsun-mobile.jpg',
+  './pages/images/bg-aurora-pc.jpg',
+  './pages/images/bg-aurora-mobile.jpg'
 ];
 
 // 安装：预缓存核心资源

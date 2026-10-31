@@ -125,7 +125,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: linear-gradient(rgba(122,168,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(122,168,255,.05) 1px,transparent 1px),radial-gradient(circle at 20% 14%,rgba(122,168,255,.16),transparent 46%),radial-gradient(circle at 82% 20%,rgba(180,140,255,.12),transparent 42%),radial-gradient(circle at 58% 78%,rgba(77,163,255,.08),transparent 52%);
         --bg-pattern-size: 36px 36px,36px 36px,auto,auto,auto;
     
-        --bg-image: url(pages/images/bg-blue.jpg);
+        --bg-image: url(pages/images/bg-blue-pc.jpg);
         /* ---- 首页双令牌同步（V130 主题适配：顶栏/卡片/文字/按钮/标题跟随主题） ---- */
         --surface: var(--card); --surface-2: var(--card-2);
         --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
@@ -152,7 +152,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: repeating-linear-gradient(45deg,rgba(245,197,66,.03) 0 1px,transparent 1px 16px),radial-gradient(circle at 50% -10%,rgba(245,197,66,.16),transparent 55%),radial-gradient(circle at 85% 32%,rgba(230,168,23,.08),transparent 46%);
         --bg-pattern-size: auto,auto,auto;
     
-        --bg-image: url(pages/images/bg-gold.jpg);
+        --bg-image: url(pages/images/bg-gold-pc.jpg);
         /* ---- 首页双令牌同步（V130） ---- */
         --surface: var(--card); --surface-2: var(--card-2);
         --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
@@ -179,7 +179,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: radial-gradient(circle at 50% -4%,rgba(147,197,253,.30),transparent 55%),radial-gradient(circle at 18% 82%,rgba(196,181,253,.16),transparent 46%),radial-gradient(rgba(59,130,246,.09) 1px,transparent 1px);
         --bg-pattern-size: auto,auto,22px 22px;
     
-        --bg-image: url(pages/images/bg-light.jpg);
+        --bg-image: url(pages/images/bg-light-pc.jpg);
         /* ---- 首页双令牌同步（V130） ---- */
         --surface: var(--card); --surface-2: var(--card-2);
         --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
@@ -252,7 +252,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 1px,transparent 1px 22px);
         --bg-pattern-size: auto;
     
-        --bg-image: url(pages/images/bg-snowsun.jpg);
+        --bg-image: url(pages/images/bg-snowsun-pc.jpg);
         /* ---- 首页双令牌同步（V130） ---- */
         --surface: var(--card); --surface-2: var(--card-2);
         --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
@@ -302,7 +302,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern: repeating-linear-gradient(45deg,rgba(125,255,176,.05) 0 1px,transparent 1px 20px);
         --bg-pattern-size: auto;
     
-        --bg-image: url(pages/images/bg-aurora.jpg);
+        --bg-image: url(pages/images/bg-aurora-pc.jpg);
         /* ---- 首页双令牌同步（V130） ---- */
         --surface: var(--card); --surface-2: var(--card-2);
         --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
@@ -588,13 +588,13 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
     inset: -240px;
     background-image:
         linear-gradient(115deg, rgba(56,239,125,.10) 20%, rgba(102,126,234,.16) 45%, rgba(167,139,250,.14) 65%, rgba(56,239,125,.08) 85%),
-        url(pages/images/bg-aurora.jpg);
+        var(--bg-image);
     background-size: 200% 200%, cover;
     background-position: 0 50%, center;
     will-change: transform;
     animation: zlAuroraDrift 26s ease-in-out infinite alternate;
 }
-:root[data-theme="aurora"] .bg-ambient .bg-flow-1 { background-image: linear-gradient(115deg, rgba(56,239,125,.10) 20%, rgba(102,126,234,.16) 45%, rgba(167,139,250,.14) 65%, rgba(56,239,125,.08) 85%), url(pages/images/bg-aurora.jpg); }
+:root[data-theme="aurora"] .bg-ambient .bg-flow-1 { background-image: linear-gradient(115deg, rgba(56,239,125,.10) 20%, rgba(102,126,234,.16) 45%, rgba(167,139,250,.14) 65%, rgba(56,239,125,.08) 85%), var(--bg-image); }
 :root[data-theme="aurora"] .bg-ambient .bg-flow-1::after,
 :root[data-theme="aurora"] .bg-animation .bg-flow-1::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -641,3 +641,17 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
 :root[data-theme="aurora"] .glow-2 { background: radial-gradient(circle, #a78bfa, transparent 65%); }
 :root[data-theme="aurora"] .glow-3 { background: radial-gradient(circle, #667eea, transparent 65%); opacity: .10; }
 :root[data-theme="aurora"] .tool-box { border-color: rgba(167, 139, 250, .28); }
+
+/* ================================================================
+   V132 背景图按端适配（PC 16:9 横图 / 手机 9:16 竖图）
+   各主题块 --bg-image 默认指向 bg-{theme}-pc.jpg（PC/横屏/平板）；
+   小屏（≤768px，手机竖屏）切换为 bg-{theme}-mobile.jpg。
+   两张图分别按 16:9 / 9:16 生成，cover 铺满不糊不裁主题。
+   ================================================================ */
+@media (max-width: 768px) {
+    :root[data-theme="blue"]    { --bg-image: url(pages/images/bg-blue-mobile.jpg); }
+    :root[data-theme="gold"]    { --bg-image: url(pages/images/bg-gold-mobile.jpg); }
+    :root[data-theme="light"]   { --bg-image: url(pages/images/bg-light-mobile.jpg); }
+    :root[data-theme="snowsun"] { --bg-image: url(pages/images/bg-snowsun-mobile.jpg); }
+    :root[data-theme="aurora"]  { --bg-image: url(pages/images/bg-aurora-mobile.jpg); }
+}
