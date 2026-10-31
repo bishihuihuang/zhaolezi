@@ -322,13 +322,7 @@ body.zl-admire .title-area, body.zl-admire .tool-card,
 body.zl-admire .card, body.zl-admire .orb { display: none !important; }
 body.zl-admire { overflow: hidden !important; }
 
-/* 自定义主题：上传背景图小按钮 */
-.zl-custom-up {
-    display: inline-block; margin-left: 6px; padding: 1px 5px;
-    border-radius: 8px; background: rgba(127,127,127,.25);
-    font-size: 12px; line-height: 1.5; cursor: pointer; user-select: none;
-}
-.zl-custom-up:hover { background: rgba(127,127,127,.45); }
+/* V126c：自定义主题改为「单击应用/双击上传」，📤 小按键及其样式已移除 */
 
 .zl-theme-panel {
     position: fixed;

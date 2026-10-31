@@ -106,13 +106,13 @@
             nm.textContent = LABELS[t] || t;
             it.appendChild(dot);
             it.appendChild(nm);
-            it.onclick = function () { apply(this.getAttribute('data-t')); };
-            // 自定义项：附加上传背景按钮
+            it.onclick = function () {
+                // custom 项由专属单击/双击逻辑接管，避免双重触发
+                if (this.getAttribute('data-t') !== 'custom') apply(this.getAttribute('data-t'));
+            };
+            // 自定义项（V126c）：单击=应用背景，双击=打开图片上传；📤 小按键已取消
             if (t === 'custom') {
-                var up = document.createElement('span');
-                up.className = 'zl-custom-up';
-                up.textContent = '📤';
-                up.title = '上传本地图片作自定义背景';
+                it.title = '单击：应用自定义背景；双击：上传背景图片';
                 var fi = document.createElement('input');
                 fi.type = 'file';
                 fi.accept = 'image/*';
@@ -121,12 +121,25 @@
                     if (this.files && this.files[0]) uploadCustomBg(this.files[0]);
                     this.value = '';
                 };
-                up.onclick = function (e) {
-                    e.stopPropagation();
-                    fi.click();
-                };
-                it.appendChild(up);
                 it.appendChild(fi);
+                var applyTimer = null;
+                it.addEventListener('click', function () {
+                    if (applyTimer) return; // dblclick 已接管本次序列
+                    applyTimer = setTimeout(function () {
+                        applyTimer = null;
+                        apply('custom');
+                        try {
+                            if (!localStorage.getItem(BGB_KEY)) {
+                                alert('当前还没有自定义背景图——双击「自定义」项即可上传图片');
+                            }
+                        } catch (e) {}
+                    }, 250);
+                });
+                it.addEventListener('dblclick', function (e) {
+                    e.preventDefault();
+                    if (applyTimer) { clearTimeout(applyTimer); applyTimer = null; }
+                    fi.click();
+                });
             }
             grid.appendChild(it);
         }
