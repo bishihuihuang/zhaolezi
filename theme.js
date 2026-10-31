@@ -6,6 +6,7 @@
 (function () {
     var KEY = 'zl_theme';
     var BGB_KEY = 'zl_custom_bg';
+    var LUM_KEY = 'zl_custom_bg_lum';   // V126d：背景图平均亮度（0-255），≥150 视为亮图切浅色前景
     var THEMES = ['dark', 'blue', 'gold', 'light', 'snowsun', 'aurora', 'custom'];
     var LABELS = { dark: '深色流光', blue: '经典蓝', gold: '鎏金', light: '明亮',
         snowsun: '雪阳', aurora: '极光', custom: '自定义' };
@@ -28,7 +29,16 @@
         document.documentElement.setAttribute('data-theme', t);
         localStorage.setItem(KEY, t);
         current = t;
-        if (t === 'custom') applyCustomBg();
+        if (t === 'custom') {
+            applyCustomBg();
+            // V126d：亮图自动切浅色前景，暗图维持深色；切走时还原
+            try {
+                var lum = parseInt(localStorage.getItem(LUM_KEY) || '0', 10);
+                document.documentElement.setAttribute('data-bg-lum', lum >= 150 ? 'light' : 'dark');
+            } catch (e) {}
+        } else {
+            document.documentElement.removeAttribute('data-bg-lum');
+        }
         if (panel) {
             var items = panel.querySelectorAll('.zl-theme-item');
             for (var i = 0; i < items.length; i++) {
@@ -50,32 +60,48 @@
         return 'linear-gradient(135deg,' + (a || '#888') + ',' + (b || '#888') + ')';
     }
 
-    // 上传自定义背景：读图 → 压缩（最长边 ≤1600）→ jpeg dataURL → localStorage → 应用
+    // 上传自定义背景：读图 → 画质降级链压缩（localStorage 存得下的最高档）→ 亮度采样 → 存储 → 应用
     function uploadCustomBg(file) {
         if (!file || file.type.indexOf('image/') !== 0) { alert('请选择图片文件'); return; }
         var fr = new FileReader();
         fr.onload = function () {
             var img = new Image();
             img.onload = function () {
-                var MAX = 1600;
-                var w = img.width, h = img.height;
-                var scale = 1;
-                if (Math.max(w, h) > MAX) scale = MAX / Math.max(w, h);
-                w = Math.round(w * scale); h = Math.round(h * scale);
-                var cv = document.createElement('canvas');
-                cv.width = w; cv.height = h;
-                var ctx = cv.getContext('2d');
-                ctx.fillStyle = '#000';
-                ctx.fillRect(0, 0, w, h);
-                ctx.drawImage(img, 0, 0, w, h);
-                var data = cv.toDataURL('image/jpeg', 0.85);
-                try {
-                    localStorage.setItem(BGB_KEY, data);
-                    applyCustomBg();
-                    alert('自定义背景已保存并应用（切换其他主题后选「自定义」可恢复）');
-                } catch (e) {
-                    alert('图片太大无法保存（本地存储容量有限），请换更小的图');
+                // V126d 画质链：优先近无损档（2560@0.92），存不下逐档回退，保用户画质
+                var chain = [[2560, 0.92, '高清'], [1920, 0.88, '标准'], [1600, 0.85, '兼容']];
+                var saved = false, grade = '', lum = 128;
+                for (var i = 0; i < chain.length && !saved; i++) {
+                    var MAX = chain[i][0], q = chain[i][1];
+                    var scale = Math.max(img.width, img.height) > MAX ? MAX / Math.max(img.width, img.height) : 1;
+                    var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+                    var cv = document.createElement('canvas');
+                    cv.width = w; cv.height = h;
+                    var ctx = cv.getContext('2d');
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, w, h);
+                    ctx.drawImage(img, 0, 0, w, h);
+                    var data = cv.toDataURL('image/jpeg', q);
+                    try {
+                        localStorage.setItem(BGB_KEY, data);
+                        saved = true; grade = chain[i][2];
+                    } catch (e) { /* 本档存不下，降下一档 */ }
+                    if (saved) {
+                        // 亮度采样：均匀步进取像素做感知亮度均值（0-255）
+                        try {
+                            var px = ctx.getImageData(0, 0, w, h).data;
+                            var sum = 0, n = 0;
+                            for (var p = 0; p < px.length; p += 4 * 97) {
+                                sum += 0.2126 * px[p] + 0.7152 * px[p + 1] + 0.0722 * px[p + 2];
+                                n++;
+                            }
+                            lum = Math.round(sum / (n || 1));
+                        } catch (e) {}
+                    }
                 }
+                if (!saved) { alert('图片太大无法保存（本地存储容量有限），请换更小的图'); return; }
+                try { localStorage.setItem(LUM_KEY, String(lum)); } catch (e) {}
+                applyCustomBg();
+                alert('自定义背景已保存（' + grade + '画质' + (lum >= 150 ? '，已自动切换浅色前景' : '') + '）');
             };
             img.onerror = function () { alert('图片读取失败，请换一张试试'); };
             img.src = fr.result;

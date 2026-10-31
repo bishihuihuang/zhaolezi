@@ -42,6 +42,16 @@
   --font: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
 }
 
+/* ---------- V126d 亮背景图自动浅色前景（theme.js 按图片亮度设置 data-bg-lum） ---------- */
+:root[data-bg-lum="light"] {
+  --text: #16181f;
+  --text-dim: rgba(22, 24, 31, .72);
+  --text-mute: rgba(22, 24, 31, .55);
+  --surface: rgba(255, 255, 255, .82);
+  --surface-2: rgba(255, 255, 255, .92);
+  --line: rgba(22, 24, 31, .14);
+}
+
 /* ---------- 重置（B1 无连字符、无超粗、系统字体） ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }

@@ -302,6 +302,18 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-image: var(--custom-bg, url(pages/images/bg-custom.jpg));
     }
 
+/* ============ V126d 亮背景图自动浅色前景（theme.js 采样亮度≥150 时设置 data-bg-lum="light"） ============ */
+/* 置于全部主题定义之后：同特异性下后定义胜，亮图时覆盖任何主题的前景色，文字/卡片永远可读 */
+:root[data-bg-lum="light"] {
+    --txt: #1c1f2e;
+    --dim: rgba(28, 31, 46, .62);
+    --card: rgba(255, 255, 255, .82);
+    --card-2: rgba(255, 255, 255, .95);
+    --line: rgba(28, 31, 46, .16);
+    --bg-dim: none;
+    --shadow: 0 18px 50px rgba(28, 31, 46, .18);
+}
+
 /* ============ V1.4 主题面板样式 ============ */
 
 /* V1.4.3 非深色流光主题：背景图片 = 顶部光晕 + 纹理图案（源自 AI提示词） */
