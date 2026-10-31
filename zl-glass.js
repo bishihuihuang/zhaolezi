@@ -91,25 +91,14 @@
         '.zl-chip:hover{background:color-mix(in srgb,var(--glow,#667eea) 18%,transparent)}' +
         '.zl-chip:active{transform:scale(.94)}' +
         '@media (prefers-reduced-motion:reduce){.zl-chip{transition:none !important}}' +
-        /* ---------- V125 右上角刷新按键 + Toast ---------- */
-        '.zl-refresh{position:fixed;top:14px;right:14px;z-index:2147483007;display:inline-flex;align-items:center;justify-content:center;' +
-        'width:44px;height:44px;border-radius:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;' +
-        'background:color-mix(in srgb,var(--card,#fff) 62%,transparent);border:1px solid color-mix(in srgb,var(--line,#eee) 45%,transparent);' +
-        'box-shadow:0 6px 20px rgba(0,0,0,.18);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);' +
-        'transition:transform .2s cubic-bezier(.3,1.4,.5,1),background .2s}' +
-        '.zl-refresh .zrf-ic{font-size:20px;line-height:1}' +
-        '.zl-refresh.zrf-loading{pointer-events:none}' +
-        '.zl-refresh.zrf-loading .zrf-ic{display:inline-block;animation:zrfSpin .8s linear infinite}' +
-        '@keyframes zrfSpin{to{transform:rotate(360deg)}}' +
-        '@media (hover:hover) and (pointer:fine){.zl-refresh:hover{transform:scale(1.12);background:color-mix(in srgb,var(--card-2,#fff) 70%,transparent)}}' +
-        '.zl-refresh:active{transform:scale(.92)}' +
+        /* ---------- V126：右上角刷新按键已移除（保留更新提示 Toast，供静默检查使用） ---------- */
         '.zl-rf-toast{position:fixed;top:68px;right:14px;z-index:2147483008;padding:8px 14px;border-radius:12px;font-size:12px;line-height:1.4;' +
         'color:var(--txt,#333);background:color-mix(in srgb,var(--card,#fff) 78%,transparent);' +
         'border:1px solid color-mix(in srgb,var(--line,#eee) 50%,transparent);box-shadow:0 8px 24px rgba(0,0,0,.2);' +
         '-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);' +
         'opacity:0;transform:translateY(-8px);transition:opacity .28s,transform .28s;pointer-events:none;max-width:220px}' +
         '.zl-rf-toast.zrf-show{opacity:1;transform:translateY(0)}' +
-        '@media (prefers-reduced-motion:reduce){.zl-refresh,.zl-refresh .zrf-ic,.zl-rf-toast{transition:none !important;animation:none !important}}';
+        '@media (prefers-reduced-motion:reduce){.zl-rf-toast{transition:none !important;animation:none !important}}';
 
     function injectStyle() {
         try {
@@ -580,19 +569,7 @@
     }
 
     function initRefresh() {
-        var btn = document.createElement('div');
-        btn.id = 'zlRfBtn';
-        btn.className = 'zl-refresh';
-        btn.setAttribute('role', 'button');
-        btn.setAttribute('tabindex', '0');
-        btn.setAttribute('aria-label', '刷新缓存');
-        btn.setAttribute('title', '全面比旧缓存，自动刷新有修改的地方');
-        btn.innerHTML = '<span class="zrf-ic">🔄</span>';
-        btn.addEventListener('click', function () { rfCheck(false); });
-        btn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); rfCheck(false); } });
-        document.body.appendChild(btn);
-
-        /* 进页默认跑一次（节流：30 分钟内不重复） */
+        /* V126：按钮 UI 已移除，仅保留进页静默更新检查（节流：30 分钟内不重复） */
         try {
             var last = parseInt(localStorage.getItem(RF_KEY) || '0', 10);
             if (Date.now() - last > RF_INTERVAL) {
@@ -612,7 +589,7 @@
                 initGlow();
                 initFocus();
                 initFilter();
-                initRefresh(); /* V125：右上角刷新按键 + 进页自动检查 */
+                initRefresh(); /* V126：进页静默更新检查（刷新按键已移除） */
             } catch (e) {}
         }
     };

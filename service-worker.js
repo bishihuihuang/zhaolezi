@@ -146,7 +146,10 @@
 // V154：2026-10-24 自动构建（公共层/页面更新，缓存随构建递增）
 // V155：2026-10-30 自动构建（公共层/页面更新，缓存随构建递增）
 // V156：2026-10-30 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v156';
+// V157：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
+// V158：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
+// V159：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v159';
 const ASSETS = [
   './',
   './index.html',
@@ -178,12 +181,8 @@ const ASSETS = [
   './pages/images/bg-blue.jpg',
   './pages/images/bg-gold.jpg',
   './pages/images/bg-light.jpg',
-  './pages/images/bg-milk.jpg',
-  './pages/images/bg-guofeng.jpg',
   './pages/images/bg-snowsun.jpg',
-  './pages/images/bg-cyber.jpg',
-  './pages/images/bg-aurora.jpg',
-  './pages/images/bg-custom.jpg'
+  './pages/images/bg-aurora.jpg'
 ];
 
 // 安装：预缓存核心资源

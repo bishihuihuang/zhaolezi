@@ -1,7 +1,7 @@
 # zhaolezi · AI 工作手册
 
 > 本文件是给 AI 看的本站工作说明（与 说明.txt 配套，面向 AI 视角）。
-> 更新日期：2026-10-11。AI 每次在本文件夹工作前，先读本文件与 说明.txt。
+> 更新日期：2026-10-31。AI 每次在本文件夹工作前，先读本文件与 说明.txt。
 
 ---
 
@@ -23,7 +23,7 @@
 ## 1. 本站是什么
 
 找乐子 —— 混淆版游戏/趣味网站（V2.3.3）。线上：https://bishihuihuang.github.io/zhaolezi/，仓库 bishihuihuang/zhaolezi。
-当前规模：46 个数字页面（1.html~46.html，含 41/42 政治作业）+ 首页 index.html；图片 42、音频 19、看看作业 19 张。
+当前规模：46 个数字页面（1.html~46.html，含 41/42 政治作业）+ 首页 index.html；图片 42、音频 19、看看作业 12 张。
 
 ## 2. 目录结构（AI 视角）
 
@@ -67,15 +67,17 @@ service-worker.js / manifest.json ← PWA
 · **SW 缓存策略（V117 起）**：`service-worker.js` 里 HTML 导航 + JS 脚本走网络优先，CSS/图片/音频等其他静态资源走缓存优先。JS 是版本敏感代码，走缓存优先会导致"发版后 SW 缓存里旧 JS 拦截新 JS，用户强刷无效"（V116 前踩过这个坑）。CACHE_NAME 每次构建自动 +1；如需手工介入，先手 bump 一次再跑混淆工具，工具再自动 +1。
 · **V120 停靠栏移除**：`zl-glass.js` 里底部玻璃停靠栏（`.zl-dock`）已整块删除——`initDock()` 函数、`.zl-dock`/`.zl-dock-item`/`.zl-pill`/`.zl-dock-hide`/`.zl-ctx` CSS、`zlBreathe` 呼吸动画、`ls`/`ss` 辅助函数、放大态收起 Dock 逻辑全部清零。CFG 只保留 `skipPages`（供 `isSkipPage()` 判断门禁页）。M2 鼠标光效、M3 模块放大+水滴筛选+汇总指标不受影响。
 · **V122 成就入口改造**：`index.html` 里居中长方形内的成就提示横条（`.ach-widget`）已删除——CSS 全块、HTML 横条、`renderAchWidget()` 函数（原 V2.2 版，读 `awAll`/`awLine`/`awSub`）全部清零。改为左上角悬浮奖杯按钮 `.ach-trophy`（`position:fixed; top:14px; left:14px; 44×44; z-index:2147483006`，玻璃拟态+毛玻璃），右下角挂「已解锁/总数」角标 `#awBadge`，点击整块 `<a>` 跳 `38.html` 成就中心。JS 只剩 `updateAchTrophy()` 一行刷角标，仍订阅 `ZL.on('ach.unlocked')`。成就总数取自 `ZL.ACHIEVEMENTS.length`（当前 93 枚，定义在 `zl-features.js`）。注意：`zl-features.js` 第 437 行 `ach_90` 的 `Math.ceil(94 * 0.9)` 是遗留硬编码（应为 93），本轮未改，留待单独修。
+· **V126 奖杯入口移除（用户决策）**：左上角奖杯按钮 `.ach-trophy` 的 CSS 与 HTML 已从源 `index.html` 删除；成就**逻辑完整保留**——`updateAchTrophy()`（函数开头 `if (!badge) return;` 空值保护，DOM 不存在即静默跳过）与 `ZL.on('ach.unlocked')` 订阅原样在册，成就解锁、Toast、数据全部照常。
 · **V125 右上角刷新按键**：`zl-glass.js` 新增 `initRefresh()`（全站生效，由 `zl-features.js` 动态加载，无需改各页 HTML）。右上角悬浮 🔄 按钮（`position:fixed; top:14px; right:14px; 44×44; z-index:2147483007`，玻璃拟态），点击或进页自动触发 `rfCheck()`：① SW 更新检查（`reg.update()` → 等新 SW 激活 → reload）；② 抽样比对 5 关键资源（`common.css`/`common.js`/`theme.js`/`zl-features.js`/`zl-glass.js`），用 `?cb=<时间戳>` 绕过 SW 缓存，字节比对，不同则 `cache.put()` 覆盖；③ 清掉 `?cb=` 污染条目。30 分钟节流（`localStorage zl_rf_ts`），进页静默跑一次不 reload；手动点击有变更 → 1.5s 后 reload。Toast 提示「已是最新」/「已更新 N 项」/「发现新版本，正在更新…」/「检查失败」。
+· **V126 刷新按钮移除（用户决策）**：右上角 🔄 按钮 UI（`.zl-refresh` CSS 与按钮 DOM）已删；**进页静默更新检查保留**（30 分钟节流，`rfCheck(true)`：发现新 SW → Toast + 自动 reload；抽样比对有变更 → Toast + reload）。`rfToast` 与 `.zl-rf-toast` 样式保留供提示用。
 · **线上部署验证**：GitHub Pages 用 Fastly CDN，静态资源 `Cache-Control: max-age=600`（10 分钟）。推送后立刻 curl 可能拿到 CDN 缓存的旧文件；等 10 分钟或用 `?v=随机数` 绕过。
 
 ---
 
 
-## 7. 全站统一跳转动画（2026-10-11 新增）
+## 7. 全站统一跳转动画（2026-10-11 新增 · V126 视觉重制）
 
-所有跳转按键（`<a href="*.html">` 和 `onclick="location.*='***.html'"`）点击后会显示统一的 zhaolezi 圆环转圈动画（绿色 #38ef7d 圆环 + 半透明黑背景）。
+所有跳转按键（`<a href="*.html">` 和 `onclick="location.*='***.html'"`）点击后会显示统一的 zhaolezi 转场动画。**V126（2026-10-31）视觉已复刻原生「三层 loader-ring」设计**：半透明黑底（rgba(0,0,0,.72)+16px 毛玻璃）+ 外环 `var(--accent)` 顺时针旋转 + 内环（#A78BFA/#667EEA）反向旋转 + 居中品牌文字（`var(--accent)`，22px 粗体）。替换了旧版单层绿色 #38ef7d 圆环（用户判定过丑）。
 
 **中心文字规则**：
 - 跳 `index.html` → 按当前站点品牌显示（zhaolezi=找乐子 / creativity=创意引擎 / xiandaihua=现代化 / all-file-saver=全能文件保存 / ai-prompts=AI 提示词库）
