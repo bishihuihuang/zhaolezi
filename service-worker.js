@@ -187,7 +187,9 @@
 // V195：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
 // V196：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
 // V197：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v197';
+// V198：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
+// V199：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v199';
 const ASSETS = [
   './',
   './index.html',
@@ -276,10 +278,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // V117 新增：JS 脚本走网络优先（与 HTML 导航同策略），失败回退缓存
-  // 原因：原静态资源统一"缓存优先"，发版后 SW 缓存里旧 JS 会拦截新 JS，用户强刷无效
-  // 适用范围：仅 .js 后缀的同源脚本；CSS/图片/音频等其他静态资源仍缓存优先
-  if (url.pathname.endsWith('.js')) {
+  // V2.5.0：CSS 与 JS 同走网络优先（原 CSS 走缓存优先，主题迭代期旧 CSS 拦截新样式，用户刷新无效）
+  // 原因：主题/样式频繁迭代后，CSS 与 JS 一样版本敏感；失败回退缓存，离线体验不变
+  // 适用范围：同源 .js 与 .css；图片/音频等其他静态资源仍缓存优先
+  if (url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
