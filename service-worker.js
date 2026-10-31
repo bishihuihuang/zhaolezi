@@ -161,7 +161,9 @@
 // V169：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
 // V170：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
 // V171：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v171';
+// V172：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
+// V173：2026-10-31 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v173';
 const ASSETS = [
   './',
   './index.html',
@@ -172,9 +174,9 @@ const ASSETS = [
   './pages/13.html', './pages/14.html', './pages/15.html', './pages/16.html', './pages/17.html', './pages/18.html',
   './pages/19.html', './pages/20.html', './pages/21.html', './pages/22.html', './pages/23.html', './pages/24.html',
   './pages/25.html', './pages/26.html', './pages/27.html', './pages/28.html', './pages/29.html', './pages/30.html',
-  './pages/31.html', './pages/32.html', './pages/33.html', './pages/34.html', './pages/35.html', './pages/36.html',
-  './pages/37.html', './pages/38.html', './pages/39.html', './pages/40.html', './pages/41.html', './pages/42.html',
-  './pages/43.html', './pages/44.html', './pages/45.html', './pages/46.html',
+  './pages/31.html', './pages/32.html', './pages/34.html', './pages/36.html',
+  './pages/37.html', './pages/38.html', './pages/39.html', './pages/41.html', './pages/42.html',
+  './pages/46.html',
   './pages/文件搜索.html',
   './pages/verify.html',
   './pages/offline.html',
