@@ -981,3 +981,120 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadGlass);
     else loadGlass();
 })();
+
+/* ========== V127 统一弹窗：居中长方形抽屉卡片（替代浏览器原生 alert/confirm/prompt） ========== */
+(function () {
+    var QUEUE = [];            // 连续弹窗串行队列，避免重叠
+    var RUNNING = false;
+    var STYLE_ID = 'zl-dialog-style';
+    var MASK_ID = 'zlDialogMask';
+    var ICONS = { info: '💬', ask: '❓', edit: '✏️' };
+
+    function ensureStyle() {
+        if (document.getElementById(STYLE_ID)) return;
+        var s = document.createElement('style');
+        s.id = STYLE_ID;
+        s.textContent =
+            '#zlDialogMask{position:fixed;inset:0;z-index:2147483646;background:rgba(0,0,0,.5);' +
+            '-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);' +
+            'display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;' +
+            'transition:opacity .25s,visibility .25s;font-family:inherit;}'
+            + '#zlDialogMask.active{opacity:1;visibility:visible;}'
+            + '.zl-dialog{width:min(420px,86vw);max-height:76vh;overflow:auto;box-sizing:border-box;' +
+            'background:var(--card,rgba(245,247,255,.96));color:var(--txt,#333);' +
+            'border:1px solid var(--line,#e8e8e8);border-radius:var(--radius,16px);' +
+            'box-shadow:0 25px 70px rgba(0,0,0,.35);padding:22px 22px 18px;' +
+            'transform:translateY(24px) scale(.92);opacity:0;' +
+            'transition:transform .28s cubic-bezier(.3,1.4,.5,1),opacity .28s;}'
+            + '#zlDialogMask.active .zl-dialog{transform:translateY(0) scale(1);opacity:1;}'
+            + '.zl-dialog .zd-ic{font-size:26px;line-height:1;margin-bottom:10px;}'
+            + '.zl-dialog .zd-msg{white-space:pre-line;font-size:14px;line-height:1.7;word-break:break-word;}'
+            + '.zl-dialog .zd-input{width:100%;box-sizing:border-box;margin-top:14px;padding:9px 12px;' +
+            'border-radius:10px;border:1px solid var(--line,#e8e8e8);background:var(--card-2,#fff);' +
+            'color:inherit;font-size:14px;outline:none;}'
+            + '.zl-dialog .zd-input:focus{border-color:var(--glow,#667eea);}'
+            + '.zl-dialog .zd-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}'
+            + '.zl-dialog .zd-btn{min-width:78px;padding:8px 16px;border-radius:10px;cursor:pointer;' +
+            'font-size:13px;font-weight:600;font-family:inherit;transition:transform .18s,opacity .2s;}'
+            + '.zl-dialog .zd-btn:active{transform:scale(.96);}'
+            + '.zl-dialog .zd-ok{border:none;background:var(--btn-grad,linear-gradient(135deg,#667eea,#764ba2));color:#fff;}'
+            + '.zl-dialog .zd-cancel{background:transparent;color:var(--txt,#333);border:1px solid var(--line,#e8e8e8);}'
+            + '@media (prefers-reduced-motion:reduce){.zl-dialog{transition:none !important}}';
+        document.head.appendChild(s);
+    }
+
+    /* 串行弹出一张卡片；resolve 值与原生语义对齐：alert=undefined / confirm=布尔 / prompt=字符串或 null */
+    function show(kind, msg, defValue) {
+        return new Promise(function (resolve) {
+            QUEUE.push({ kind: kind, msg: msg == null ? '' : String(msg), defValue: defValue, resolve: resolve });
+            pump();
+        });
+    }
+
+    function pump() {
+        if (RUNNING || !QUEUE.length) return;
+        if (!document.body) { setTimeout(pump, 120); return; }   // body 未就绪稍候，保持体验一致
+        RUNNING = true;
+        var job = QUEUE.shift();
+        ensureStyle();
+        var mask = document.getElementById(MASK_ID);
+        if (!mask) {
+            mask = document.createElement('div');
+            mask.id = MASK_ID;
+            document.body.appendChild(mask);
+        }
+        var icon = job.kind === 'confirm' ? ICONS.ask : job.kind === 'prompt' ? ICONS.edit : ICONS.info;
+        mask.innerHTML =
+            '<div class="zl-dialog" role="dialog" aria-modal="true">'
+            + '<div class="zd-ic">' + icon + '</div>'
+            + '<div class="zd-msg"></div>'
+            + (job.kind === 'prompt' ? '<input class="zd-input" type="text">' : '')
+            + '<div class="zd-btns">'
+            + (job.kind === 'alert' ? '' : '<button class="zd-btn zd-cancel" type="button">取消</button>')
+            + '<button class="zd-btn zd-ok" type="button">确定</button>'
+            + '</div></div>';
+        mask.querySelector('.zd-msg').textContent = job.msg;      // textContent 防注入
+        var input = mask.querySelector('.zd-input');
+        if (input) input.value = job.defValue == null ? '' : String(job.defValue);
+
+        function close(result) {
+            mask.classList.remove('active');
+            setTimeout(function () { mask.innerHTML = ''; }, 280); // 等退场动画结束再清
+            document.removeEventListener('keydown', onKey, true);
+            RUNNING = false;
+            job.resolve(result);
+            pump();
+        }
+        function ok() {
+            close(job.kind === 'confirm' ? true : job.kind === 'prompt' ? input.value : undefined);
+        }
+        function cancel() {
+            close(job.kind === 'confirm' ? false : job.kind === 'prompt' ? null : undefined);
+        }
+        function onKey(e) {
+            if (e.key === 'Escape') { e.stopPropagation(); cancel(); }
+            else if (e.key === 'Enter') { e.stopPropagation(); ok(); }
+        }
+        mask.querySelector('.zd-ok').addEventListener('click', ok);
+        var cancelBtn = mask.querySelector('.zd-cancel');
+        if (cancelBtn) cancelBtn.addEventListener('click', cancel);
+        mask.addEventListener('click', function (e) { if (e.target === mask) cancel(); });
+        document.addEventListener('keydown', onKey, true);
+        mask.classList.add('active');
+        if (input) { input.focus(); input.select(); }
+    }
+
+    window.ZL = window.ZL || {};
+    ZL.dialog = {
+        alert: function (msg) { return show('alert', msg); },
+        confirm: function (msg) { return show('confirm', msg); },
+        prompt: function (msg, defValue) { return show('prompt', msg, defValue); }
+    };
+
+    /* 劫持 window.alert：无返回值语义，卡片化零逻辑风险；组件未就绪时退化原生保功能 */
+    var _nativeAlert = window.alert ? window.alert.bind(window) : function () {};
+    window.alert = function (msg) {
+        if (!document.body || !window.ZL || !ZL.dialog) { _nativeAlert(msg); return; }
+        ZL.dialog.alert(msg);
+    };
+})();
