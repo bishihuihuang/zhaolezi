@@ -71,6 +71,9 @@ service-worker.js / manifest.json ← PWA
 · **V125 右上角刷新按键**：`zl-glass.js` 新增 `initRefresh()`（全站生效，由 `zl-features.js` 动态加载，无需改各页 HTML）。右上角悬浮 🔄 按钮（`position:fixed; top:14px; right:14px; 44×44; z-index:2147483007`，玻璃拟态），点击或进页自动触发 `rfCheck()`：① SW 更新检查（`reg.update()` → 等新 SW 激活 → reload）；② 抽样比对 5 关键资源（`common.css`/`common.js`/`theme.js`/`zl-features.js`/`zl-glass.js`），用 `?cb=<时间戳>` 绕过 SW 缓存，字节比对，不同则 `cache.put()` 覆盖；③ 清掉 `?cb=` 污染条目。30 分钟节流（`localStorage zl_rf_ts`），进页静默跑一次不 reload；手动点击有变更 → 1.5s 后 reload。Toast 提示「已是最新」/「已更新 N 项」/「发现新版本，正在更新…」/「检查失败」。
 · **V126 刷新按钮移除（用户决策）**：右上角 🔄 按钮 UI（`.zl-refresh` CSS 与按钮 DOM）已删；**进页静默更新检查保留**（30 分钟节流，`rfCheck(true)`：发现新 SW → Toast + 自动 reload；抽样比对有变更 → Toast + reload）。`rfToast` 与 `.zl-rf-toast` 样式保留供提示用。
 · **V126b 首页两 bug 修复 + 自定义主题回归（2026-10-31 08:21 发布，03b7906）**：① 首页 `absUrl()` 原 `return u;` 未补前缀致四区工具卡片全 404——已改为站内页走 `ZL.resolve()`（门禁+pages/ 前缀），外部/兄弟站绝对 URL 原样；② `.bg-ambient` 不透明底色遮死主题背景——已移除，并新增 `.bg-ambient .bg-flow-1` 承载层（dark 主题视觉不变，非 dark 主题由 common.css 规则接管显示背景图）；③ 主题面板恢复第 7 项「自定义」（上传背景按钮 + 历史已存 zl_custom_bg 无缝找回）。教训：**换首页版本时必须保留"运行时 ZL.resolve 补前缀"约定，勿在 JS 数据里裸写文件名直出 href**。
+· **V126c 自定义背景交互（de26873）**：「自定义」项单击=应用背景、双击=打开图片上传（📤 小按键已删）；画质降级链 2560@0.92→1920@0.88→1600@0.85（存得下的最高档）。
+· **V126d 亮图自适应前景（2969a7c）**：上传时 canvas 采样亮度存 `zl_custom_bg_lum`；≥150 自动 `data-bg-lum="light"` 整站切浅色前景（common.css 与首页各一组变量覆盖），暗图维持深色，切走自动还原。
+· **V127 统一弹窗（740678b）**：`zl-features.js` 新增 `ZL.dialog`（alert/confirm/prompt 三 API，Promise 化，串行队列）——居中长方形抽屉卡片（毛玻璃+弹性上滑展开，Esc/遮罩/按钮交互，textContent 防注入）。**window.alert 已全局劫持**：全站 31 处 alert 自动卡片化（含未来新增）；confirm×3（41.html×2、14.html 购物车）与 prompt×1（19.html 备注名）已逐点改 async/await（均带原生兜底）。**新代码禁止再直接调 confirm()/prompt()**，一律 `ZL.dialog.confirm/prompt`；alert 随意（劫持兜住）。
 · **线上部署验证**：GitHub Pages 用 Fastly CDN，静态资源 `Cache-Control: max-age=600`（10 分钟）。推送后立刻 curl 可能拿到 CDN 缓存的旧文件；等 10 分钟或用 `?v=随机数` 绕过。
 
 ---
