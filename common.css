@@ -483,17 +483,9 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
     background: var(--title-grad); -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-:root[data-theme="zhaolezi"] .bg-ambient .bg-flow-1 {
-    background:
-        radial-gradient(ellipse 34% 28% at 14% 20%, rgba(255,107,107,.16), transparent 70%),
-        radial-gradient(ellipse 30% 26% at 84% 16%, rgba(246,211,101,.18), transparent 70%),
-        radial-gradient(ellipse 32% 26% at 78% 80%, rgba(56,239,125,.13), transparent 70%),
-        radial-gradient(ellipse 36% 28% at 16% 78%, rgba(124,92,255,.15), transparent 70%),
-        radial-gradient(ellipse 28% 22% at 50% 48%, rgba(56,189,248,.10), transparent 70%),
-        #f6f7fd;
-    animation: zlRainbowDrift 30s ease-in-out infinite alternate;
-}
+:root[data-theme="zhaolezi"] .bg-ambient .bg-flow-1,
 :root[data-theme="zhaolezi"] .bg-animation .bg-flow-1 {
+    inset: -240px;
     background:
         radial-gradient(ellipse 34% 28% at 14% 20%, rgba(255,107,107,.16), transparent 70%),
         radial-gradient(ellipse 30% 26% at 84% 16%, rgba(246,211,101,.18), transparent 70%),
@@ -501,24 +493,27 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
         radial-gradient(ellipse 36% 28% at 16% 78%, rgba(124,92,255,.15), transparent 70%),
         radial-gradient(ellipse 28% 22% at 50% 48%, rgba(56,189,248,.10), transparent 70%),
         #f6f7fd;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
     animation: zlRainbowDrift 30s ease-in-out infinite alternate;
 }
-@keyframes zlRainbowDrift { from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; } to { background-position: 70px 46px, -60px 36px, 50px -40px, -46px -30px, 30px 50px, 0 0; } }
+@keyframes zlRainbowDrift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(180px, 120px, 0); } }
 
 /* ---------- 经典蓝（科技）：星点纹理 + 蓝色流光扫过 + 字距微宽 ---------- */
 :root[data-theme="blue"] body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; letter-spacing: .02em; }
 :root[data-theme="blue"] .bg-ambient .bg-flow-1,
 :root[data-theme="blue"] .bg-animation .bg-flow-1 {
+    inset: -240px;
     background-image:
         linear-gradient(115deg, transparent 30%, rgba(122,168,255,.10) 46%, rgba(122,168,255,.02) 54%, transparent 70%),
         radial-gradient(rgba(190,215,255,.55) 1px, transparent 1.6px),
         radial-gradient(rgba(140,170,255,.30) 1px, transparent 1.6px),
         linear-gradient(160deg, #0b0e1a, #101736 55%, #0b0e1a);
     background-size: 220% 220%, 130px 130px, 210px 210px, cover;
-    background-position: -60% 0, 0 0, 0 0, center;
-    animation: zlBlueSweep 16s linear infinite;
+    will-change: transform;
+    animation: zlBlueSweep 26s linear infinite alternate;
 }
-@keyframes zlBlueSweep { 0% { background-position: -60% 0, 0 0, 0 0, center; } 100% { background-position: 160% 0, 0 0, 0 0, center; } }
+@keyframes zlBlueSweep { from { transform: translate3d(-120px, 0, 0); } to { transform: translate3d(120px, 0, 0); } }
 
 /* ---------- 鎏金（复古）：衬线标题 + 金色双线框 + 流金微粒 + 金色光晕扩散 ---------- */
 :root[data-theme="gold"] h1, :root[data-theme="gold"] h2, :root[data-theme="gold"] h3,
@@ -529,14 +524,16 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
 :root[data-theme="gold"] .card:hover { box-shadow: 0 0 24px rgba(245,197,66,.28); }
 :root[data-theme="gold"] .bg-ambient .bg-flow-1,
 :root[data-theme="gold"] .bg-animation .bg-flow-1 {
+    inset: -320px;
     background-image:
         radial-gradient(rgba(245,197,66,.45) 1px, transparent 1.8px),
         radial-gradient(ellipse 50% 40% at 50% 0%, rgba(245,197,66,.12), transparent 70%),
         linear-gradient(160deg, #171004, #241a08 55%, #171004);
     background-size: 160px 160px, cover, cover;
-    animation: zlGoldFlow 30s linear infinite;
+    will-change: transform;
+    animation: zlGoldFlow 34s ease-in-out infinite alternate;
 }
-@keyframes zlGoldFlow { from { background-position: 0 0, 0 0, center; } to { background-position: 160px 320px, 0 0, center; } }
+@keyframes zlGoldFlow { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-140px, 280px, 0); } }
 
 /* ---------- 明亮（极简）：细字重 + 大圆角 + 无动效（最快最静） ---------- */
 :root[data-theme="light"] body { font-weight: 300; }
@@ -549,15 +546,17 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
 :root[data-theme="snowsun"] .card:hover { box-shadow: 0 0 30px rgba(255,255,255,.45); }
 :root[data-theme="snowsun"] .bg-ambient .bg-flow-1,
 :root[data-theme="snowsun"] .bg-animation .bg-flow-1 {
+    inset: -240px;
     background-image:
         radial-gradient(rgba(255,255,255,.9) 1.5px, transparent 2.2px),
         radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.6px),
         radial-gradient(ellipse 60% 40% at 78% 12%, rgba(255,214,140,.35), transparent 70%),
         linear-gradient(175deg, #dfe9f5, #eef3fa 55%, #f7f4ec);
     background-size: 240px 240px, 150px 150px, cover, cover;
-    animation: zlSnowFall 24s linear infinite;
+    will-change: transform;
+    animation: zlSnowFall 20s linear infinite;
 }
-@keyframes zlSnowFall { from { background-position: 0 -240px, 0 -150px, 0 0, center; } to { background-position: -60px 240px, 40px 150px, 0 0, center; } }
+@keyframes zlSnowFall { from { transform: translate3d(0, -240px, 0); } to { transform: translate3d(-40px, 0, 0); } }
 
 /* ---------- 极光（梦幻）：朦胧弥散发光边框 + 极光漂移 + 四周渐晕营造遥远感 ---------- */
 :root[data-theme="aurora"] body { font-weight: 300; }
@@ -566,21 +565,22 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
 :root[data-theme="aurora"] .card:hover { box-shadow: 0 0 42px rgba(124,58,237,.38), inset 0 0 20px rgba(167,139,250,.16); }
 :root[data-theme="aurora"] .bg-ambient .bg-flow-1,
 :root[data-theme="aurora"] .bg-animation .bg-flow-1 {
+    inset: -240px;
     background-image:
         linear-gradient(115deg, rgba(56,239,125,.10) 20%, rgba(102,126,234,.16) 45%, rgba(167,139,250,.14) 65%, rgba(56,239,125,.08) 85%),
         url(pages/images/bg-aurora.jpg);
     background-size: 200% 200%, cover;
     background-position: 0 50%, center;
-    background-attachment: fixed, fixed;
-    animation: zlAuroraDrift 22s ease-in-out infinite alternate;
+    will-change: transform;
+    animation: zlAuroraDrift 26s ease-in-out infinite alternate;
 }
-:root[data-theme="aurora"] .bg-animation .bg-flow-1 { background-image: linear-gradient(115deg, rgba(56,239,125,.10) 20%, rgba(102,126,234,.16) 45%, rgba(167,139,250,.14) 65%, rgba(56,239,125,.08) 85%), url(images/bg-aurora.jpg); }
+:root[data-theme="aurora"] .bg-ambient .bg-flow-1 { background-image: linear-gradient(115deg, rgba(56,239,125,.10) 20%, rgba(102,126,234,.16) 45%, rgba(167,139,250,.14) 65%, rgba(56,239,125,.08) 85%), url(pages/images/bg-aurora.jpg); }
 :root[data-theme="aurora"] .bg-ambient .bg-flow-1::after,
 :root[data-theme="aurora"] .bg-animation .bg-flow-1::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(ellipse at center, transparent 38%, rgba(12,4,36,.34) 74%, rgba(8,2,28,.62) 100%);
 }
-@keyframes zlAuroraDrift { from { background-position: 0% 50%, center; } to { background-position: 100% 50%, center; } }
+@keyframes zlAuroraDrift { from { transform: translate3d(-60px, 0, 0); } to { transform: translate3d(60px, -40px, 0); } }
 
 /* ---------- 动效可达性：系统减少动效时全部静止 ---------- */
 @media (prefers-reduced-motion: reduce) {
