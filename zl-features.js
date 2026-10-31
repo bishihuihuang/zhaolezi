@@ -138,8 +138,9 @@
      * zl_app_version = {ver, at, read[]}：ver=数据已迁移到的版本，read=已读过的更新记录
      * 新功能发布流程：ZL.APP_VER 升版 → VERSION_LOG 补一条 → whatsNew() 自动触达用户
      * dataMigration(name, toVer, fn)：确保数据结构演进到 toVer，幂等，只执行一次 */
-    ZL.APP_VER = '2.4.8';
+    ZL.APP_VER = '2.4.9';
     ZL.VERSION_LOG = [
+        { ver: '2.4.9', title: '六主题五维体系', desc: '每主题专属字体/边框/交互/动效/背景增强；自定义上传背景下架' },
         { ver: '2.4.8', title: '主题焕新 · 找乐子', desc: '新增「找乐子」默认主题（黑底金橙·与首页统一）；深色流光下架自动迁移' },
         { ver: '2.4.4', title: '统一弹窗 · 抽屉卡片', desc: '36 处原生弹窗全量卡片化：毛玻璃抽屉动效 · Esc 关闭 · 队列防重叠' },
         { ver: '2.4.3', title: '亮图自适应浅色前景', desc: '上传亮色背景自动切换浅色文字，字体永远清晰可读' },

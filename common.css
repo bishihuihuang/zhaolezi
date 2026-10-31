@@ -460,3 +460,111 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
     text-align: center;
 }
 .zl-toast.show { opacity: 1; }
+/* ================================================================
+   V2.4.9 六主题五维体系（字体/边框/交互/动效/背景增强）
+   挂载点：.bg-ambient .bg-flow-1 = 首页承载层（资源路径 pages/images/）
+          .bg-animation .bg-flow-1 = 业务页流光层（资源路径 images/）
+   全部动效仅用 transform/opacity/background-position，尊重 reduced-motion
+   ================================================================ */
+
+/* ---------- 找乐子（黑金 · 默认）：金橙光斑漂浮，卡片上浮金边 ---------- */
+:root[data-theme="zhaolezi"] body,
+:root body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; }
+:root[data-theme="zhaolezi"] .bg-ambient .bg-flow-1 {
+    background:
+        radial-gradient(ellipse 42% 34% at 18% 22%, rgba(246,211,101,.14), transparent 70%),
+        radial-gradient(ellipse 38% 30% at 82% 72%, rgba(253,160,133,.10), transparent 70%),
+        #000;
+    animation: zlGoldDrift 26s ease-in-out infinite alternate;
+}
+:root[data-theme="zhaolezi"] .bg-animation .bg-flow-1 {
+    background:
+        radial-gradient(ellipse 42% 34% at 18% 22%, rgba(246,211,101,.14), transparent 70%),
+        radial-gradient(ellipse 38% 30% at 82% 72%, rgba(253,160,133,.10), transparent 70%),
+        #000;
+    animation: zlGoldDrift 26s ease-in-out infinite alternate;
+}
+@keyframes zlGoldDrift { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 60px 40px, -50px 30px, 0 0; } }
+
+/* ---------- 经典蓝（科技）：星点纹理 + 蓝色流光扫过 + 字距微宽 ---------- */
+:root[data-theme="blue"] body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; letter-spacing: .02em; }
+:root[data-theme="blue"] .bg-ambient .bg-flow-1,
+:root[data-theme="blue"] .bg-animation .bg-flow-1 {
+    background-image:
+        linear-gradient(115deg, transparent 30%, rgba(122,168,255,.10) 46%, rgba(122,168,255,.02) 54%, transparent 70%),
+        radial-gradient(rgba(190,215,255,.55) 1px, transparent 1.6px),
+        radial-gradient(rgba(140,170,255,.30) 1px, transparent 1.6px),
+        linear-gradient(160deg, #0b0e1a, #101736 55%, #0b0e1a);
+    background-size: 220% 220%, 130px 130px, 210px 210px, cover;
+    background-position: -60% 0, 0 0, 0 0, center;
+    animation: zlBlueSweep 16s linear infinite;
+}
+@keyframes zlBlueSweep { 0% { background-position: -60% 0, 0 0, 0 0, center; } 100% { background-position: 160% 0, 0 0, 0 0, center; } }
+
+/* ---------- 鎏金（复古）：衬线标题 + 金色双线框 + 流金微粒 + 金色光晕扩散 ---------- */
+:root[data-theme="gold"] h1, :root[data-theme="gold"] h2, :root[data-theme="gold"] h3,
+:root[data-theme="gold"] .hero-title, :root[data-theme="gold"] .tool-title {
+    font-family: Georgia, "Noto Serif SC", "SimSun", serif; letter-spacing: .04em;
+}
+:root[data-theme="gold"] .card { border: 1px solid rgba(245,197,66,.45); outline: 1px solid rgba(245,197,66,.18); outline-offset: 3px; }
+:root[data-theme="gold"] .card:hover { box-shadow: 0 0 24px rgba(245,197,66,.28); }
+:root[data-theme="gold"] .bg-ambient .bg-flow-1,
+:root[data-theme="gold"] .bg-animation .bg-flow-1 {
+    background-image:
+        radial-gradient(rgba(245,197,66,.45) 1px, transparent 1.8px),
+        radial-gradient(ellipse 50% 40% at 50% 0%, rgba(245,197,66,.12), transparent 70%),
+        linear-gradient(160deg, #171004, #241a08 55%, #171004);
+    background-size: 160px 160px, cover, cover;
+    animation: zlGoldFlow 30s linear infinite;
+}
+@keyframes zlGoldFlow { from { background-position: 0 0, 0 0, center; } to { background-position: 160px 320px, 0 0, center; } }
+
+/* ---------- 明亮（极简）：细字重 + 大圆角 + 无动效（最快最静） ---------- */
+:root[data-theme="light"] body { font-weight: 300; }
+:root[data-theme="light"] .card, :root[data-theme="light"] .zl-dialog, :root[data-theme="light"] .zl-theme-panel { border-radius: 22px; }
+:root[data-theme="light"] .bg-ambient .bg-flow-1,
+:root[data-theme="light"] .bg-animation .bg-flow-1 { background: linear-gradient(170deg, #f4f6fb, #e9edf6 60%, #f4f6fb); animation: none; }
+
+/* ---------- 雪阳（清透）：白雾描边 + 霜雾 hover + 雪花粒子缓落 ---------- */
+:root[data-theme="snowsun"] .card { border: 1px solid rgba(255,255,255,.65); box-shadow: 0 0 18px rgba(255,255,255,.25); }
+:root[data-theme="snowsun"] .card:hover { box-shadow: 0 0 30px rgba(255,255,255,.45); }
+:root[data-theme="snowsun"] .bg-ambient .bg-flow-1,
+:root[data-theme="snowsun"] .bg-animation .bg-flow-1 {
+    background-image:
+        radial-gradient(rgba(255,255,255,.9) 1.5px, transparent 2.2px),
+        radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.6px),
+        radial-gradient(ellipse 60% 40% at 78% 12%, rgba(255,214,140,.35), transparent 70%),
+        linear-gradient(175deg, #dfe9f5, #eef3fa 55%, #f7f4ec);
+    background-size: 240px 240px, 150px 150px, cover, cover;
+    animation: zlSnowFall 24s linear infinite;
+}
+@keyframes zlSnowFall { from { background-position: 0 -240px, 0 -150px, 0 0, center; } to { background-position: -60px 240px, 40px 150px, 0 0, center; } }
+
+/* ---------- 极光（梦幻）：朦胧弥散发光边框 + 极光漂移 + 四周渐晕营造遥远感 ---------- */
+:root[data-theme="aurora"] body { font-weight: 300; }
+:root[data-theme="aurora"] h1, :root[data-theme="aurora"] .hero-title { font-weight: 200; letter-spacing: .06em; }
+:root[data-theme="aurora"] .card { border: 1px solid rgba(167,139,250,.35); box-shadow: 0 0 26px rgba(124,58,237,.22), inset 0 0 14px rgba(167,139,250,.10); }
+:root[data-theme="aurora"] .card:hover { box-shadow: 0 0 42px rgba(124,58,237,.38), inset 0 0 20px rgba(167,139,250,.16); }
+:root[data-theme="aurora"] .bg-ambient .bg-flow-1,
+:root[data-theme="aurora"] .bg-animation .bg-flow-1 {
+    background-image:
+        linear-gradient(115deg, rgba(56,239,125,.10) 20%, rgba(102,126,234,.16) 45%, rgba(167,139,250,.14) 65%, rgba(56,239,125,.08) 85%),
+        url(pages/images/bg-aurora.jpg);
+    background-size: 200% 200%, cover;
+    background-position: 0 50%, center;
+    background-attachment: fixed, fixed;
+    animation: zlAuroraDrift 22s ease-in-out infinite alternate;
+}
+:root[data-theme="aurora"] .bg-animation .bg-flow-1 { background-image: linear-gradient(115deg, rgba(56,239,125,.10) 20%, rgba(102,126,234,.16) 45%, rgba(167,139,250,.14) 65%, rgba(56,239,125,.08) 85%), url(images/bg-aurora.jpg); }
+:root[data-theme="aurora"] .bg-ambient .bg-flow-1::after,
+:root[data-theme="aurora"] .bg-animation .bg-flow-1::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 38%, rgba(12,4,36,.34) 74%, rgba(8,2,28,.62) 100%);
+}
+@keyframes zlAuroraDrift { from { background-position: 0% 50%, center; } to { background-position: 100% 50%, center; } }
+
+/* ---------- 动效可达性：系统减少动效时全部静止 ---------- */
+@media (prefers-reduced-motion: reduce) {
+    :root[data-theme] .bg-flow-1, .bg-ambient .bg-flow-1, .bg-animation .bg-flow-1 { animation: none !important; }
+    :root[data-theme="aurora"] .bg-flow-1::after { display: none; }
+}
