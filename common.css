@@ -57,32 +57,41 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
 
 /* ============ V1.4 多主题变量体系（默认深色流光 + 21 主题，源自 AI提示词/全能文件保存） ============ */
     :root {
-        /* V2.4.8 默认主题「找乐子」：对齐首页视觉（纯黑底 + 深卡 + 金橙强调 + 白字），原深色流光已下架 */
-        --bg: #000000;
-        --bg-dim: #181818;
-        --card: rgba(24, 24, 24, .92);
-        --card-2: #1f1f1f;
-        --txt: #ffffff;
-        --dim: #9b9b9b;
-        --line: #272727;
-        --gold: #f6d365;
-        --gold-2: #fda085;
-        --gold-grad: linear-gradient(135deg, #f6d365, #fda085, #f6d365);
+        /* V2.5.0 默认主题「找乐子」：自由·开放·包容·光鲜亮丽——亮底白玻璃 + 全色相彩虹渐变（多元包容）+ 五彩柔光流动（自由），原黑金暗色已替换 */
+        --bg: #f6f7fd;
+        --bg-dim: #eef0fa;
+        --card: rgba(255, 255, 255, .85);
+        --card-2: #ffffff;
+        --txt: #23263a;
+        --dim: #6b7086;
+        --line: rgba(110, 110, 180, .20);
+        --gold: #7c5cff;
+        --gold-2: #ff6b9d;
+        --gold-grad: linear-gradient(135deg, #ff6b6b, #f6d365, #38ef7d, #7c5cff);
         --blue: #667eea;
         --green: #11998e;
         --purple: #764ba2;
         --red: #fb7185;
-        --glow: #f6d365;
-        --glow-2: #fda085;
-        --glow-3: #38ef7d;
+        --glow: #7c5cff;
+        --glow-2: #ff6b9d;
+        --glow-3: #38bdf8;
         --radius: 16px;
-        --shadow: 0 25px 70px rgba(0, 0, 0, .55);
-        --btn-txt: #181818;
-        --title-grad: linear-gradient(135deg, #f6d365, #fda085, #f6d365);
+        --shadow: 0 25px 70px rgba(124, 92, 255, .16);
+        --btn-txt: #ffffff;
+        --title-grad: linear-gradient(135deg, #ff6b6b, #f6d365, #38ef7d, #7c5cff);
         --back-grad: linear-gradient(135deg, #11998e, #38ef7d);
-        --btn-grad: linear-gradient(135deg, #f6d365, #fda085);
-        --flow-grad: linear-gradient(125deg, #000000, #181818, #101010, #1f1f1f, #141414, #0d0d0d, #181818);
-        --scroll-thumb: linear-gradient(180deg, #f6d365, #fda085);
+        --btn-grad: linear-gradient(135deg, #7c5cff, #ff6b9d);
+        --flow-grad: linear-gradient(125deg, #fdf4ff, #eef4ff, #fff8e8, #eafff4, #f4f0ff);
+        --scroll-thumb: linear-gradient(180deg, #ff6b6b, #f6d365, #38ef7d, #7c5cff);
+        /* ---- 首页内嵌令牌名同步（亮彩版，保证首页与新主题一体） ---- */
+        --text: #23263a;
+        --text-dim: #6b7086;
+        --text-mute: #8a8fa3;
+        --surface: rgba(255, 255, 255, .85);
+        --surface-2: #ffffff;
+        --accent: #7c5cff;
+        --accent-2: #ff6b9d;
+        --accent-ink: #ffffff;
         /* ---- V2.4 装饰调色板令牌（M2 收编：全站复制粘贴的装饰色与渐变，集中入口） ---- */
         --cream: #f6d365;
         --coral: #fda085;
@@ -467,24 +476,34 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
    全部动效仅用 transform/opacity/background-position，尊重 reduced-motion
    ================================================================ */
 
-/* ---------- 找乐子（黑金 · 默认）：金橙光斑漂浮，卡片上浮金边 ---------- */
+/* ---------- 找乐子（彩虹亮彩 · 默认）：五彩柔光流动，光鲜包容 ---------- */
 :root[data-theme="zhaolezi"] body,
 :root body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; }
+:root[data-theme="zhaolezi"] .hero-title {
+    background: var(--title-grad); -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 :root[data-theme="zhaolezi"] .bg-ambient .bg-flow-1 {
     background:
-        radial-gradient(ellipse 42% 34% at 18% 22%, rgba(246,211,101,.14), transparent 70%),
-        radial-gradient(ellipse 38% 30% at 82% 72%, rgba(253,160,133,.10), transparent 70%),
-        #000;
-    animation: zlGoldDrift 26s ease-in-out infinite alternate;
+        radial-gradient(ellipse 34% 28% at 14% 20%, rgba(255,107,107,.16), transparent 70%),
+        radial-gradient(ellipse 30% 26% at 84% 16%, rgba(246,211,101,.18), transparent 70%),
+        radial-gradient(ellipse 32% 26% at 78% 80%, rgba(56,239,125,.13), transparent 70%),
+        radial-gradient(ellipse 36% 28% at 16% 78%, rgba(124,92,255,.15), transparent 70%),
+        radial-gradient(ellipse 28% 22% at 50% 48%, rgba(56,189,248,.10), transparent 70%),
+        #f6f7fd;
+    animation: zlRainbowDrift 30s ease-in-out infinite alternate;
 }
 :root[data-theme="zhaolezi"] .bg-animation .bg-flow-1 {
     background:
-        radial-gradient(ellipse 42% 34% at 18% 22%, rgba(246,211,101,.14), transparent 70%),
-        radial-gradient(ellipse 38% 30% at 82% 72%, rgba(253,160,133,.10), transparent 70%),
-        #000;
-    animation: zlGoldDrift 26s ease-in-out infinite alternate;
+        radial-gradient(ellipse 34% 28% at 14% 20%, rgba(255,107,107,.16), transparent 70%),
+        radial-gradient(ellipse 30% 26% at 84% 16%, rgba(246,211,101,.18), transparent 70%),
+        radial-gradient(ellipse 32% 26% at 78% 80%, rgba(56,239,125,.13), transparent 70%),
+        radial-gradient(ellipse 36% 28% at 16% 78%, rgba(124,92,255,.15), transparent 70%),
+        radial-gradient(ellipse 28% 22% at 50% 48%, rgba(56,189,248,.10), transparent 70%),
+        #f6f7fd;
+    animation: zlRainbowDrift 30s ease-in-out infinite alternate;
 }
-@keyframes zlGoldDrift { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 60px 40px, -50px 30px, 0 0; } }
+@keyframes zlRainbowDrift { from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; } to { background-position: 70px 46px, -60px 36px, 50px -40px, -46px -30px, 30px 50px, 0 0; } }
 
 /* ---------- 经典蓝（科技）：星点纹理 + 蓝色流光扫过 + 字距微宽 ---------- */
 :root[data-theme="blue"] body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; letter-spacing: .02em; }

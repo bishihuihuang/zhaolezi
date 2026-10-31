@@ -31,7 +31,7 @@
     }
 
     function dotBg(t) {
-        if (t === 'zhaolezi') return 'linear-gradient(135deg,#000000,#F6D365)';
+        if (t === 'zhaolezi') return 'linear-gradient(135deg,#ff6b6b,#f6d365,#38ef7d,#7c5cff)';
         var prev = document.documentElement.getAttribute('data-theme');
         document.documentElement.setAttribute('data-theme', t);
         var s = getComputedStyle(document.documentElement);
