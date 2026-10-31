@@ -351,7 +351,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
     background-image: var(--bg-image), var(--bg-dim, transparent), var(--bg-glow), var(--bg-pattern);
     background-size: cover, cover, auto, auto;
     background-position: center, center, center, center;
-    background-attachment: fixed, fixed, local, local;
+    background-attachment: local, local, local, local;
     animation: none;
 }
 
@@ -654,4 +654,19 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
     :root[data-theme="light"]   { --bg-image: url(pages/images/bg-light-mobile.jpg); }
     :root[data-theme="snowsun"] { --bg-image: url(pages/images/bg-snowsun-mobile.jpg); }
     :root[data-theme="aurora"]  { --bg-image: url(pages/images/bg-aurora-mobile.jpg); }
+}
+
+/* ================================================================
+   V134 背景图独立层（方案 C · 根治 fixed+cover 整页放大 bug）
+   背景图从 .bg-flow-1 剥离为独立 .bg-img：
+   - 元素 inset:0 = 视口；background-size:cover 按“元素=视口”计算 → 精确铺满
+   - 不用 background-attachment:fixed（其 cover 会按整页高度放大 → 显示 1/4）
+   - 背景随主题 data-theme 与 @media(max-width:768px) 自动切换 pc/mobile
+   - zhaolezi 主题无 --bg-image（透明）→ 底下 .bg-flow-1 彩虹柔光渐变照常
+   ================================================================ */
+.bg-ambient .bg-img {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-image) center / cover no-repeat;
+    pointer-events: none;
 }
