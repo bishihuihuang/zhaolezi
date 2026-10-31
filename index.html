@@ -150,7 +150,7 @@ main { position: relative; z-index: 1; padding-top: 120px; }
 .hero-title {
   font-size: 60px; font-weight: 700; line-height: 1.05;
   letter-spacing: -.01em; text-wrap: balance;
-  background: linear-gradient(90deg, #FFFFFF, #9B9B9B);
+  background: var(--title-grad);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
 }
@@ -166,8 +166,8 @@ main { position: relative; z-index: 1; padding-top: 120px; }
   font-size: 16px; font-weight: 600; border-radius: var(--r-md);
   transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background var(--dur-fast) var(--ease);
 }
-.btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 24px rgba(246, 211, 101, .18); }
-.btn-primary:hover { background: #FDE08A; box-shadow: 0 12px 32px rgba(246, 211, 101, .28); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 22%, transparent); }
+.btn-primary:hover { background: color-mix(in srgb, var(--accent) 82%, #ffffff); box-shadow: 0 12px 32px color-mix(in srgb, var(--accent) 32%, transparent); }
 .btn-primary:active { transform: scale(.98); }
 .hero-proof {
   margin-top: var(--sp-300); font-size: 14px; color: var(--text-mute);
@@ -208,8 +208,8 @@ main { position: relative; z-index: 1; padding-top: 120px; }
 }
 .tool-box:hover {
   transform: translateY(-6px);
-  border-color: rgba(246, 211, 101, .5);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, .4), 0 0 0 1px rgba(246, 211, 101, .18);
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .4), 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 .tool-box:active { transform: scale(.97); transition-duration: .1s; }
 .tool-box .tool-icon { font-size: 26px; line-height: 1; margin-bottom: var(--sp-100); }

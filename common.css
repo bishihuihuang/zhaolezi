@@ -126,6 +126,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern-size: 36px 36px,36px 36px,auto,auto,auto;
     
         --bg-image: url(pages/images/bg-blue.jpg);
+        /* ---- 首页双令牌同步（V130 主题适配：顶栏/卡片/文字/按钮/标题跟随主题） ---- */
+        --surface: var(--card); --surface-2: var(--card-2);
+        --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
+        --accent: var(--gold); --accent-2: var(--gold-2); --accent-ink: var(--btn-txt);
     }
     :root[data-theme="gold"] {
         --bg: #0d0a05; --bg-dim: linear-gradient(rgba(0,0,0,.06),rgba(0,0,0,.14));
@@ -149,6 +153,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern-size: auto,auto,auto;
     
         --bg-image: url(pages/images/bg-gold.jpg);
+        /* ---- 首页双令牌同步（V130） ---- */
+        --surface: var(--card); --surface-2: var(--card-2);
+        --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
+        --accent: var(--gold); --accent-2: var(--gold-2); --accent-ink: var(--btn-txt);
     }
     :root[data-theme="light"] {
         --bg: #f4f6fb; --bg-dim: none;
@@ -172,6 +180,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern-size: auto,auto,22px 22px;
     
         --bg-image: url(pages/images/bg-light.jpg);
+        /* ---- 首页双令牌同步（V130） ---- */
+        --surface: var(--card); --surface-2: var(--card-2);
+        --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
+        --accent: var(--gold); --accent-2: var(--gold-2); --accent-ink: var(--btn-txt);
     }
     :root[data-theme="milk"] {
         --bg: #f5edd9; --bg-dim: linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.12));
@@ -241,6 +253,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern-size: auto;
     
         --bg-image: url(pages/images/bg-snowsun.jpg);
+        /* ---- 首页双令牌同步（V130） ---- */
+        --surface: var(--card); --surface-2: var(--card-2);
+        --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
+        --accent: var(--gold); --accent-2: var(--gold-2); --accent-ink: var(--btn-txt);
     }
     :root[data-theme="cyber"] {
         --bg: #070714; --bg-dim: linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.34));
@@ -287,6 +303,10 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --bg-pattern-size: auto;
     
         --bg-image: url(pages/images/bg-aurora.jpg);
+        /* ---- 首页双令牌同步（V130） ---- */
+        --surface: var(--card); --surface-2: var(--card-2);
+        --text: var(--txt); --text-dim: var(--dim); --text-mute: var(--dim);
+        --accent: var(--gold); --accent-2: var(--gold-2); --accent-ink: var(--btn-txt);
     }
     :root[data-theme="custom"] {
         --bg: #0b0e1a; --bg-dim: linear-gradient(rgba(2,6,16,.18));
@@ -587,3 +607,37 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
     :root[data-theme] .bg-flow-1, .bg-ambient .bg-flow-1, .bg-animation .bg-flow-1 { animation: none !important; }
     :root[data-theme="aurora"] .bg-flow-1::after { display: none; }
 }
+
+/* ================================================================
+   V130 首页主题特色增强（方案 C · 光斑主题色化 + 工具卡描边特色）
+   各主题首页 .glow 光斑与 .tool-box 描边按主题色系定制，避免金色写死
+   ================================================================ */
+
+/* ---- 经典蓝：蓝/紫光晕 ---- */
+:root[data-theme="blue"] .glow-1 { background: radial-gradient(circle, #7aa8ff, transparent 65%); }
+:root[data-theme="blue"] .glow-2 { background: radial-gradient(circle, #4da3ff, transparent 65%); }
+:root[data-theme="blue"] .glow-3 { background: radial-gradient(circle, #b48cff, transparent 65%); opacity: .10; }
+
+/* ---- 鎏金：金光 + 卡片金描边 ---- */
+:root[data-theme="gold"] .glow-1 { background: radial-gradient(circle, #f5c542, transparent 65%); }
+:root[data-theme="gold"] .glow-2 { background: radial-gradient(circle, #e6a817, transparent 65%); }
+:root[data-theme="gold"] .glow-3 { background: radial-gradient(circle, #fff3c4, transparent 65%); opacity: .10; }
+:root[data-theme="gold"] .tool-box { border-color: rgba(245, 197, 66, .22); }
+
+/* ---- 明亮：低饱和柔光（亮底，光斑更淡） ---- */
+:root[data-theme="light"] .glow-1 { background: radial-gradient(circle, #93c5fd, transparent 65%); opacity: .10; }
+:root[data-theme="light"] .glow-2 { background: radial-gradient(circle, #c4b5fd, transparent 65%); opacity: .08; }
+:root[data-theme="light"] .glow-3 { background: radial-gradient(circle, #bfdbfe, transparent 65%); opacity: .06; }
+
+/* ---- 雪阳：暖橙白雾 + 卡片白雾描边（亮雪底，深色半透明卡） ---- */
+:root[data-theme="snowsun"] .glow-1 { background: radial-gradient(circle, #ffd68c, transparent 65%); opacity: .12; }
+:root[data-theme="snowsun"] .glow-2 { background: radial-gradient(circle, #ffffff, transparent 65%); opacity: .10; }
+:root[data-theme="snowsun"] .glow-3 { background: radial-gradient(circle, #ffb45c, transparent 65%); opacity: .08; }
+:root[data-theme="snowsun"] .tool-box { border-color: rgba(255, 255, 255, .32); box-shadow: 0 0 14px rgba(255, 255, 255, .10); }
+:root[data-theme="snowsun"] .tool-box:hover { box-shadow: 0 14px 34px rgba(0, 0, 0, .28), 0 0 0 1px rgba(255, 255, 255, .22); }
+
+/* ---- 极光：翠绿/紫光晕 + 卡片紫描边 ---- */
+:root[data-theme="aurora"] .glow-1 { background: radial-gradient(circle, #7dffb0, transparent 65%); }
+:root[data-theme="aurora"] .glow-2 { background: radial-gradient(circle, #a78bfa, transparent 65%); }
+:root[data-theme="aurora"] .glow-3 { background: radial-gradient(circle, #667eea, transparent 65%); opacity: .10; }
+:root[data-theme="aurora"] .tool-box { border-color: rgba(167, 139, 250, .28); }
