@@ -16,18 +16,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* 高级感动态背景：流动的极光色 */
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            /* 六主题适配：背景随主题（原霓虹流动渐变 + background-position 动画移除，触性能铁律） */
+            background: var(--bg);
             overflow: hidden;
-        }
-
-        /* 背景流光动画 */
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         /* --- 主卡片容器 (玻璃拟态) --- */
@@ -36,7 +27,7 @@
             width: 90%;
             max-width: 800px;
             height: 85vh;
-            background: rgba(255, 255, 255, 0.85);
+            background: var(--card);
             backdrop-filter: blur(10px);
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.15);
@@ -67,7 +58,7 @@
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            background: rgba(255,255,255,0.9);
+            background: var(--card-2);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             cursor: pointer;
             min-height: 44px; /* 【优化】确保触摸目标 ≥44px */
@@ -84,22 +75,22 @@
 
         /* --- 左上角：蓝色框 (返回) --- */
         .btn-back {
-            color: #2b5876;
-            border: 2px solid #4e4376; /* 深蓝紫色边框 */
+            color: var(--txt);
+            border: 2px solid var(--line); /* 深蓝紫色边框→主题线色 */
         }
         .btn-back:hover {
-            background: #4e4376;
-            color: white;
+            background: var(--glow);
+            color: var(--btn-txt);
         }
 
         /* --- 右上角：青色框 (下一步) --- */
         .btn-next {
-            color: #008080;
-            border: 2px solid #00ced1; /* 亮青色边框 */
+            color: var(--txt);
+            border: 2px solid color-mix(in srgb, var(--gold-2) 60%, transparent); /* 亮青色边框→主题副强调 */
         }
         .btn-next:hover {
-            background: #00ced1;
-            color: white;
+            background: var(--gold-2);
+            color: var(--btn-txt);
         }
 
         /* --- 中间内容区 (可滚动) --- */
@@ -108,7 +99,7 @@
             height: 100%;
             overflow-y: auto; /* 允许垂直滚动 */
             padding-right: 10px;
-            color: #444;
+            color: var(--txt);
             line-height: 1.8;
             font-size: 15px;
             text-align: justify;
@@ -123,14 +114,14 @@
             border-radius: 10px;
         }
         .content-area::-webkit-scrollbar-thumb {
-            background: rgba(161, 140, 209, 0.6);
+            background: var(--scroll-thumb);
             border-radius: 10px;
         }
 
         /* --- 协议标题 --- */
         h1 {
             font-size: 24px;
-            color: #333;
+            color: var(--txt);
             margin-bottom: 20px;
             text-align: center;
             font-weight: 800;
@@ -138,10 +129,10 @@
 
         h3 {
             font-size: 18px;
-            color: #555;
+            color: var(--txt);
             margin-top: 25px;
             margin-bottom: 10px;
-            border-left: 4px solid #a18cd1; /* 紫色小竖线 */
+            border-left: 4px solid var(--gold); /* 紫色小竖线→主题强调 */
             padding-left: 10px;
         }
 
@@ -166,9 +157,8 @@
             display: none;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            /* 六主题适配：遮罩随主题底色 */
+            background: var(--bg);
         }
         #transitionMask.show {
             display: flex;
@@ -183,8 +173,8 @@
         .spinner-circle {
             width: 100px;
             height: 100px;
-            border: 5px solid rgba(255, 255, 255, 0.35);
-            border-top-color: #ffffff;
+            border: 5px solid color-mix(in srgb, var(--txt) 35%, transparent);
+            border-top-color: var(--txt);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -192,7 +182,7 @@
             animation: spinRotate 1.5s linear infinite;
         }
         .spinner-circle span {
-            color: #fff;
+            color: var(--txt);
             font-size: 20px;
             font-weight: bold;
             letter-spacing: 2px;
@@ -250,7 +240,7 @@
                 flex: 1 1 100% !important;
                 width: 100% !important;
                 border-right: none !important;
-                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+                border-bottom: 1px solid var(--line) !important;
             }
             .display-area, .game-main, .calculator-area {
                 flex-direction: column !important;
@@ -447,7 +437,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
             <h3>特别声明：</h3>
             <p>本协议自您勾选同意并继续使用服务时生效；本协议与《用户服务协议》《隐私政策》共同构成完整法律文件；本协议解释权归本网站所有，但涉及用户权益的条款将以有利于用户的方式解释。</p>
 
-            <p style="text-align: center; color: #999; margin-top: 50px;">--- 协议内容结束 ---</p>
+            <p style="text-align: center; color: var(--dim); margin-top: 50px;">--- 协议内容结束 ---</p>
             <br><br>
         </div>
 

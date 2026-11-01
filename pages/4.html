@@ -20,19 +20,8 @@
             align-items: center;
             justify-content: center;
             font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-            background: linear-gradient(
-                -45deg,
-                #ffb6c1, #c39bd3, #a8d8ea, #ffd1a4, #ff9a8b, #ffb6c1
-            );
-            background-size: 400% 400%;
-            animation: flowLight 12s ease infinite;
-        }
-
-        /* 背景流动动画 */
-        @keyframes flowLight {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            /* 六主题适配：背景随主题（原粉紫流动渐变 + background-position 动画移除，触性能铁律） */
+            background: var(--bg);
         }
 
         /* ========== 2. 中央白色卡片：大圆角 + 柔和阴影 ========== */
@@ -40,9 +29,9 @@
             position: relative;
             width: 460px;
             height: 480px;                    /* 略加高，优化空间 */
-            background: #ffffff;
+            background: var(--card);
             border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(160, 100, 160, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
             padding: 30px 32px 40px;
             display: flex;
             flex-direction: column;
@@ -89,10 +78,10 @@
             z-index: 1000;
             font-size: 14px;
             font-weight: bold;
-            color: #4e4376;
+            color: var(--txt);
             text-decoration: none;
-            background: rgba(255, 255, 255, 0.85);
-            border: 2px solid #4e4376;
+            background: var(--card);
+            border: 2px solid var(--line);
             padding: 8px 20px;
             border-radius: 50px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -106,8 +95,8 @@
             justify-content: center;
         }
         .back-link:hover {
-            background: #4e4376;
-            color: #fff;
+            background: var(--glow);
+            color: var(--btn-txt);
             transform: translateY(-2px);
         }
 
@@ -119,10 +108,10 @@
             z-index: 1000;
             font-size: 14px;
             font-weight: bold;
-            color: #2b5876;
+            color: var(--txt);
             text-decoration: none;
-            background: rgba(255, 255, 255, 0.85);
-            border: 2px solid #008080;
+            background: var(--card);
+            border: 2px solid var(--line);
             padding: 8px 20px;
             border-radius: 50px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -136,8 +125,8 @@
             justify-content: center;
         }
         .back-main:hover {
-            background: #008080;
-            color: #fff;
+            background: var(--glow);
+            color: var(--btn-txt);
             transform: translateY(-2px);
         }
 
@@ -145,13 +134,13 @@
         .title-bar {
             margin-top: 20px;
             background: transparent;
-            color: #333;
+            color: var(--txt);
             text-align: center;
             font-size: 26px;
             font-weight: bold;
             letter-spacing: 3px;
             padding: 10px 0 20px;
-            border-bottom: 2px dashed #e0c3f0;
+            border-bottom: 2px dashed var(--line);
             margin-bottom: 20px;
         }
 
@@ -169,25 +158,25 @@
         .form-area input {
             height: 50px;
             padding: 0 24px;
-            border: 2.5px solid #FF9800;
+            border: 2.5px solid var(--gold-2);
             border-radius: 50px;
             font-size: 16px;
             outline: none;
-            background: #fff;
-            color: #333;
+            background: var(--card-2);
+            color: var(--txt);
             text-align: center;
             transition: all 0.3s ease;
             width: 100%;
         }
         .form-area input:focus {
-            box-shadow: 0 0 14px rgba(255, 152, 0, 0.4);
+            box-shadow: 0 0 14px color-mix(in srgb, var(--gold-2) 40%, transparent);
             transform: scale(1.01);
         }
         .form-area input::placeholder {
-            color: #b8b8b8;
+            color: var(--dim);
         }
         .form-area input[readonly] {
-            background: #fffaf2;
+            background: color-mix(in srgb, var(--gold-2) 6%, var(--card-2));
         }
 
         /* 第二行：IP输入框 + 刷新按钮 */
@@ -208,17 +197,18 @@
             padding: 0 22px;
             border: none;
             border-radius: 50px;
-            background: linear-gradient(to right, #FFE082, #FFD54F);
-            color: #8a6d00;
+            background: var(--btn-grad);
+            color: var(--btn-txt);
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
             white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(255, 200, 60, 0.35);
+            box-shadow: 0 4px 12px color-mix(in srgb, var(--glow) 35%, transparent);
             transition: all 0.3s ease;
         }
         #refreshBtn:hover {
-            background: linear-gradient(to right, #FFD54F, #FFC107);
+            background: var(--btn-grad);
+            filter: brightness(1.08);
             transform: translateY(-2px);
         }
         #refreshBtn:active { transform: scale(0.97); }
@@ -233,25 +223,25 @@
             font-size: 18px;
             font-weight: bold;
             letter-spacing: 4px;
-            color: #fff;
-            background: #c8c8c8;
+            color: var(--txt);
+            background: color-mix(in srgb, var(--dim) 25%, transparent);
             cursor: not-allowed;
             transition: all 0.3s ease;
         }
         #confirmBtn:hover:not(:disabled) {
-            background: linear-gradient(to right, #FFC107, #FFD54F);
+            background: var(--btn-grad);
             transform: translateY(-2px);
         }
         #confirmBtn:disabled {
-            background: #c8c8c8;
+            background: color-mix(in srgb, var(--dim) 25%, transparent);
             opacity: 0.6;
             cursor: not-allowed;
         }
         #confirmBtn:not(:disabled) {
-            background: linear-gradient(to right, #FFC107, #FFEB3B);
-            color: #7a5c00;
+            background: var(--btn-grad);
+            color: var(--btn-txt);
             cursor: pointer;
-            box-shadow: 0 6px 18px rgba(255, 193, 7, 0.45);
+            box-shadow: 0 6px 18px color-mix(in srgb, var(--glow) 45%, transparent);
         }
 
         /* ========== 7. 转场遮罩层（index.html 通用圆环样式） ========== */
@@ -402,7 +392,7 @@
                 flex: 1 1 100% !important;
                 width: 100% !important;
                 border-right: none !important;
-                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+                border-bottom: 1px solid var(--line) !important;
             }
             .display-area, .game-main, .calculator-area {
                 flex-direction: column !important;

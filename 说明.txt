@@ -1,0 +1,48 @@
+找乐子（zhaolezi）站点维护说明
+================================
+更新日期：2026-11-01（V2.6.0）
+配套文档：AI工作手册.md（AI 视角工作说明，每次动工前必读）
+
+【本站是什么】
+找乐子——混淆版游戏/趣味导航站（V2.6.0）。
+线上：https://bishihuihuang.github.io/zhaolezi/（GitHub Pages，仓库 bishihuihuang/zhaolezi）
+规模：46 个数字页面（1~46，33/35/40/43/44/45 已下架）+ 首页 + 文件搜索/verify/offline。
+
+【目录结构】
+index.html            混淆后首页（线上用，勿手改）
+pages\                混淆后全部子页面 + images\ + audio\ + 看看作业\
+_原始未混淆版\        【唯一修改入口】50 个源文件，已被 .gitignore 忽略，不公开
+构建工具\_混淆工具.js  混淆脚本（改完源码跑它；公共层留根不混淆）
+common.css/common.js/theme.js/zl-features.js/zl-glass.js  公共层（留根）
+service-worker.js/manifest.json  PWA（CACHE_NAME 构建自动+1）
+一键自动化发布.bat     【唯一发布方式】拉取→混淆→commit→push 全自动
+备份当前版本.bat       发布前先跑，镜像到 E:\全面备份\zhaolezi备份
+AI工作手册.md          AI 工作说明（铁律/流程/版本史）
+.tmp\                  AI 临时文件区（完成后归档）
+
+【日常修改流程】
+1) 先跑 备份当前版本.bat
+2) 只改 _原始未混淆版\ 里的源文件（勿改根目录/pages\ 产物）
+3) 双击 一键自动化发布.bat（构建+发布一步完成）
+4) 发布后验证：git ls-remote origin main 应等于本地 HEAD
+5) 同步更新本文件与 AI工作手册.md
+
+【V2.6.0 变更摘要（2026-11-01）】
+· 全站 43 页完成六主题（找乐子/经典蓝/鎏金/明亮/雪阳/极光）精细适配：
+  背景/卡片/按钮/输入框/弹窗/滚动条全面跟随主题，各页按内容定制主题色。
+· 移除多页违规的 background-position 全屏背景动画（性能铁律：只用 transform）。
+· 词云/分享卡/打字图表等 canvas 绘图改为运行时读取主题令牌，切主题即时换色。
+· 目录无变化；service-worker CACHE_NAME 随构建自动升版。
+· 语义色白名单（有意保留）：转场圆环品牌色、奖牌金银铜、段位色、黑客终端
+  深色舱体、扫雷经典灰皮、棋盘木色、代码块深色、计算器 LED 屏、verify 门禁
+  黑金体系（自带令牌）。
+
+【注意事项】
+· bat 必须 GBK+CRLF；勿手动 git push（Mimosa 安全钩子会拦截，且绕过发布流程）。
+· 发布后 CDN（Fastly）10 分钟缓存：验证线上用硬刷新×2 或 ?v=随机数。
+· SW 缓存：HTML/JS/CSS 网络优先；CACHE_NAME 每次构建自动 +1。
+· 新代码禁止 confirm()/prompt()，用 ZL.dialog（alert 已全局劫持可随意）。
+· 新增颜色一律引用主题令牌（var(--card)/--txt/--glow/--gold-2 等），
+  半透明用 color-mix(in srgb, var(--xx) N%, transparent)，禁止写死色值。
+· 背景动画禁用 background-position（全屏重绘卡顿），只用 transform。
+· 本文件与 AI工作手册.md 为本地文档，每次改动后同步更新。

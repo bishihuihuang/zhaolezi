@@ -23,22 +23,15 @@ body {
     align-items: center;
     position: relative;
     font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-}
-
-@keyframes gradientBG {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    /* 六主题适配：背景随主题（原霓虹流动渐变 + background-position 动画移除，触性能铁律） */
+    background: var(--bg);
 }
 
 /* ========== 背景漂浮光球 ========== */
 .bg-orb {
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
+    background: color-mix(in srgb, var(--glow) 14%, transparent);
     filter: blur(2px);
     z-index: 1;
     animation: orbFloat 8s ease-in-out infinite;
@@ -56,7 +49,7 @@ body {
     position: relative;
     width: 440px;
     height: 440px;                    /* 宽高相等 => 正方形 */
-    background: rgba(255, 255, 255, 0.88);
+    background: var(--card);
     backdrop-filter: blur(10px);      /* 磨砂玻璃效果 */
     border-radius: 25px;              /* 大圆角 */
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
@@ -80,7 +73,7 @@ body {
     width: 55%;
     height: 5px;
     border-radius: 0 0 10px 10px;
-    background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); /* 页系签名霓虹条（白名单） */
 }
 
 /* 卡片入场动画（上浮淡入） */
@@ -104,10 +97,10 @@ body {
     left: 16px;
     font-size: 13px;
     font-weight: bold;
-    color: #e73c7e;
+    color: var(--glow);
     text-decoration: none;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(231, 60, 126, 0.25);
+    background: var(--card-2);
+    border: 1px solid var(--line);
     padding: 7px 18px;
     border-radius: 50px;              /* 胶囊形 */
     transition: all 0.3s ease;
@@ -120,10 +113,10 @@ body {
     min-width: 44px;
 }
 .back-link:hover {
-    background: #e73c7e;
-    color: #fff;
+    background: var(--glow);
+    color: var(--btn-txt);
     transform: translateX(-3px);
-    box-shadow: 0 4px 12px rgba(231, 60, 126, 0.35);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--glow) 35%, transparent);
 }
 
 /* ========== 4. 头像小正方形（内放 1.jpg） ========== */
@@ -132,7 +125,7 @@ body {
     height: 140px;                    /* 小正方形 */
     border-radius: 18px;
     padding: 6px;
-    background: #fff;                 /* 白色相框边 */
+    background: var(--card-2);        /* 相框边→主题卡面 */
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
     transform: rotate(-3deg);         /* 轻微歪头，俏皮感 */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -156,8 +149,8 @@ body {
     justify-content: center;
     align-items: center;
     border-radius: 12px;
-    background: linear-gradient(135deg, #ffe3ec, #e3ecff);
-    color: #999;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--glow) 12%, var(--card-2)), color-mix(in srgb, var(--blue) 12%, var(--card-2)));
+    color: var(--dim);
     font-size: 13px;
     text-align: center;
     line-height: 1.6;
@@ -169,12 +162,12 @@ body {
     font-size: 24px;
     font-weight: bold;
     letter-spacing: 2px;
-    background: linear-gradient(90deg, #b8860b, #ffd700, #daa520, #b8860b);
+    background: var(--title-grad);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 2px 5px rgba(255, 215, 0, 0.3));
+    filter: drop-shadow(0 2px 5px color-mix(in srgb, var(--gold) 30%, transparent));
     animation: goldFlow 4s linear infinite;   /* 金光缓缓流转 */
 }
 @keyframes goldFlow {
@@ -191,12 +184,12 @@ body {
 .author-deco .line {
     width: 46px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #daa520, transparent);
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 60%, transparent), transparent);
 }
 .author-deco .diamond {
     width: 6px;
     height: 6px;
-    background: #daa520;
+    background: var(--gold);
     transform: rotate(45deg);
     opacity: 0.8;
 }
@@ -204,7 +197,7 @@ body {
 /* ========== 6. 简介文字 ========== */
 .intro-text {
     font-size: 14px;
-    color: #9a9a9a;
+    color: var(--dim);
     letter-spacing: 1px;
 }
 
@@ -219,9 +212,8 @@ body {
     display: none;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    /* 六主题适配：遮罩随主题底色 */
+    background: var(--bg);
     /* 【优化】无障碍角色 */
     role: dialog;
     aria-modal: true;
@@ -239,8 +231,8 @@ body {
 .spinner-circle {
     width: 100px;
     height: 100px;
-    border: 5px solid rgba(255, 255, 255, 0.35);
-    border-top-color: #ffffff;
+    border: 5px solid color-mix(in srgb, var(--txt) 35%, transparent);
+    border-top-color: var(--txt);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -248,7 +240,7 @@ body {
     animation: spinRotate 1.5s linear infinite;
 }
 .spinner-circle span {
-    color: #fff;
+    color: var(--txt);
     font-size: 20px;
     font-weight: bold;
     letter-spacing: 2px;
@@ -290,7 +282,7 @@ body {
                 flex: 1 1 100% !important;
                 width: 100% !important;
                 border-right: none !important;
-                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+                border-bottom: 1px solid var(--line) !important;
             }
             .display-area, .game-main, .calculator-area {
                 flex-direction: column !important;
@@ -469,7 +461,7 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
     </div>
 
     <!-- 笔名 -->
-    <div class="intro-text" style="color:#a08c5b; font-family:'KaiTi','STKaiti',serif;">啥也没有</div>
+    <div class="intro-text" style="color:var(--dim); font-family:'KaiTi','STKaiti',serif;">啥也没有</div>
 
     <!-- 简介 -->
     <div class="intro-text">你的简介空空如也。</div>

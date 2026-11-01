@@ -16,7 +16,7 @@
             font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
             min-height: 100vh;
             background: var(--bg);
-            color: #fff;
+            color: var(--txt);
             overflow-x: hidden;
             position: relative;
         }
@@ -141,10 +141,10 @@
             z-index: 1000;
             text-align: center;
             padding: 18px 20px;
-            background: linear-gradient(180deg, rgba(8,10,30,.9), rgba(10,14,39,.5), transparent);
+            background: var(--card);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(255,255,255,.06);
+            border-bottom: 1px solid var(--line);
             box-shadow: 0 4px 40px rgba(0,0,0,.3);
         }
 
@@ -152,14 +152,14 @@
             font-size: 28px;
             font-weight: 900;
             letter-spacing: 5px;
-            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365, #fda085, #f6d365);
+            var(--title-grad);
             background-size: 200% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: textShine 3s linear infinite;
             display: inline-block;
-            text-shadow: 0 0 30px rgba(246,211,101,.3);
+            text-shadow: 0 0 30px color-mix(in srgb, var(--gold) 30%, transparent);
         }
 
         @keyframes textShine {
@@ -183,9 +183,9 @@
         .container {
             width: 80%;
             max-width: 1440px;
-            background: rgba(245,247,255,.96);
+            background: var(--card);
             border-radius: 24px;
-            box-shadow: 0 25px 70px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.3), inset 0 1px 0 rgba(255,255,255,.6);
+            box-shadow: 0 25px 70px rgba(0,0,0,.35), 0 0 0 1px var(--line);
             max-height: calc(100vh - 130px);
             overflow-y: auto;
             padding: 20px;
@@ -194,7 +194,7 @@
 
         .container::-webkit-scrollbar { width: 10px; }
         .container::-webkit-scrollbar-track { background: rgba(0,0,0,.04); border-radius: 12px; }
-        .container::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 12px; border: 2px solid rgba(255,255,255,.4); }
+        .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 12px; border: 2px solid transparent; }
 
         /* ========== 网格布局（6列） ========== */
         .grid {
@@ -211,10 +211,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #ff6b6b, #ffa500, #ffd700, #ff6b6b);
+            background: var(--gold-3-grad);
             background-size: 300% 300%;
             border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(255,150,50,.35), inset 0 1px 0 rgba(255,255,255,.2);
+            box-shadow: 0 12px 40px color-mix(in srgb, var(--gold-2) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
             animation: titleGradient 6s ease infinite;
             position: relative;
             overflow: hidden;
@@ -224,7 +224,7 @@
 
         .title-area:hover {
             transform: translateY(-6px) scale(1.01);
-            box-shadow: 0 18px 60px rgba(255,150,50,.5), 0 0 50px rgba(255,200,100,.25);
+            box-shadow: 0 18px 60px color-mix(in srgb, var(--gold-2) 50%, transparent), 0 0 50px color-mix(in srgb, var(--gold-2) 25%, transparent);
         }
 
         .title-area h2 {
@@ -233,7 +233,7 @@
             text-align: center;
             line-height: 1.3;
             letter-spacing: 5px;
-            color: #fff;
+            color: var(--btn-txt);
             text-shadow: 2px 2px 10px rgba(0,0,0,.3);
         }
 
@@ -250,20 +250,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #11998e, #38ef7d);
-            color: #fff;
+            background: var(--back-grad);
+            color: var(--btn-txt);
             font-size: 24px;
             font-weight: 800;
             text-decoration: none;
             border-radius: 20px;
-            box-shadow: 0 12px 40px rgba(17,153,142,.4), inset 0 1px 0 rgba(255,255,255,.2);
+            box-shadow: 0 12px 40px color-mix(in srgb, var(--green) 40%, transparent), inset 0 1px 0 rgba(255,255,255,.2);
             transition: transform .3s, box-shadow .3s;
             cursor: pointer;
         }
 
         .back-area:hover {
             transform: translateY(-5px);
-            box-shadow: 0 18px 50px rgba(17,153,142,.5);
+            box-shadow: 0 18px 50px color-mix(in srgb, var(--green) 50%, transparent);
         }
 
         .back-area:active {
@@ -273,11 +273,11 @@
         /* ========== 公告卡片（内容区，从第3行开始，占满6列） ========== */
         .announcement-card {
             grid-column: 1 / 7;
-            background: #fff;
+            background: var(--card-2);
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 6px 20px rgba(0,0,0,.1);
-            border: 2px solid #e8e8e8;
+            border: 2px solid var(--line);
             position: relative;
             overflow: hidden;
             transition: transform .3s, box-shadow .3s, border-color .3s;
@@ -303,26 +303,26 @@
             top: 0;
             bottom: 0;
             width: 4px;
-            background: linear-gradient(180deg, #ff6b6b, #ffa500);
+            var(--gold-3-grad);
             border-radius: 4px 0 0 4px;
         }
 
         .announcement-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 30px rgba(0,0,0,.15);
-            border-color: #ffd700;
+            border-color: var(--gold);
         }
 
         .announcement-card .date {
             display: inline-block;
-            background: linear-gradient(135deg, #ff6b6b, #ffa500);
-            color: #fff;
+            var(--gold-3-grad);
+            color: var(--btn-txt);
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 14px;
             font-weight: 700;
             margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(255,107,107,.3);
+            box-shadow: 0 2px 8px color-mix(in srgb, var(--red) 30%, transparent);
             transition: transform .2s;
         }
 
@@ -333,7 +333,7 @@
         .announcement-card .content {
             font-size: 16px;
             line-height: 1.8;
-            color: #444;
+            color: var(--txt);
             padding-left: 8px;
         }
 
@@ -455,7 +455,7 @@
             .announcement-card .date { font-size: 13px; padding: 3px 10px; }
             .announcement-card .content { font-size: 15px; line-height: 1.7; }
             /* 手机端去除hover效果，使用active */
-            .announcement-card:hover { transform: none; box-shadow: 0 6px 20px rgba(0,0,0,.1); border-color: #e8e8e8; }
+            .announcement-card:hover { transform: none; box-shadow: 0 6px 20px rgba(0,0,0,.1); border-color: var(--line); }
             .announcement-card:active { transform: scale(.98); }
             .title-area:hover { transform: none; }
             .back-area:hover { transform: none; }

@@ -57,9 +57,9 @@
         .btn:hover { transform: translateY(-2px); }
         .btn:active { transform: translateY(0); }
         .btn.primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #ffffff;
-            box-shadow: 0 6px 18px rgba(102,126,234,.35);
+            background: var(--btn-grad);
+            color: var(--btn-txt);
+            box-shadow: 0 6px 18px color-mix(in srgb, var(--glow) 35%, transparent);
         }
         .btn.secondary {
             background: rgba(128,128,128,.15);

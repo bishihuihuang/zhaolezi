@@ -24,17 +24,8 @@
             align-items: center;
             position: relative;
 
-            /* 动态霓虹渐变背景 */
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-
-        /* 背景流动的关键帧动画 */
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            /* 六主题适配：背景随主题（原霓虹流动渐变 + background-position 动画移除，触性能铁律） */
+            background: var(--bg);
         }
 
         /* =========================================
@@ -43,7 +34,7 @@
         .bg-orb {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
+            background: color-mix(in srgb, var(--glow) 14%, transparent);
             filter: blur(2px);
             z-index: 1;
             animation: orbFloat 8s ease-in-out infinite;
@@ -68,13 +59,13 @@
 
         .back-link {
             text-decoration: none;
-            color: white;
+            color: var(--txt);
             font-size: 16px;
             font-weight: bold;
             padding: 10px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.6);
+            border: 2px solid var(--line);
             border-radius: 30px;
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: var(--card);
             backdrop-filter: blur(5px);
             transition: all 0.3s ease;
             display: flex;
@@ -83,18 +74,18 @@
         }
 
         .back-link:hover {
-            background-color: rgba(255, 255, 255, 0.9);
-            color: #e73c7e;
-            border-color: white;
+            background-color: var(--card-2);
+            color: var(--glow);
+            border-color: var(--gold-2);
             transform: translateX(-5px);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px color-mix(in srgb, var(--glow) 30%, transparent);
         }
 
         /* =========================================
            3. 核心卡片容器 (白色方块)
            ========================================= */
         .card-container {
-            background-color: #ffffff;
+            background-color: var(--card);
             width: 420px;
             padding: 45px 40px 40px;
             border-radius: 24px;
@@ -102,7 +93,7 @@
             text-align: center;
             position: relative;
             z-index: 10;
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--line);
             animation: cardEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
             transition: box-shadow 0.3s ease;
         }
@@ -126,7 +117,7 @@
             width: 60%;
             height: 5px;
             border-radius: 0 0 10px 10px;
-            background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); /* 页系签名霓虹条（白名单） */
         }
 
         /* 标题样式 */
@@ -135,11 +126,11 @@
             font-weight: bold;
             margin-bottom: 28px;
             letter-spacing: 3px;
-            background: linear-gradient(135deg, #2ecc71, #00b894, #2ecc71);
+            background: var(--back-grad);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            filter: drop-shadow(0 2px 6px rgba(46, 204, 113, 0.35));
+            filter: drop-shadow(0 2px 6px color-mix(in srgb, var(--green) 35%, transparent));
         }
 
         /* =========================================
@@ -163,7 +154,7 @@
             font-weight: bold;
             letter-spacing: 4px;
             /* 香槟金渐变（background-size 加大，供悬停流光使用） */
-            background: linear-gradient(90deg, #b8860b, #ffd700, #daa520, #b8860b);
+            background: var(--title-grad);
             background-size: 200% auto;
             -webkit-background-clip: text;
             background-clip: text;
@@ -178,7 +169,7 @@
             font-family: "KaiTi", "STKaiti", "FangSong", "Microsoft YaHei", serif;
             font-size: 14px;
             letter-spacing: 3px;
-            color: #a08c5b; /* 柔和暗金灰 */
+            color: var(--dim); /* 柔和次要色（随主题） */
         }
 
         /* 两侧细金线 + 中间小菱形点缀 */
@@ -192,12 +183,12 @@
         .author-deco .line {
             width: 50px;
             height: 1px;
-            background: linear-gradient(90deg, transparent, #daa520, transparent);
+            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 60%, transparent), transparent);
         }
         .author-deco .diamond {
             width: 7px;
             height: 7px;
-            background: #daa520;
+            background: var(--gold);
             transform: rotate(45deg);
             opacity: 0.8;
         }
@@ -205,10 +196,10 @@
         /* 悬停：金光缓缓流转 + 轻柔光晕 */
         .author-link:hover .author-name {
             background-position: 200% center;
-            filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.55));
+            filter: drop-shadow(0 0 6px color-mix(in srgb, var(--gold) 55%, transparent));
         }
         .author-link:hover .author-alias {
-            color: #b8860b;
+            color: var(--gold-2);
         }
 
         /* =========================================
@@ -220,7 +211,7 @@
             justify-content: center;
             margin-bottom: 32px;
             font-size: 14px;
-            color: #555;
+            color: var(--txt);
             text-align: left;
             line-height: 1.5;
         }
@@ -230,7 +221,7 @@
             height: 18px;
             margin-right: 10px;
             cursor: pointer;
-            accent-color: #007bff;
+            accent-color: var(--blue);
         }
 
         .agreement-section label {
@@ -239,7 +230,7 @@
         }
 
         .protocol-link {
-            color: #007bff;
+            color: var(--blue);
             text-decoration: underline;
             margin-left: 5px;
         }
@@ -261,8 +252,8 @@
             transition: all 0.3s ease;
             min-height: 44px; /* 【修复】确保触摸目标不小于44x44 */
 
-            background-color: #cccccc;
-            color: #ffffff;
+            background-color: color-mix(in srgb, var(--dim) 22%, transparent);
+            color: var(--txt);
             opacity: 0.6;
             pointer-events: none;
             cursor: not-allowed;
@@ -272,15 +263,15 @@
         }
 
         .next-btn.active {
-            background-color: #007bff;
+            background-color: var(--glow);
             opacity: 1;
             pointer-events: auto;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            box-shadow: 0 5px 15px color-mix(in srgb, var(--glow) 40%, transparent);
         }
 
         .next-btn.active:hover {
-            background-color: #0056b3;
+            filter: brightness(.9);
             transform: translateY(-2px);
         }
 
@@ -314,9 +305,8 @@
             display: none;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            /* 六主题适配：遮罩随主题底色 */
+            background: var(--bg);
         }
         #transitionMask.show {
             display: flex;
@@ -331,8 +321,8 @@
         .spinner-circle {
             width: 100px;
             height: 100px;
-            border: 5px solid rgba(255, 255, 255, 0.35);
-            border-top-color: #ffffff;
+            border: 5px solid color-mix(in srgb, var(--txt) 35%, transparent);
+            border-top-color: var(--txt);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -340,7 +330,7 @@
             animation: spinRotate 1.5s linear infinite;
         }
         .spinner-circle span {
-            color: #fff;
+            color: var(--txt);
             font-size: 20px;
             font-weight: bold;
             letter-spacing: 2px;
@@ -382,7 +372,7 @@
                 flex: 1 1 100% !important;
                 width: 100% !important;
                 border-right: none !important;
-                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+                border-bottom: 1px solid var(--line) !important;
             }
             .display-area, .game-main, .calculator-area {
                 flex-direction: column !important;

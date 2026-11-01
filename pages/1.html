@@ -17,7 +17,8 @@
             justify-content: center;
             align-items: center;
             /* 高级感动态背景：流动的极光色 */
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            /* 六主题适配：霓虹流动渐变→主题底色（background-position 动画已随移除） */
+            background: var(--bg);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             overflow: hidden;
@@ -61,7 +62,7 @@
             margin-bottom: 40px;
             font-weight: bold;
             letter-spacing: 2px;
-            text-shadow: 2px 2px 0px rgba(255,255,255,1);
+            text-shadow: 2px 2px 0px color-mix(in srgb, var(--card-2) 90%, transparent);
         }
 
         /* 输入框区域 */
@@ -74,7 +75,7 @@
             width: 100%;
             padding: 15px 20px;
             font-size: 18px;
-            border: 3px solid #FF9800; /* 橙色边框 */
+            border: 3px solid var(--gold-2); /* 橙色边框 */
             border-radius: 50px; /* 圆角矩形 */
             background: white;
             color: var(--txt);
@@ -87,7 +88,7 @@
         }
 
         input[type="password"]:focus {
-            box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+            box-shadow: 0 0 15px color-mix(in srgb, var(--gold-2) 50%, transparent);
             transform: scale(1.02);
         }
 
@@ -106,7 +107,7 @@
             font-size: 20px;
             font-weight: bold;
             color: white;
-            background: linear-gradient(to right, #FF9800, #FFB74D); /* 橙色渐变 */
+            background: var(--btn-grad); /* 橙色渐变 */
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -122,17 +123,17 @@
         /* 确定按钮交互 */
         .btn-confirm:active {
             transform: scale(0.95);
-            background: #F57C00;
+            background: color-mix(in srgb, var(--gold-2) 85%, #000);
         }
 
         /* 取消按钮交互 (稍微淡一点的橙色以示区分，但大小一致) */
         .btn-cancel {
-            background: linear-gradient(to right, #FFCC80, #FFE0B2);
-            color: #E65100;
+            background: color-mix(in srgb, var(--gold-2) 18%, var(--card-2));
+            color: var(--gold-2);
         }
         .btn-cancel:active {
             transform: scale(0.95);
-            background: #FFB74D;
+            background: var(--gold-2);
         }
 
         /* 错误时的抖动动画 */
@@ -155,9 +156,9 @@
             z-index: 999;
             display: inline-block;
             padding: 10px 16px;
-            color: rgba(255, 255, 255, 0.9);
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--txt);
+            background: color-mix(in srgb, var(--glow) 10%, transparent);
+            border: 1px solid var(--line);
             border-radius: 30px;
             text-decoration: none;
             font-size: 14px;
@@ -171,7 +172,7 @@
             align-items: center;
         }
         .back-home:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: color-mix(in srgb, var(--glow) 18%, transparent);
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0,0,0,0.25);
         }

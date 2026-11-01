@@ -80,8 +80,8 @@
         .orb {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.32), rgba(255,255,255,.12) 45%, transparent 75%);
-            box-shadow: 0 0 60px rgba(255,255,255,.1), inset 0 0 30px rgba(255,255,255,.05);
+            background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--card-2) 60%, transparent), color-mix(in srgb, var(--card-2) 15%, transparent) 45%, transparent 75%);
+            box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 10%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
             pointer-events: none;
             will-change: transform, opacity;
         }
@@ -116,9 +116,9 @@
         .container {
             width: 80%;
             max-width: 1200px;
-            background: rgba(245, 247, 255, .97);
+            background: var(--card);
             border-radius: 24px;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px rgba(255, 255, 255, .3);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px var(--line);
             padding: 24px;
             backdrop-filter: blur(4px);
             margin-top: 30px;
@@ -134,7 +134,7 @@
         }
         .cell {
             border-radius: 14px;
-            background: rgba(255, 255, 255, .15);
+            background: color-mix(in srgb, var(--glow) 5%, transparent);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -147,22 +147,22 @@
         }
         .cell:hover {
             transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 0 20px rgba(255,255,255,.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 0 20px color-mix(in srgb, var(--glow) 15%, transparent);
         }
 
         /* ===== 标题区域 ===== */
         .title-area {
             grid-row: 1 / 3;
             grid-column: 1 / 5;
-            background: linear-gradient(135deg, #1a1a4e, #2d1b69, #1a1a4e);
-            border-color: #f6d365;
+            background: var(--btn-grad);
+            border-color: var(--gold);
             cursor: default;
         }
         .title-area h1 {
             font-size: 46px;
             font-weight: 900;
             letter-spacing: 6px;
-            background: linear-gradient(90deg, #f6d365, #fff, #a78bfa, #f6d365);
+            background: linear-gradient(90deg, var(--btn-txt), color-mix(in srgb, var(--btn-txt) 55%, transparent), var(--btn-txt));
             background-size: 300% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -178,17 +178,17 @@
         .back-area {
             grid-row: 1 / 3;
             grid-column: 5 / 7;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: #fff;
+            background: var(--btn-grad);
+            color: var(--btn-txt);
             font-weight: 800;
             font-size: 22px;
             letter-spacing: 3px;
             text-decoration: none;
-            border-color: #a78bfa;
+            border-color: var(--purple);
             cursor: pointer;
         }
         .back-area:hover {
-            background: linear-gradient(135deg, #2b4a9e, #4b8ef6);
+            filter: brightness(1.12);
             box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
         }
 
@@ -198,7 +198,7 @@
             grid-column: 1 / 7;
             background: rgba(255, 255, 255, .97);
             border-radius: 14px;
-            border: 3px solid #81c784;
+            border: 3px solid var(--green);
             display: flex;
             flex-direction: column;
             padding: 20px;
@@ -240,8 +240,8 @@
         .btn {
             border: none;
             border-radius: 12px;
-            background: #f0f2f5;
-            color: #333;
+            background: color-mix(in srgb, var(--glow) 5%, var(--card-2));
+            color: var(--txt);
             font-size: 20px;
             font-weight: 600;
             cursor: pointer;
@@ -262,22 +262,22 @@
             transform: scale(.96);
         }
         .btn-operator {
-            background: #ff9800;
-            color: #fff;
+            background: var(--gold-2);
+            color: var(--btn-txt);
         }
         .btn-operator:hover {
             background: #f57c00;
         }
         .btn-equal {
-            background: #4caf50;
-            color: #fff;
+            background: var(--green);
+            color: var(--btn-txt);
         }
         .btn-equal:hover {
             background: #43a047;
         }
         .btn-clear {
-            background: #e53935;
-            color: #fff;
+            background: var(--red);
+            color: var(--btn-txt);
         }
         .btn-clear:hover {
             background: #d32f2f;
