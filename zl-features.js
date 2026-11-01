@@ -138,9 +138,10 @@
      * zl_app_version = {ver, at, read[]}：ver=数据已迁移到的版本，read=已读过的更新记录
      * 新功能发布流程：ZL.APP_VER 升版 → VERSION_LOG 补一条 → whatsNew() 自动触达用户
      * dataMigration(name, toVer, fn)：确保数据结构演进到 toVer，幂等，只执行一次 */
-    ZL.APP_VER = '2.5.2';
+    ZL.APP_VER = '2.5.3';
     ZL.VERSION_LOG = [
-        { ver: '2.5.2', title: '主题背景图焕新 · 按端适配', desc: '5 主题 AI 高清背景，电脑横图/手机竖图各完整显示；修复局部显示 bug' },
+{ ver: '2.5.3', title: '返回导航统一 · 小房子键', desc: '39/36/1-8 页返回键重定向：39→32 工具导航、36→31 娱乐游戏、1-8 统一左下角小房子键跳 31；旧右上角返回主程序链接移除；转场动画保留' },
+                { ver: '2.5.2', title: '主题背景图焕新 · 按端适配', desc: '5 主题 AI 高清背景，电脑横图/手机竖图各完整显示；修复局部显示 bug' },
         { ver: '2.5.1', title: '首页六主题完整适配', desc: '顶栏/卡片/文字/按钮/标题全跟随主题；底部精简为一行版权；五主题各具特色' },
         { ver: '2.5.0', title: '找乐子主题 · 彩虹焕新', desc: '黑金换装自由包容的光鲜亮丽：亮底白玻璃+彩虹渐变+五彩柔光' },
         { ver: '2.4.9', title: '六主题五维体系', desc: '每主题专属字体/边框/交互/动效/背景增强；自定义上传背景下架' },
@@ -953,7 +954,7 @@
         var cur = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
         if (cur === 'index.html' || cur === '') return;
         /* V2.3.3：业务页在 pages/ 内，页面内回首页链接是 ../index.html（或注入器写的 .back-home），一并识别避免重复按钮 */
-        if (document.querySelector('a[href="index.html"], a[href="./index.html"], a[href="../index.html"], a[href$="/index.html"], a[href="./"], a.back-home, a[href$="/zhaolezi/"]')) return;
+        if (document.querySelector('a[href="index.html"], a[href="./index.html"], a[href="../index.html"], a[href$="/index.html"], a[href="./"], a.back-home, a.home-fab, a[href$="/zhaolezi/"]')) return;
         var b = document.createElement('button');
         b.id = 'zlHomeBtn';
         b.type = 'button';

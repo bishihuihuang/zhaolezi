@@ -299,6 +299,65 @@
                 padding: 8px 12px !important;
             }
         }
+
+    /* ========== 返回主程序·小房子键（V2.5.3 全站统一，左下角浮动） ========== */
+    .home-fab {
+        position: fixed;
+        left: 16px;
+        bottom: 74px;
+        z-index: 2147483647;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        line-height: 1;
+        color: #fff;
+        text-decoration: none;
+        background: linear-gradient(145deg, rgba(17, 153, 142, .94), rgba(10, 90, 84, .94));
+        border: 2px solid rgba(255, 255, 255, .35);
+        border-radius: 50%;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(255, 255, 255, .25);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        transition: transform .3s, box-shadow .3s;
+    }
+    .home-fab:hover { transform: translateY(-4px) scale(1.06); box-shadow: 0 16px 36px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.25); }
+    .home-fab:active { transform: translateY(-1px) scale(.94); }
+
+    /* ========== 返回主程序·转场遮罩（与39/36同款） ========== */
+    .home-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(8, 10, 25, .72);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .4s ease, visibility .4s ease;
+        pointer-events: none;
+    }
+    .home-overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
+    .home-loader-wrap { position: relative; width: 170px; height: 170px; display: flex; align-items: center; justify-content: center; }
+    .home-loader-ring {
+        position: absolute; width: 100%; height: 100%; border-radius: 50%;
+        border: 3px solid rgba(255,255,255,.1);
+        border-top-color: #f6d365; border-right-color: #fda085;
+        animation: homeRingSpin .8s linear infinite;
+    }
+    .home-loader-ring::before {
+        content: ''; position: absolute; inset: 22px; border-radius: 50%;
+        border: 3px solid rgba(255,255,255,.08);
+        border-bottom-color: #5ee7df; border-left-color: #b490ca;
+        animation: homeRingSpin 1.1s linear infinite reverse;
+    }
+    .home-loader-text { color: #fff; font-size: 19px; font-weight: 700; letter-spacing: 5px; }
+    @keyframes homeRingSpin { to { transform: rotate(360deg); } }
 </style>
 
 <script>
@@ -400,7 +459,15 @@ eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURICo
     </div>
 
     <script>
-eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("CiAgICAgICAgLy8gPT09IFtKUyDljLrlnZddIOi9rOWcuumAu+i+kSA9PT0KCiAgICAgICAgbGV0IGlzVHJhbnNpdGlvbmluZyA9IGZhbHNlOyAvLyDpmLLmraLov57ngrnph43lpI3op6blj5EKCiAgICAgICAgLy8g6YCa55So6L2s5Zy677ya5pi+56S6IuaJvuS5kOWtkCLpga7nvanvvIwxIOenku+8iDEwMDAg5q+r56eS77yJ5ZCO6Lez6L2s5Yiw55uu5qCH6aG16Z2iCiAgICAgICAgZnVuY3Rpb24gc2hvd1RyYW5zaXRpb24odGFyZ2V0VXJsKSB7CiAgICAgICAgICAgIGlmIChpc1RyYW5zaXRpb25pbmcpIHJldHVybjsKICAgICAgICAgICAgaXNUcmFuc2l0aW9uaW5nID0gdHJ1ZTsKCiAgICAgICAgICAgIC8vIOaYvuekuuWFqOWxj+mBrue9qe+8iOa1geWFieiDjOaZryArIOaXi+i9rOWwj+Wchu+8iQogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndHJhbnNpdGlvbk1hc2snKS5jbGFzc0xpc3QuYWRkKCdzaG93Jyk7CgogICAgICAgICAgICAvLyAxIOenkuWQjui3s+i9rAogICAgICAgICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsKICAgICAgICAgICAgICAgIHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gdGFyZ2V0VXJsOwogICAgICAgICAgICB9LCAxMDAwKTsKICAgICAgICB9CgogICAgICAgIC8vIOi/lOWbnuaMiemSru+8muaLpuaIqum7mOiupOi3s+i9rO+8jOWFiOaSrei9rOWcuuWKqOeUu+WGjeWOuyAxLmh0bWwKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYnRuQmFjaycpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKGUpIHsKICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgICAgICAgICBzaG93VHJhbnNpdGlvbignMS5odG1sJyk7CiAgICAgICAgfSk7CgogICAgICAgIC8vIOS4i+S4gOatpeaMiemSru+8muaLpuaIqum7mOiupOi3s+i9rO+8jOWFiOaSrei9rOWcuuWKqOeUu+WGjeWOuyAzLmh0bWwKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYnRuTmV4dCcpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKGUpIHsKICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgICAgICAgICBzaG93VHJhbnNpdGlvbignMy5odG1sJyk7CiAgICAgICAgfSk7CgogICAgICAgIC8vIOenu+mZpOS6huWOn+acrOWvuSBiYWNrTWFpbiDnmoTlvJXnlKjvvIzor6XlhYPntKDlnKjpobXpnaLkuK3kuI3lrZjlnKjvvIzkvJrlr7zoh7TohJrmnKzkuK3mlq0KICAgIAoKLyog6Ieq5Yqo5YWo5bGA5oyC6L2977yI5L6b5YaF6IGU5LqL5Lu25bGe5oCn6LCD55So77yJICovCmlmKCEoJ3Nob3dUcmFuc2l0aW9uJyBpbiB3aW5kb3cpKXdpbmRvdy5zaG93VHJhbnNpdGlvbj1zaG93VHJhbnNpdGlvbjs=");
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQogICAgICAgIC8vID09PSBbSlMg5Yy65Z2XXSDovazlnLrpgLvovpEgPT09DQoNCiAgICAgICAgbGV0IGlzVHJhbnNpdGlvbmluZyA9IGZhbHNlOyAvLyDpmLLmraLov57ngrnph43lpI3op6blj5ENCg0KICAgICAgICAvLyDpgJrnlKjovazlnLrvvJrmmL7npLoi5om+5LmQ5a2QIumBrue9qe+8jDEg56eS77yIMTAwMCDmr6vnp5LvvInlkI7ot7PovazliLDnm67moIfpobXpnaINCiAgICAgICAgZnVuY3Rpb24gc2hvd1RyYW5zaXRpb24odGFyZ2V0VXJsKSB7DQogICAgICAgICAgICBpZiAoaXNUcmFuc2l0aW9uaW5nKSByZXR1cm47DQogICAgICAgICAgICBpc1RyYW5zaXRpb25pbmcgPSB0cnVlOw0KDQogICAgICAgICAgICAvLyDmmL7npLrlhajlsY/pga7nvanvvIjmtYHlhYnog4zmma8gKyDml4vovazlsI/lnIbvvIkNCiAgICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0cmFuc2l0aW9uTWFzaycpLmNsYXNzTGlzdC5hZGQoJ3Nob3cnKTsNCg0KICAgICAgICAgICAgLy8gMSDnp5LlkI7ot7PovawNCiAgICAgICAgICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gKCkgew0KICAgICAgICAgICAgICAgIHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gdGFyZ2V0VXJsOw0KICAgICAgICAgICAgfSwgMTAwMCk7DQogICAgICAgIH0NCg0KICAgICAgICAvLyDov5Tlm57mjInpkq7vvJrmi6bmiKrpu5jorqTot7PovazvvIzlhYjmkq3ovazlnLrliqjnlLvlho3ljrsgMS5odG1sDQogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdidG5CYWNrJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOw0KICAgICAgICAgICAgc2hvd1RyYW5zaXRpb24oJzEuaHRtbCcpOw0KICAgICAgICB9KTsNCg0KICAgICAgICAvLyDkuIvkuIDmraXmjInpkq7vvJrmi6bmiKrpu5jorqTot7PovazvvIzlhYjmkq3ovazlnLrliqjnlLvlho3ljrsgMy5odG1sDQogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdidG5OZXh0JykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOw0KICAgICAgICAgICAgc2hvd1RyYW5zaXRpb24oJzMuaHRtbCcpOw0KICAgICAgICB9KTsNCg0KICAgICAgICAvLyDnp7vpmaTkuobljp/mnKzlr7kgYmFja01haW4g55qE5byV55So77yM6K+l5YWD57Sg5Zyo6aG16Z2i5Lit5LiN5a2Y5Zyo77yM5Lya5a+86Ie06ISa5pys5Lit5patDQogICAgCgovKiDoh6rliqjlhajlsYDmjILovb3vvIjkvpvlhoXogZTkuovku7blsZ7mgKfosIPnlKjvvIkgKi8KaWYoISgnc2hvd1RyYW5zaXRpb24nIGluIHdpbmRvdykpd2luZG93LnNob3dUcmFuc2l0aW9uPXNob3dUcmFuc2l0aW9uOw==");
+</script>
+
+<a class="home-fab" id="homeFab" href="31.html" aria-label="返回主程序" title="返回主程序">🏠</a>
+<div class="home-overlay" id="homeOverlay" role="dialog" aria-modal="true" aria-label="页面跳转中">
+    <div class="home-loader-wrap"><div class="home-loader-ring"></div><div class="home-loader-text">找乐子～</div></div>
+</div>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQooZnVuY3Rpb24gKCkgew0KICAgIHZhciBmYWIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaG9tZUZhYicpOw0KICAgIHZhciBvdiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdob21lT3ZlcmxheScpOw0KICAgIGlmICghZmFiIHx8ICFvdikgcmV0dXJuOw0KICAgIHZhciBidXN5ID0gZmFsc2U7DQogICAgZmFiLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKGUpIHsNCiAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOw0KICAgICAgICBpZiAoYnVzeSkgcmV0dXJuOw0KICAgICAgICBidXN5ID0gdHJ1ZTsNCiAgICAgICAgb3YuY2xhc3NMaXN0LmFkZCgnc2hvdycpOw0KICAgICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsgd2luZG93LmxvY2F0aW9uLmhyZWYgPSBmYWIuZ2V0QXR0cmlidXRlKCdocmVmJyk7IH0sIDEyMDApOw0KICAgIH0pOw0KICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICBpZiAoZS5rZXkgPT09ICdFc2NhcGUnICYmIG92LmNsYXNzTGlzdC5jb250YWlucygnc2hvdycpKSB7IG92LmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsgYnVzeSA9IGZhbHNlOyB9DQogICAgfSk7DQp9KSgpOw0K");
 </script>
 </body>
 </html>
