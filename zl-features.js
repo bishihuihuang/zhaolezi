@@ -949,22 +949,23 @@
     }
 })();
 
-/* ========== V2 悬浮回首页按钮：仅当页面没有任何指向首页的链接时注入 ========== */
+/* ========== V2 悬浮回首页按钮：仅当页面没有任何指向首页的链接时注入 ==========
+ * V2.6.0c：位置移至右上角（top14/right16）；button 改 <a href>——点击交给
+ * common.js 跳转动画 hook 拦截播放转场（与全站统一），hook 未加载时 a 默认导航兜底 */
 (function () {
     function initHomeBtn() {
         var cur = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
         if (cur === 'index.html' || cur === '') return;
         /* V2.3.3：业务页在 pages/ 内，页面内回首页链接是 ../index.html（或注入器写的 .back-home），一并识别避免重复按钮 */
         if (document.querySelector('a[href="index.html"], a[href="./index.html"], a[href="../index.html"], a[href$="/index.html"], a[href="./"], a.back-home, a.home-fab, a[href$="/zhaolezi/"]')) return;
-        var b = document.createElement('button');
+        var b = document.createElement('a');
         b.id = 'zlHomeBtn';
-        b.type = 'button';
         b.setAttribute('aria-label', '返回首页');
         b.title = '返回首页';
-        b.style.cssText = 'position:fixed;left:16px;bottom:76px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line,#ddd);background:var(--card,#fff);color:var(--txt,#333);font-size:20px;line-height:1;cursor:pointer;z-index:2147483000;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;padding:0;';
+        b.style.cssText = 'position:fixed;top:14px;right:16px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line,#ddd);background:var(--card,#fff);color:var(--txt,#333);font-size:20px;line-height:1;cursor:pointer;z-index:2147483000;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;padding:0;text-decoration:none;';
         b.textContent = '🏠';
         /* V2.3.3：业务页在 pages/ 下，首页在根，硬编码 index.html 会落到 pages/index.html 404 */
-        b.onclick = function () { location.href = (window.ZL && window.ZL.resolve) ? window.ZL.resolve('index.html') : 'index.html'; };
+        b.href = (window.ZL && window.ZL.resolve) ? window.ZL.resolve('index.html') : 'index.html';
         document.body.appendChild(b);
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHomeBtn);
