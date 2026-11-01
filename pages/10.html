@@ -212,6 +212,11 @@
             transform: translateY(-5px) scale(1.01);
             box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
         }
+        /* 内容区是承载容器不是卡片：禁用整体上浮，避免 3 张方法卡联动（各自独立触发） */
+        .cell.content-area:hover {
+            transform: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+        }
 
         /* 标题区 */
         .title-area {
@@ -278,6 +283,13 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
             display: flex;
             flex-direction: column;
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+        /* 方法卡独立悬浮反馈：移到哪张哪张上浮（主题强调色柔光） */
+        .content-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, .14),
+                0 0 24px color-mix(in srgb, var(--glow) 14%, transparent);
         }
         .content-section h2 {
             font-size: 20px;
@@ -681,7 +693,7 @@ renderTools();</code></pre>
                         <div class="content-section">
                             <h2>🎛️ 方法三：管理面板添加</h2>
                             <p>页面右侧有“添加工具”面板，填写名称、简介、链接后点击“添加”按钮即可。</p>
-                            <div style="flex:1;display:flex;align-items:center;justify-content:center;margin-top:12px;padding:20px;background:rgba(240,242,245,.8);border-radius:12px;border:1px dashed #bbb;">
+                            <div style="flex:1;display:flex;align-items:center;justify-content:center;margin-top:12px;padding:20px;background:color-mix(in srgb, var(--card) 80%, transparent);border-radius:12px;border:1px dashed var(--line);">
                                 <span style="font-size:48px;" role="img" aria-label="工具图标">🛠️</span>
                             </div>
                         </div>
