@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>现代化·知识学习站 - 从零学会计算机、AI、Git 与网页开发</title>
+<meta name="description" content="面向初学者的现代化知识学习站：计算机基础、电脑详细使用、网络与服务器、键盘快捷键练习、如何使用 AI、Git 配置与 GitHub 上传网页、Web 开发入门。模块化目录层层深入，全部免费、可离线。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="zoom-capture.js"></script>
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="index.html" data-kind="dir">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">免费 · 可离线 · 零广告</span>
+</header>
+
+<main>
+    <div class="container">
+        <div class="hero-panel">
+            <section class="hero">
+                <div class="hero-title">现代化·知识学习站</div>
+                <div class="hero-sub">从零开始，掌握这个时代的数字生存技能：电脑、网络、AI、Git 与网页开发</div>
+                <div class="hero-stats">
+                    <span class="badge">🗂 14 大模块 · 子模块层层深入</span>
+                    <span class="badge">📝 13 套测验 + 考后解析</span>
+                    <span class="badge">⚡ 9 个互动工具</span>
+                    <span class="badge">🏅 26 枚成就 · XP 升级</span>
+                </div>
+                <div class="today-stats" id="todayStats"><!-- JS 渲染今日统计 --></div>
+            </section>
+
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="搜索课程，例如：DNS、快捷键、commit…（或按 / 键唤起）">
+                <button class="btn" id="searchBtn">🔍 搜索</button>
+            </div>
+        </div>
+
+        <section class="home-dash">
+            <div id="homeLevel"><!-- JS 渲染等级卡 --></div>
+            <div class="ring" id="progRing" style="--sz:110px;"><span class="ring-txt" id="progTxt">0%</span></div>
+            <div class="dash-mid">
+                <b style="font-size:16px;">我的学习进度</b>
+                <p style="font-size:13.5px;color:var(--dim);margin:4px 0 8px;">读完任意一篇图文课，对应模块的进度条就会往上涨；14 个模块全部 100%，就是毕业之时。</p>
+                <div class="progress-bar"><div class="fill" id="progFill" style="width:0%;"></div></div>
+                <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                    <a class="btn green" href="1.html">🗂 全站目录树</a>
+                    <a class="btn ghost" href="41.html">📊 学习仪表盘</a>
+                </div>
+            </div>
+            <div id="continueCard"><!-- JS 渲染继续学习卡 --></div>
+        </section>
+
+        <h2 style="margin:26px 0 6px;">十四大模块</h2>
+        <p style="color:var(--dim);font-size:13.5px;margin-bottom:10px;">建议按 A → N 顺序学习；每个模块点进去都有细分的子模块目录。</p>
+        <div class="card-grid" id="modGrid"><!-- JS 渲染 --></div>
+
+        <h2 style="margin:26px 0 6px;">学习系统</h2>
+        <div class="card-grid">
+            <a class="card" href="1.html"><span class="icon">🗂️</span><b>全站目录树</b><span>所有模块与子模块一览</span></a>
+            <a class="card" href="41.html"><span class="icon">📊</span><b>学习仪表盘</b><span>进度、连续天数、成绩聚合</span></a>
+            <a class="card" href="42.html"><span class="icon">🏅</span><b>成就徽章墙</b><span>26 枚成就等你解锁</span></a>
+            <a class="card" href="43.html"><span class="icon">✏️</span><b>测验中心与错题本</b><span>13 套测验入口 + 错题复习</span></a>
+            <a class="card" href="D3.html"><span class="icon">⚡</span><b>快捷键练习器</b><span>招牌交互：真实按键判定训练</span></a>
+            <a class="card" href="D4.html"><span class="icon">⌨️</span><b>打字速度测试</b><span>中英文测速、准确率统计</span></a>
+            <a class="card" href="SYS4.html"><span class="icon">🧭</span><b>生活场景速查</b><span>按生活问题直达教程</span></a>
+            <a class="card" href="SYS5.html"><span class="icon">📖</span><b>术语词典</b><span>看不懂的词点一下就有大白话解释</span></a>
+            <a class="card" href="SYS6.html"><span class="icon">🎓</span><b>毕业证书</b><span>学完十四大模块，领取你的证书</span></a>
+        </div>
+
+        <h2 style="margin:26px 0 6px;">关于本站</h2>
+        <p style="font-size:14.5px;">纯 HTML/CSS/JS 手写，零框架零依赖，源码明码可读——本站自己就是<a href="G5.html">《调试与 F12 开发者工具》</a>一课的活教材。支持添加到主屏幕离线使用（PWA）。想知道"这个网站是怎么做出来、怎么发布到网上的"？<a href="F5.html">第 F5 节手把手教你</a>。</p>
+        <p style="font-size:13px;color:var(--dim);margin-top:10px;">🎨 右下角可切换 10 套主题 · 👁 左下角欣赏模式 · 按 <kbd>/</kbd> 全站搜索 · <a href="45.html">使用指南</a> · <a href="46.html">免责声明</a></p>
+    </div>
+</main>
+
+<!-- 首页仪表盘渲染与搜索绑定已迁入 xd-features.js 的 XD.home（2026-10-17 诗意代码迁移） -->
+</body>
+</html>

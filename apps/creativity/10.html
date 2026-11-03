@@ -1,0 +1,226 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创意连线·联想训练｜创意引擎</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="favicon-48.png">
+    <link rel="canonical" href="https://your-name.github.io/creativity/10.html">
+    <style>
+        .pair-box { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; margin-top: 14px; }
+        .word-card { border: 1px solid var(--zl-border); border-radius: 14px; padding: 22px 16px; text-align: center; background: var(--zl-card-2); min-height: 96px; display: flex; flex-direction: column; justify-content: center; }
+        .word-card .big { font-size: 26px; font-weight: 800; color: var(--zl-text); line-height: 1.4; word-break: break-all; }
+        .word-card .dom { font-size: 12px; color: var(--zl-dim); margin-top: 6px; }
+        .bridge-mark { font-size: 30px; font-weight: 900; color: var(--zl-accent); }
+        .timer-bar { height: 8px; border-radius: 6px; background: var(--zl-card-2); overflow: hidden; margin-top: 14px; position: relative; }
+        .timer-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--zl-accent), var(--zl-accent-2)); transition: width .3s linear; }
+        .timer-fill.danger { background: linear-gradient(90deg,#ef4444,#f43f5e); }
+        .timer-num { text-align: center; font-size: 14px; color: var(--zl-dim); margin-top: 6px; }
+        .log-item { display: flex; align-items: baseline; gap: 8px; padding: 8px 10px; border-radius: 8px; margin-top: 6px; background: var(--zl-card-2); font-size: 13px; }
+        .log-item .pair { font-weight: 700; color: var(--zl-text); }
+        .log-item .bridge { color: var(--zl-dim); flex: 1; }
+        .log-item .time { font-size: 11px; color: var(--zl-dim); white-space: nowrap; }
+        .score-pill { font-size: 13px; font-weight: 700; color: var(--zl-accent); }
+    </style>
+
+    <link rel="stylesheet" href="common.css">
+    <script src="theme-init.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="创意引擎">
+    <meta name="description" content="随机词对联想训练：五个领域 200 个词，30 秒内为两个看似无关的词架起桥梁，练的就是发散思维。">
+    <link rel="stylesheet" href="common.css">
+    <script defer src="common.js"></script>
+    <script defer src="theme.js"></script>
+    <script defer src="cy-features.js"></script>
+</head>
+<body>
+
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+    </div>
+
+    <header class="cy-shell">
+        <h1>创意引擎 · 创意连线</h1>
+    </header>
+
+    <main class="cy-page">
+        <div class="cy-card">
+            <h2>🧩 联想挑战</h2>
+            <div class="sub">每次出现两个「八竿子打不着」的词。30 秒内，为它们架一座桥——讲出（或写出）它们之间的联系。想不出就换一组，量变产生质变。</div>
+            <div class="score-pill" id="scorePill" style="margin-top:8px;">本局连上 0 组 · 累计 0 组</div>
+            <div class="pair-box">
+                <div class="word-card"><div class="big" id="w1">—</div><div class="dom" id="d1"></div></div>
+                <div class="bridge-mark">⇄</div>
+                <div class="word-card"><div class="big" id="w2">—</div><div class="dom" id="d2"></div></div>
+            </div>
+            <div class="cy-toolbar" style="margin-top:14px;">
+                <input class="cy-input" id="bridgeInput" placeholder="写下你们的连接点（可选，写了更有收获）" style="flex:1;">
+                <button class="cy-btn" id="btnConnect">🔗 连上了</button>
+                <button class="cy-btn cy-btn-ghost" id="btnNext">🎲 换一组</button>
+            </div>
+            <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+            <div class="timer-num" id="timerNum">⏱ 30 秒</div>
+        </div>
+
+        <div class="cy-card">
+            <h2>📜 本局连线日志</h2>
+            <div id="logBox"><div style="padding:16px;text-align:center;color:var(--zl-dim);font-size:13px;">连上第一组，日志就会出现在这里。</div></div>
+            <div class="hint" style="font-size:12px;color:var(--zl-dim);margin-top:10px;line-height:1.8;">
+                💡 训练要点：① 不要急着否定，任何连接都算；② 能连出「故事」比「分类」更高级；③ 刻意练习间隔效应——每天 5 分钟就够。
+            </div>
+        </div>
+    </main>
+
+    <script>
+    /* ========== 创意连线引擎 ========== */
+    var DOMAINS = {
+        '物体': ['咖啡杯','雨伞','门锁','鞋带','玻璃窗','台灯','橡皮擦','闹钟','衣架','遥控器','背包','蜡烛','剪刀','灯泡','钥匙','眼镜','手表','枕头','水杯','气球'],
+        '自然': ['月亮','瀑布','松树','海风','石头','露珠','闪电','蚂蚁','枫叶','云朵','火山','冰川','萤火虫','沙漠','珊瑚','枯枝','晚霞','潮汐','竹笋','苔藓'],
+        '情感': ['勇气','孤独','惊喜','焦虑','怀念','好奇','愧疚','期待','释然','倔强','温柔','害羞','兴奋','遗憾','信任','嫉妒','感恩','迷茫','冲动','安心'],
+        '动作': ['奔跑','编织','折叠','抛掷','凝视','研磨','哼唱','犹豫','抖落','沉浸','试探','跨越','翻滚','擦拭','追寻','喘息','敲击','漂流','躲藏','模仿'],
+        '抽象': ['时间','边界','记忆','秩序','回声','灵感','循环','裂缝','色彩','噪音','重量','巧合','惯性','温度','答案','空白','节奏','影子','原点','概率']
+    };
+    var DOM_KEYS = Object.keys(DOMAINS);
+    var ROUND_SEC = 30;
+    var state = {
+        sessionCount: 0,   // 本局连上数
+        total: 0,          // 累计连上数（持久化）
+        timer: null,
+        left: ROUND_SEC,
+        busy: false,
+        current: null,
+        used: {}           // 最近用过的词，避免重复
+    };
+
+    function readTotal() {
+        try { var storedValue = parseInt(localStorage.getItem('cy_link_total') || '0', 10); return isNaN(storedValue) ? 0 : storedValue; } catch (e) { return 0; }
+    }
+    function writeTotal(v) {
+        try { localStorage.setItem('cy_link_total', String(v)); } catch (e) {}
+    }
+
+    function pickWord(dom) {
+        var list = DOMAINS[dom];
+        var tries = 0;
+        while (tries < 40) {
+            var word = list[Math.floor(Math.random() * list.length)];
+            if (!state.used[word]) { state.used[word] = 1; return word; }
+            tries++;
+        }
+        return list[Math.floor(Math.random() * list.length)];
+    }
+    function nextPair() {
+        if (state.busy) return;
+        // 清理太旧的 used（只保留最近 30 个）
+        var keys = Object.keys(state.used);
+        if (keys.length > 30) {
+            var toDel = keys.length - 30;
+            for (var delIdx = 0; delIdx < toDel; delIdx++) delete state.used[keys[delIdx]];
+        }
+        var d1 = DOM_KEYS[Math.floor(Math.random() * DOM_KEYS.length)];
+        var d2 = DOM_KEYS[Math.floor(Math.random() * DOM_KEYS.length)];
+        var guard = 0;
+        while (d2 === d1 && guard++ < 6) d2 = DOM_KEYS[Math.floor(Math.random() * DOM_KEYS.length)];
+        var w1 = pickWord(d1), w2 = pickWord(d2);
+        state.current = { w1: w1, d1: d1, w2: w2, d2: d2 };
+        document.getElementById('w1').textContent = w1;
+        document.getElementById('d1').textContent = '领域：' + d1;
+        document.getElementById('w2').textContent = w2;
+        document.getElementById('d2').textContent = '领域：' + d2;
+        document.getElementById('bridgeInput').value = '';
+        document.getElementById('bridgeInput').placeholder = '写下你们的连接点（可选，写了更有收获）';
+        startTimer();
+    }
+
+    /* ---------- 计时器 ---------- */
+    function startTimer() {
+        clearInterval(state.timer);
+        state.left = ROUND_SEC;
+        renderTimer();
+        state.timer = setInterval(function () {
+            state.left--;
+            renderTimer();
+            if (state.left <= 0) {
+                clearInterval(state.timer);
+                state.busy = true;
+                CY.showToast('⏱ 时间到——没有连接也不丢人，换一组再来');
+                addLog(state.current, '⏱ 超时未连', false);
+                setTimeout(function () { state.busy = false; nextPair(); }, 1200);
+            }
+        }, 1000);
+    }
+    function renderTimer() {
+        var pct = state.left / ROUND_SEC * 100;
+        var fill = document.getElementById('timerFill');
+        fill.style.width = pct + '%';
+        fill.classList.toggle('danger', state.left <= 8);
+        document.getElementById('timerNum').textContent = '⏱ ' + state.left + ' 秒';
+    }
+
+    /* ---------- 连线 ---------- */
+    function connect() {
+        if (state.busy || !state.current) return;
+        clearInterval(state.timer);
+        var bridge = document.getElementById('bridgeInput').value.trim();
+        state.sessionCount++;
+        state.total++;
+        writeTotal(state.total);
+        renderScore();
+        addLog(state.current, bridge || '（口头连接，未写文字）', true);
+        if (state.total >= 10) CY.unlock('link_10');
+        if (typeof CY.activity === 'object' && CY.activity.add) CY.activity.add({ type: 'link', page: '10.html' });
+        state.busy = true;
+        setTimeout(function () { state.busy = false; nextPair(); }, 400);
+    }
+    function addLog(cur, bridge, ok) {
+        var box = document.getElementById('logBox');
+        if (box.firstChild && box.firstChild.tagName === 'DIV' && !box.firstChild.children.length) box.innerHTML = '';
+        var it = document.createElement('div');
+        it.className = 'log-item';
+        var pair = document.createElement('span');
+        pair.className = 'pair';
+        pair.textContent = cur.w1 + ' ⇄ ' + cur.w2;
+        if (!ok) pair.style.opacity = '0.5';
+        var br = document.createElement('span');
+        br.className = 'bridge';
+        br.textContent = bridge;
+        var tm = document.createElement('span');
+        tm.className = 'time';
+        var nowDate = new Date();
+        tm.textContent = (nowDate.getHours() < 10 ? '0' + nowDate.getHours() : nowDate.getHours()) + ':' + (nowDate.getMinutes() < 10 ? '0' + nowDate.getMinutes() : nowDate.getMinutes());
+        it.appendChild(pair); it.appendChild(br); it.appendChild(tm);
+        box.insertBefore(it, box.firstChild);
+    }
+    function renderScore() {
+        document.getElementById('scorePill').textContent = '本局连上 ' + state.sessionCount + ' 组 · 累计 ' + state.total + ' 组';
+    }
+
+    /* ---------- 事件绑定与初始化 ---------- */
+    document.getElementById('btnConnect').onclick = connect;
+    document.getElementById('btnNext').onclick = function () {
+        clearInterval(state.timer);
+        nextPair();
+    };
+    document.getElementById('bridgeInput').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') { event.preventDefault(); connect(); }
+    });
+
+    /* 公共脚本 common.js / theme.js / cy-features.js 都是 defer 加载，而本段内联脚本不带 defer，
+       会抢先执行——那时 CY 还没定义，最后一行 typeof CY.activity 抛 ReferenceError，open_tool 活动记录静默丢失。
+       把初始化挪到 DOMContentLoaded：defer 脚本在此事件之前一定已执行完。 */
+    document.addEventListener('DOMContentLoaded', function () {
+        state.total = readTotal();
+        renderScore();
+        nextPair();
+        if (typeof CY.activity === 'object' && CY.activity.add) CY.activity.add({ type: 'open_tool', page: '10.html' });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>文件与文件夹管理 - 现代化·知识学习站</title>
+<meta name="description" content="文件与文件夹管理：路径结构（C:/Users、硬盘分区）、扩展名与显示设置、批量操作与搜索技巧、文件整理的黄金原则。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="B2.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块B · 电脑详细使用</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">文件与文件夹管理</h1>
+        <p class="lesson-sub">B2 · 电脑里的"图书馆学"：找不到文件 = 白存</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">先懂路径：文件的门牌号</a></li>
+                <li><a href="#s2">扩展名：文件的名字尾巴</a></li>
+                <li><a href="#s3">文件管理器的正确打开方式</a></li>
+                <li><a href="#s4">批量操作与重命名</a></li>
+                <li><a href="#s5">搜索：找不到文件时的王牌</a></li>
+                <li><a href="#s6">整理三原则与备份</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、先懂路径：文件的门牌号</h2>
+        <p>Windows 的文件系统像一棵倒着长的大树：盘符（C:、D:）是根，往下是文件夹套文件夹。每个文件的"门牌号"叫<strong>路径</strong>：</p>
+        <div class="code-block"><pre>C:\Users\你的用户名\Documents\报告.docx
+└─盘┴─用户文件夹───┴──文档──┴─文件名.扩展名</pre></div>
+        <ul>
+            <li>反斜杠 <code>\</code> 是层级分隔符（Linux/Mac 用正斜杠 /）。</li>
+            <li><strong>C 盘是系统盘</strong>：Windows 系统装在里面，故障时要"格式化装系统"的就是它。个人文件请养成放 D 盘（或文档、下载目录）的习惯。</li>
+            <li><code>C:\Users\用户名</code> 是你的用户目录，桌面/文档/下载/图片都藏在这里。</li>
+        </ul>
+        <div class="callout info">
+            <b>💡 认识常见系统文件夹</b>
+            <code>Program Files</code>：装机程序（64位）；<code>Windows</code>：系统本体（勿动！）；<code>用户\用户名</code>：你的一切。路径栏输入 <code>%userprofile%</code> 直接跳转到用户目录。
+        </div>
+
+        <h2 id="s2">二、扩展名：文件的名字尾巴</h2>
+        <p><code>报告.docx</code> 中的 <code>.docx</code> 是扩展名，告诉系统"用什么程序打开"。常见扩展名速认：</p>
+        <table class="xd-table">
+            <tr><th>扩展名</th><th>含义</th><th>打开方式</th></tr>
+            <tr><td>.txt</td><td>纯文本</td><td>记事本</td></tr>
+            <tr><td>.docx / .xlsx / .pptx</td><td>Office 文档</td><td>Word / Excel / PowerPoint</td></tr>
+            <tr><td>.pdf</td><td>版式固定文档</td><td>浏览器 / 阅读器</td></tr>
+            <tr><td>.jpg / .png / .gif</td><td>图片</td><td>照片查看器 / 浏览器</td></tr>
+            <tr><td>.zip / .rar / .7z</td><td>压缩包</td><td>压缩软件（WinRAR / 7-Zip）</td></tr>
+            <tr><td>.mp4 / .mp3</td><td>视频 / 音频</td><td>播放器</td></tr>
+            <tr><td>.exe</td><td>Windows 可执行程序</td><td>直接运行（<strong>下载时认准官网</strong>）</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 显示扩展名</b>
+            文件管理器 → 查看 → 勾选"文件扩展名"，才能看到 .exe/.jpg 等尾巴，避免被"照片.png.exe"这类伪装骗到。
+        </div>
+
+        <h2 id="s3">三、文件管理器的正确打开方式</h2>
+        <ul>
+            <li><kbd>Win</kbd>+<kbd>E</kbd> 一键打开文件管理器（资源管理器）。</li>
+            <li>顶部地址栏可直接输入路径回车跳转；也可点左侧"快速访问"。</li>
+            <li>查看改为"大图标/列表"：右上角查看 → 选择。</li>
+            <li>拖动文件 = 移动；<strong>拖到不同盘 = 复制</strong>。想精确控制：右键 → 剪切/复制 → 去目标文件夹右键粘贴。</li>
+            <li>多选：按住 <kbd>Ctrl</kbd> 逐一点选；<kbd>Shift</kbd> 选首尾区间；<kbd>Ctrl</kbd>+<kbd>A</kbd> 全选。</li>
+        </ul>
+
+        <h2 id="s4">四、批量操作与重命名</h2>
+        <ol class="step-list">
+            <li class="step">框选/全选多个文件 → 右键 → 重命名 → 输入"旅行照片"，回车：变成 <code>旅行照片 (1).jpg、旅行照片 (2).jpg…</code> 自动编号。</li>
+            <li class="step">批量移动：Ctrl 多选 → 右键"剪切"→ 到目标文件夹"粘贴"。</li>
+            <li class="step">批量删除：选中后 <kbd>Shift</kbd>+<kbd>Delete</kbd> 永久删除（<strong>不进回收站，慎用！</strong>）。</li>
+        </ol>
+
+        <h2 id="s5">五、搜索：找不到文件时的王牌</h2>
+        <ul>
+            <li><strong>文件管理器内搜索</strong>：在打开的文件夹右上角搜索框输入关键词，或 <kbd>Ctrl</kbd>+<kbd>F</kbd>。</li>
+            <li><strong>按类型搜</strong>：输入 <code>*.jpg</code> 搜所有图片；<code>报告*</code> 搜以"报告"开头。</li>
+            <li><strong>全盘搜</strong>：开始菜单搜索框（尽量精确的扩展名/关键词），或 <kbd>Win</kbd>+<kbd>S</kbd>。</li>
+            <li>搜不到？先确认文件名是不是手滑打错，或该文件夹被"隐藏"（查看 → 显示 → 隐藏的项目）。</li>
+        </ul>
+        <div class="callout info">
+            <b>💡 一个习惯</b>
+            命名用"见名知意 + 日期"：<code>2026-10-月报.docx</code> 比 <code>新建文档(5)</code> 强一万倍——搜索、排序都顺畅。
+        </div>
+
+        <h2 id="s6">六、整理三原则与备份</h2>
+        <div class="flow-line">
+            <span class="node">分层</span><span class="arr">→</span>
+            <span class="node">改名</span><span class="arr">→</span>
+            <span class="node">即时归档</span><span class="arr">→</span>
+            <span class="node">定期备份</span>
+        </div>
+        <ul>
+            <li><strong>分层</strong>：D:\工作、D:\生活、D:\学习 三大类，里面再分年度/主题子文件夹，不要全堆桌面。</li>
+            <li><strong>改名</strong>：下载的文件经常是"xxx(1).zip"，第一时间改成有意义的名字。</li>
+            <li><strong>即时归档</strong>：文件做完随手放进对应文件夹，别攒到月底无处下手。</li>
+            <li><strong>备份=第二份拷贝</strong>：重要文件备份到 U 盘/移动硬盘/网盘。备份不是"复制到桌面"——要放到<strong>另一块存储介质</strong>上才算数。</li>
+        </ul>
+        <div class="callout warn">
+            <b>⚠️ 血的教训</b>
+            "车到山前必有路"，硬盘到坏时没有路。日常习惯：照片每月备份一次，毕业论文/重要文档随写随备。等到"盘坏了"再想起备份，成本已经翻倍。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="B.html">模块B 目录</a> · 下一节：<a href="B3.html">软件的安装与管理</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

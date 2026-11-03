@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>内存 - 现代化·知识学习站</title>
+<meta name="description" content="内存（RAM）详解：容量与频率怎么看、内存不足的表现、与硬盘的本质区别，以及加内存的注意事项。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A2-2.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 硬件</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">内存</h1>
+        <p class="lesson-sub">A2-2 | 临时工作台：断电即清空的"快手"</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">内存是干嘛的</a></li>
+                <li><a href="#s2">两个数字：容量与频率</a></li>
+                <li><a href="#s3">内存不足是什么感觉</a></li>
+                <li><a href="#s4">内存 ≠ 硬盘（高频误区）</a></li>
+                <li><a href="#s5">加内存前要确认的三件事</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、内存是干嘛的</h2>
+        <p><strong>内存（RAM）</strong>是程序运行时临时存放数据的地方——CPU 处理任何数据，都要先搬到内存里。你打开的网页、聊天的微信、正在编辑的文档，全部"住"在内存里。</p>
+        <div class="callout info">
+            <b>💡 为什么不直接用硬盘？</b>
+            速度差太远：内存纳秒级响应，硬盘再快也是微秒级，差成百上千倍。CPU 等"仓库"取货会把整台机器拖垮，所以必须有一块超高速的"工作台"缓冲。
+        </div>
+
+        <h2 id="s2">二、两个数字：容量与频率</h2>
+        <table class="xd-table">
+            <tr><th>指标</th><th>常见值</th><th>影响</th></tr>
+            <tr><td>容量</td><td>8GB / 16GB / 32GB</td><td>能同时"摊开"多少工作：8GB 底线，16GB 舒适，32GB+ 面向专业工作</td></tr>
+            <tr><td>频率</td><td>DDR4-3200 / DDR5-6000</td><td>搬数据速度；代数（DDR4→DDR5）比频率差异更根本</td></tr>
+        </table>
+
+        <h2 id="s3">三、内存不足是什么感觉</h2>
+        <ul>
+            <li>开十几个网页后整机变卡、打字都延迟；</li>
+            <li>切换程序时硬盘灯狂闪、等待数秒才响应——系统把内存里放不下的数据挤到硬盘（虚拟内存），而硬盘慢百倍；</li>
+            <li>程序直接闪退或提示"内存不足"。</li>
+        </ul>
+        <p>验证方法：<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd> 打开任务管理器→性能→内存。常年占用超过 85% 就该考虑加内存或减少常驻软件。</p>
+
+        <h2 id="s4">四、内存 ≠ 硬盘（高频误区）</h2>
+        <div class="callout warn">
+            <b>⚠️ 最容易混淆的一对概念</b>
+            <table class="xd-table" style="margin:8px 0 0;">
+                <tr><th></th><th>内存 RAM</th><th>硬盘 SSD/HDD</th></tr>
+                <tr><td>角色</td><td>临时工作台</td><td>长期仓库</td></tr>
+                <tr><td>断电后</td><td>数据清空</td><td>数据保留</td></tr>
+                <tr><td>速度</td><td>极快</td><td>较慢（SSD 已很快）</td></tr>
+                <tr><td>容量</td><td>GB 级</td><td>TB 级常见</td></tr>
+            </table>
+            "我 512G 的内存"这句话几乎一定说错了——那叫硬盘。
+        </div>
+
+        <h2 id="s5">五、加内存前要确认的三件事</h2>
+        <div class="step-list">
+            <div class="step">代数对不对：DDR4 主板插不进 DDR5 内存条，先查主板/机型规格。</div>
+            <div class="step">还有没有空槽：笔记本往往只有 1-2 个槽，可能需要换条更大的而不是"加"。</div>
+            <div class="step">是不是板载：部分超薄本的内存焊死在主板上（无法升级），买前查清。</div>
+        </div>
+
+        <h2>本页小结</h2>
+        <ul>
+            <li>内存 = 程序运行的临时工作台，断电清空、速度极快。</li>
+            <li>容量看够不够（占用 &gt;85% 该升级），频率看代数（DDR4/DDR5）。</li>
+            <li>内存 ≠ 硬盘：一个工作台一个仓库，别再混用。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后实践</b>
+            用任务管理器看看自己电脑的内存总容量与当前占用百分比。开一堆程序再观察占用变化，你就知道自己的"工作台"多大了。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A2.html">硬件目录</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

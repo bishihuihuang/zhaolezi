@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>模块H测验：手机与平板 - 现代化·知识学习站</title>
+<meta name="description" content="模块H结业测验：10 道选择题检验触屏手势、App 安装、手写语音输入、拍照相册与手机设置的掌握情况，错题自动进入错题本。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="H6.html" data-kind="quiz">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块H · 手机与平板</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">📝 模块H测验：手机与平板</h1>
+        <p class="lesson-sub">H6 · 结业测验 | 触屏 · App · 输入 · 拍照 · 设置</p>
+
+        <div class="callout info">
+            <b>规则</b>
+            共 10 题，点击选项立即判定并显示解析；60 分及格，满分解锁成就「满分学霸」。做错的题会自动进入<a href="43.html">错题本</a>，成绩计入学习仪表盘。建议先过一遍 H1-H5 的小结再开始。
+        </div>
+
+        <div id="quiz"></div>
+
+        <h2>测验之后</h2>
+        <ul>
+            <li>≥80 分：恭喜，智能手机这块你已经入门，前往<a href="I.html">模块I</a>学习微信与生活服务。</li>
+            <li>60-79 分：及格，但建议回看错题解析，把手势和设置的基础补牢。</li>
+            <li>&lt;60 分：别灰心，重读做错题对应的课，然后点「重做一次」。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 测验成绩自动保存，可在<a href="41.html">学习仪表盘</a>查看</span>
+            <span>返回：<a href="H.html">模块H 目录</a> · 下一模块：<a href="I.html">微信与生活服务</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* ============================================================
+ * 模块H结业测验（页面内联脚本，借 XD.quiz 引擎统一渲染/评分）
+ * 题目数据即文案：q / opts / a / exp 逐字保留；错题自动入错题本
+ * ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.XD || !XD.quiz) return;
+    XD.quiz.run('quiz', {
+        id: 'H',
+        title: '模块H测验：手机与平板',
+
+        /* ---- 题目清单（10 题，q/opts/a/exp 逐字保留） ---- */
+        questions: [
+            {
+                q: '手机想要彻底关机，应该怎么按电源键？',
+                opts: ['短按一下', '长按 2-3 秒后在弹出菜单里点「关机」', '连按两下', '长按 1 秒就自动关机'],
+                a: 1,
+                exp: '短按是锁屏；长按才会弹出"关机/重启"菜单，点「关机」才彻底关机。'
+            },
+            {
+                q: '网页上的字太小看不清，最直接的办法是？',
+                opts: ['把手机横过来', '两个手指在屏幕上向外撑开（放大）', '重启手机', '换一个 App 打开'],
+                a: 1,
+                exp: '双指向外张开是缩放，放大后字就清楚了；这是触屏手机最实用的一招。'
+            },
+            {
+                q: '长按手机桌面上的 App 图标，通常可以做什么？',
+                opts: ['卸载、移动或弹出快捷菜单', '让手机重启', '拍照', '增加手机内存'],
+                a: 0,
+                exp: '长按图标会弹出菜单（卸载/分享等），也可以进入"编辑桌面"状态拖动图标。'
+            },
+            {
+                q: '安装手机 App，最安全正规的来源是？',
+                opts: ['浏览器搜索下载链接', '短信里的安装链接', '手机自带的应用商店（App Store/应用市场）', '朋友微信转发的安装包'],
+                a: 2,
+                exp: '只在官方应用商店安装，陌生链接和安装包都可能是捆绑软件或诈骗入口。'
+            },
+            {
+                q: '一个手电筒 App 却要求读取你的通讯录，正确的做法是？',
+                opts: ['同意，方便它"帮忙"', '拒绝——它根本用不到通讯录', '先同意再卸载', '给它短信权限才更安全'],
+                a: 1,
+                exp: '记住口诀：用得上才给，用不上不给。手电筒不需要通讯录，这就是流氓软件的典型特征。'
+            },
+            {
+                q: '不会拼音的人想打字，最好用哪种输入方式？',
+                opts: ['手写输入或语音输入', '只能学拼音', '用英文输入', '打电话代替'],
+                a: 0,
+                exp: '手写一笔一画写字、语音张嘴说话就变文字，都不用会拼音。'
+            },
+            {
+                q: '语音输入突然识别不了，最常见的原因是？',
+                opts: ['手机坏了', '没有联网（语音识别需要网络）', '屏幕太暗', 'App 版本太新'],
+                a: 1,
+                exp: '声音要送去服务器识别，断网时语音输入就会失灵；检查 WiFi 或移动数据即可。'
+            },
+            {
+                q: '拍出的照片太暗，应该？',
+                opts: ['把手机贴到窗户上', '点屏幕对焦后，拖动出现的小太阳图标调亮', '狂按快门', '删除重装相机 App'],
+                a: 1,
+                exp: '点屏幕后出现小太阳，上下拖动就能调节画面亮度，再按快门。'
+            },
+            {
+                q: '误删了手机里的照片，想找回，应该？',
+                opts: ['没法找回，只能接受', '去相册的「最近删除」里恢复（一般 30 天内）', '格式化手机', '卸载相册 App'],
+                a: 1,
+                exp: '删除的照片先进"最近删除"保留约 30 天，期间可以一键恢复。'
+            },
+            {
+                q: '手机提示"存储空间不足"，哪一项是可以放心清理的？',
+                opts: ['银行 App 的登录数据', '微信聊天记录的缓存', '系统核心文件', '不认识的文件'],
+                a: 1,
+                exp: '缓存清理不丢聊天记录；银行数据、系统文件、不认识的文件都不要乱动。'
+            }
+        ]
+    });
+});
+</script>
+</body>
+</html>

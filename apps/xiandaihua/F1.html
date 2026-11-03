@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>版本控制概念 - 现代化·知识学习站</title>
+<meta name="description" content="版本控制概念：为什么需要给文件拍快照、工作区/暂存区/版本库三区模型、Git 的诞生与几个关键名词。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="F1.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块F · Git 与 GitHub</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">版本控制概念</h1>
+        <p class="lesson-sub">模块F · 第 1 课 | 为什么需要给文件拍"快照"</p>
+
+        <div class="toc">
+            <b>📑 本课目录</b>
+            <ol>
+                <li><a href="#s1">没有版本控制的世界</a></li>
+                <li><a href="#s2">版本控制是什么</a></li>
+                <li><a href="#s3">三区模型</a></li>
+                <li><a href="#s4">Git 是怎么诞生的</a></li>
+                <li><a href="#s5">关键名词速览</a></li>
+                <li><a href="#s6">你现在就有机会用上</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、没有版本控制的世界</h2>
+        <p>回想一下你写文档的经历：</p>
+        <div class="code-block"><pre>论文终稿.doc
+论文终稿(2).doc
+论文终稿(最终).doc
+论文终稿(最终)(打死不改).doc
+论文终稿(最终)(打死不改)(2).doc
+最终版_真正最终版.doc   ← 崩溃现场</pre></div>
+        <p>文件名后缀越来越长，却仍然搞不清：<strong>哪个是最新的？哪一版改了哪里？谁改的？怎么找回一周前的版本？</strong>这就是"没有版本控制"的日常。</p>
+
+        <h2 id="s2">二、版本控制是什么</h2>
+        <p><strong>版本控制（Version Control）</strong>是给文件"拍快照"的系统：每次你认为"这版值得记住"，就存一张快照，并附上<strong>时间、作者、改动说明</strong>。以后随时可以：</p>
+        <ul>
+            <li>回到任意一张历史快照（"我昨天改坏了我后悔了，回退！"）。</li>
+            <li>对比任意两版差别（"这版到底删了什么？"）。</li>
+            <li>多人协作互不踩踏（各改各的，最后合并）。</li>
+            <li>在云端备份（本地电脑坏了，仓库还在）。</li>
+        </ul>
+        <div class="callout info">
+            <b>💡 一个类比</b>
+            玩游戏时"存档/读档"你肯定熟悉。Git 就是<strong>给你所有重要文件（尤其是代码和网页）做无限存档位</strong>，还附带"这版发生了什么"的说明。
+        </div>
+
+        <h2 id="s3">三、三区模型</h2>
+        <p>Git 把工作分成三个区，理解它就懂了 70% 的命令：</p>
+        <div class="flow-line">
+            <span class="node">工作区</span><span class="arr">→ add →</span>
+            <span class="node">暂存区</span><span class="arr">→ commit →</span>
+            <span class="node">版本库</span>
+        </div>
+        <table class="xd-table">
+            <tr><th>区</th><th>比喻</th><th>对应命令</th></tr>
+            <tr><td>工作区</td><td>你正在编辑的文件（桌面上的文件夹）</td><td>改文件（不涉及 Git）</td></tr>
+            <tr><td>暂存区（Index）</td><td>购物车：挑好了要"结算"的改动</td><td><code>git add</code></td></tr>
+            <tr><td>版本库（Repository）</td><td>仓库：正式归档的快照库</td><td><code>git commit</code></td></tr>
+        </table>
+        <p>为什么要"暂存"这一步而不是直接存？因为你能<strong>分批提交</strong>：今天改了两个功能，只想先归档其中一个，另一个继续改——购物车（暂存区）正好解决这个问题。</p>
+
+        <h2 id="s4">四、Git 是怎么诞生的</h2>
+        <p>Git 是 Linux 之父 <strong>Linus Torvalds</strong> 在 2005 年为管理 Linux 内核而开发的分布式版本控制系统。它有两个核心特点：</p>
+        <ul>
+            <li><strong>分布式</strong>：每个开发者电脑里都有一份完整仓库（不是只从中央服务器拿文件），离线也能提交，再同步到远程。</li>
+            <li><strong>快</strong>：处理海量文件依然迅捷，今天全世界几乎都在用它（GitHub 上的代码托管、开源协作全靠它）。</li>
+        </ul>
+
+        <h2 id="s5">五、关键名词速览</h2>
+        <table class="xd-table">
+            <tr><th>名词</th><th>含义</th></tr>
+            <tr><td>仓库 Repository</td><td>Git 管理的项目文件夹（含隐藏的 <code>.git</code> 目录）</td></tr>
+            <tr><td>提交 Commit</td><td>一张带说明的快照（版本）</td></tr>
+            <tr><td>分支 Branch</td><td>并行的版本线（主线叫 main/master），可开新线实验再合并</td></tr>
+            <tr><td>远程 Remote</td><td>托管在别处（如 GitHub）的仓库副本</td></tr>
+            <tr><td>推送/拉取 Push/Pull</td><td>把本地提交传到远程 / 把远程更新拉回本地</td></tr>
+            <tr><td>克隆 Clone</td><td>把远程仓库完整复制到本地</td></tr>
+        </table>
+
+        <h2 id="s6">六、你现在就有机会用上</h2>
+        <div class="callout tip">
+            <b>💡 好消息</b>
+            你正在学的这个"现代化·知识学习站"本身就是一个 Git 仓库，它的每一课页面都是分模块 <code>commit</code> 归档的（还记得 M0-M7 吗？）。F5 会教你<strong>把这个网站一键发布到 GitHub Pages</strong>——学了就能用，用了就懂。
+        </div>
+
+        <h2>本课小结</h2>
+        <ul>
+            <li>版本控制=给文件拍快照：随时回退、对比、协作、备份。</li>
+            <li>三区模型：工作区（改）→ 暂存区（挑）→ 版本库（存）。</li>
+            <li>Git 是 Linus 为 Linux 内核写的分布式版本控制工具，是当今事实标准。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>下一课：<a href="F2.html">安装与配置 Git</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

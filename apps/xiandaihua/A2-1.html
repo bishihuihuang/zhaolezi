@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>主板与 CPU - 现代化·知识学习站</title>
+<meta name="description" content="认识主板与CPU：芯片组与插槽的作用，主频、核心、线程、缓存四大指标，主流品牌与选购定位。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A2-1.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 硬件</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">主板与 CPU</h1>
+        <p class="lesson-sub">A2-1 | 电脑的骨架与大脑</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">主板：一切零件的家</a></li>
+                <li><a href="#s2">CPU：执行每一条指令</a></li>
+                <li><a href="#s3">看懂 CPU 的四个数字</a></li>
+                <li><a href="#s4">品牌与定位：i5/R5 够用吗</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、主板：一切零件的家</h2>
+        <p><strong>主板（Motherboard）</strong>是一块大电路板，CPU、内存、硬盘、显卡全部插在它上面，零件之间通过主板上的线路交换数据。买电脑不必精通主板，但要知道：<strong>主板决定了能装什么型号的 CPU 和内存</strong>（即"兼容性"）。</p>
+        <div class="term-grid">
+            <div class="term"><b>芯片组</b><span>主板上的"交通调度中心"，决定支持哪代 CPU、几个硬盘位</span></div>
+            <div class="term"><b>插槽</b><span>CPU 插槽、内存插槽（一般 2-4 条）、显卡 PCIe 插槽</span></div>
+            <div class="term"><b>接口</b><span>后面板上的 USB、网口、音频口都焊在主板上</span></div>
+        </div>
+
+        <h2 id="s2">二、CPU：执行每一条指令</h2>
+        <p><strong>CPU（中央处理器）</strong>负责执行程序里的每一条指令，是"干活速度"的决定者之一。它不断地做三件事：<strong>取指令 → 翻译 → 执行</strong>，每秒循环几十亿次。第 2 课说的"存储程序"思想就在这里落地：程序存在内存里，CPU 逐条取出执行。</p>
+        <div class="flow-line">
+            <span class="node">📜 取指令</span><span class="arr">→</span>
+            <span class="node">🔍 翻译解码</span><span class="arr">→</span>
+            <span class="node">⚙️ 执行运算</span><span class="arr">→</span>
+            <span class="node">💾 写回结果</span><span class="arr">↺</span>
+        </div>
+
+        <h2 id="s3">三、看懂 CPU 的四个数字</h2>
+        <table class="xd-table">
+            <tr><th>指标</th><th>含义</th><th>通俗理解</th></tr>
+            <tr><td>主频（GHz）</td><td>每秒多少个"节拍"，如 3.6GHz≈每秒 36 亿拍</td><td>一个人手速多快</td></tr>
+            <tr><td>核心数</td><td>同时独立干活的"小脑"数量，常见 4-16 核</td><td>几个工人同时干活</td></tr>
+            <tr><td>线程数</td><td>每个核心可拆成 2 个虚拟通道（超线程）</td><td>工人左右手同时开工</td></tr>
+            <tr><td>缓存（MB）</td><td>CPU 旁边的超高速小内存</td><td>手边的小工具盒</td></tr>
+        </table>
+        <div class="callout info">
+            <b>🌡 顺带认识"核显"</b>
+            很多 CPU 内置了显示芯片（集成显卡/核显），不装独立显卡也能亮机。办公、看视频、轻度游戏足够；大型游戏和视频渲染才需要独显（见 A2-4）。
+        </div>
+
+        <h2 id="s4">四、品牌与定位：i5/R5 够用吗</h2>
+        <p>常见品牌：Intel（酷睿 i3/i5/i7/i9）与 AMD（锐龙 R3/R5/R7/R9）。<strong>数字越大定位越高</strong>，但跨代比较不能只看数字（如 i5-13400 强于老 i7-7700）。</p>
+        <table class="xd-table">
+            <tr><th>定位</th><th>典型型号</th><th>适合场景</th></tr>
+            <tr><td>入门</td><td>i3 / R3</td><td>上网、文档、网课</td></tr>
+            <tr><td>主流</td><td>i5 / R5</td><td>办公、编程、主流网游——<strong>大多数人的甜点位</strong></td></tr>
+            <tr><td>高性能</td><td>i7 / R7</td><td>视频剪辑、虚拟机、大型游戏</td></tr>
+            <tr><td>旗舰</td><td>i9 / R9</td><td>重度创作、AI 训练、工作站</td></tr>
+        </table>
+
+        <h2>本页小结</h2>
+        <ul>
+            <li>主板决定兼容性；CPU 循环"取指-译码-执行"，是电脑的大脑。</li>
+            <li>看 CPU 先看四件套：主频、核心、线程、缓存。</li>
+            <li>选型看用途：主流用户 i5/R5 足够，别为用不到的性能买单。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            打开你的电脑设置（Windows：设置→系统→关于），找到处理器型号。对照本页，它的核心/线程数是多少？处于哪个定位？
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A2.html">硬件目录</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>安装与配置 Git - 现代化·知识学习站</title>
+<meta name="description" content="安装与配置 Git：Windows 下载安装、Git Bash 介绍、git config 设置用户名邮箱、验证配置是否成功。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="F2.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块F · Git 与 GitHub</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">安装与配置 Git</h1>
+        <p class="lesson-sub">模块F · 第 2 课 | 下载安装与 git config 全流程</p>
+
+        <div class="toc">
+            <b>📑 本课目录</b>
+            <ol>
+                <li><a href="#s1">下载安装 Git</a></li>
+                <li><a href="#s2">认识 Git Bash</a></li>
+                <li><a href="#s3">验证安装</a></li>
+                <li><a href="#s4">设置用户名与邮箱</a></li>
+                <li><a href="#s5">检查配置</a></li>
+                <li><a href="#s6">配置的三个级别</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、下载安装 Git</h2>
+        <div class="step-list">
+            <div class="step">打开 Git 官网 <strong>git-scm.com</strong>，点击 Windows 下的 "Download"，下载 64-bit 安装包。</div>
+            <div class="step">双击安装，一路 "Next"；<strong>注意勾选 "Add Git Bash Profile to Windows Terminal"（如果有）</strong>，其余选项保持默认即可。</div>
+            <div class="step">安装完成，开始菜单会出现 <strong>Git Bash</strong> 和 <strong>Git GUI</strong>。Windows 10 以上系统通常也可直接在任意文件夹右键选择 "Open Git Bash here"。</div>
+        </div>
+        <div class="callout info">
+            <b>💡 本站建议</b>
+            作者用的是 <strong>git 2.55</strong>（Windows 版）。版本号差别不影响本模块任何命令，保持默认安装即可，不需要纠结最新版。
+        </div>
+
+        <h2 id="s2">二、认识 Git Bash</h2>
+        <p><strong>Git Bash</strong> 是 Git 自带的命令行终端，风格像 Linux 的 bash：</p>
+        <div class="code-block"><pre>Administrator@DESKTOP MINGW64 ~
+$ █   ← 在 $ 后面输入命令，回车执行</pre></div>
+        <ul>
+            <li><code>cd 文件夹名</code> 进入目录；<code>ls</code> 列出文件；<code>pwd</code> 显示当前位置。</li>
+            <li>在资源管理器空白处右键选 "Git Bash Here"，就<strong>直接在该文件夹打开终端</strong>——最常用。</li>
+            <li>粘贴用 <kbd>Ctrl</kbd>+<kbd>V</kbd> 或 <kbd>Shift</kbd>+<kbd>Insert</kbd>；命令卡死按 <kbd>Ctrl</kbd>+<kbd>C</kbd> 终止。</li>
+        </ul>
+
+        <h2 id="s3">三、验证安装</h2>
+        <p>打开 Git Bash，输入下面命令查看版本——能输出版本号说明安装成功：</p>
+        <div class="code-block"><pre>git --version
+# 输出示例：git version 2.55.0.windows.1</pre></div>
+
+        <h2 id="s4">四、设置用户名与邮箱</h2>
+        <p>Git 提交时会记下"谁做的这次提交"，所以必须先设置你的名字和邮箱。邮箱建议用注册 GitHub 时同一个邮箱：</p>
+        <div class="code-block"><pre>git config --global user.name "bishihuihuang"
+git config --global user.email "你的邮箱@example.com"</pre></div>
+        <div class="callout warn">
+            <b>⚠️ 照抄会踩坑</b>
+            上面是示例，请把名字和邮箱换成<strong>你自己的</strong>（GitHub 用户名 + 注册邮箱）。不设置的话，第一次 commit 会报错：<em>"Please tell me who you are"</em>。
+        </div>
+
+        <h2 id="s5">五、检查配置</h2>
+        <div class="code-block"><pre>git config --list        # 列出全部配置
+git config user.name     # 只查看用户名
+git config user.email    # 只查看邮箱</pre></div>
+        <p>如果显示的名字/邮箱不对，重跑一次 <code>--global</code> 命令覆盖即可。</p>
+
+        <h2 id="s6">六、配置的三个级别</h2>
+        <table class="xd-table">
+            <tr><th>级别</th><th>作用范围</th><th>命令</th></tr>
+            <tr><td>--system</td><td>整台电脑所有用户（很少用）</td><td><code>git config --system</code></td></tr>
+            <tr><td>--global</td><td>当前用户所有仓库（推荐，配置一次全适用）</td><td><code>git config --global</code></td></tr>
+            <tr><td>（不加）</td><td>仅当前仓库</td><td><code>git config user.name ...</code></td></tr>
+        </table>
+
+        <h2>本课小结</h2>
+        <ul>
+            <li>官网下载安装 Git，全程默认选项即可；Git Bash 是常用终端。</li>
+            <li><code>git --version</code> 验证安装；<code>git config --global</code> 设置用户名和邮箱（务必换成自己的）。</li>
+            <li>配置分 system / global / 当前仓库三级，日常用 --global。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="F1.html">版本控制概念</a> · 下一课：<a href="F3.html">Git 核心命令图解</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

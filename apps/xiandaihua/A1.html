@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>认识计算机 - 现代化·知识学习站</title>
+<meta name="description" content="从定义、历史、种类到核心思想，一节课真正认识计算机：输入-处理-存储-输出模型与存储程序思想。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A1.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 计算机基础</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">计算机是什么</h1>
+        <p class="lesson-sub">A1 · 认识计算机 | 一切现代技能的起点</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">无处不在的计算机</a></li>
+                <li><a href="#s2">定义：一台信息加工厂</a></li>
+                <li><a href="#s3">八十秒看懂计算机简史</a></li>
+                <li><a href="#s4">计算机家族：不止台式机</a></li>
+                <li><a href="#s5">核心思想：存储程序与二进制</a></li>
+                <li><a href="#s6">常见误区澄清</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、无处不在的计算机</h2>
+        <p>早上被手机闹钟叫醒、扫码坐地铁、上课用的电子白板、回家路上的红绿灯控制箱、睡前刷的短视频——这些背后全部是计算机在工作。可以说：<strong>现代生活就是建立在无数台计算机协作之上的</strong>。</p>
+        <p>但"计算机"到底是什么？它为什么能"算"？这一页先把概念的地基打牢，后面所有内容（硬件、系统、网络、开发）都盖在这块地基上。</p>
+
+        <h2 id="s2">二、计算机的定义：一台信息加工厂</h2>
+        <p><strong>计算机（Computer）是能按照程序自动处理信息的电子设备。</strong>拆开这句话，有三个关键词：</p>
+        <ul>
+            <li><em>信息</em>：数字、文字、图片、声音、视频——在计算机里统统变成数字（A4 节细讲）。</li>
+            <li><em>程序</em>：人事先写好的一步步指令，告诉机器"先做什么、再做什么"。</li>
+            <li><em>自动</em>：一旦启动，它不需要人逐步干预，就能高速、重复、精确地执行。</li>
+        </ul>
+        <p>任何计算机，无论大小，都在做同一件事，一个四步循环：</p>
+        <div class="flow-line">
+            <span class="node">📥 输入</span><span class="arr">→</span>
+            <span class="node">⚙️ 处理</span><span class="arr">→</span>
+            <span class="node">💾 存储</span><span class="arr">→</span>
+            <span class="node">📤 输出</span><span class="arr">↺</span>
+        </div>
+        <table class="xd-table">
+            <tr><th>环节</th><th>做什么</th><th>对应你熟悉的例子</th></tr>
+            <tr><td>输入</td><td>把外界信息变成电信号/数据</td><td>键盘、鼠标、触摸屏、麦克风、摄像头</td></tr>
+            <tr><td>处理</td><td>按程序对数据计算和判断</td><td>CPU（中央处理器）</td></tr>
+            <tr><td>存储</td><td>把数据记住，以备后用</td><td>内存（临时）、硬盘（长期）</td></tr>
+            <tr><td>输出</td><td>把结果变回人能懂的形式</td><td>屏幕显示、喇叭发声、打印机打印</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 一个万能思考框架</b>
+            以后看到任何电子设备，都可以问四个问题：它的输入是什么？谁来处理？存在哪里？输出成什么？问完这四个问题，你就基本看懂了它的原理。
+        </div>
+
+        <h2 id="s3">三、八十秒看懂计算机简史</h2>
+        <table class="xd-table">
+            <tr><th>年代</th><th>里程碑</th><th>意义</th></tr>
+            <tr><td>古代</td><td>算盘、算筹</td><td>人类最早的计算辅助工具</td></tr>
+            <tr><td>19 世纪</td><td>巴贝奇分析机（设计）</td><td>首次提出"可编程计算机"构想</td></tr>
+            <tr><td>1946 年</td><td>ENIAC 诞生</td><td>第一台通用电子计算机，重 30 吨、占地 170㎡</td></tr>
+            <tr><td>1970s</td><td>微处理器（Intel 4004）</td><td>CPU 做进一颗芯片，个人电脑成为可能</td></tr>
+            <tr><td>1980-90s</td><td>PC 普及、Windows 图形界面</td><td>电脑从机房走进家庭和办公室</td></tr>
+            <tr><td>2007 年后</td><td>智能手机爆发</td><td>人人都随身携带一台计算机</td></tr>
+            <tr><td>今天</td><td>云计算、AI 大模型</td><td>计算力集中到数据中心，按需取用</td></tr>
+        </table>
+        <p>趋势很明显：<strong>越来越小、越来越快、越来越便宜、越来越普及</strong>。ENIAC 全世界的算力，如今还不如你口袋手机的一亿分之一。</p>
+
+        <h2 id="s4">四、计算机家族：不止台式机</h2>
+        <div class="term-grid">
+            <div class="term"><b>🖥 台式机</b><span>主机+显示器分体，性能强、易升级，适合固定办公与游戏</span></div>
+            <div class="term"><b>💻 笔记本</b><span>一体携带，性能与续航平衡，当代主流</span></div>
+            <div class="term"><b>📱 智能手机</b><span>掌上计算机，加上通信、定位、各类传感器</span></div>
+            <div class="term"><b>📟 平板电脑</b><span>大屏触控，介于手机与笔记本之间</span></div>
+            <div class="term"><b>🗄 服务器</b><span>机房里 7×24 小时工作的计算机，网站与 App 的后台（模块C 专讲）</span></div>
+            <div class="term"><b>🔧 嵌入式</b><span>藏在电饭煲、汽车、电梯里的微型计算机</span></div>
+        </div>
+        <div class="callout warn">
+            <b>⚠️ 误区提醒</b>
+            "计算机"≠"台式电脑"。手机、服务器、智能手表、甚至洗衣机里的控制芯片，本质都是计算机。它们的区别只是<strong>形态与用途</strong>，核心原理完全一致。
+        </div>
+
+        <h2 id="s5">五、核心思想：存储程序与二进制</h2>
+        <p>为什么计算机能"自动"工作？靠 1945 年冯·诺依曼提出的<strong>存储程序（Stored-Program）思想</strong>：</p>
+        <div class="callout info">
+            <b>🧠 存储程序思想</b>
+            把<b>程序（指令）</b>和<b>数据</b>一起存进机器内部的存储器里，机器自动按顺序取出指令并执行——要换任务，只需换一段程序，不用改电路。今天所有计算机，从手机到超算，都遵循这个体系（冯·诺依曼架构）。
+        </div>
+        <p>那程序和数据在机器里长什么样？都是<strong>二进制数字（0 和 1）</strong>。因为电路最容易区分两种状态：高电压/低电压、通电/断电。用亿万个微小开关的组合，就能表示任何信息。</p>
+        <div class="code-block"><pre><span class="cmt">// 一切信息的最终形态（示例：字母 A 的编码）</span>
+字母 A → 编码 65 → 二进制 01000001 → 电路里 8 个开关：通断断断断断通断</pre></div>
+        <p>二进制、字节、编码的具体规则，A4 子模块会专门拆解。这里只需记住一句话：<strong>计算机里没有魔法，只有开关的排列组合。</strong></p>
+
+        <h2 id="s6">六、常见误区澄清</h2>
+        <table class="xd-table">
+            <tr><th>误区</th><th>事实</th></tr>
+            <tr><td>"电脑很聪明"</td><td>计算机只会严格执行指令，快而不"聪明"；显得聪明的是人写的程序（以及如今程序驱动下的 AI 模型，模块E 细讲）</td></tr>
+            <tr><td>"手机和电脑是两种东西"</td><td>原理上同类，都是"输入-处理-存储-输出"的通用计算机</td></tr>
+            <tr><td>"内存越大电脑越快"（笼统地讲）</td><td>性能是 CPU、内存、硬盘等协同的结果，A2 子模块细讲</td></tr>
+            <tr><td>"计算机会自己坏/有脾气"</td><td>故障几乎都有具体原因（软件冲突、硬件老化、设置错误），B6 课教你排查</td></tr>
+        </table>
+
+        <h2>本页小结</h2>
+        <ul>
+            <li>计算机 = 能<strong>按程序自动处理信息</strong>的设备，循环执行"输入 → 处理 → 存储 → 输出"。</li>
+            <li>家族庞大：台式机、笔记本、手机、服务器、嵌入式，原理一致。</li>
+            <li>两大基石思想：<strong>存储程序</strong>与<strong>二进制</strong>。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            试着用"输入-处理-存储-输出"四步，描述一台自动售货机的工作过程。想清楚这个问题，你就已经会用计算机科学的眼光看世界了。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A.html">模块A 目录</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

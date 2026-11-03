@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>微信与生活服务 - 模块I - 现代化·知识学习站</title>
+<meta name="description" content="微信与生活服务模块目录：微信入门、微信进阶、微信支付与红包、支付宝与扫码支付、出行挂号生活 App、结业测验。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="zoom-capture.js"></script>
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="I.html" data-kind="dir">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块I · 微信与生活服务</span>
+</header>
+
+<main>
+    <div class="container">
+        <h1 class="lesson-title">💬 模块I · 微信与生活服务</h1>
+        <p class="lesson-sub">从加好友聊天到扫码付款、网上挂号：让生活服务"长"在手机里</p>
+
+        <div class="callout info">
+            <b>这个模块学什么？</b>
+            微信早已不只是聊天工具——它还能付钱、挂号、打车、交水电费。本模块从加好友、聊天、视频通话讲起，再手把手教微信支付与支付宝扫码付款，最后带你用手机完成打车、坐公交、挂号和交费这些日常大事。学会本模块，你的很多事就不用再跑腿排队了。
+        </div>
+
+        <h2>📂 子模块目录</h2>
+        <div class="card-grid" id="dir"><!-- JS 渲染 --></div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.XD && XD.renderDir) XD.renderDir('dir', 'I');
+});
+</script>
+</body>
+</html>

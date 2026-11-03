@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>模块E测验：如何使用 AI - 现代化·知识学习站</title>
+<meta name="description" content="模块E结业测验：8 道选择题检验大模型认知、提示词五要素、工具选型与隐私版权边界，错题自动进入错题本。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="E5.html" data-kind="quiz">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块E · 如何使用 AI</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">📝 模块E测验</h1>
+        <p class="lesson-sub">模块E · 结业测验 | 如何使用 AI</p>
+
+        <div class="callout info">
+            <b>规则</b>
+            共 8 题，点击选项立即判定并显示解析；60 分及格。做错的题会自动进入<a href="43.html">错题本</a>。建议先复习 E1-E4 再开始。
+        </div>
+
+        <div id="quiz"></div>
+
+        <h2>测验之后</h2>
+        <ul>
+            <li>≥80 分：恭喜，你已掌握 AI 使用基本功，前往<a href="F.html">模块F</a>学 Git 与 GitHub。</li>
+            <li>60-79 分：及格，建议回看错题解析，把模糊概念补牢。</li>
+            <li>&lt;60 分：别灰心，重读做错题对应的课程（E1-E4），然后点「重做一次」。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 测验成绩自动保存，可在<a href="41.html">学习仪表盘</a>查看</span>
+            <span>下一模块：<a href="F.html">Git 与 GitHub</a></span>
+        </div>
+    </article>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+</main>
+
+<script>
+/* ============================================================
+ * 模块E结业测验（页面内联脚本，借 XD.quiz 引擎统一渲染/评分）
+ * 题目数据即文案：q / opts / a / exp 逐字保留；错题自动入错题本
+ * ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.XD || !XD.quiz) return;
+    XD.quiz.run('quiz', {
+        id: 'E',
+        title: '模块E测验：如何使用 AI',
+
+        /* ---- 题目清单（8 题，q/opts/a/exp 逐字保留） ---- */
+        questions: [
+            {
+                q: '大语言模型（LLM）最准确的比喻是？',
+                opts: ['一本按索引查询的百科全书', '一个靠海量文本训练、擅长"猜下一句"的接话大师', '一台能上网的超级计算机', '一个会独立思考的机器人'],
+                a: 1,
+                exp: '它是靠概率预测生成文字的"接话大师"：知识面广，但不是查字典式检索，更不会独立思考。'
+            },
+            {
+                q: 'AI 产生"幻觉"是指？',
+                opts: ['AI 显示器出现花屏', 'AI 编造出看似可信的错误信息', 'AI 拒绝回答任何问题', 'AI 的算力不足导致卡顿'],
+                a: 1,
+                exp: '幻觉=AI 一本正经地编造（假书名、假数据、错步骤）。识别它靠人工核实，不能全信。'
+            },
+            {
+                q: '关于提示词五要素，下列哪个说法正确？',
+                opts: ['提示词越短越好，AI 自己会猜', '给 AI 设定角色能显著影响回复风格与深度', '上下文素材不必提供，AI 全都知道', '输出格式完全由 AI 决定，用户管不了'],
+                a: 1,
+                exp: '角色、任务、上下文、格式、迭代是五要素；明确角色能让风格和深度对齐需求。'
+            },
+            {
+                q: '想请 AI 帮自己改一段文字，最规范的提示词开头是？',
+                opts: ['帮我改，快', '【角色】你是资深编辑…【任务】帮我改下面这段…【上下文】粘贴原稿…【格式】…', '文字如下，改吧：', '你猜我想改什么'],
+                a: 1,
+                exp: '用五要素结构把身份、任务、素材、格式一次说清，AI 才能对症下药。'
+            },
+            {
+                q: 'AI 输出的内容，最关键的一步是？',
+                opts: ['直接转发给别人', '人工核实关键事实后再使用', '多复制几份留底', '立刻付费升级账号'],
+                a: 1,
+                exp: 'AI 输出是"初稿"，人做终审。数字、日期、链接、步骤等关键信息必须人工核实。'
+            },
+            {
+                q: '下列哪种信息最不应该贴进公开 AI 对话？',
+                opts: ['一道数学题', '一段想润色的自我介绍', '自己的身份证号和银行卡号', '一篇需要改写的文章草稿'],
+                a: 2,
+                exp: '敏感个人信息（身份证、银行卡、密码、验证码）绝不可进 AI 对话，防止泄露与被用于训练。'
+            },
+            {
+                q: '让 AI 帮你写作业后直接全文提交，正确的态度是？',
+                opts: ['完全没问题，效率最高', '先确认课程/学校是否允许，多数场景属于学术诚信问题', '只有英文作业可以', 'AI 生成的不算抄袭'],
+                a: 1,
+                exp: 'AI 代写是否允许取决于课程规定，多数场景不被允许。润色自己的文字则普遍没问题。'
+            },
+            {
+                q: '想查最新新闻/实时信息，最适合的 AI 工具类型是？',
+                opts: ['不带联网能力的普通聊天模型', '带联网搜索能力的 AI 助手', '文生图工具', '本地离线模型'],
+                a: 1,
+                exp: '训练数据有截止时间，查最新资讯选带联网搜索的 AI，回答通常带来源链接。'
+            }
+        ]
+    });
+});
+</script>
+</body>
+</html>

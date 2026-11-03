@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>系统设置与安全 - 现代化·知识学习站</title>
+<meta name="description" content="系统设置与安全：Windows 更新、UAC、防火墙、杀毒软件、账户密码卫生、锁屏与远程控制，一次讲清保护电脑的必会项。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="B4.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块B · 电脑详细使用</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">系统设置与安全</h1>
+        <p class="lesson-sub">B4 · 设置对了，电脑一半的病就没了</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">设置中心：一切从这里开始</a></li>
+                <li><a href="#s2">Windows 更新与 Defender</a></li>
+                <li><a href="#s3">防火墙与备份</a></li>
+                <li><a href="#s4">账户与密码卫生</a></li>
+                <li><a href="#s5">锁屏、PIN 与指纹</a></li>
+                <li><a href="#s6">远程控制：当心"被操作"</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、设置中心：一切从这里开始</h2>
+        <p>按 <kbd>Win</kbd>+<kbd>I</kbd> 打开<strong>设置</strong>：系统的"控制台"。常用入口速记：</p>
+        <table class="xd-table">
+            <tr><th>想干什么</th><th>去哪找</th></tr>
+            <tr><td>换壁纸/主题/屏保</td><td>设置 → 个性化</td></tr>
+            <tr><td>看机器配置</td><td>设置 → 系统 → 关于</td></tr>
+            <tr><td>管理开机自启</td><td>设置 → 应用 → 启动（或任务管理器）</td></tr>
+            <tr><td>连接蓝牙/打印机</td><td>设置 → 蓝牙和其他设备</td></tr>
+            <tr><td>改网络/DNS</td><td>设置 → 网络和 Internet</td></tr>
+            <tr><td>电源与睡眠</td><td>设置 → 系统 → 电源</td></tr>
+        </table>
+
+        <h2 id="s2">二、Windows 更新与 Defender</h2>
+        <ul>
+            <li><strong>Windows 更新</strong>（设置 → Windows 更新)：补丁修复漏洞，<strong>别长期禁用</strong>。"关机并更新/更新并重启"要顺手做。</li>
+            <li><strong>Windows Defender</strong>：系统自带的实时防护，已够用。设置 → 隐私和安全 → Windows 安全中心 → 病毒和威胁防护，开"实时保护"。</li>
+            <li>疑点文件可右键 → 用 Defender 扫描；真中了"勒索/木马"，马上断网 + 全盘扫描（B6 有处置流程）。</li>
+        </ul>
+        <div class="callout info">
+            <b>💡 别双杀毒</b>
+            同时装 Defender + 某管家 + 某杀软，三个杀软互相"斗法"，卡到你怀疑人生。留下一套就好。
+        </div>
+
+        <h2 id="s3">三、防火墙与备份</h2>
+        <ul>
+            <li><strong>防火墙</strong>（安全中心 → 防火墙和网络保护)：拦截未经许可的外来连接。开着即可；只有明确需要（如游戏联机）时才按提示放行。</li>
+            <li><strong>备份还原</strong>：设置 → 更新和安全（Win10）/系统 → 存储 → 高级存储选项（Win11）→ 备份。加一块外接硬盘，让"文件历史"自动为你备份文档。</li>
+        </ul>
+
+        <h2 id="s4">四、账户与密码卫生</h2>
+        <ul>
+            <li>Microsoft 账户登录电脑：好处是同步设置与文件（OneDrive），但一定要设<strong>强密码并开两步验证</strong>。</li>
+            <li>密码三不：不用生日/123456/姓名拼音；不所有网站一个密码；不把密码明文存在桌面 txt 里。</li>
+            <li>推荐：密码管理器（如 Keepass / Bitwarden）+ 每站独立强密码。</li>
+        </ul>
+        <div class="callout warn">
+            <b>⚠️ 警惕"默认登录中"的坑</b>
+            用 Microsoft 账户登录 Windows 后，若邮箱/密码泄露且没开两步验证，别人云端一登就能看到你同步的文件和密码。开验证 = 加了一道门锁。
+        </div>
+
+        <h2 id="s5">五、锁屏、PIN 与指纹</h2>
+        <ul>
+            <li><kbd>Win</kbd>+<kbd>L</kbd> 一键锁屏：离开电脑必锁。</li>
+            <li>设置 → 账户 → 登录选项：优先用 <strong>PIN</strong>（本地数字密码，快且只在本机有效）或<strong>指纹/人脸</strong>。</li>
+            <li>开"动态锁"：手机离开蓝牙范围自动锁屏（部分版本支持），防忘锁。</li>
+        </ul>
+
+        <h2 id="s6">六、远程控制：当心"被操作"</h2>
+        <div class="callout warn">
+            <b>⚠️ 官方入口只有一个：远程桌面</b>
+            Windows 自带"远程桌面"只在你主动开启时才可被连。接到"客服"电话让你装某某远程软件/输某某组织代码（TeamViewer、AnyDesk、向日葵），<strong>一律挂掉</strong>——正规售后不会远程让你输代码。
+        </div>
+        <ul>
+            <li>需要帮家人远程装软件：用官方渠道（微信远程协助/QQ 远程）并确认对方是本人。</li>
+            <li>远程桌面设置：设置 → 系统 → 远程桌面 → 开启（仅需时开启）。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            为什么说"杀毒软件管不了你手欠"？Defender 能拦病毒文件，但拦不住你主动给骗子转钱、主动输验证码。安全的第一道防线永远是<strong>人的判断</strong>。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="B.html">模块B 目录</a> · 下一节：<a href="B5.html">网络连接</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

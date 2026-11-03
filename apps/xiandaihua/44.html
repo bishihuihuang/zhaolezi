@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>更新公告 - 现代化·知识学习站</title>
+<meta name="description" content="更新公告：本站版本日志，看每个版本的改动与新增内容。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    .ver-item { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-top: 14px; }
+    .ver-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .ver-badge { background: var(--btn-grad); color: #fff; font-weight: 800; font-size: 13px; padding: 3px 12px; border-radius: 10px; }
+    .ver-head b { font-size: 16px; color: var(--txt); }
+    .ver-item p { margin: 8px 0 0; font-size: 13.5px; color: var(--dim); line-height: 1.8; }
+    .ver-item p b { color: var(--txt); }
+</style>
+</head>
+<body data-page="44.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">关于本站 · 公告</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">📢 更新公告</h1>
+        <p class="lesson-sub">本站版本日志（当前版本由 XD.APP_VER 自动显示）</p>
+
+        <div id="verLog"></div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>🔄 公告随站更新</span>
+            <span>关于本站：<a href="45.html">使用指南</a> · 反馈：<a href="46.html">免责与反馈</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* ============================================================
+ * 更新公告（页面内联脚本）
+ * 读取 XD.VERSION_LOG 渲染版本日志；空列表时给出占位提示
+ * ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.XD) return;
+    var box = document.getElementById('verLog');
+    var list = XD.VERSION_LOG || [];
+    if (!list.length) {
+        box.innerHTML = '<p class="t-dim">暂无公告记录。</p>';
+        return;
+    }
+    var html = '';
+    for (var i = 0; i < list.length; i++) {
+        var v = list[i];
+        html += '<div class="ver-item"><div class="ver-head"><span class="ver-badge">v' + XD.escapeHtml(v.ver) + '</span><b>' + XD.escapeHtml(v.title) + '</b></div>' +
+            '<p>' + XD.escapeHtml(v.desc) + '</p></div>';
+    }
+    box.innerHTML = html;
+});
+</script>
+</body>
+</html>

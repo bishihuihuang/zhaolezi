@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>二进制与存储单位 - 现代化·知识学习站</title>
+<meta name="description" content="二进制与存储单位：为什么是二进制、bit 与 Byte、KB/MB/GB/TB 换算、512G 硬盘只有 476G 之谜、进制转换方法。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A4-1.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 计算机基础</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">二进制与存储单位</h1>
+        <p class="lesson-sub">A4-1 · 数据与二进制 | bit、Byte 与"缩水"硬盘的秘密</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">为什么是二进制</a></li>
+                <li><a href="#s2">bit 与 Byte</a></li>
+                <li><a href="#s3">KB、MB、GB、TB 换算</a></li>
+                <li><a href="#s4">为什么 512G 硬盘只有 476G</a></li>
+                <li><a href="#s5">进制转换小试身手</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、为什么是二进制</h2>
+        <p>A1 埋的坑现在填：电路最容易区分两种状态——<strong>通电 / 断电</strong>（高电压 / 低电压）。想做"十种电压表示 0-9"？电路会复杂到不可靠；而用两态电路，稳定性拉满、成本极低。所以计算机选择二进制：</p>
+        <div class="code-block"><pre>十进制：  0  1  2  3  4  5  6  7  8  9    （逢十进一）
+二进制：  0  1 10 11 100 101 110 111 ...   （逢二进一）</pre></div>
+        <p>一个 0 或 1 叫 <strong>1 个比特（bit）</strong>，是信息世界的最小单位。你今天看的这段网页、听的一首歌、拍的一张照片，最终都是无数 bit 的组合。</p>
+
+        <h2 id="s2">二、bit 与 Byte：宽带速率的秘密</h2>
+        <p><strong>8 bit = 1 Byte（字节）</strong>，字节是文件大小的常用单位。注意大小写：<code>b</code> = bit，<code>B</code> = Byte。运营商说的"千兆宽带"是 <strong>1000 Mbps（小写 b）</strong>，换算成下载速度要除以 8：</p>
+        <div class="code-block"><pre>1000 Mbps 宽带 ÷ 8 ≈ 125 MB/s 的理论最大下载速度
+即：下载 1GB 的电影，理论用时 ≈ 1024MB ÷ 125MB/s ≈ 8 秒</pre></div>
+        <div class="callout warn">
+            <b>⚠️ 常见误会</b>
+            "我办的 300 兆宽带，怎么下载只有 30 多 MB？"——不是被坑了，是 300Mbps ÷ 8 ≈ 37.5 MB/s，属正常现象。小写 b 是 bit，大写 B 是 Byte，差 8 倍。
+        </div>
+
+        <h2 id="s3">三、KB、MB、GB、TB 换算</h2>
+        <table class="xd-table">
+            <tr><th>单位</th><th>等于</th><th>直观感受（大致）</th></tr>
+            <tr><td>1 KB</td><td>1024 B</td><td>一段纯文字</td></tr>
+            <tr><td>1 MB</td><td>1024 KB</td><td>一张手机照片的几分之一</td></tr>
+            <tr><td>1 GB</td><td>1024 MB</td><td>一部标清电影 / 几百张照片</td></tr>
+            <tr><td>1 TB</td><td>1024 GB</td><td>约 25 万张照片 / 200 多部高清电影</td></tr>
+        </table>
+        <p>为什么不取整 1000？因为二进制世界里 2 的 10 次方 = 1024，最接近 1000，工程上就用它当"千"。<em>（严格讲，1024 进位有专门名字 KiB/MiB；硬盘厂商按 1000 进位标容量——这正是下一节争议的来源。）</em></p>
+
+        <h2 id="s4">四、为什么 512G 的硬盘只有 476G</h2>
+        <p>硬盘厂商按 <strong>1GB = 10 亿字节（1000 进制）</strong>标注容量，而操作系统按 <strong>1GB = 1024MB（1024 进制）</strong>显示，两边换算一下：</p>
+        <div class="code-block"><pre>512,000,000,000 字节 ÷ 1024 ÷ 1024 ÷ 1024 ≈ 476.8 GB（系统显示值）
+"丢失"的约 7% 是两套进制的差，不是奸商扣了你的容量</pre></div>
+        <div class="callout tip">
+            <b>💡 为什么 U 盘"更缩水"？</b>
+            因为 U 盘小，固定的文件系统开销占比显得更明显，加上同样的进制差，实际可用容量往往比标称少 10% 左右。全世界的存储设备都这样。
+        </div>
+
+        <h2 id="s5">五、进制转换小试身手</h2>
+        <p>二进制的每一位代表 2 的幂：从右往左是 1、2、4、8、16……把为 1 的位加起来即可：</p>
+        <div class="code-block"><pre>// 二进制 1101 转十进制（从右往左权重 1,2,4,8）
+1 1 0 1
+= 8 + 4 + 0 + 1 = 13
+
+// 十进制 13 转二进制（不断除以 2 记余数，余数倒着读）
+13 ÷ 2 = 6 余 1
+ 6 ÷ 2 = 3 余 0
+ 3 ÷ 2 = 1 余 1
+ 1 ÷ 2 = 0 余 1    → 余数倒读：1101 ✔</pre></div>
+        <p>这样 A1 里"字母 A = 65"就自己推出来了：65 = 64 + 1 = <code>1000001</code>，补足 8 位写作 <code>01000001</code>。文字怎么变成数字的具体规则，见下一节<a href="A4-2.html">字符编码</a>。</p>
+
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            试着把 27 转成二进制（提示：27 = 16+8+2+1）。算完再去 A4-3 看看图片和声音是怎么"数字化"的。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A4.html">A4 子模块目录</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

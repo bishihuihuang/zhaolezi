@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>网页打开的全过程 - 现代化·知识学习站</title>
+<meta name="description" content="网页打开全过程：从输入网址回车到页面渲染，DNS 解析、HTTP/HTTPS 请求、状态码 200/404/500、三次握手与缓存。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="C3.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块C · 网络与服务器</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">网页打开的全过程</h1>
+        <p class="lesson-sub">C3 · 网络与服务器 | 从回车到页面出现，中间发生了什么</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">一次完整的旅程</a></li>
+                <li><a href="#s2">HTTP：网页世界的通用语</a></li>
+                <li><a href="#s3">状态码：服务器的暗号</a></li>
+                <li><a href="#s4">HTTPS：坐进加密车厢</a></li>
+                <li><a href="#s5">缓存：第二次为什么更快</a></li>
+                <li><a href="#s6">动手看真实过程</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、一次完整的旅程</h2>
+        <p>你在地址栏敲 <code>example.com</code> 回车，到屏幕上出现页面，经历了这八步：</p>
+        <div class="flow-line">
+            <span class="node">① 输网址</span><span class="arr">→</span>
+            <span class="node">② DNS 查 IP</span><span class="arr">→</span>
+            <span class="node">③ 建立连接</span><span class="arr">→</span>
+            <span class="node">④ 发请求</span><span class="arr">→</span>
+            <span class="node">⑤ 服务器处理</span><span class="arr">→</span>
+            <span class="node">⑥ 返回网页</span><span class="arr">→</span>
+            <span class="node">⑦ 浏览器渲染</span><span class="arr">→</span>
+            <span class="node">⑧ 加载子资源</span>
+        </div>
+        <ol class="step-list">
+            <li class="step"><strong>输入并用 DNS 查 IP</strong>（C2 已讲）：拿到服务器的"真地址"。</li>
+            <li class="step"><strong>建立 TCP 连接</strong>：客户端与服务器"三次握手"——好比打电话前的"喂？喂！听到了吗"，确认双方在线再开聊。</li>
+            <li class="step"><strong>发送 HTTP 请求</strong>：浏览器说"你好，请把 / 这个页面给我"。</li>
+            <li class="step"><strong>服务器处理并返回响应</strong>：返回状态码 + 一份完整网页（HTML 文本）。</li>
+            <li class="step"><strong>浏览器渲染</strong>：把 HTML 解析成画面，再逐个请求图片、CSS、JS 等"子资源"。</li>
+            <li class="step">等所有资源到齐，页面完整显示；进度条/转圈结束。</li>
+        </ol>
+
+        <h2 id="s2">二、HTTP：网页世界的通用语</h2>
+        <p><strong>HTTP（超文本传输协议）</strong>是浏览器和服务器之间的"会话规则"，核心是一问一答：</p>
+        <div class="code-block"><pre>请求（客户端 → 服务器）：
+GET / HTTP/1.1
+Host: example.com
+User-Agent: Chrome/…
+
+响应（服务器 → 客户端）：
+HTTP/1.1 200 OK
+Content-Type: text/html
+
+&lt;!DOCTYPE html&gt;&lt;html&gt;…（网页正文）</pre></div>
+        <p>请求方法常见：<code>GET</code>（要数据）、<code>POST</code>（提交数据，如登录表单）。你看网页、刷抖音都是反复地 GET/POST。</p>
+
+        <h2 id="s3">三、状态码：服务器的暗号</h2>
+        <table class="xd-table">
+            <tr><th>状态码</th><th>含义</th><th>你遇到的表现</th></tr>
+            <tr><td>200</td><td>成功</td><td>正常打开</td></tr>
+            <tr><td>301 / 302</td><td>重定向（网页搬家了）</td><td>自动跳转到新地址</td></tr>
+            <tr><td>403</td><td>禁止访问</td><td>"无权访问该页面"</td></tr>
+            <tr><td>404</td><td>找不到页面</td><td>"404 Not Found"</td></tr>
+            <tr><td>429</td><td>请求太频繁</td><td>"太多请求，稍后再试"</td></tr>
+            <tr><td>500</td><td>服务器内部错误</td><td>"服务器出错了"，多半是站长那边的问题</td></tr>
+            <tr><td>503</td><td>服务暂不可用（维护/过载）</td><td>"维护中，请稍后"</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 判断法</b>
+            4xx 开头：多半是"你的请求"方面（404 拼错网址、403 没权限）；5xx 开头：是"服务器那边"出问题了——等一会儿或换个时间，跟你的电脑无关。
+        </div>
+
+        <h2 id="s4">四、HTTPS：坐进加密车厢</h2>
+        <p>HTTP 是明文的——中间人能看到你发的密码。 <strong>HTTPS = HTTP + TLS 加密</strong>：通信前握手交换密钥，之后内容全部加密传输，谁都偷看不了内容。</p>
+        <ul>
+            <li>浏览器地址栏的小锁 + "https://" 前缀 = 加密连接；输密码、支付<strong>一定要看这个锁</strong>。</li>
+            <li>网站要加密，站长要在服务器配"SSL 证书"（现在有免费机构 Let's Encrypt）。</li>
+            <li>看到"连接不安全"警告还硬闯的，风险自负——那正是没加密/证书异常的信号。</li>
+        </ul>
+
+        <h2 id="s5">五、缓存：第二次为什么更快</h2>
+        <p>第一次打开后，浏览器把图片、JS 等资源<strong>缓存</strong>在本地（本机磁盘）。第二次访问，直接读缓存，只请求变化的部分——这就是"第二次秒开"的原理。想强制刷新（拿到最新版）：<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>。</p>
+        <div class="callout info">
+            <b>💡 本站自己的离线能力</b>
+            本站是 PWA：首次打开后，Service Worker 把全部页面预缓存进本地（service-worker.js），之后<strong>断网也能看</strong>——缓存的进阶用法，G5 会带你打开控制台一探究竟。
+        </div>
+
+        <h2 id="s6">六、动手看真实过程</h2>
+        <p>按 <kbd>F12</kbd> 打开开发者工具 → "网络（Network）"面板 → 刷新页面：你能看到每个资源的请求/状态码/耗时。蓝色 = 文档，灰色 = 图片/脚本，红色 = 失败。这就是"网页打开的全过程"可视化版——G5 会专门训练它。</p>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="C.html">模块C 目录</a> · 下一节：<a href="C4.html">服务器是什么</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

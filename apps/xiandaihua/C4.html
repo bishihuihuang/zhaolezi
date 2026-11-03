@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>服务器是什么 - 现代化·知识学习站</title>
+<meta name="description" content="服务器是什么：服务器的本质、机房的构成、云服务器与虚拟化、Web 服务器软件、静态与动态网站、常用服务器操作系统。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="C4.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块C · 网络与服务器</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">服务器是什么</h1>
+        <p class="lesson-sub">C4 · 网络与服务器 | 机房里 7×24 小时工作的计算机</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">服务器的本质</a></li>
+                <li><a href="#s2">机房：服务器的家</a></li>
+                <li><a href="#s3">云服务器：不用买也能租</a></li>
+                <li><a href="#s4">Web 服务器软件</a></li>
+                <li><a href="#s5">静态 vs 动态网站</a></li>
+                <li><a href="#s6">服务器系统与运维常识</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、服务器的本质</h2>
+        <p><strong>服务器就是一台电脑</strong>——只是"专干服务活"：常年开机、监听端口、响应请求（C1 的客户端-服务器模型里的"服务方"）。它和我们家用的电脑区别在于：</p>
+        <ul>
+            <li><strong>不关屏 / 不关机</strong>：7×24 小时待命，坏一台要能顶上。</li>
+            <li><strong>性能与可靠优先</strong>：多核 CPU、大内存、ECC 内存（纠错）、磁盘阵列 RAID（坏一块盘数据不丢）。</li>
+            <li><strong>没有多余花哨</strong>：一般不带显示器键盘，装好后远程管理。</li>
+        </ul>
+        <div class="callout info">
+            <b>💡 服务器并非"高档神秘物"</b>
+            从原理上，你淘汰的旧电脑插上网线、装个 Web 软件，就能当一台"家用服务器"给局域网提供网页/文件共享——这就是很多极客的"NAS/私有云"。差别只在稳定、安全、带宽这些"搬进机房"后才有的保障。
+        </div>
+
+        <h2 id="s2">二、机房：服务器的家</h2>
+        <p>大网站把成千上万台服务器放进<strong>数据中心（机房）</strong>：</p>
+        <ul>
+            <li><strong>供电</strong>：双路市电 + UPS 电池 + 柴油发电机，断电不停机。</li>
+            <li><strong>散热</strong>：冷通道/热通道设计、精密空调；一度电给计算、还得小半电散热。</li>
+            <li><strong>网络</strong>：多条冗余光纤接入，带宽按 Gbps/Tbps 计。</li>
+            <li><strong>安防</strong>：门禁、监控、消防（气体灭火），专人 24 小时值守。</li>
+        </ul>
+
+        <h2 id="s3">三、云服务器：不用买也能租</h2>
+        <p>普通人不买机房，而是<strong>租云服务器</strong>：阿里云、腾讯云、华为云、AWS、Azure 等把一台物理机用"虚拟化"切成很多台虚拟机租给你，像租公寓一样按需付费。</p>
+        <table class="xd-table">
+            <tr><th>概念</th><th>类比</th><th>你要做的事</th></tr>
+            <tr><td>云服务器 ECS/EC2</td><td>租了一台"裸电脑"（含系统）</td><td>自己装环境、配置、交月租</td></tr>
+            <tr><td>对象存储 OSS</td><td>租了一个超大网盘/仓库</td><td>专门存图片视频等静态文件</td></tr>
+            <tr><td>托管/PaaS</td><td>拎包入住</td><td>只传代码，平台管运行（如 GitHub Pages）</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 学生/新手白嫖攻略</b>
+            各大云厂商对学生有免费试用/低价云主机；而最便宜的"托管"方案，是 C5 要讲的 GitHub Pages——静态网站完全免费，本站就打算用它发布。
+        </div>
+
+        <h2 id="s4">四、Web 服务器软件</h2>
+        <p>服务器要"会答网页请求"，得跑一个 <strong>Web 服务器软件</strong>：</p>
+        <table class="xd-table">
+            <tr><th>软件</th><th>特点</th><th>在哪见</th></tr>
+            <tr><td>Nginx</td><td>轻快、高并发，如今事实标准</td><td>绝大多数网站/REST API 前端</td></tr>
+            <tr><td>Apache</td><td>老牌稳定，配置直白</td><td>老站、传统主机商</td></tr>
+            <tr><td>IIS</td><td>Windows 自带</td><td>企业内部 Windows 服务</td></tr>
+        </table>
+        <p>它干的活：监听 80/443 端口 → 收到请求 → 找到对应文件/执行程序 → 返回响应。F 模块你上传到 GitHub Pages 之后，背后就是 GitHub 的 Nginx/对象存储替你干这些。</p>
+
+        <h2 id="s5">五、静态 vs 动态网站</h2>
+        <table class="xd-table">
+            <tr><th>类型</th><th>特点</th><th>代表</th></tr>
+            <tr><td>静态网站</td><td>纯 HTML/CSS/JS 文件，谁来访问都给同一份；简单、快、防火、便宜</td><td>个人主页、文档站、<strong>本站</strong></td></tr>
+            <tr><td>动态网站</td><td>程序（PHP/Python/Java 等）按请求现算现生成；能登录、评论、购物车</td><td>电商、论坛、SaaS</td></tr>
+        </table>
+        <p>动态站=静态站 + 后端程序 + 数据库（如 MySQL/PostgreSQL）。本站是纯静态的（G 模块会学怎么写），这也是它免费、离线可用的原因。</p>
+
+        <h2 id="s6">六、服务器系统与运维常识</h2>
+        <ul>
+            <li>服务器操作系统 90%+ 是 <strong>Linux</strong>（Ubuntu Server / Debian / CentOS 系），免费且稳定。</li>
+            <li>管理员通过 <strong>SSH</strong>（端口 22）远程登录配置，像"远程遥控一台没有屏幕的电脑"。</li>
+            <li>运维日常：更新补丁、看日志、监控告警、备份、扩容。云服务器崩了数据丢了？——还是要自己有备份思维（B6 同理）。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            本站（纯 HTML）能免费挂在 GitHub Pages，而一个有"登录注册"的网站不能——你能用"静态 vs 动态"解释原因吗？这就是本模块与 G 模块的接口。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="C.html">模块C 目录</a> · 下一节：<a href="C5.html">网站托管与 GitHub Pages</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

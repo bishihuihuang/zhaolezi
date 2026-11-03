@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摘要萃取·智能摘要提炼｜创意引擎</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="favicon-48.png">
+    <link rel="canonical" href="https://your-name.github.io/creativity/3.html">
+    <style>
+        .kw { display: inline-flex; align-items: center; gap: 4px; margin: 3px; padding: 4px 10px; border-radius: 999px; font-size: 12px; background: var(--zl-card-2); border: 1px solid var(--zl-border); color: var(--zl-text); }
+        .kw b { color: var(--zl-accent); font-size: 11px; }
+        .summ { background: var(--zl-card-2); border: 1px solid var(--zl-border); border-radius: 12px; padding: 14px 16px; line-height: 2; font-size: 15px; color: var(--zl-text); }
+        mark { background: #fde68a; color: #333; border-radius: 4px; padding: 1px 2px; }
+        :root[data-theme] mark { background: var(--zl-accent); color: var(--zl-btn-text); }
+        .sent { line-height: 2; }
+        .slider-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .slider-row input[type=range] { flex: 1; min-width: 140px; accent-color: var(--zl-accent); }
+        .slider-row output { font-weight: 800; color: var(--zl-accent); min-width: 20px; text-align: center; }
+    </style>
+
+    <link rel="stylesheet" href="common.css">
+    <script src="theme-init.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="创意引擎">
+    <meta name="description" content="抽取式智能摘要：无需联网，在浏览器本地自动提炼长文的核心句与关键词，支持高亮原文与导出。">
+    <link rel="stylesheet" href="common.css">
+    <script defer src="common.js"></script>
+    <script defer src="theme.js"></script>
+    <script defer src="cy-features.js"></script>
+</head>
+<body>
+
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+    </div>
+
+    <header class="cy-shell">
+        <h1>创意引擎 · 摘要萃取</h1>
+    </header>
+
+    <main class="cy-page">
+        <div class="cy-card">
+            <h2>📑 摘要萃取</h2>
+            <div class="sub">把长文粘贴进来，算法按「词频 × 句子位置」给每个句子打分，挑出最能代表全文的句子拼成摘要。全程本地运行，不联网、不泄露。</div>
+            <textarea class="cy-textarea" id="ta" style="min-height:180px;" placeholder="粘贴新闻、报告、文章正文……例如：&#10;「人工智能正在改变我们的生活方式。据统计，超过六成的企业已经在业务流程中引入智能技术。……」（建议 200 字以上效果更好）"></textarea>
+            <div class="slider-row" style="margin-top:12px;">
+                <span style="font-size:13px;color:var(--zl-muted);">摘要句数</span>
+                <input type="range" id="nSent" min="1" max="6" value="3">
+                <output id="nSentOut">3</output>
+            </div>
+            <div class="cy-toolbar">
+                <button class="cy-btn" id="btnRun">⚡ 开始萃取</button>
+                <button class="cy-btn cy-btn-ghost" id="btnCopy">📋 复制摘要</button>
+                <button class="cy-btn cy-btn-ghost" id="btnSave">💾 存到记录本</button>
+                <button class="cy-btn cy-btn-ghost" id="btnExample">📄 填入示例</button>
+            </div>
+        </div>
+
+        <div class="cy-card" id="resultCard" style="display:none;">
+            <h2>🧩 萃取结果</h2>
+            <div class="sub">关键词权重为词频得分（越高越核心）</div>
+            <div class="summ" id="summBox"></div>
+            <div style="margin-top:12px;" id="kwBox"></div>
+            <div style="margin-top:12px;font-size:12px;color:var(--zl-muted);" id="metaBox"></div>
+            <h2 style="margin-top:18px;">🔦 原文高亮</h2>
+            <div class="sub">黄色标出被摘取的核心句</div>
+            <div id="origBox" style="font-size:14px;color:var(--zl-text);"></div>
+        </div>
+    </main>
+
+    <script>
+    /* ========== 停用字（单字语法词） ========== */
+    const STOP_CHARS = '的了是在和有都就着也还又而或与及把被但虽然而若则且因故于此其为从对向位于以上中之内的外间以'.split('');
+    const STOP_WORDS = ['我们', '你们', '他们', '她们', '它们', '这个', '那个', '这些', '那些', '自己', '一个', '一种', '可以', '没有', '不是', '已经', '但是', '因为', '所以', '如果', '虽然', '而且', '并且', '或者', '只是', '就是', '还是', '通过', '对于', '关于', '由于', '其中', '以及', '例如', '比如', '随着', '同时', '此外', '然后', '之后', '之前', '今天', '现在', '目前', '今年', '近几年来'];
+
+    function tokenize(text) {
+        // 返回 [{tok, score}]：中文双字词权重1.6、单字1.0；英文单词权重1.0
+        const toks = [];
+        const cjk = text.replace(/[^\u4e00-\u9fff]/g, '');
+        const en = text.match(/[a-zA-Z]{2,}/g) || [];
+        // 双字
+        for (let idx = 0; idx < cjk.length - 1; idx++) {
+            const big = cjk[idx] + cjk[idx + 1];
+            if (STOP_WORDS.indexOf(big) < 0) toks.push({ tok: big, w: 1.6 });
+        }
+        // 单字（去停用字）
+        for (let idx = 0; idx < cjk.length; idx++) {
+            const char = cjk[idx];
+            if (STOP_CHARS.indexOf(char) < 0) toks.push({ tok: char, w: 1.0 });
+        }
+        en.forEach(w => toks.push({ tok: w, w: 1.0 }));
+        return toks;
+    }
+
+    function splitSentences(text) {
+        const parts = text.replace(/\n+/g, '。').split(/(?<=[。！？!?…])/);
+        return parts.map(sentence => sentence.trim()).filter(sentence => sentence.length >= 6);
+    }
+
+    function summarize(text, count) {
+        const sents = splitSentences(text);
+        if (sents.length === 0) return null;
+        // 词频统计
+        const freq = {};
+        tokenize(text).forEach(token => { freq[token.tok] = (freq[token.tok] || 0) + token.w; });
+        // 句子打分
+        const scored = sents.map((sentence, idx) => {
+            let score = 0, cnt = 0;
+            tokenize(sentence).forEach(token => {
+                if (freq[token.tok]) { score += freq[token.tok] * token.w; cnt++; }
+            });
+            // 位置加成：首句/末句略加权
+            const pos = idx === 0 ? 1.15 : (idx === sents.length - 1 ? 1.05 : 1);
+            const len = sentence.length;
+            score = (score / Math.max(1, len)) * pos;
+            return { sentence, score, idx };
+        });
+        // 取前 count 句（按分数），按原文顺序输出
+        const top = scored.slice().sort((lhs, rhs) => rhs.score - lhs.score).slice(0, count).sort((lhs, rhs) => lhs.idx - rhs.idx);
+        // 关键词：按词频取前 12，过滤单字与数字
+        const kws = Object.keys(freq).sort((lhs, rhs) => freq[rhs] - freq[lhs]).slice(0, 12)
+            .filter(k => !(/^[\d.]+$/.test(k)) && (k.length > 1 || STOP_CHARS.indexOf(k) < 0))
+            .slice(0, 8);
+        return {
+            summary: top.map(item => item.sentence).join(''),
+            sentences: top.map(item => item.sentence),
+            topIdx: top.map(item => item.idx),
+            kws: kws.map(k => ({ w: k, f: Math.round(freq[k] * 10) / 10 })),
+            meta: { totalSent: sents.length, totalChar: text.length, compress: Math.round(top.join('').length / text.length * 100) }
+        };
+    }
+
+    const EXAMPLE = '人工智能正在深刻改变我们的生活方式。据统计，超过六成的企业已经在业务流程中引入智能技术，而三年前这个数字还不到两成。智能客服系统让服务响应时间从平均五分钟缩短到三十秒，显著提升了用户体验。\n在教育领域，自适应学习系统能够根据学生的答题情况动态调整题目难度，真正实现因材施教。一些偏远地区的学校通过远程课堂，第一次享受到了名师资源。\n但技术发展也带来了新的挑战。数据隐私问题日益突出，算法歧视的风险不容忽视，部分传统岗位面临被替代的压力。专家建议，在拥抱技术的同时，应加快完善法律法规，加强公民数字素养教育。\n未来十年，人工智能将与医疗、制造、农业深度融合，人类和机器将进入协作共生的新阶段。谁先掌握人与技术协同的能力，谁就将在下一轮竞争中占据先机。';
+
+    const ta = document.getElementById('ta');
+    const nSent = document.getElementById('nSent');
+    const nSentOut = document.getElementById('nSentOut');
+
+    nSent.oninput = function () { nSentOut.textContent = this.value; };
+
+    function run() {
+        const text = ta.value.trim();
+        if (text.length < 40) { CY.showToast('内容太短啦，至少 40 字效果才好'); return; }
+        const sentenceCount = parseInt(nSent.value);
+        const res = summarize(text, sentenceCount);
+        if (!res) { CY.showToast('没找到有效句子，请检查内容'); return; }
+        document.getElementById('summBox').textContent = res.summary;
+        document.getElementById('kwBox').innerHTML = res.kws.map(k =>
+            '<span class="kw"><b>' + k.f + '</b>' + CY.escapeHtml(k.w) + '</span>'
+        ).join('');
+        document.getElementById('metaBox').innerHTML =
+            '原文 ' + res.meta.totalSent + ' 句 · ' + res.meta.totalChar + ' 字｜摘要约 ' + res.meta.compress + '% 的体量';
+        // 原文高亮
+        const sents = splitSentences(text);
+        const topSet = {};
+        res.topIdx.forEach(idx => topSet[idx] = 1);
+        document.getElementById('origBox').innerHTML = sents.map((sentence, idx) =>
+            '<span class="sent">' + (topSet[idx] ? '<mark>' + CY.escapeHtml(sentence) + '</mark>' : CY.escapeHtml(sentence)) + '</span>'
+        ).join('');
+        document.getElementById('resultCard').style.display = '';
+        if (window.CY && CY.activity) CY.activity.add({ type: 'summarize', page: '3.html' });
+        if (window.CY && CY.unlock) CY.unlock('digest_first');
+        CY.showToast('萃取完成');
+    }
+
+    document.getElementById('btnRun').onclick = run;
+    document.getElementById('btnExample').onclick = function () {
+        ta.value = EXAMPLE;
+        ta.focus();
+        CY.showToast('示例已填入，点击「开始萃取」');
+    };
+    document.getElementById('btnCopy').onclick = function () {
+        const summaryText = document.getElementById('summBox').textContent;
+        if (!summaryText) return;
+        navigator.clipboard.writeText(summaryText).then(function () { CY.showToast('摘要已复制'); }).catch(function () {});
+    };
+    document.getElementById('btnSave').onclick = function () {
+        const summaryText = document.getElementById('summBox').textContent;
+        if (!summaryText) return;
+        try {
+            const notes = JSON.parse(localStorage.getItem('cy_notes_v1') || '[]');
+            notes.unshift({ id: 'n' + Date.now(), text: '【摘要】' + summaryText, tags: ['摘要'], fav: false, at: Date.now() });
+            localStorage.setItem('cy_notes_v1', JSON.stringify(notes.slice(0, 300)));
+            CY.showToast('已存入灵感记录本（9 号页可查看）');
+        } catch (e) {}
+    };
+
+    /* 冒烟自检辅助：暴露函数 */
+    if (!('summarize' in window)) window.summarize = summarize;
+    if (!('splitSentences' in window)) window.splitSentences = splitSentences;
+    if (!('tokenize' in window)) window.tokenize = tokenize;
+    </script>
+</body>
+</html>

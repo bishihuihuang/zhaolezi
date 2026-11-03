@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>软件与操作系统 - 现代化·知识学习站</title>
+<meta name="description" content="软件与操作系统：系统软件和应用软件的区别、操作系统的四大职责、Windows/macOS/Linux 对比、32/64 位、驱动程序与重装系统。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A3.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 计算机基础</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">软件与操作系统</h1>
+        <p class="lesson-sub">A3 · 软件与操作系统 | 硬件是身体，软件才是灵魂</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">软件是什么</a></li>
+                <li><a href="#s2">操作系统的四大职责</a></li>
+                <li><a href="#s3">主流操作系统对比</a></li>
+                <li><a href="#s4">32 位与 64 位</a></li>
+                <li><a href="#s5">驱动程序：翻译官</a></li>
+                <li><a href="#s6">"装系统"是什么意思</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、软件是什么</h2>
+        <p>A1 里讲过：计算机 = 硬件 + 软件。<strong>软件（Software）就是运行在硬件上的指令集合</strong>——它摸不到、没实体，但决定了硬件做什么。按用途分两大类：</p>
+        <table class="xd-table">
+            <tr><th>类别</th><th>作用</th><th>例子</th></tr>
+            <tr><td>系统软件</td><td>管理硬件、给其他软件打地基</td><td>Windows、macOS、Linux、Android、iOS</td></tr>
+            <tr><td>应用软件</td><td>完成具体任务</td><td>微信、浏览器、Word、游戏、视频播放器</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 一句话理解</b>
+            操作系统是"物业公司"，应用软件是"租户"。租户（微信、浏览器）都要通过物业（操作系统）使用楼里的水电（CPU、内存、硬盘）。
+        </div>
+
+        <h2 id="s2">二、操作系统的四大职责</h2>
+        <p><strong>操作系统（OS，Operating System）</strong>是开机后第一个运行的"总管家"。一台电脑为何能同时开着浏览器、听歌、打字？全靠它：</p>
+        <ul>
+            <li><strong>管硬件（进程调度）</strong>：把 CPU 时间、内存、磁盘公平地分给每个运行中的程序（叫"进程"），谁也别想独占。</li>
+            <li><strong>管文件</strong>：把磁盘上亿万个存储单元组织成你熟悉的"文件夹"结构，还负责权限与回收站。</li>
+            <li><strong>管界面</strong>：把鼠标点击、键盘输入翻译给程序，把程序输出画到屏幕上（图形界面 GUI）。</li>
+            <li><strong>管安全</strong>：隔离不同程序的权限，防止一个程序乱改另一个程序的数据，这是安全的第一道防线。</li>
+        </ul>
+        <div class="callout info">
+            <b>🔍 眼见为实</b>
+            按 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd> 打开任务管理器：列表里每个条目是一个进程，能看到 CPU/内存实时占用——这就是操作系统"管硬件"的直接证据。想深挖见模块B。
+        </div>
+
+        <h2 id="s3">三、主流操作系统对比</h2>
+        <table class="xd-table">
+            <tr><th>系统</th><th>主要设备</th><th>优点</th><th>短处</th><th>适合谁</th></tr>
+            <tr><td>Windows</td><td>台式机 / 笔记本</td><td>软件生态最全、游戏最强、教程最多</td><td>偶有广告与更新打断</td><td>绝大多数人的默认选择</td></tr>
+            <tr><td>macOS</td><td>Mac 电脑</td><td>稳定流畅、与 iPhone 联动、设计行业常用</td><td>价格高、游戏少、不可装在普通 PC</td><td>设计 / 开发 / 苹果全家桶用户</td></tr>
+            <tr><td>Linux</td><td>服务器 / 开发机</td><td>免费开源、可定制、服务器领域垄断级</td><td>入门门槛较高、部分软件缺位</td><td>开发者、运维、爱折腾的人</td></tr>
+            <tr><td>Android / iOS</td><td>手机 / 平板</td><td>触摸优化、应用商店生态成熟</td><td>生产力弱于桌面系统</td><td>移动场景</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 冷知识</b>
+            世界上几乎所有的网站服务器跑的都是 Linux（模块C、F 会一再遇到它）；你家路由器里也藏着一份精简 Linux。
+        </div>
+
+        <h2 id="s4">四、32 位与 64 位</h2>
+        <p>这说的是 CPU 一次能处理的<strong>数据宽度</strong>。64 位一次搬 64 bit 数据，并且<strong>能认出超过 4GB 的内存</strong>；32 位系统最多只能用约 4GB 内存。今天的电脑几乎全是 64 位。</p>
+        <p>下载软件时常见后缀：<code>x86</code> = 32 位（历史命名）；<code>x64 / amd64</code> = 64 位；<code>arm64</code> = 手机/新 Mac 那类 ARM 架构。普通用户记一条：<strong>有新装新，桌面装 x64 即可</strong>。</p>
+
+        <h2 id="s5">五、驱动程序：翻译官</h2>
+        <p>不同厂商的打印机、显卡、声卡各有各的"方言"——<strong>驱动（Driver）</strong>是介于操作系统和硬件之间的翻译官，让系统听懂每个零件的话。</p>
+        <ul>
+            <li>大多数常见硬件（鼠标、键盘、U盘）系统自带驱动，插上就能用。</li>
+            <li>显卡、打印机这类复杂设备需要单独安装：通常去<strong>官网</strong>下对应型号驱动（别用杂牌"驱动精灵"一类，易捆绑广告）。</li>
+            <li>Windows 里随时可更新驱动：右键"此电脑"→ 管理 → 设备管理器 → 右键设备 → 更新驱动。</li>
+            <li>典型信号：硬件上有黄色感叹号、突然没声音、分辨率不对——八成是驱动问题，重装/更新驱动可解。</li>
+        </ul>
+
+        <h2 id="s6">六、"装系统"是什么意思</h2>
+        <p>把操作系统写入硬盘并设置好引导，就叫<strong>装系统</strong>。<strong>重装系统 = 把系统盘清空后重新写入一份干净的 Windows</strong>，适用于系统严重损坏、顽固病毒、或想让电脑"焕然一新"的场景。</p>
+        <div class="step-list">
+            <div class="step"><b>① 备份</b>：把 C 盘中的文档、照片、浏览器收藏统统拷到别的盘或网盘。<strong>这是最重要的步骤！</strong></div>
+            <div class="step"><b>② 准备启动盘</b>：一个 8GB 以上 U 盘，用微软官方工具（Media Creation Tool）写入 Windows 安装镜像。</div>
+            <div class="step"><b>③ 从 U 盘启动</b>：插入 U 盘重启，开机时狂按 F12 / F9 / Esc（品牌不同键不同）进入启动菜单，选 U 盘。</div>
+            <div class="step"><b>④ 走安装向导</b>：选语言 → 选"全新安装"→ 选目标磁盘（<strong>看清容量，别选错盘</strong>）→ 删除原系统分区后格式化 → 等拷贝重启。</div>
+            <div class="step"><b>⑤ 收尾</b>：设置账户 → 联网自动更新驱动 → 装常用软件。大功告成。</div>
+        </div>
+        <div class="callout warn">
+            <b>⚠️ 量力而行</b>
+            重装会清空目标盘全部数据。第一次操作请在有人指导或详细图文/视频教程下进行；系统只是"卡/慢"时，先试试模块B 的排障流程，多数问题不用重装。
+        </div>
+
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            你手机上的"设置"App 是系统软件还是应用软件？微信闪退了，你打算"重装微信"和"重装系统"哪个？想清楚你就理解了软件与操作系统的分工。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A.html">模块A 目录</a> · 进阶：<a href="A4.html">数据与二进制</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

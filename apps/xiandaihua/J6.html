@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>诈骗识别练习器 - 现代化·知识学习站</title>
+<meta name="description" content="情景闯关式防诈骗练习器：读一段真实场景，判断是安全、可疑还是骗局，即时解析，把防骗变成本能。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    /* 本页专属布局 */
+    .case-panel { background: var(--card-2); border: 2px solid var(--line); border-radius: var(--radius); padding: 20px; margin: 16px 0; }
+    .case-panel .case-tag { font-size: 12.5px; color: var(--dim); }
+    .case-panel .case-title { font-size: clamp(18px, 3.5vw, 26px); font-weight: 800; margin: 8px 0 10px; }
+    .case-panel .case-body { font-size: 15.5px; line-height: 1.8; color: var(--text); }
+    .judge-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+    .judge-row .btn { flex: 1; min-width: 130px; padding: 12px 10px; font-size: 15px; }
+    .case-feedback { min-height: 30px; font-size: 15px; font-weight: 700; margin-top: 4px; }
+    .case-feedback.ok { color: var(--green); }
+    .case-feedback.bad { color: var(--red); }
+    .case-feedback .exp { display: block; font-weight: 400; font-size: 13.5px; color: var(--dim); margin-top: 4px; line-height: 1.7; }
+</style>
+</head>
+<body data-page="J6.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块J · 网络安全与防诈骗</span>
+</header>
+
+<nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">🛡️ 诈骗识别练习器</h1>
+        <p class="lesson-sub">模块J · 第 6 课 | 读情景 → 判危险度，把防骗练成本能</p>
+
+        <div class="callout info">
+            <b>🎮 怎么练</b>
+            每轮 10 个真实场景，读完后判断它是「✅ 安全」「⚠️ 可疑」还是「🚨 骗局」。点选后立即判分并给出解析——答错了也别怕，解析比答对更重要。进度与累计成绩自动记录，计入<a href="41.html">学习仪表盘</a>。答题规则记住三条：<strong>要转账？要验证码？要你点链接？</strong>
+        </div>
+
+        <div class="stat-row" id="statRow">
+            <div class="stat-cell"><b id="stRound">0</b><span>当前第几题</span></div>
+            <div class="stat-cell"><b id="stScore">0</b><span>本轮判对</span></div>
+            <div class="stat-cell"><b id="stWrong">0</b><span>本轮判错</span></div>
+            <div class="stat-cell"><b id="stTotal">0</b><span>累计判对（总）</span></div>
+            <div class="stat-cell"><b id="stBest">0</b><span>最好成绩</span></div>
+        </div>
+
+        <div class="case-panel" id="casePanel">
+            <div class="case-tag" id="caseTag">情景 1/10</div>
+            <div class="case-title" id="caseTitle">准备中…</div>
+            <div class="case-body" id="caseBody"></div>
+            <div class="judge-row" id="judgeRow">
+                <button class="btn green" data-a="0">✅ 安全</button>
+                <button class="btn" data-a="1">⚠️ 可疑</button>
+                <button class="btn" data-a="2">🚨 骗局</button>
+            </div>
+            <div class="case-feedback" id="caseFb"></div>
+            <div class="mode-row" id="nextRow" style="display:none;">
+                <button class="btn ghost" id="nextBtn">下一题 →</button>
+            </div>
+        </div>
+
+        <div class="callout tip" id="doneBox" style="display:none;">
+            <b>🎉 本轮完成！</b><br>
+            <span id="doneText"></span><br>
+            <span style="color:var(--dim);font-size:13px;">想再来一轮，点下面按钮重新出题。span>
+            <div class="mode-row"><button class="btn green" id="restartBtn">🔄 再练一轮</button></div>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="J5.html">被骗之后：止损与报警</a> · 下一课：<a href="J7.html">模块J 测验</a></span>
+        </div>
+    </article>
+</main>
+
+<script>
+(function () {
+    /* ========== 题库：a=0 安全 / 1 可疑 / 2 骗局 ========== */
+    var BANK = [
+        { t: '快递理赔', c: '你网购后接到电话："您的快递在运输中丢失，我们要给您理赔 200 元，请按提示下载理赔 App 并开启屏幕共享操作。"', a: 2, exp: '退款会原路返回，不需要下载 App、不需要开屏幕共享。要你"下载理赔 App+屏幕共享"的 100% 是骗局。' },
+        { t: '警察来电', c: '电话自称"公安局民警"，说你涉嫌洗钱，让你把钱转到"安全账户"配合调查，并强调"不要告诉任何人"。', a: 2, exp: '公检法绝不电话办案、绝无"安全账户"。出现"安全账户+别告诉别人"是教科书级骗局，直接挂断。' },
+        { t: '验证码索要', c: '"银行客服"打电话说你的信用卡要升级，需要把刚收到的短信验证码念给他核对。', a: 2, exp: '验证码等于账号钥匙，任何人索要都不给。银行绝不会电话索要验证码。' },
+        { t: '儿子求救', c: '视频电话里"儿子"带着哭腔："爸，我开车撞了人，对方要 5 万私了，不然报警抓我！千万别告诉我妈！"视频里确实是儿子的脸和声音。', a: 2, exp: 'AI 换脸+语音克隆能冒充亲人。越是"紧急+别告诉别人"越要冷静：回拨通讯录里的号码、问只有家人知道的事。' },
+        { t: '中奖通知', c: '收到短信："恭喜您被抽中幸运用户，奖品为一台手机。请点击链接登记，缴纳 200 元运费后奖品寄出。"', a: 2, exp: '先交钱才能领的"奖"都是骗局。中奖短信的链接也绝不能点（可能是钓鱼木马）。' },
+        { t: '医院官方挂号', c: '你打开当地三甲医院的官方公众号（有认证标识），在"预约挂号"里选了科室和时间，看到预约成功通知。', a: 0, exp: '官方认证的医院公众号挂号是正规渠道。记住认准认证标识、走官方入口即可。' },
+        { t: '好友借款', c: '微信里一位老同学发来消息："我支付宝被限额了，先借我 2000 元救急，明天就还。"你发现他的头像和声音（语音消息）都很像本人。', a: 1, exp: '文字和语音都可能被冒充（AI 语音克隆）。属于"可疑"：先打电话、视频核实本人，再谈借钱；未核实前不转账。' },
+        { t: '扫码领鸡蛋', c: '菜市场门口有人喊："扫这个二维码进群，免费领鸡蛋一袋！"二维码印在一张传单上。', a: 2, exp: '"扫码送礼"是拉人进诈骗群/装木马的经典手法，二维码来源不明，一律不扫。' },
+        { t: '柜台付款码', c: '你在超市结账，收银台出示了店家的收款二维码，收银员说"扫这个码付款 35.5 元"。', a: 0, exp: '当面确认过的柜台收款码是正常支付场景。只要确认收款方是店家、金额正确，可以放心付。' },
+        { t: '社保冻结', c: '"社保局"来电：你的社保卡被异地盗刷，已冻结。需要在电话里报出卡号、密码和验证码"重新激活"。', a: 2, exp: '社保卡问题会让你去柜台或官方 App 处理，绝不会电话索要卡号密码验证码。"激活""解冻"话术都是骗局。' },
+        { t: '低价代购', c: '闲鱼上有人卖原价 8000 元的手机，只卖 2000 元，说"渠道价"，但要你先转 1000 元定金、再加微信私下交易。', a: 2, exp: '明显低于市场价+要求脱离平台私下交易，双重骗局特征。二手交易坚持平台内担保交易。' },
+        { t: '96110 来电', c: '你正在接一个"退款客服"电话时，另一个来电显示 96110 的电话打进来。你想起学过的知识。', a: 0, exp: '96110 是反诈专线，它主动打来说明你可能正被诈骗，务必接听并听从提醒——这是在救你的钱。' }
+    ];
+
+    var ROUND = 10;
+
+    /* ========== 本地存储 ========== */
+    function loadStats() {
+        try { return JSON.parse(localStorage.getItem('xd_fraud_stats_v1')) || { total: 0, best: 0 }; } catch (e) { return { total: 0, best: 0 }; }
+    }
+    function saveStats(s) { try { localStorage.setItem('xd_fraud_stats_v1', JSON.stringify(s)); } catch (e) {} }
+
+    /* ========== 状态 ========== */
+    var S = {
+        queue: [], pos: 0, score: 0, wrong: 0, done: 0,
+        stats: loadStats()
+    };
+    var el = function (id) { return document.getElementById(id); };
+
+    function shuffle(a) {
+        var r = a.slice();
+        for (var i = r.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = r[i]; r[i] = r[j]; r[j] = t;
+        }
+        return r;
+    }
+
+    function renderStat() {
+        el('stRound').textContent = Math.min(S.pos + 1, ROUND);
+        el('stScore').textContent = S.score;
+        el('stWrong').textContent = S.wrong;
+        el('stTotal').textContent = S.stats.total;
+        el('stBest').textContent = S.stats.best;
+    }
+
+    function showCase() {
+        var q = S.queue[S.pos];
+        el('caseTag').textContent = '情景 ' + (S.pos + 1) + '/' + ROUND + ' · ' + q.t;
+        el('caseTitle').textContent = q.t;
+        el('caseBody').textContent = q.c;
+        el('caseFb').textContent = '';
+        el('caseFb').className = 'case-feedback';
+        el('nextRow').style.display = 'none';
+        renderStat();
+    }
+
+    function answer(a) {
+        if (S.done) return;
+        var q = S.queue[S.pos];
+        S.done = 1;
+        var ok = a === q.a;
+        var fb = el('caseFb');
+        fb.className = 'case-feedback ' + (ok ? 'ok' : 'bad');
+        fb.innerHTML = (ok ? '✅ 判对了！' : '❌ 这次判错了（正确答案：' + ['安全', '可疑', '骗局'][q.a] + '）') +
+            '<span class="exp">' + q.exp + '</span>';
+        if (ok) { S.score++; S.stats.total++; }
+        else S.wrong++;
+        saveStats(S.stats);
+        if (window.XD && XD.studyLog) {
+            try { XD.studyLog.add({ type: 'fraud', itemId: q.t, mod: 'J' }); } catch (e) {}
+        }
+        el('nextRow').style.display = 'flex';
+        renderStat();
+    }
+
+    function next() {
+        S.done = 0;
+        S.pos++;
+        if (S.pos >= ROUND) return finish();
+        showCase();
+    }
+
+    function finish() {
+        var fb = el('caseFb');
+        fb.className = 'case-feedback';
+        fb.textContent = '';
+        el('judgeRow').style.display = 'none';
+        el('nextRow').style.display = 'none';
+        el('casePanel').style.display = 'none';
+        if (S.score > S.stats.best) { S.stats.best = S.score; saveStats(S.stats); }
+        var pct = Math.round(S.score / ROUND * 100);
+        var advise = pct >= 90 ? '太稳了！你已经具备识别绝大多数骗局的能力，继续保持。' :
+            pct >= 60 ? '不错！把答错的解析再看一遍，尤其是"要转账/要验证码/要你点链接"三条铁律。' :
+            '别灰心！防骗是练出来的，回到 J1-J5 课复习一遍，再来一轮。';
+        el('doneBox').style.display = 'block';
+        el('doneText').innerHTML = '本轮判对 <b>' + S.score + '</b> / ' + ROUND + ' 题（' + pct + '%）· ' + advise;
+        renderStat();
+    }
+
+    function startRound() {
+        S.queue = shuffle(BANK).slice(0, ROUND);
+        S.pos = 0; S.score = 0; S.wrong = 0; S.done = 0;
+        el('judgeRow').style.display = 'flex';
+        el('casePanel').style.display = 'block';
+        el('doneBox').style.display = 'none';
+        showCase();
+    }
+
+    el('judgeRow').addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('button[data-a]') : null;
+        if (!btn || S.done) return;
+        answer(parseInt(btn.getAttribute('data-a'), 10));
+    });
+    el('nextBtn').addEventListener('click', next);
+    el('restartBtn').addEventListener('click', startRound);
+
+    startRound();
+})();
+</script>
+</body>
+</html>

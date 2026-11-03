@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>模块J测验：网络安全与防诈骗 - 现代化·知识学习站</title>
+<meta name="description" content="模块J结业测验：10 道选择题检验密码安全、电话短信诈骗、购物转账、AI 新骗局与止损报警的掌握情况，错题自动进入错题本。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="J7.html" data-kind="quiz">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块J · 网络安全与防诈骗</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">📝 模块J测验：网络安全与防诈骗</h1>
+        <p class="lesson-sub">J7 · 结业测验 | 密码 · 骗术 · 转账 · AI 新骗局 · 止损</p>
+
+        <div class="callout info">
+            <b>规则</b>
+            共 10 题，点击选项立即判定并显示解析；60 分及格，满分解锁成就「满分学霸」。做错的题会自动进入<a href="43.html">错题本</a>，成绩计入学习仪表盘。建议先过一遍 J1-J6 的小结再开始。
+        </div>
+
+        <div id="quiz"></div>
+
+        <h2>测验之后</h2>
+        <ul>
+            <li>≥80 分：恭喜，你已具备识别常见骗局的能力，前往<a href="K.html">模块K</a>学习办公与文档。</li>
+            <li>60-79 分：及格，但建议回看错题解析，把"要转账/要验证码/点链接"三条铁律记牢。</li>
+            <li>&lt;60 分：别灰心，重读做错题对应的课，然后点「重做一次」。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 测验成绩自动保存，可在<a href="41.html">学习仪表盘</a>查看</span>
+            <span>返回：<a href="J.html">模块J 目录</a> · 下一模块：<a href="K.html">办公与文档</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* ============================================================
+ * 模块J结业测验（页面内联脚本，借 XD.quiz 引擎统一渲染/评分）
+ * 题目数据即文案：q / opts / a / exp 逐字保留；错题自动入错题本
+ * ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.XD || !XD.quiz) return;
+    XD.quiz.run('quiz', {
+        id: 'J',
+        title: '模块J测验：网络安全与防诈骗',
+
+        /* ---- 题目清单（10 题，q/opts/a/exp 逐字保留） ---- */
+        questions: [
+            {
+                q: '设置密码时，下面哪个密码最安全？',
+                opts: ['123456', '自己的生日', '一句话编的"句子密码"（大小写+数字+符号）', '姓名拼音'],
+                a: 2,
+                exp: '好密码要够长、够混、没规律；生日、123456、姓名拼音都太容易被猜到。'
+            },
+            {
+                q: '电话里"银行客服"让你把短信验证码念给他"核对"，正确的做法是？',
+                opts: ['念给他，帮他对账', '先念一半看看', '不给——验证码任何人都不给', '发短信给他'],
+                a: 2,
+                exp: '验证码等于账号钥匙，包括自称客服、警察在内的任何人都不能给。'
+            },
+            {
+                q: '电话里出现哪一组词，可以 100% 确定是诈骗？',
+                opts: ['"安全账户""屏幕共享""保证金"', '"您好""请问""谢谢"', '"明天见""保重""再联系"', '"地址""电话""姓名"'],
+                a: 0,
+                exp: '真正的警方、银行、客服绝无"安全账户"，绝不让开"屏幕共享"、收"保证金"。'
+            },
+            {
+                q: '收到一条短信："ETC 已过期，点击链接 m.xxx.cn 重新认证，否则将被注销。"应该？',
+                opts: ['马上点链接认证', '先转发到家庭群', '不点——正规机构不会用短信链接要你输密码', '回复短信询问'],
+                a: 2,
+                exp: '要输密码、要转账的短信链接一律当骗子处理，真有问题走官方 App/柜台核实。'
+            },
+            {
+                q: '网购后接到"客服"电话说商品有问题要退款，正确的做法是？',
+                opts: ['按他说的下载理赔 App 操作', '开屏幕共享让他指导', '不操作——退款自动原路返回，回购物平台官方客服核实', '把验证码报给他'],
+                a: 2,
+                exp: '退款原路自动返回，不需要下载 App、不开屏幕共享、不给验证码。'
+            },
+            {
+                q: '视频通话里"儿子"说自己撞了人急需 5 万私了、千万别告诉别人，你应该？',
+                opts: ['马上转账救急', '先转一半', '挂断，回拨通讯录里的号码核实，问只有家人知道的事', '相信自己的眼睛直接转'],
+                a: 2,
+                exp: 'AI 换脸+语音克隆能冒充亲人；"紧急+别告诉别人"更要冷静核实，回拨原号码、对家庭暗号。'
+            },
+            {
+                q: '路边"扫码进群免费领鸡蛋"，正确的做法是？',
+                opts: ['扫码领一袋再退群', '让家人也来扫', '不扫——不明来源的二维码可能带木马或是诈骗入口', '扫码后帮他们宣传'],
+                a: 2,
+                exp: '"扫码送礼"是拉人进诈骗群/装木马的经典手法，一律不扫。'
+            },
+            {
+                q: '在商场想输支付密码付款，此时连着免费的"商场 WiFi"，应该？',
+                opts: ['直接用 WiFi 付款', '关掉 WiFi 改用移动数据付款', '把密码调大字体', '换个角落付款'],
+                a: 1,
+                exp: '公共 WiFi 可能被搭"钓鱼热点"，输支付密码、登录银行时务必用移动数据。'
+            },
+            {
+                q: '发现钱被骗走后的第一步，正确的是？',
+                opts: ['先哭一场再想办法', '马上再转一笔"试试能不能要回来"', '停手，立刻打电话冻结银行卡/微信/支付宝，然后报警', '先联系骗子求他退钱'],
+                a: 2,
+                exp: '顺序是：停手 → 冻结（银行卡/微信/支付宝官方渠道）→ 报警 → 留证据，越快追回概率越大。'
+            },
+            {
+                q: '被骗后，有人加微信说"交 2000 元手续费帮你追回被骗的钱"，应该？',
+                opts: ['交钱试试', '让他先追再付费', '拒绝并报警——"帮你追回"是二次诈骗', '让他帮忙骂骗子'],
+                a: 2,
+                exp: '被骗后钱只走官方渠道（110 警察）追，任何"收费帮你追回""黑客帮你找回"都是二次诈骗。'
+            }
+        ]
+    });
+});
+</script>
+</body>
+</html>

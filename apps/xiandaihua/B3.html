@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>软件的安装与管理 - 现代化·知识学习站</title>
+<meta name="description" content="软件的安装与管理：只去官网下载、安装向导解读、卸载与清理、防捆绑广告、软件更新与绿色软件。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="B3.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块B · 电脑详细使用</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">软件的安装与管理</h1>
+        <p class="lesson-sub">B3 · 装对、卸净、不被捆绑广告绑架</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">下载：只认官网与官方商店</a></li>
+                <li><a href="#s2">安装向导：三个坑点要看清</a></li>
+                <li><a href="#s3">安装目录选在哪</a></li>
+                <li><a href="#s4">反悔了？正确卸载</a></li>
+                <li><a href="#s5">防捆绑：让广告协议失效</a></li>
+                <li><a href="#s6">更新与"绿色软件"</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、下载：只认官网与官方商店</h2>
+        <ul>
+            <li><strong>官网最安全</strong>：搜"腾讯 官网""微信 官网"之类，认准域名（如 weixin.qq.com）。</li>
+            <li><strong>微软商店（Microsoft Store）</strong>：Windows 自带的官方应用商店，里面的应用经过审核、自动更新，最省心。</li>
+            <li><strong>警惕</strong>：第三方"软件园/高速下载"站下载的安装包，十有八九捆绑全家桶——<strong>不要用"搜索软件下载"的第一条广告链接</strong>。</li>
+        </ul>
+        <div class="callout warn">
+            <b>⚠️ 一眼识破</b>
+            官网下载页常有一堆醒目的绿色"高速下载"按钮——真正的下载链接往往藏在页面下方"下载：Windows 版"小字里。认准网址和文件后缀（.exe 安装包 / .msi）再点。
+        </div>
+
+        <h2 id="s2">二、安装向导：三个坑点要看清</h2>
+        <p>双击安装包后进入向导，新手最常踩三处：</p>
+        <ol class="step-list">
+            <li class="step"><strong>附加组件</strong>：勾选项"安装XX浏览器""体验新功能"——<strong>全部取消勾选</strong>。</li>
+            <li class="step"><strong>安装目录</strong>：默认 C 盘没问题，但想轻装可改到 D:\Software 下（见 §3）。</li>
+            <li class="step"><strong>"快速安装" vs "自定义安装"</strong>：永远选<strong>自定义</strong>，才看得到上面两处选项。</li>
+        </ol>
+
+        <h2 id="s3">三、安装目录选在哪</h2>
+        <table class="xd-table">
+            <tr><th>情形</th><th>建议</th></tr>
+            <tr><td>常用小软件（微信、QQ）</td><td>默认 C 盘即可，方便 & 更新省心</td></tr>
+            <tr><td>大型软件（游戏、剪辑、建模）</td><td>装到 D 盘等非系统盘，C 盘瘦身、重装系统不心疼</td></tr>
+            <tr><td>绿色软件（免安装版）</td><td>解压到固定文件夹即可用，不写注册表</td></tr>
+        </table>
+
+        <h2 id="s4">四、反悔了？正确卸载</h2>
+        <ol class="step-list">
+            <li class="step">设置 → 应用 → 已安装的应用，找到目标 → 卸载（Win11 路径）。</li>
+            <li class="step">或控制面板 → 卸载程序 → 右键卸载。</li>
+            <li class="step"><strong>懒人捷径</strong>：开始菜单右键程序 → 卸载。</li>
+        </ol>
+        <div class="callout info">
+            <b>💡 卸不干净怎么办</b>
+            正常卸载后，残留可能藏在 <code>C:\Users\用户名\AppData</code> 和 Program Files 目录里。手动删残留有风险（删错会坏别的软件）；新手用系统自带卸载即可，别急着上"强力卸载工具"。
+        </div>
+
+        <h2 id="s5">五、防捆绑：让广告协议失效</h2>
+        <ul>
+            <li>安装时逐页看：每一页别直接"下一步"，注意复选框。</li>
+            <li>发现被装了一堆"XX桌面/XX电脑管家"：第一时间去 §4 卸载，越早越干净。</li>
+            <li>装完新的浏览器，夺回默认程序：设置 → 应用 → 默认应用 → 把浏览器/播放器改回你熟悉的那款。</li>
+            <li>被"不能关的弹窗"骚扰：任务管理器 → 启动应用 → 禁用它。</li>
+        </ul>
+        <div class="callout tip">
+            <b>💡 一句话心法</b>
+            任何网址/弹窗让你"点这里下载"，先想一个问题：<strong>这软件我要不要？从哪能拿到官方版？</strong>想清楚再点。
+        </div>
+
+        <h2 id="s6">六、更新与"绿色软件"</h2>
+        <ul>
+            <li><strong>该更就更</strong>：软件更新往往补安全漏洞。但<strong>大版本（Win11 周年更新、游戏客户端大更）可稍等一周</strong>，看评测再更。</li>
+            <li><strong>绿色软件</strong>：免安装、直接解压运行，U盘都能带。但来源要更谨慎（易被改打包），仅认口碑好的工具站/官方 GitHub Releases。</li>
+            <li>杀毒软件：Windows 自带 Defender 已够用于普通用户；装多个杀毒反而互相打架拖慢电脑。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            为什么"国产软件全家桶"那么难卸干净？回想 B2 的文件系统——安装时它们把文件写进了 C:\Program Files、写了注册表、设了开机自启、还改了默认浏览器。层层叠叠，卸起来当然费劲。这就是懂原理的价值：<strong>安装时的每个选择，都在为未来买单。</strong>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="B.html">模块B 目录</a> · 下一节：<a href="B4.html">系统设置与安全</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

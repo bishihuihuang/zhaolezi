@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>手机与平板 - 模块H - 现代化·知识学习站</title>
+<meta name="description" content="手机与平板模块目录：触屏与手势基础、桌面与 App 安装、手写与语音输入、拍照与相册、设置/WiFi/存储清理、结业测验。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="zoom-capture.js"></script>
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="H.html" data-kind="dir">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块H · 手机与平板</span>
+</header>
+
+<main>
+    <div class="container">
+        <h1 class="lesson-title">📱 模块H · 手机与平板</h1>
+        <p class="lesson-sub">触屏、App、输入法与拍照：把智能手机用明白</p>
+
+        <div class="callout info">
+            <b>这个模块学什么？</b>
+            智能手机是现在每个人随身携带的"小电脑"，也是很多人最常用的数字设备。本模块从最基础的开关机、手势讲起，教你认全应用商店、装对 App；再攻克中老年最关心的两件事——手写/语音输入和拍照；最后学会连接 WiFi、清理存储，让手机又快又省电。
+        </div>
+
+        <h2>📂 子模块目录</h2>
+        <div class="card-grid" id="dir"><!-- JS 渲染 --></div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.XD && XD.renderDir) XD.renderDir('dir', 'H');
+});
+</script>
+</body>
+</html>

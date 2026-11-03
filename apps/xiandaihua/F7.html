@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>模块F测验：Git 与 GitHub - 现代化·知识学习站</title>
+<meta name="description" content="模块F结业测验：10 道选择题检验版本控制概念、Git 命令、GitHub 与上传网页流程，错题自动进入错题本。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="F7.html" data-kind="quiz">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块F · Git 与 GitHub</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">📝 模块F测验</h1>
+        <p class="lesson-sub">模块F · 结业测验 | Git 与 GitHub</p>
+
+        <div class="callout info">
+            <b>规则</b>
+            共 10 题，点击选项立即判定并显示解析；60 分及格。做错的题会自动进入<a href="43.html">错题本</a>。建议先复习 F1-F6 再开始。
+        </div>
+
+        <div id="quiz"></div>
+
+        <h2>测验之后</h2>
+        <ul>
+            <li>≥80 分：恭喜，你已能独立管理版本并发布网站，前往<a href="G.html">模块G</a>亲手写网页。</li>
+            <li>60-79 分：及格，建议回看错题解析，把命令和概念补牢。</li>
+            <li>&lt;60 分：别灰心，先重玩<a href="F6.html">命令演练场</a>再重做测验。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 测验成绩自动保存，可在<a href="41.html">学习仪表盘</a>查看</span>
+            <span>下一模块：<a href="G.html">Web 开发入门</a></span>
+        </div>
+    </article>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+</main>
+
+<script>
+/* ============================================================
+ * 模块F结业测验（页面内联脚本，借 XD.quiz 引擎统一渲染/评分）
+ * 题目数据即文案：q / opts / a / exp 逐字保留；错题自动入错题本
+ * ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.XD || !XD.quiz) return;
+    XD.quiz.run('quiz', {
+        id: 'F',
+        title: '模块F测验：Git 与 GitHub',
+
+        /* ---- 题目清单（10 题，q/opts/a/exp 逐字保留） ---- */
+        questions: [
+            {
+                q: '版本控制系统的核心价值不包括下列哪项？',
+                opts: ['随时回到任意历史版本', '对比任意两版差异', '保证文件永远不会损坏', '多人协作互不覆盖'],
+                a: 2,
+                exp: '版本控制能回退、对比、协作、备份，但不能保证硬件/文件永远不损坏——该备份备份，该加密加密。'
+            },
+            {
+                q: 'Git 的三区模型中，git add 的作用是？',
+                opts: ['把文件从版本库恢复到工作区', '把改动从工作区放进暂存区', '把改动直接永久删除', '把文件上传到 GitHub'],
+                a: 1,
+                exp: '工作区（改）→ add → 暂存区（挑）→ commit → 版本库。add 是把改动装进"购物车"。'
+            },
+            {
+                q: '第一次使用 Git，提交时报错"Please tell me who you are"，原因是？',
+                opts: ['磁盘空间不足', '没有设置 user.name 和 user.email', '仓库没有 init', '网络不通'],
+                a: 1,
+                exp: 'Git 要知道"谁提交的"，先执行 git config --global user.name/user.email（换成你自己的）。'
+            },
+            {
+                q: '以下哪个命令把暂存区内容正式归档成一张快照？',
+                opts: ['git init', 'git add .', 'git commit -m "说明"', 'git status'],
+                a: 2,
+                exp: 'commit 才产生版本快照；add 只是暂存，init 是开仓库，status 是看状态。'
+            },
+            {
+                q: '想看精简的提交历史，用哪个命令？',
+                opts: ['git log --oneline', 'git status -v', 'git push -v', 'git clone --short'],
+                a: 0,
+                exp: 'git log 看历史，--oneline 一行一个提交，最常用。'
+            },
+            {
+                q: 'HTTPS 方式向 GitHub 推送时，输入的"密码"实际上是？',
+                opts: ['GitHub 登录密码', '个人访问令牌（Personal Access Token）', '邮箱密码', '电脑开机密码'],
+                a: 1,
+                exp: 'HTTPS 推送用令牌验证（Settings → Developer settings → Personal access tokens），不是登录密码。'
+            },
+            {
+                q: '免费 GitHub 账户要使用 GitHub Pages 托管网站，仓库必须？',
+                opts: ['设为 Private', '设为 Public', '名称以 .com 结尾', '至少 100 个文件'],
+                a: 1,
+                exp: '免费账户的 Pages 需要 Public 仓库；名称和文件数没有这些限制。'
+            },
+            {
+                q: '第一次推送时执行 git push -u origin main，其中 -u 的作用是？',
+                opts: ['立即发布到 Pages', '记住本地分支与远程分支的关联，之后直接 git push 即可', '把 main 改名为 master', '强制覆盖远程'],
+                a: 1,
+                exp: '-u（--set-upstream）记住关联，之后日常更新只需 git push。'
+            },
+            {
+                q: '推送时报 "rejected ... fetch first"，最可能的原因是？',
+                opts: ['远程仓库里有本地没有的提交', '本地文件太多', '用户名拼写错误', 'Pages 没开启'],
+                a: 0,
+                exp: '典型是建仓时勾了 README 等文件。解决：git pull --rebase origin main 后重推。'
+            },
+            {
+                q: '想把自己网站的新版本更新到 GitHub 上，正确的顺序是？',
+                opts: ['push → commit → add', 'add . → commit -m "说明" → push', 'init → pull → push', 'commit → init → add'],
+                a: 1,
+                exp: '高频组合拳：git add .（暂存）→ git commit -m（快照）→ git push（上传）。'
+            }
+        ]
+    });
+});
+</script>
+</body>
+</html>

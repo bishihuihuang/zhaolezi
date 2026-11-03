@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>图片与声音的数字化 - 现代化·知识学习站</title>
+<meta name="description" content="图片、声音、视频如何数字化：像素与分辨率、颜色通道、采样率、有损压缩与无损压缩、文件大小估算。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A4-3.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 计算机基础</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">图片与声音的数字化</h1>
+        <p class="lesson-sub">A4-3 · 数据与二进制 | 从"模拟世界"到"数字世界"</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">一句话：切碎再编号</a></li>
+                <li><a href="#s2">图片 = 像素矩阵</a></li>
+                <li><a href="#s3">算一笔账：一张照片多大</a></li>
+                <li><a href="#s4">声音 = 采样波形</a></li>
+                <li><a href="#s5">压缩：有损 vs 无损</a></li>
+                <li><a href="#s6">视频 = 图片 + 声音</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、一句话：切碎再编号</h2>
+        <p>现实世界的画面和声音是<strong>连续（模拟）</strong>的，而硬盘只认离散数字。数字化就两招：<strong>切碎</strong>（空间上切成小格、时间上切成瞬时）→ <strong>编号</strong>（给每一小片记一个数字）。切得越细、记得越准，越接近原样，代价是文件越大。</p>
+
+        <h2 id="s2">二、图片 = 像素矩阵</h2>
+        <ul>
+            <li><strong>像素（Pixel）</strong>：把画面切成一个个小方块，每个方块就是一个像素。</li>
+            <li><strong>分辨率</strong>：横×竖的像素个数。1920×1080 = 约 207 万个像素（"200 万像素"）。</li>
+            <li><strong>颜色通道</strong>：每个像素用红（R）、绿（G）、蓝（B）三个数字混合成颜色，每个通道常用 0-255（1 字节）。</li>
+            <li><strong>位深</strong>：每个通道用几位表示。8 位/通道是主流（1600 万色）；专业摄影用 16 位/通道，体积翻倍但色彩更平滑。</li>
+        </ul>
+        <div class="callout info">
+            <b>💡 为什么是 RGB？</b>
+            因为人眼有三类感光细胞（红、绿、蓝）。显示器用红绿蓝三色小灯按不同亮度混合，就能"骗"出几乎所有颜色。
+        </div>
+
+        <h2 id="s3">三、算一笔账：一张照片多大</h2>
+        <div class="code-block"><pre>// 一张 1920×1080 的位图，未经压缩（每像素 R/G/B 各 1 字节）
+1920 × 1080 × 3 字节 = 6,220,800 字节 ≈ 5.9 MB
+// 而手机拍出的同样尺寸 JPG 照片通常只有 2-5 MB —— 压缩的功劳</pre></div>
+        <p>这就是为什么"100 万像素"时代 200 万像素都巨大，今天 5000 万像素手机照片却不大——硬件像素更多了，但<strong>压缩算法和编码（HEIC/JPG）也更聪明了</strong>。</p>
+
+        <h2 id="s4">四、声音 = 采样波形</h2>
+        <ul>
+            <li><strong>采样（Sampling）</strong>：把连续声波按固定间隔"拍照"，每拍一次记一个音量数值。CD 标准是每秒采样 <strong>44100 次</strong>（44.1kHz），无损格式 FLAC/WAV 就存这些原始数值。</li>
+            <li><strong>位深</strong>：每次采样记几个 bit 的数值。16 bit 是 CD 标准（约 6.5 万级音量），高端录音用 24 bit。</li>
+            <li>手机录音通常是压缩过的（如 AAC/M4A），用更少的数字"近似"波形，体积小很多。</li>
+        </ul>
+        <div class="callout tip">
+            <b>💡 概念对照</b>
+            采样率 ≈ "每秒拍几张"，位深 ≈ "每次拍得多准"。和图片一样：拍得越勤越准，就越接近原声，文件也越大。
+        </div>
+
+        <h2 id="s5">五、压缩：有损 vs 无损</h2>
+        <table class="xd-table">
+            <tr><th>类型</th><th>原理</th><th>代表格式</th><th>用途</th></tr>
+            <tr><td>无损压缩</td><td>去掉重复冗余，解压后 100% 还原</td><td>PNG、FLAC、ZIP</td><td>截图、无损音乐、文档</td></tr>
+            <tr><td>有损压缩</td><td>丢弃人眼/人耳不易察觉的细节，不可还原</td><td>JPG、MP3、HEIC</td><td>照片、音乐、网页图片</td></tr>
+        </table>
+        <p>实用结论：<strong>照片想清晰选 JPG/HEIC，界面截图请存 PNG（文字和线条经 JPG 会糊）</strong>；素材要反复编辑用无损，最终发布用有损。</p>
+
+        <h2 id="s6">六、视频 = 图片 + 声音</h2>
+        <p>视频本质是<strong>一帧帧图片按帧率连续播放 + 音轨</strong>。常见的 30fps = 每秒 30 张图。若不压缩，一部 90 分钟 1080p 电影要几百 GB；靠 H.264/H.265 等<strong>帧间压缩</strong>（前后帧只记录变化的部分），一部高清电影才压到 1-4GB。</p>
+
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            为什么微信朋友圈发"原图"会提示可能泄露拍摄位置？——因为图片除了像素，还带 EXIF 元数据（时间、相机型号、GPS）。数字化不只会存画面，也会存"画外信息"。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A4.html">A4 子模块目录</a> · 下一步：<a href="A5.html">模块A 结业测验</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

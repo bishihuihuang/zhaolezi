@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AI 基础认知 - 现代化·知识学习站</title>
+<meta name="description" content="AI 基础认知：大语言模型是什么、AI 能做什么不能做什么、幻觉现象与核实方法、常用 AI 服务上手清单。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="E1.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块E · 如何使用 AI</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">AI 基础认知</h1>
+        <p class="lesson-sub">模块E · 第 1 课 | 大模型是什么、能与不能、幻觉与核实</p>
+
+        <div class="toc">
+            <b>📑 本课目录</b>
+            <ol>
+                <li><a href="#s1">大模型到底是什么</a></li>
+                <li><a href="#s2">AI 能做什么</a></li>
+                <li><a href="#s3">AI 不能做什么</a></li>
+                <li><a href="#s4">幻觉：一本正经地胡说八道</a></li>
+                <li><a href="#s5">核实三招</a></li>
+                <li><a href="#s6">上手清单：今天就能用</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、大模型到底是什么</h2>
+        <p>你平时用到的"AI 对话""文生图"背后，大多是大语言模型（LLM）。它不是一个"会思考的人"，而是一个<strong>靠海量文本训练出来的"接话大师"</strong>：它学到的是"这段话的后面通常跟什么词"，所以能生成看起来通顺、合理的回复。</p>
+        <div class="callout info">
+            <b>💡 一个比喻</b>
+            大模型像一个读过几十亿本书的"速读选手"：知识面极广，但它是"猜下一句"猜出来的，不是查字典查出来的。这决定了它的强项和弱点——下文都会围绕这个比喻展开。
+        </div>
+        <ul>
+            <li><strong>输入端</strong>：你输入的文字叫<strong>提示词（Prompt）</strong>，它决定 AI 输出什么。</li>
+            <li><strong>输出端</strong>：AI 生成文字/图片/代码/表格，是"概率预测"的结果——<em>同样的输入，两次答案可能不一样</em>。</li>
+            <li><strong>记忆</strong>：对话窗口内记得上下文，关掉窗口/换会话就"失忆"，一般不知道你的真实身份。</li>
+        </ul>
+
+        <h2 id="s2">二、AI 能做什么</h2>
+        <table class="xd-table">
+            <tr><th>场景</th><th>示例</th><th>上手难度</th></tr>
+            <tr><td>写作与改写</td><td>写周报、改病句、润色文案、起标题</td><td>⭐ 立即可用</td></tr>
+            <tr><td>问答与解释</td><td>用大白话解释"什么是区块链"</td><td>⭐ 立即可用</td></tr>
+            <tr><td>翻译</td><td>中英互译、校对术语</td><td>⭐ 立即可用</td></tr>
+            <tr><td>编程助手</td><td>写代码、找 bug、讲解报错</td><td>⭐⭐ 需会描述需求（模块G 会用到）</td></tr>
+            <tr><td>资料整理</td><td>把杂乱笔记整理成提纲/表格</td><td>⭐⭐ 需提供原材料</td></tr>
+            <tr><td>文生图</td><td>按描述生成插画、头像</td><td>⭐⭐ 需学好描述词</td></tr>
+            <tr><td>数据分析</td><td>把表格数据解释出规律、写总结</td><td>⭐⭐⭐ 需检查结论</td></tr>
+        </table>
+
+        <h2 id="s3">三、AI 不能做什么</h2>
+        <ul>
+            <li><strong>不能保证"全对"</strong>：它会犯错，尤其数字、日期、代号、冷门事实。</li>
+            <li><strong>不能替你做决定</strong>：健康、法律、投资等专业人士的意见不可替代。</li>
+            <li><strong>不是实时百科</strong>：训练有截止时间，最新新闻、刚发布的功能你最好自己上网查。</li>
+            <li><strong>不懂"心照不宣"</strong>：你不说清楚背景，它就只能猜测（这正是下一课 E2 要解决的）。</li>
+            <li><strong>没有真实感官</strong>：不会真去"看"你的文件（除非你把内容贴进去）、不能替你签字操作。</li>
+        </ul>
+
+        <h2 id="s4">四、幻觉：一本正经地胡说八道</h2>
+        <p>当大模型"猜下一句"猜得信心十足却完全编造时，就叫<strong>幻觉（Hallucination）</strong>。它可能：编造不存在的书籍/论文、把事实张冠李戴、给出看似严谨实则错误的步骤。</p>
+        <div class="code-block"><pre>用户：帮我介绍一本适合新手的 Python 书。
+AI  ：强烈推荐《Python 入门到放弃》第三版… ← 大概率是编的书名
+      （它只是"觉得"这个书名很常见，训练数据里未必真有）</pre></div>
+        <div class="callout warn">
+            <b>⚠️ 错误示范 vs 正确姿势</b>
+            <strong>错误</strong>：把 AI 答案当成权威结论直接采用，尤其数字、链接、药物剂量、法律条文。<br>
+            <strong>正确</strong>：把 AI 当"初稿机器+陪练"，关键信息一律人工核实（还怎么做？看下一节）。
+        </div>
+
+        <h2 id="s5">五、核实三招</h2>
+        <div class="step-list">
+            <div class="step"><b>让 AI 给依据</b>：追问"你的信息来源是什么？请只回答你有把握的"。AI 会收敛，但对编造笃信不疑时仍会"圆谎"，所以不能只靠它自己。</div>
+            <div class="step"><b>交叉验证</b>：关键事实用搜索引擎/官方文档/课本再查一遍，或问第二个 AI 相同问题对照。</div>
+            <div class="step"><b>能动手就动手</b>：让它写代码、做计算类的任务，直接运行/手工验算。错了有报错，比"嘴上对错"可靠得多。</div>
+        </div>
+        <div class="callout tip">
+            <b>💡 记忆口诀</b>
+            "AI 输出 = 初稿；人工核实 = 终稿"。把它当聪明的实习生，不当圣旨。
+        </div>
+
+        <h2 id="s6">六、上手清单：今天就能用</h2>
+        <ol>
+            <li>选一个靠谱入口：各手机厂商/浏览器自带的 AI 助手、ChatGPT（ChatGPT.com）、DeepSeek、豆包、Kimi 等，优先用官方渠道，别下乱七八糟的"AI 破解版"。</li>
+            <li>先做三件小事：<strong>a)</strong> 让 AI 用一句话解释你的职业/学校课程；<strong>b)</strong> 让它帮你改一段 3 句话的自我介绍；<strong>c)</strong> 问一个你确定答案的问题，看它答得对不对（顺手练核实）。</li>
+            <li>记住：<strong>问题描述得越清楚，答案越靠谱</strong>。描述不清怎么办？下一课就是答案。</li>
+        </ol>
+        <div class="callout warn">
+            <b>⚠️ 账号与隐私提醒</b>
+            很多 AI 服务需要注册，未满年龄/所在地区限制请遵守平台规则；别在公开对话里贴身份证、密码、隐私聊天记录等敏感信息（E3 再展开）。
+        </div>
+
+        <h2>本课小结</h2>
+        <ul>
+            <li>大模型是"接话大师"，强在广、弱在准——输出要当初稿。</li>
+            <li>AI 不会替你决策、不是实时百科、不记得你；幻觉=编得可信的假话。</li>
+            <li>核实三招：要依据 → 交叉验证 → 能跑就跑。上手第一步：挑官方入口，试三件小事。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>下一课：<a href="E2.html">提示词工程</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

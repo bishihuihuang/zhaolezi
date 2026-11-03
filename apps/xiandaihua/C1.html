@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>网络基础 - 现代化·知识学习站</title>
+<meta name="description" content="网络基础：局域网与互联网、IP 地址与端口、客户端-服务器模型、数据包与路由器、有线无线与网络安全基本概念。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="C1.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块C · 网络与服务器</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">网络基础</h1>
+        <p class="lesson-sub">C1 · 网络与服务器 | 全网的门牌号、马路与送货员</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">从一台电脑到一张网</a></li>
+                <li><a href="#s2">IP 地址与端口</a></li>
+                <li><a href="#s3">客户端-服务器模型</a></li>
+                <li><a href="#s4">数据包与路由器</a></li>
+                <li><a href="#s5">局域网与互联网</a></li>
+                <li><a href="#s6">网络世界的基本安全观</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、从一台电脑到一张网</h2>
+        <p>一台电脑能干很多事，但<strong>联网才有大世界</strong>。网络=很多台电脑/设备用线缆或无线电<strong>连在一起，并按规则互相通信</strong>。最小网络是两台电脑一根网线直连；大到全世界互联，就是互联网（Internet）。</p>
+        <div class="flow-line">
+            <span class="node">你家的电脑</span><span class="arr">→</span>
+            <span class="node">路由器</span><span class="arr">→</span>
+            <span class="node">光猫</span><span class="arr">→</span>
+            <span class="node">运营商机房</span><span class="arr">→</span>
+            <span class="node">数据中心服务器</span>
+        </div>
+
+        <h2 id="s2">二、IP 地址与端口</h2>
+        <p>每台上网设备都有一个<strong>IP 地址</strong>（门牌号），如 <code>192.168.1.5</code>（v4 点分十进制）或 <code>240e:390:…</code>（v6 更长）。光有门牌不够，进楼后还要<strong>端口</strong>（房间号）区分服务：</p>
+        <table class="xd-table">
+            <tr><th>端口</th><th>服务</th><th>谁在听</th></tr>
+            <tr><td>80</td><td>HTTP（网页）</td><td>Web 服务器</td></tr>
+            <tr><td>443</td><td>HTTPS（加密网页）</td><td>Web 服务器</td></tr>
+            <tr><td>21</td><td>FTP 文件传输</td><td>FTP 服务器</td></tr>
+            <tr><td>22</td><td>SSH 远程登录</td><td>Linux 服务器</td></tr>
+            <tr><td>3306</td><td>MySQL 数据库</td><td>数据库服务器</td></tr>
+        </table>
+        <p>完整说法是"IP:端口"，如 <code>192.168.1.1:80</code>。你在浏览器只需输网址，因为域名和默认端口都被自动填好了（C2、C3 展开）。</p>
+
+        <h2 id="s3">三、客户端-服务器模型</h2>
+        <div class="callout info">
+            <b>🧩 理解全站最重要的一句话</b>
+            互联网上大部分通信是：<strong>客户端（你）提出请求，服务器（别人）提供响应</strong>。
+        </div>
+        <table class="xd-table">
+            <tr><th>角色</th><th>做什么</th><th>例子</th></tr>
+            <tr><td>客户端</td><td>主动发起请求，等待结果</td><td>浏览器、微信 App、游戏客户端</td></tr>
+            <tr><td>服务器</td><td>监听端口、处理请求、返回数据</td><td>网站服务器、游戏服务器、邮件服务器</td></tr>
+        </table>
+        <p>看视频时"边看边缓冲"也是这个模型：你的播放器客户端不断向视频服务器请求"下一段数据"。</p>
+
+        <h2 id="s4">四、数据包与路由器</h2>
+        <ul>
+            <li>网络传输像寄快递：文件被切成一堆 <strong>数据包（packet）</strong>，每个包有"收件地址（目的 IP）、发件地址（源 IP）、序号"，各自独立上路，到站再组装。</li>
+            <li><strong>路由器</strong>是各网络之间的转车站：看地址、选岔路（路由表）、转发。你家路由器负责把家里设备转发到运营商网络。</li>
+            <li>丢包/卡顿 = 有包在路上丢了或迟到。游戏里的"延迟"，就是包在客户端-服务器之间往返的时间。</li>
+        </ul>
+
+        <h2 id="s5">五、局域网与互联网</h2>
+        <table class="xd-table">
+            <tr><th>网络</th><th>范围</th><th>特点</th><th>地址示例</th></tr>
+            <tr><td>局域网 LAN</td><td>家里/公司/校园内</td><td>内部互通快，经路由器出外网</td><td>192.168.x.x、10.x.x.x</td></tr>
+            <tr><td>广域网 WAN</td><td>跨城市/全国</td><td>运营商骨干网络</td><td>公网 IP</td></tr>
+            <tr><td>互联网</td><td>全球</td><td>所有网络互联</td><td>任何公网地址</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 你家为啥是"192.168…"</b>
+            路由器把你的设备归入一个私有局域网（192.168.x.x 是私有地址段），对外共用路由器的公网 IP——这叫 NAT 上网。这就解释了 B5 里"进路由器后台改设置"的原理。
+        </div>
+
+        <h2 id="s6">六、网络世界的基本安全观</h2>
+        <ul>
+            <li>公网是"敞开的街道"：不要在不明网站输密码；<strong>HTTP 裸奔、HTTPS 加密</strong>（C3 讲清差异）。</li>
+            <li>局域网里邻居/公共 WiFi 理论上能抓你的明文流量——公共 WiFi 别登银行。</li>
+            <li>防火墙+杀毒+系统更新，就是给"敞开的门"装锁（B4 已讲过）。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            为什么"重启路由器"常常能治网络故障？——路由器内存小、长时间运行状态会乱，重启等于清空状态重新"排班"。这位"转车站长"也需要休息。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="C.html">模块C 目录</a> · 下一节：<a href="C2.html">IP、域名与 DNS</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

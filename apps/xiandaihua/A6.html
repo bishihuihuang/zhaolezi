@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>鼠标练习器 - 现代化·知识学习站</title>
+<meta name="description" content="专为中老年设计的鼠标练习器：单击、双击、右键、拖拽四大专项训练与综合闯关，即时判分、记录用时与最好成绩。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    .trainer-panel { background: var(--card-2); border: 2px solid var(--line); border-radius: var(--radius); padding: 20px; margin: 16px 0; text-align: center; position: relative; }
+    .action-name { font-size: clamp(20px, 4vw, 30px); font-weight: 900; color: var(--gold); margin: 6px 0 12px; letter-spacing: 1px; }
+    .state-msg { font-size: 15px; font-weight: 700; min-height: 24px; }
+    .state-msg.ok { color: var(--green); }
+    .state-msg.bad { color: var(--red); }
+    .mode-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 12px 0; }
+    .stage { position: relative; width: 100%; max-width: 620px; height: 300px; margin: 10px auto 0; border: 2px dashed var(--line); border-radius: 14px; background: var(--card); overflow: hidden; user-select: none; }
+    .tgt-circle { position: absolute; width: 46px; height: 46px; border-radius: 50%; background: #ff6b6b; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.25); cursor: pointer; z-index: 2; }
+    .tgt-square { position: absolute; width: 56px; height: 56px; border-radius: 10px; background: #667eea; border: 3px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.25); cursor: grab; z-index: 2; }
+    .dropzone { position: absolute; right: 14px; bottom: 14px; width: 96px; height: 96px; border: 3px dashed var(--gold); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--dim); font-size: 12px; text-align: center; }
+    .dropzone.on { border-color: var(--green); background: rgba(34,197,94,.12); color: var(--green); }
+    .done-box { margin: 14px auto 0; max-width: 440px; background: var(--card); border: 2px solid var(--line); border-radius: 14px; padding: 16px 20px; display: none; }
+    .done-box b { font-size: 18px; }
+</style>
+</head>
+<body data-page="A6.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 计算机基础</span>
+</header>
+
+<nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">🖱️ 鼠标练习器</h1>
+        <p class="lesson-sub">模块A · 第 6 课 | 单击、双击、右键、拖拽专项训练</p>
+
+        <div class="callout info">
+            <b>🎮 怎么练</b>
+            选一个模式开始，屏幕会出现目标，按要求操作鼠标即可。每轮 10 个目标，完成后记录用时与失误。没有鼠标的平板用户，可以用手指点按代替单击、双击、拖拽；右键练习需要鼠标（触屏可长按代替）。
+        </div>
+
+        <div class="mode-row">
+            <button class="btn green" data-mode="click">🖱 单击练习</button>
+            <button class="btn" data-mode="dbl">👆 双击练习</button>
+            <button class="btn" data-mode="rbtn">📌 右键练习</button>
+            <button class="btn" data-mode="drag">↔ 拖拽练习</button>
+            <button class="btn ghost" data-mode="mix">🎯 综合闯关</button>
+        </div>
+
+        <div class="stat-row" id="statRow">
+            <div class="stat-cell"><b id="stRound">0/10</b><span>本轮进度</span></div>
+            <div class="stat-cell"><b id="stTime">--</b><span>本轮用时</span></div>
+            <div class="stat-cell"><b id="stMiss">0</b><span>本轮失误</span></div>
+            <div class="stat-cell"><b id="stTotal">0</b><span>累计完成（总）</span></div>
+            <div class="stat-cell"><b id="stBest">--</b><span>最好一轮用时</span></div>
+        </div>
+
+        <div class="trainer-panel">
+            <div style="font-size:13px;color:var(--dim);">请完成下面的操作：</div>
+            <div class="action-name" id="actionName">点击上方任一模式开始</div>
+            <div class="state-msg" id="stateMsg">选好模式后，目标会出现</div>
+            <div class="stage" id="stage">
+                <div class="dropzone" id="dropzone">拖到这里<br>放 开</div>
+            </div>
+            <div class="done-box" id="doneBox"></div>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>下一课：<a href="A5.html">测验：计算机基础</a></span>
+        </div>
+    </article>
+</main>
+
+<script>
+(function () {
+    var ROUNDS = 10;
+    var MODE_KEYS = ['click', 'dbl', 'rbtn', 'drag'];
+    var MODE_TXT = { click: '单击这个红圆点', dbl: '快速双击这个红圆点', rbtn: '在这个蓝方块上点鼠标右键', drag: '把这个蓝方块拖进虚线框' };
+
+    function loadStats() {
+        try { return JSON.parse(localStorage.getItem('xd_mouse_stats_v1')) || { total: 0, best: 0 }; } catch (e) { return { total: 0, best: 0 }; }
+    }
+    function saveStats(s) { try { localStorage.setItem('xd_mouse_stats_v1', JSON.stringify(s)); } catch (e) {} }
+
+    var S = {
+        mode: null, curMode: null, round: 0, miss: 0, t0: 0,
+        tick: null, to: null, dragOn: false, dragDX: 0, dragDY: 0, lastTap: 0,
+        done: false, stats: loadStats()
+    };
+
+    var el = function (id) { return document.getElementById(id); };
+    var stage = el('stage');
+
+    function setMsg(t, ok) {
+        var m = el('stateMsg');
+        m.textContent = t;
+        m.className = 'state-msg' + (ok === true ? ' ok' : ok === false ? ' bad' : '');
+    }
+
+    function pickMode() {
+        return S.mode === 'mix' ? MODE_KEYS[Math.floor(Math.random() * MODE_KEYS.length)] : S.mode;
+    }
+
+    function removeTarget() {
+        var t = el('target');
+        if (t) stage.removeChild(t);
+    }
+
+    function spawn() {
+        removeTarget();
+        S.curMode = pickMode();
+        S.lastTap = 0;
+        var t = document.createElement('div');
+        t.id = 'target';
+        t.className = (S.curMode === 'rbtn' || S.curMode === 'drag') ? 'tgt-square' : 'tgt-circle';
+        var w = S.curMode === 'drag' ? 56 : 46;
+        var maxL = Math.max(20, (stage.clientWidth || 600) - w - 24);
+        var maxT = Math.max(20, (stage.clientHeight || 300) - w - 24);
+        t.style.left = (20 + Math.floor(Math.random() * Math.max(1, maxL - 20))) + 'px';
+        t.style.top = (16 + Math.floor(Math.random() * Math.max(1, maxT - 16))) + 'px';
+        stage.appendChild(t);
+        el('actionName').textContent = MODE_TXT[S.curMode];
+        setMsg('目标出现了，动手吧！');
+    }
+
+    function start(m) {
+        if (S.tick) clearInterval(S.tick);
+        if (S.to) clearTimeout(S.to);
+        S.mode = m; S.round = 0; S.miss = 0; S.done = false; S.dragOn = false;
+        S.t0 = Date.now();
+        el('stRound').textContent = '0/' + ROUNDS;
+        el('stMiss').textContent = '0';
+        el('stTime').textContent = '0 秒';
+        el('doneBox').style.display = 'none';
+        el('doneBox').innerHTML = '';
+        S.tick = setInterval(function () {
+            el('stTime').textContent = Math.round((Date.now() - S.t0) / 1000) + ' 秒';
+        }, 500);
+        spawn();
+    }
+
+    function hit() {
+        S.round++;
+        el('stRound').textContent = S.round + '/' + ROUNDS;
+        if (S.round >= ROUNDS) { finish(); return; }
+        setMsg('✅ 第 ' + S.round + ' 个完成，继续！', true);
+        removeTarget();
+        S.to = setTimeout(spawn, 450);
+    }
+
+    function miss(msg) {
+        S.miss++;
+        el('stMiss').textContent = S.miss;
+        setMsg('❌ ' + msg + '（不扣完成数，再试一次）', false);
+    }
+
+    function finish() {
+        if (S.tick) { clearInterval(S.tick); S.tick = null; }
+        var t = Math.round((Date.now() - S.t0) / 1000);
+        if (!S.stats.best || t < S.stats.best) S.stats.best = t;
+        S.stats.total += ROUNDS;
+        saveStats(S.stats);
+        el('stTotal').textContent = S.stats.total;
+        el('stBest').textContent = (S.stats.best ? S.stats.best + ' 秒' : '--');
+        el('stTime').textContent = t + ' 秒';
+        setMsg('🎉 一轮完成！', true);
+        try { if (window.XD && XD.studyLog) XD.studyLog.add({ type: 'mouse', itemId: '完成一轮鼠标训练', mod: 'A' }); } catch (e) {}
+        var box = el('doneBox');
+        box.style.display = 'block';
+        box.innerHTML = '<div><b>🎊 本轮完成！</b></div>' +
+            '<p style="margin:8px 0 2px;color:var(--dim);font-size:14px;">用时 <b style="color:var(--green);">' + t + ' 秒</b> · 失误 <b style="color:var(--red);">' + S.miss + '</b> 次</p>' +
+            '<p style="margin:2px 0 10px;color:var(--dim);font-size:14px;">最好成绩：' + (S.stats.best ? S.stats.best + ' 秒' : '--') + ' · 累计完成 ' + S.stats.total + ' 个</p>' +
+            '<p style="margin:0 0 10px;font-size:14px;">💬 ' + (t <= 20 && S.miss <= 2 ? '手很稳！10 个目标 <b>' + t + ' 秒</b>拿下，又快又准，可以试试拖拽模式了。'
+                : t <= 35 ? '不错！速度已经上来了，再练几轮会更顺手，失误的 <b>' + S.miss + '</b> 次会越来越少。'
+                : '别急，慢就是快——照着红点位置点准，速度自然会上来，失误的 <b>' + S.miss + '</b> 次也会越来越少。') + '</p>' +
+            '<button class="btn green" id="againBtn">🔁 再来一轮</button>';
+        el('againBtn').addEventListener('click', function () { start(S.mode); });
+    }
+
+    /* ========== 事件 ========== */
+    var btns = document.querySelectorAll('.mode-row button[data-mode]');
+    for (var i = 0; i < btns.length; i++) {
+        (function (b) {
+            b.addEventListener('click', function () { start(b.getAttribute('data-mode')); });
+        })(btns[i]);
+    }
+
+    stage.addEventListener('click', function (e) {
+        if (S.done || !S.curMode || S.dragOn) return;
+        var isTarget = e.target && e.target.id === 'target';
+        if (S.curMode === 'click') {
+            if (isTarget) hit(); else miss('没点中红圆点');
+        } else if (S.curMode === 'dbl') {
+            if (isTarget) {
+                var now = Date.now();
+                if (now - S.lastTap < 380) { S.lastTap = 0; hit(); }
+                else { S.lastTap = now; setMsg('👌 点了一下，快点第二下！'); }
+            } else { miss('点到了空白处'); S.lastTap = 0; }
+        }
+    });
+
+    stage.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        if (S.done || !S.curMode) return;
+        if (S.curMode === 'rbtn') {
+            if (e.target && e.target.id === 'target') hit(); else miss('右键点在空白处了');
+        }
+    });
+
+    stage.addEventListener('mousedown', function (e) {
+        if (S.done || S.curMode !== 'drag') return;
+        if (e.target && e.target.id === 'target') {
+            S.dragOn = true;
+            S.dragDX = e.clientX - e.target.offsetLeft;
+            S.dragDY = e.clientY - e.target.offsetTop;
+            e.preventDefault();
+        }
+    });
+
+    stage.addEventListener('mousemove', function (e) {
+        if (!S.dragOn) return;
+        var t = el('target');
+        if (!t) return;
+        var maxL = Math.max(20, (stage.clientWidth || 600) - 56 - 4);
+        var maxT = Math.max(20, (stage.clientHeight || 300) - 56 - 4);
+        var l = Math.min(Math.max(0, e.clientX - S.dragDX), maxL);
+        var tp = Math.min(Math.max(0, e.clientY - S.dragDY), maxT);
+        t.style.left = l + 'px';
+        t.style.top = tp + 'px';
+    });
+
+    stage.addEventListener('mouseup', function () {
+        if (!S.dragOn) return;
+        S.dragOn = false;
+        var t = el('target');
+        var dz = el('dropzone');
+        if (!t || !dz) return;
+        var ox = Math.max(0, Math.min(t.offsetLeft + 56, dz.offsetLeft + dz.offsetWidth) - Math.max(t.offsetLeft, dz.offsetLeft));
+        var oy = Math.max(0, Math.min(t.offsetTop + 56, dz.offsetTop + dz.offsetHeight) - Math.max(t.offsetTop, dz.offsetTop));
+        if (ox * oy >= 56 * 56 / 2) { hit(); }
+        else { miss('没拖进虚线框'); }
+    });
+})();
+</script>
+</body>
+</html>

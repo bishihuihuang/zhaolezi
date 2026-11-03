@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>网络连接 - 现代化·知识学习站</title>
+<meta name="description" content="网络连接：WiFi 连接与信号、网线、手机热点、网速测试、DNS 修改、常见断网排查。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="B5.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块B · 电脑详细使用</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">网络连接</h1>
+        <p class="lesson-sub">B5 · WiFi、网线、热点与"为什么这么慢"</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">WiFi：连接与信号那些事</a></li>
+                <li><a href="#s2">网线直连：更快更稳</a></li>
+                <li><a href="#s3">手机热点与共享网络</a></li>
+                <li><a href="#s4">测速与"明明100M为什么慢"</a></li>
+                <li><a href="#s5">改 DNS：翻墙之外的提速与护网</a></li>
+                <li><a href="#s6">断网了？两分钟排查</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、WiFi：连接与信号那些事</h2>
+        <ul>
+            <li>连接：任务栏右下角 WiFi 图标 → 选网络 → 输密码。已连过的自动连。</li>
+            <li>忘记网络重连：设置 → 网络和 Internet → WiFi → 管理已知网络 → 忘记，再连。</li>
+            <li><strong>2.4GHz vs 5GHz</strong>：5GHz 快但穿墙弱；2.4GHz 慢些但远。路由器开启"双频合一"交给它自动选最优。</li>
+            <li>信号差：把路由器放高、少隔墙；大户型上 Mesh/电力猫；别把路由器塞进弱电箱闷着。</li>
+        </ul>
+        <div class="callout info">
+            <b>💡 用"以太网"看型号</b>
+            路由器背后贴纸有管理地址（如 192.168.1.1）和默认密码，浏览器访问即可进后台（改密码/管理设备）。第一次用时务必改掉默认管理员密码！
+        </div>
+
+        <h2 id="s2">二、网线直连：更快更稳</h2>
+        <p>台式机/笔记本插上网线（RJ45 水晶头），Windows 会自动识别"以太网"。网线直连的优势：无无线干扰、延迟低、不会被邻居蹭网。游戏/直播/拷贝大文件用网线是首选。</p>
+
+        <h2 id="s3">三、手机热点与共享网络</h2>
+        <ul>
+            <li>电脑连手机热点：手机"个人热点"打开 → 电脑连该 WiFi（注意流量）。</li>
+            <li>有线共享：USB 数据线连接手机 → 手机提示"USB 网络共享"→ 电脑立即上网，比 WiFi 热点稳得多。</li>
+            <li>紧急断网但有多台设备：用手机的"WiFi 直连"或蓝牙共享救急。</li>
+        </ul>
+
+        <h2 id="s4">四、测速与"明明100M为什么慢"</h2>
+        <p>打开测速网站（如 speedtest.cn，或运营商官方测速）测下载/上传/延迟。拿到结果先对照：</p>
+        <table class="xd-table">
+            <tr><th>现象</th><th>常见原因</th><th>对策</th></tr>
+            <tr><td>下载远低于带宽/8</td><td>WiFi 信号弱、网线老化、路由器太老</td><td>靠近路由器测、换线、换千兆路由器</td></tr>
+            <tr><td>看视频卡、网页慢</td><td>DNS 慢、后台下载占满、多人共享</td><td>改 DNS（§5）、暂停后台、错峰</td></tr>
+            <tr><td>延迟高（打游戏）</td><td>无线干扰、跨省/跨国节点远</td><td>换网线、选区服、用加速器（合规场景）</td></tr>
+        </table>
+        <div class="callout warn">
+            <b>⚠️ 测速的讲究</b>
+            用同一网站、同一时间段、贴近路由器、电脑不跑下载任务时测，才有可比性。不同时段运营商拥塞差别很大。
+        </div>
+
+        <h2 id="s5">五、改 DNS：提速与护网</h2>
+        <p><strong>DNS 是"网址翻译官"</strong>：把 baidu.com 翻成 IP。运营商 DNS 可能慢或被污染，换成公共 DNS 常能提速：</p>
+        <div class="code-block"><pre>国内常用：114.114.114.114（114DNS）、223.5.5.5（阿里）
+全球通用：1.1.1.1（Cloudflare）、8.8.8.8（Google）</pre></div>
+        <p>修改方法：设置 → 网络和 Internet → 当前网络属性 → DNS 服务器分配 → 手动 → 填首选/备用。改完 <code>ipconfig /flushdns</code>（见 F 模块命令）刷新缓存。</p>
+        <div class="callout tip">
+            <b>💡 什么时候改</b>
+            网页能开但特别慢、换个域名反而快、上不去的站换 DNS 却通了——这都值得试。改完不行就改回"自动（DHCP）"。
+        </div>
+
+        <h2 id="s6">六、断网了？两分钟排查</h2>
+        <ol class="step-list">
+            <li class="step"><strong>看任务栏图标</strong>：红色 x = 网线没插/驱动问题；黄色感叹号 = 连上了但没外网（先查路由器）。</li>
+            <li class="step"><strong>先断后连</strong>：WiFi 开关切换一次，或拔插网线。重启电脑/路由器（拔电源等 30 秒再插）能救 80% 的怪问题。</li>
+            <li class="step"><strong>让系统诊断</strong>：右键右下角网络图标 → 诊断。让它自己修复。</li>
+            <li class="step"><strong>命令三板斧</strong>：Win+R 输 cmd 回车，依次运行 <code>ipconfig /release</code> → <code>ipconfig /renew</code> → <code>ipconfig /flushdns</code>。</li>
+            <li class="step"><strong>仍然不行</strong>：手机开热点试电脑——热点能上则问题在路由器/宽带；热点也上不了则问题在电脑网卡或系统。</li>
+        </ol>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="B.html">模块B 目录</a> · 下一节：<a href="B6.html">日常维护与故障排查</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

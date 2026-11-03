@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>提示词工程 - 现代化·知识学习站</title>
+<meta name="description" content="提示词工程：五要素（角色/任务/上下文/格式/迭代）把需求说清楚，正反示例对比，常用模板拿来即用。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="E2.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块E · 如何使用 AI</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">提示词工程</h1>
+        <p class="lesson-sub">模块E · 第 2 课 | 把需求说清楚的五要素与迭代法</p>
+
+        <div class="toc">
+            <b>📑 本课目录</b>
+            <ol>
+                <li><a href="#s1">为什么提示词决定一切</a></li>
+                <li><a href="#s2">五要素：角色</a></li>
+                <li><a href="#s3">五要素：任务</a></li>
+                <li><a href="#s4">五要素：上下文</a></li>
+                <li><a href="#s5">五要素：格式</a></li>
+                <li><a href="#s6">迭代：问出更好的答案</a></li>
+                <li><a href="#s7">拿来即用的模板</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、为什么提示词决定一切</h2>
+        <p>AI 只认字面意思，不认你的内心戏。<strong>提示词（Prompt）越具体、越有结构，AI 的"猜"就越有方向</strong>。同样的需求，一句话问和五要素问，答案质量差好几档：</p>
+        <div class="code-block"><pre>❌ 一句话版：帮我写个自我介绍。
+
+✅ 五要素版：
+【角色】你是一位求职辅导老师，擅长帮职场新人写自我介绍。
+【任务】帮我写一段 200 字以内的自我介绍。
+【上下文】我是应届毕业生，应聘新媒体运营岗，会用剪映和公众号后台，性格外向。
+【格式】分三段：个人背景、技能亮点、为什么选这份工作；语气热情但不浮夸。</pre></div>
+
+        <h2 id="s2">二、角色（Role）：告诉 AI 它"是谁"</h2>
+        <p>给 AI 一个身份，能让它的语言风格、专业深度立刻对齐：</p>
+        <div class="code-block"><pre>【角色】你是一位耐心的初中数学老师，讲解要通俗。
+→ 输出会更基础、更有耐心，而不是堆术语。</pre></div>
+
+        <h2 id="s3">三、任务（Task）：动词开头，说清"要我做什么"</h2>
+        <ul>
+            <li>用明确动词：<strong>写/改/翻译/总结/对比/列出/解释/生成代码</strong>。</li>
+            <li>加约束：字数、条数、难度、风格、受众。</li>
+        </ul>
+        <div class="code-block"><pre>【任务】把下面这段 100 字的产品介绍，改成 30 字以内的朋友圈文案，
+并另外给出 3 个备选标题。</pre></div>
+
+        <h2 id="s4">四、上下文（Context）：喂足背景信息</h2>
+        <p>AI 不认识你、没看过你的文件。把<strong>原材料、背景、目标读者、限制条件</strong>直接贴进对话，它才能"对症下药"：</p>
+        <div class="code-block"><pre>【上下文】目标读者是 55 岁左右完全不熟悉电脑的阿姨；
+下面是我的原稿：
+「……（粘贴原稿）」</pre></div>
+        <div class="callout info">
+            <b>💡 投影法</b>
+            想不清要写什么？先把"素材堆"丢给 AI："以下是我零散的想法，帮我整理成有条理的段落"——像给它过一遍投影仪。
+        </div>
+
+        <h2 id="s5">五、格式（Format）：规定输出的样子</h2>
+        <p>决定结果好不好用：</p>
+        <div class="code-block"><pre>【格式】用 Markdown 表格输出，三列：步骤/操作/注意点；
+或：分点列出，每点不超过 15 字；
+或：只输出代码，不要解释。</pre></div>
+
+        <h2 id="s6">六、迭代：问出更好的答案</h2>
+        <div class="flow-line">
+            <span class="node">初版提问</span><span class="arr">→</span>
+            <span class="node">看输出找差距</span><span class="arr">→</span>
+            <span class="node">补充/纠正</span><span class="arr">→</span>
+            <span class="node">再问</span><span class="arr">→</span>
+            <span class="node">满意为止</span>
+        </div>
+        <div class="callout tip">
+            <b>💡 迭代三板斧</b>
+            ① <strong>要不要加"变"？</strong>找具体毛病：语气太官方→"改活泼点"。② <strong>要不要圈范围？</strong>"太长"→"压缩到 100 字"。③ <strong>要不要换视角？</strong>"再以读者的角度挑毛病"。每次只改一件事，别一次提五个要求。
+        </div>
+
+        <h2 id="s7">七、拿来即用的模板</h2>
+        <table class="xd-table">
+            <tr><th>场景</th><th>模板</th></tr>
+            <tr><td>学习提问</td><td>我 [身份/年级]。请用通俗的话解释 [概念]，再举 1 个生活中的例子。</td></tr>
+            <tr><td>写文章</td><td>你是 [角色]。写一篇关于 [主题] 的 [字数] 文章，受众是 [谁]，结尾给 [行动号召]。</td></tr>
+            <tr><td>改稿</td><td>你是 [角色]，帮我改这段文字：[粘贴]，要求 [具体：更口语/更正式/更有感情]，保留原意。</td></tr>
+            <tr><td>做计划</td><td>你是 [角色]。帮我制定一个 [目标] 的 [X 天/周] 计划，每天 [时间]，输出表格。</td></tr>
+            <tr><td>学代码排错</td><td>我运行 [语言] 报错：[贴报错]。请解释原因并给出修复代码，不要长篇大论。</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>🤔 动手练</b>
+            本章节的 [E4 提示词实验室](E4.html) 可以"点菜式"组装一条完整提示词，不用背模板直接生成。先去逛一圈，回来再看测验更轻松。
+        </div>
+
+        <h2>本课小结</h2>
+        <ul>
+            <li>五要素：角色、任务、上下文、格式，加上"迭代"这一动态步骤。</li>
+            <li>好提示词 = 具体（有动词、有约束、有素材、有输出格式）。</li>
+            <li>别期待一次到位，用"变一变/圈范围/换视角"三板斧反复打磨。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="E1.html">AI 基础认知</a> · 下一课：<a href="E3.html">AI 工具地图与工作流</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

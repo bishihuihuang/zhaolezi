@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>硬盘与存储 - 现代化·知识学习站</title>
+<meta name="description" content="硬盘详解：机械HDD与固态SSD的原理与速度差距、SATA与NVMe接口、给老电脑最划算的升级方案与选购要点。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A2-3.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 硬件</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">硬盘与存储</h1>
+        <p class="lesson-sub">A2-3 | 长期仓库：系统与文件都住在这里</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">两种硬盘：机械与固态</a></li>
+                <li><a href="#s2">接口形态：SATA 与 NVMe</a></li>
+                <li><a href="#s3">容量怎么选</a></li>
+                <li><a href="#s4">最划算的升级：换 SSD</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、两种硬盘：机械与固态</h2>
+        <table class="xd-table">
+            <tr><th></th><th>机械硬盘 HDD</th><th>固态硬盘 SSD</th></tr>
+            <tr><td>原理</td><td>旋转盘片+磁头（类似唱片机）</td><td>闪存芯片（类似大号U盘）</td></tr>
+            <tr><td>速度</td><td>约 100-200 MB/s</td><td>SATA：约 550 MB/s；NVMe：3000-7000 MB/s</td></tr>
+            <tr><td>抗震</td><td>怕摔（磁头碰盘会坏）</td><td>不怕震动</td></tr>
+            <tr><td>噪音</td><td>有转动声</td><td>完全无声</td></tr>
+            <tr><td>价格</td><td>每 GB 便宜</td><td>每 GB 略贵，逐年下降</td></tr>
+            <tr><td>现状</td><td>适合冷数据/监控录像等大容量存放</td><td><strong>系统盘首选</strong>，开机 10 秒级</td></tr>
+        </table>
+
+        <h2 id="s2">二、接口形态：SATA 与 NVMe</h2>
+        <div class="term-grid">
+            <div class="term"><b>2.5" SATA</b><span>扁方块，一根数据线一根电源线，老笔记本/台式机常见</span></div>
+            <div class="term"><b>M.2 SATA</b><span>小长条，走 SATA 通道，速度同 2.5" SATA</span></div>
+            <div class="term"><b>M.2 NVMe</b><span>小长条但走 PCIe 通道，速度数倍于 SATA，<b>现在的绝对主流</b></span></div>
+            <div class="term"><b>移动硬盘</b><span>USB 外接的 HDD 或 SSD 盒，备份好帮手</span></div>
+        </div>
+
+        <h2 id="s3">三、容量怎么选</h2>
+        <ul>
+            <li><strong>256GB</strong>：仅系统+常用软件，很快捉襟见肘；</li>
+            <li><strong>512GB</strong>：日常办公学习的甜点位；</li>
+            <li><strong>1TB 及以上</strong>：存视频、游戏库、素材。</li>
+        </ul>
+        <p>记住 A4-1 课会讲的冷知识：512G 标称的硬盘系统里显示约 476G，是两套进制的差，不是被偷了容量。</p>
+
+        <h2 id="s4">四、最划算的升级：换 SSD</h2>
+        <p>老电脑（还用机械硬盘装系统）开机两三分钟、软件启动转圈——把系统迁到 SSD 上，体验提升立竿见影，是<strong>性价比最高的硬件升级，没有之一</strong>。</p>
+        <div class="step-list">
+            <div class="step">确认电脑支持的形态（台式机看有无 M.2 槽，笔记本查机型规格）。</div>
+            <div class="step">购买对应 SSD（容量 ≥ 旧盘已用空间）。</div>
+            <div class="step">用厂商迁移工具（或克隆软件）把旧系统整盘搬到新 SSD。</div>
+            <div class="step">BIOS 里把新盘设为第一启动项，确认正常后再处理旧盘。</div>
+        </div>
+        <div class="callout warn">
+            <b>⚠️ 动手前</b>
+            涉及拆机与系统迁移，第一次操作建议观看对应机型的拆机视频并<strong>先备份重要数据</strong>。不敢动手就找懂朋友或店铺代装，工时费通常不高。
+        </div>
+
+        <h2>本页小结</h2>
+        <ul>
+            <li>HDD 便宜大容量但慢且怕摔；SSD 快、静、抗震，是系统盘唯一正解。</li>
+            <li>接口认 M.2 NVMe（主流）与 SATA（老平台）。</li>
+            <li>老机器卡=先换 SSD；容量日常 512G 起步。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            查查自己电脑的硬盘类型（任务管理器→性能→磁盘，看名称里有 SSD 还是 HDD）。如果还是机械盘，换 SSD 大约要花多少钱？（nvme 512G 固态近年约 200-300 元区间）
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A2.html">硬件目录</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

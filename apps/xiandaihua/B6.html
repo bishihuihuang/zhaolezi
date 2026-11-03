@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>日常维护与故障排查 - 现代化·知识学习站</title>
+<meta name="description" content="日常维护与故障排查：卡顿处理顺序、内存不足、磁盘清理、蓝屏代码、程序假死与强制结束、系统备份恢复。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="B6.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块B · 电脑详细使用</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">日常维护与故障排查</h1>
+        <p class="lesson-sub">B6 · 电脑卡了怎么办？照这个顺序来</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">原则：从软到硬、从简到繁</a></li>
+                <li><a href="#s2">第一类：电脑变卡</a></li>
+                <li><a href="#s3">第二类：程序假死 / 无响应</a></li>
+                <li><a href="#s4">第三类：蓝屏与重启</a></li>
+                <li><a href="#s5">第四类：磁盘快满了</a></li>
+                <li><a href="#s6">预防维护清单与备份恢复</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、原则：从软到硬、从简到繁</h2>
+        <p>排查故障的正确姿势：<strong>先软件后硬件，先简单后复杂，先重启再重装</strong>。动手前先想清楚"上次正常是什么时候？这之后我做了什么？"——八成答案就在你装的软件/改的设置里。</p>
+        <div class="callout tip">
+            <b>💡 万能第一步：重启</b>
+            重启会清空内存、重置所有驱动和临时状态，能解决半数"怪问题"。先重启再排查，别一上来就重装系统。
+        </div>
+
+        <h2 id="s2">二、第一类：电脑变卡</h2>
+        <ol class="step-list">
+            <li class="step"><strong>先看占用</strong>：<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd> 打开任务管理器 → 按 CPU/内存/磁盘排序，揪出"吃货"（如 99% 的某进程）。</li>
+            <li class="step"><strong>瘦身启动项</strong>：任务管理器 → 启动应用，禁用一切非必需开机自启。</li>
+            <li class="step"><strong>清存储</strong>：见 §5，磁盘满到 90% 以上会卡到崩溃。</li>
+            <li class="step"><strong>关特效</strong>：设置 → 系统 → 关于 → 高级系统设置 → 性能设置 → 调整为最佳性能（老机器立竿见影）。</li>
+            <li class="step"><strong>查占用大户</strong>：浏览器标签页少开；杀毒别装两套；检查是否背着挖矿脚本/占用狂。</li>
+            <li class="step"><strong>还不行</strong>：就是硬件瓶颈了（内存小、机械盘慢）——回顾 A2-5 升级决策，SSD + 内存是性价比之王。</li>
+        </ol>
+
+        <h2 id="s3">三、第二类：程序假死 / 无响应</h2>
+        <ul>
+            <li>先干等 10 秒，Win 偶尔"缓一缓"就回来。</li>
+            <li>还没动：<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Esc</kbd> → 右键卡死的程序 → 结束任务（会丢未保存内容，但救回系统）。</li>
+            <li>整机鼠标都转圈：<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Delete</kbd> → 注销或重启；长按电源键强制关机是最后手段。</li>
+        </ul>
+        <div class="callout warn">
+            <b>⚠️ 结束任务前的半秒</b>
+            任何程序"正在保存/正在转码"时强制结束，可能损坏文件。能等就等，能保存就保存。
+        </div>
+
+        <h2 id="s4">四、第三类：蓝屏与重启</h2>
+        <p>蓝屏（BSOD）不常来，来了别慌——关键是<strong>读代码</strong>。屏幕上一行大号英文（如 <code>MEMORY_MANAGEMENT</code>、<code>CRITICAL_PROCESS_DIED</code>）就是提示：</p>
+        <table class="xd-table">
+            <tr><th>提示关键词</th><th>含义</th><th>方向</th></tr>
+            <tr><td>MEMORY_MANAGEMENT / IRQL_NOT_LESS_OR_EQUAL</td><td>内存或驱动冲突</td><td>插拔内存条、更新驱动、内存检测</td></tr>
+            <tr><td>CRITICAL_PROCESS_DIED / KERNEL_DATA_INPAGE_ERROR</td><td>系统内核异常 / 磁盘读失败</td><td>查硬盘健康（CrystalDiskInfo）、重装系统</td></tr>
+            <tr><td>VIDEO_TDR_FAILURE</td><td>显卡驱动超时</td><td>重装显卡驱动</td></tr>
+            <tr><td>WHEA_UNCORRECTABLE_ERROR</td><td>硬件级错误</td><td>高概率硬件问题，过热/超频/内存老化</td></tr>
+            <tr><td>蓝屏＆不断重启</td><td>启动失败循环</td><td>进"安全模式"（开机连续重启后进恢复界面）排查或重装</td></tr>
+        </table>
+        <p>记下错误码（形如 <code>0x0000000A</code>）去搜索："代码 + 品牌+型号" 命中率最高。⚠ 若蓝屏频繁出现，优先怀疑<strong>内存与硬盘</strong>——先跑内存检测（Windows 自带"内存诊断"）与硬盘健康检测。</p>
+
+        <h2 id="s5">五、第四类：磁盘快满了</h2>
+        <ul>
+            <li>设置 → 系统 → 存储：看谁占地方，点进去逐项清理（临时文件/回收站/系统更新缓存）。</li>
+            <li>磁盘清理工具：Win+R 输 <code>cleanmgr</code> 回车 → 选 C 盘 → 勾选"临时文件/Windows 更新清理"。</li>
+            <li>大文件搬家：视频/安装包/游戏挪到 D 盘。</li>
+            <li>别删 C:\Windows 里的东西，那里没你想的"垃圾"，全是系统零件。</li>
+        </ul>
+
+        <h2 id="s6">六、预防维护清单与备份恢复</h2>
+        <div class="step-list">
+            <div class="step"><b>每周</b>：磁盘整理交给系统自动；检查更新一次。</div>
+            <div class="step"><b>每月</b>：清理浏览器缓存与下载文件夹；备份重要文档到另一介质。</div>
+            <div class="step"><b>每季</b>：打开机箱清灰（台式机），检查风扇是否积灰打鸣。</div>
+            <div class="step"><b>永远</b>：重要文件多介质备份 + 系统镜像（设置 → 系统 → 恢复 → 启动高级选项可做备份点）。</div>
+        </div>
+        <div class="callout info">
+            <b>💡 断电保护</b>
+            台式机插排上接个 UPS（不间断电源）或带防浪涌插排，突然断电是硬盘的隐形杀手；笔记本尽量插着电源跑大型任务。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="B.html">模块B 目录</a> · 下一步：<a href="B7.html">模块B 结业测验</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

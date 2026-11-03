@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>关于本站与使用指南 - 现代化·知识学习站</title>
+<meta name="description" content="关于本站：站点理念、学习路径建议、功能使用说明，以及把本站免费部署到你自己 GitHub 的完整指南。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    .site-meta { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-top: 16px; }
+    .site-meta h3 { margin: 0 0 8px; font-size: 15px; color: var(--blue); }
+    .site-meta p { margin: 4px 0; font-size: 13.5px; color: var(--dim); line-height: 1.8; }
+    .site-meta p b { color: var(--txt); }
+</style>
+</head>
+<body data-page="45.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">关于本站 · 指南</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">🧭 关于本站与使用指南</h1>
+        <p class="lesson-sub">它是什么、怎么用、以及如何部署成你自己的网站</p>
+
+        <h2 id="s1">一、本站是什么</h2>
+        <p>「现代化·知识学习站」是一份<strong>全中文、面向零基础</strong>的综合性学习资料：从认识电脑硬件、学会日常操作，到理解网络与服务器、练出盲打和快捷键肌肉记忆，再到上手 AI、Git 和网页开发——按 <strong>模块 → 子模块</strong> 的目录树组织，点进模块就能看到细分子模块，目录还可以再套目录（最深 10 层），每页都有面包屑定位。</p>
+        <div class="callout tip">
+            <b>💡 本站的技术特点</b>
+            纯静态页面 + PWA：没有后台数据库、不需要注册登录、不依赖任何外链资源。学完一页后你的进度、成绩、错题都保存在<strong>你自己浏览器的本地存储</strong>里，隐私安全。
+        </div>
+
+        <h2 id="s2">二、建议的学习路径</h2>
+        <ol>
+            <li><strong>模块 A 计算机基础</strong>：先知道电脑的硬件和软件是怎么回事。</li>
+            <li><strong>模块 B 电脑详细使用</strong>：Windows 操作、文件管理、软件安装、系统设置。</li>
+            <li><strong>模块 C 网络与服务器</strong>：上网原理、IP/域名、服务器与建站基础。</li>
+            <li><strong>模块 D 键盘与快捷键</strong>：指法 + 快捷键速查 + 练习器 + 打字测试，练出肌肉记忆。</li>
+            <li><strong>模块 E 如何使用 AI</strong>：认识大模型、学会写提示词、用对工具。</li>
+            <li><strong>模块 F Git 与 GitHub</strong>：版本控制 + 把网页发布到 GitHub Pages。</li>
+            <li><strong>模块 G 怎么开发网页</strong>：HTML/CSS/JS 三件套 + F12 调试 + 实战发布。</li>
+            <li><strong>模块 H 手机与平板</strong>：触屏手势、App 安装、拍照、设置，把智能手机用明白。</li>
+            <li><strong>模块 I 微信与生活服务</strong>：聊天、支付、挂号出行，把生活服务搬进手机。</li>
+            <li><strong>模块 J 网络安全与防诈骗</strong>：密码与骗术拆解、AI 新骗局、被骗后止损报警。</li>
+            <li><strong>模块 K 办公与文档</strong>：Word/Excel/PPT、WPS 云文档与电子邮件。</li>
+            <li><strong>模块 L 网上购物与现代消费</strong>：网购入门、下单支付、物流收货、退换货售后与直播团购。</li>
+            <li><strong>模块 M 数字生活进阶</strong>：短视频、智能电视、智能家居、数字政务、线上就医与备份换机。</li>
+            <li><strong>模块 N 旅游与出行</strong>：出行规划、火车高铁、飞机、酒店住宿、景区预约与旅途防坑。</li>
+        </ol>
+        <p>每个模块末尾都有<strong>结业测验</strong>（60 分通过）；最后到 <a href="41.html">学习仪表盘</a> 看进度，到 <a href="42.html">成就墙</a> 收集徽章，错题会集中在 <a href="43.html">错题本</a> 里随时复习。学课途中遇到看不懂的词，到 <a href="SYS5.html">术语词典</a> 查它的大白话解释；14 个模块全部学完，再到 <a href="SYS6.html">毕业证书</a> 领取你的毕业证明并打印出来。</p>
+
+        <h2 id="s3">三、怎么记录进度</h2>
+        <ul>
+            <li>打开任意一课，该页自动标记为"已读"（右下角会弹提示）。</li>
+            <li>测验做完自动保存<strong>最好成绩</strong>，答错的题进错题本。</li>
+            <li>练习器（快捷键、打字、鼠标、Git 演练场、诈骗识别）保存最佳记录，打字成绩可解锁成就徽章。</li>
+            <li>不知道该学哪一课？到 <a href="SYS4.html">生活场景速查</a>，按眼下的生活问题直接找到对应教程。</li>
+            <li>连续 3 天学习、读完 20 个页面、完成整个模块，都有对应徽章。</li>
+        </ul>
+        <p>想清空重来？清除浏览器里本站的站点数据即可（开发者工具 → Application → Storage → Local Storage → 本站域 → Clear）。</p>
+
+        <h2 id="s4">四、如何把本站部署到你的 GitHub</h2>
+        <p>本站没有任何服务器依赖，可以整个文件夹免费托管在 <strong>GitHub Pages</strong> 上。详细步骤见 <a href="F5.html">F5 上传网页到 GitHub Pages 全流程</a>，这里给个速览：</p>
+        <div class="step-list">
+            <div class="step">在 GitHub 新建一个仓库（Public，不勾选 README/.gitignore/license），例如叫 <code>xiandaihua</code>。</div>
+            <div class="step">本地把整个站点文件夹变成 Git 仓库并提交（本项目的 <code>_构建.js</code> 会自动生成站点地图与缓存清单）。</div>
+            <div class="step">把远程地址指到你的仓库并推送：<code>git remote add origin https://github.com/你的用户名/xiandaihua.git</code>，然后 <code>git push -u origin main</code>。</div>
+            <div class="step">到仓库 Settings → Pages → Build and deployment → Source 选 <strong>Deploy from a branch</strong>，分支选 main，目录选 /(root)，保存。</div>
+            <div class="step">等一两分钟，访问 <code>https://你的用户名.github.io/xiandaihua/</code> 即可看到你的站点。</div>
+        </div>
+        <div class="callout warn">
+            <b>⚠️ 发布小贴士</b>
+            推送到公开仓库意味着这些文件<strong>任何人可见</strong>，上传前确认里面没有隐私信息（比如密钥、token）。Git 的用户名/邮箱推荐使用 GitHub 的 noreply 匿名邮箱，保护真实邮箱不被公开抓取。
+        </div>
+
+        <h2 id="s5">五、版本与源码</h2>
+        <p>当前版本 <code>XD.APP_VER</code> 与历史改动见 <a href="44.html">更新公告</a>。本站全部由纯 HTML/CSS/JavaScript 构建，无框架、无 npm 依赖，用浏览器自带能力实现（localStorage 存储、Service Worker 离线缓存）。</p>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="44.html">更新公告</a> · 下一课：<a href="46.html">免责声明与反馈</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

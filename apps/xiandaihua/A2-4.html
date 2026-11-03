@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>显卡、电源与散热 - 现代化·知识学习站</title>
+<meta name="description" content="显卡（核显vs独显、显存）、电源功率与质量、散热与降频的关系——电脑的画面子系统与隐形地基。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A2-4.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 硬件</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">显卡、电源与散热</h1>
+        <p class="lesson-sub">A2-4 | 画面子系统与看不见的地基</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">显卡：画面加工厂</a></li>
+                <li><a href="#s2">核显 vs 独显怎么选</a></li>
+                <li><a href="#s3">电源：被忽视的命门</a></li>
+                <li><a href="#s4">散热与降频</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、显卡：画面加工厂</h2>
+        <p><strong>GPU（图形处理器）</strong>专门并行处理图像，把 CPU 算好的画面变成屏幕上的几百万个像素。它和 CPU 的分工像"画家与导演"：导演统筹全局，画家同时画千万笔。</p>
+        <p>独显自带<strong>显存</strong>（常见 6-16GB），存贴图与帧数据。主流品牌：NVIDIA（GeForce RTX 系列）与 AMD（Radeon RX 系列）。此外，GPU 的"几千个小核心并行运算"特性恰好适合 AI 计算——模块E 讲到的 AI 大模型，训练与推理都大量依赖 GPU。</p>
+
+        <h2 id="s2">二、核显 vs 独显怎么选</h2>
+        <table class="xd-table">
+            <tr><th></th><th>核显（集成显卡）</th><th>独显（独立显卡）</th></tr>
+            <tr><td>位置</td><td>内置在 CPU 里</td><td>单独一块卡/芯片</td></tr>
+            <tr><td>性能</td><td>够办公、视频、轻度网游</td><td>3A 游戏、视频剪辑、3D/AI</td></tr>
+            <tr><td>功耗续航</td><td>省电、发热小</td><td>耗电、需要更好散热</td></tr>
+            <tr><td>成本</td><td>免费自带</td><td>几百到上万元</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 判断口诀</b>
+            不玩大型游戏、不剪 4K 视频 → 核显完全够用，省下的钱加内存/换 SSD 更值。
+        </div>
+
+        <h2 id="s3">三、电源：被忽视的命门</h2>
+        <p><strong>电源（PSU）</strong>把 220V 市电转成低压直流电供给各零件。两件事最关键：</p>
+        <ul>
+            <li><strong>功率留余量</strong>：整机满载功耗 +30% 余量，别顶着上限配；</li>
+            <li><strong>质量比功率重要</strong>：劣质电源输出不稳，会造成莫名死机、重启、甚至损坏硬件——"玄学故障"的根源常常是它。</li>
+        </ul>
+
+        <h2 id="s4">四、散热与降频</h2>
+        <p>CPU/GPU 过热时会<strong>主动降频自保</strong>（变慢），表现为：一开游戏就卡、风扇狂转、机身烫手。散热系统的三件套：</p>
+        <ul>
+            <li><strong>风扇与风道</strong>：定期清灰（一年一次），进出风口别堵；</li>
+            <li><strong>硅脂</strong>：CPU 与散热器之间的导热介质，两三年会干，老化就换；</li>
+            <li><strong>环境</strong>：笔记本别放床上捂住进风口，夏天可配散热支架。</li>
+        </ul>
+        <div class="callout info">
+            <b>🌡 观察温度</b>
+            任务管理器只能看占用，温度需用厂商工具或免费小工具（如 HWiNFO）。CPU 满载 70-85℃ 算正常，长期 95℃+ 说明散热该保养了。
+        </div>
+
+        <h2>本页小结</h2>
+        <ul>
+            <li>GPU 并行画图，也是 AI 时代的算力担当；轻度使用核显即可。</li>
+            <li>电源宁可功率有余、不可质量将就。</li>
+            <li>过热降频是"越用越卡"的常见元凶：清灰、换硅脂、别捂进风口。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            你的电脑是无独显的核显机型，还是带独显？如果是笔记本，留意一下满负荷时出风口的风量和温度变化，体会"降频保护"的存在。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A2.html">硬件目录</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

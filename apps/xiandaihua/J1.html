@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>密码与账号安全 - 现代化·知识学习站</title>
+<meta name="description" content="好密码的三条标准、记不住密码怎么办、双重验证、密码是怎么被偷的：守住账号安全的第一道关。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="J1.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块J · 网络安全与防诈骗</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">密码与账号安全</h1>
+        <p class="lesson-sub">J1 · 密码与账号 | 守住第一道门</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">为什么密码这么重要</a></li>
+                <li><a href="#s2">好密码的三条标准</a></li>
+                <li><a href="#s3">记不住密码怎么办</a></li>
+                <li><a href="#s4">双重验证：多一道保险</a></li>
+                <li><a href="#s5">密码是怎么被偷的</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、为什么密码这么重要</h2>
+        <p>微信、支付宝、银行卡、电子社保卡……这些账号背后都是<strong>钱和隐私</strong>。密码就是这些"房间"的钥匙：钥匙丢了，房间里的东西就可能被搬走。所以密码这件事，值得花十分钟认真对待。</p>
+        <div class="callout info">
+            <b>🧭 三把"钥匙"要分清</b>
+            <ul>
+                <li><strong>锁屏密码</strong>：打开手机的密码。</li>
+                <li><strong>支付密码</strong>：付款时输的 6 位数字。</li>
+                <li><strong>登录密码</strong>：登录微信、支付宝等账号用的密码。</li>
+            </ul>
+            锁屏密码和支付密码<strong>不要设成同一个</strong>；如果都设成"123456"或生日，等于三把钥匙都插在门上。
+        </div>
+
+        <h2 id="s2">二、好密码的三条标准</h2>
+        <table class="xd-table">
+            <tr><th>标准</th><th>说明</th><th>反例</th></tr>
+            <tr><td>够长</td><td>至少 8 位，越长越难破</td><td>123456、000000</td></tr>
+            <tr><td>够混</td><td>大小写字母+数字+符号混着来</td><td>只用自己的名字拼音</td></tr>
+            <tr><td>没规律</td><td>别用生日、手机号、身份证号、姓名</td><td>19601001、zhangwei</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 普通人也能记的"句子密码"</b>
+            想一句只有你知道的话，取每个字的首字母加数字符号，比如"我爱吃老伴做的红烧肉"→ <code>WacLZ?hsr&8</code>。又好记又难猜，比"abc123"安全一万倍。
+        </div>
+
+        <h2 id="s3">三、记不住密码怎么办</h2>
+        <p>很多人怕"好密码记不住"才用弱密码，其实有更好的办法：</p>
+        <ul>
+            <li><strong>用一句话编密码</strong>（上一节教的），能记住句子就记住密码。</li>
+            <li><strong>写在本子上放家里</strong>：给每个账号记一行（哪个网站/哪个密码），本子锁在抽屉里。丢钱包的概率远小于被黑客偷——对老人家来说，<strong>纸笔账本比脑子记更可靠</strong>。</li>
+            <li><strong>用手机自带的密码保险箱</strong>：很多手机系统自带"保险箱/密码本"（需指纹/密码打开），把账号密码存进去，要用时自动填写。</li>
+            <li><strong>重要账号互不相同</strong>：微信、支付宝、银行卡这三样，<strong>绝对不要用同一个密码</strong>——一个被偷，全都完蛋。</li>
+        </ul>
+        <div class="callout warn">
+            <b>⚠️ 别把密码存在这里</b>
+            不要写在手机备忘录里不加密、不要发到微信群/朋友圈、不要抄在微信聊天里。纸本账本请放家里，别带出门。
+        </div>
+
+        <h2 id="s4">四、双重验证：多一道保险</h2>
+        <p>光有密码还不保险（可能被盗、可能被猜），所以重要账号都有"第二道锁"——<strong>双重验证</strong>：登录时除了密码，还要输入<strong>短信验证码</strong>（或人脸/指纹）。</p>
+        <ul>
+            <li><strong>微信</strong>：「我→设置→账号与安全→登录设备管理」，把不认识的设备删掉；开启"账号保护"。</li>
+            <li><strong>支付宝</strong>：「我的→设置→安全设置」，开启指纹/刷脸支付和登录保护。</li>
+            <li><strong>银行卡 App</strong>：多数默认短信验证，别关。</li>
+        </ul>
+        <div class="callout info">
+            <b>🧠 双重验证的两面性</b>
+            验证码是双刃剑：它帮你挡住盗号者，但<strong>骗子也会骗你要验证码</strong>。记住：任何人在电话、短信、微信里<strong>索要验证码，一律不给</strong>——验证码只能你自己输在正规 App 的界面里。
+        </div>
+
+        <h2 id="s5">五、密码是怎么被偷的</h2>
+        <table class="xd-table">
+            <tr><th>偷法</th><th>怎么发生的</th><th>怎么防</th></tr>
+            <tr><td>撞库</td><td>你在别处用过的密码，被黑客拿到后批量试你的其他账号</td><td>各账号密码不同</td></tr>
+            <tr><td>钓鱼</td><td>点击短信/邮件里的假链接，在假网页上输入了账号密码</td><td>不点陌生链接，认准官网</td></tr>
+            <tr><td>诱导</td><td>电话里"客服"套你的密码/验证码</td><td>任何人不给</td></tr>
+            <tr><td>偷看</td><td>在公共场所输入密码被人记下</td><td>输密码时用手遮挡，用防窥膜</td></tr>
+            <tr><td>公共 WiFi</td><td>在免费 WiFi 上登录账号，数据被截获</td><td>输密码/付款时关掉公共 WiFi，用移动数据</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 自查：我的密码泄露过吗？</b>
+            如果哪个网站被爆出过"数据泄露"，而你正好在那个网站注册过——马上改掉该网站的密码，<strong>并把用过同一密码的其他账号也一起改</strong>。
+        </div>
+
+        <h2>本页小结</h2>
+        <ul>
+            <li>密码要<strong>够长、够混、没规律</strong>；一句话编密码，好记又难猜。</li>
+            <li>记不住就<strong>写纸本账本放家里</strong>；微信/支付宝/银行卡三个密码绝不能相同。</li>
+            <li>开启<strong>双重验证</strong>；验证码<strong>任何人都不给</strong>。</li>
+            <li>不点陌生链接、不在公共 WiFi 上输密码、输密码用手遮挡。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后练习</b>
+            现在就做三件事：① 把微信、支付宝的登录密码改成两句不同的"句子密码"；② 在微信「登录设备管理」里清掉不认识的设备；③ 检查你有没有在所有地方都用同一个密码——有就改。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="J.html">模块J 目录</a> · 下一课：<a href="J2.html">电话与短信诈骗识别</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

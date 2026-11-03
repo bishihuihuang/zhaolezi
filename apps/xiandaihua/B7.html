@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>模块B测验：电脑使用 - 现代化·知识学习站</title>
+<meta name="description" content="模块B结业测验：12 道选择题检验 Windows 操作、文件管理、软件安装、系统安全、网络与排障的掌握情况。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="B7.html" data-kind="quiz">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块B · 电脑详细使用</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">📝 模块B测验：电脑使用</h1>
+        <p class="lesson-sub">B7 · 结业测验 | Windows · 文件 · 软件 · 安全 · 网络 · 排障</p>
+
+        <div class="callout info">
+            <b>规则</b>
+            共 12 题，点击选项立即判定并显示解析；60 分及格。错题自动进错题本，成绩计入仪表盘。
+        </div>
+
+        <div id="quiz"></div>
+
+        <h2>测验之后</h2>
+        <ul>
+            <li>≥80 分：Windows 日常使用你已经合格，前往<a href="C.html">模块C</a>探索网络与服务器。</li>
+            <li>60-79 分：及格，回看错题解析补一补。</li>
+            <li>&lt;60 分：回看 B1-B6 对应小节，再「重做一次」。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 测验成绩自动保存，可在<a href="41.html">学习仪表盘</a>查看</span>
+            <span>返回：<a href="B.html">模块B 目录</a> · 下一模块：<a href="C.html">网络与服务器</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* ============================================================
+ * 模块B结业测验（页面内联脚本，借 XD.quiz 引擎统一渲染/评分）
+ * 题目数据即文案：q / opts / a / exp 逐字保留；错题自动入错题本
+ * ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.XD || !XD.quiz) return;
+    XD.quiz.run('quiz', {
+        id: 'B',
+        title: '模块B测验：电脑使用',
+
+        /* ---- 题目清单（12 题，q/opts/a/exp 逐字保留） ---- */
+        questions: [
+            {
+                q: '桌面上带小箭头的图标大多是？',
+                opts: ['文件的原身', '快捷方式（指向程序的链接）', '回收站', '系统组件不可删除'],
+                a: 1,
+                exp: '快捷方式只是个"门牌"，删掉它程序还在；删真文件才是真删。'
+            },
+            {
+                q: '想要边写文档边查资料，各占半屏，最快的方法是？',
+                opts: ['把两个窗口分别拖到屏幕左右两侧', '用 Shift+Tab 切换', '最小化一个窗口', '用 F11 全屏'],
+                a: 0,
+                exp: '拖到边缘自动分半屏，是 Windows 最常用的分屏操作。'
+            },
+            {
+                q: 'C:\\Users\\小明\\Documents\\报告.docx 中的"\\"表示？',
+                opts: ['盘符', '文件夹层级分隔符', '文件名', '隐藏标记'],
+                a: 1,
+                exp: '反斜杠 \\ 分隔路径层级：盘符 → 用户 → 文档 → 文件。'
+            },
+            {
+                q: '文件扩展名最大的作用是？',
+                opts: ['让文件名更好看', '告诉系统用什么程序打开', '控制文件体积', '让文件不能被复制'],
+                a: 1,
+                exp: '.docx/.jpg/.exe 等后缀决定了默认打开方式，也帮助你识别文件类型。'
+            },
+            {
+                q: '下载.exe 安装包时，最安全的来源是？',
+                opts: ['XX软件园的"高速下载"按钮', '搜索引擎广告位链接', '软件官网的下载页面', '微信群里的安装包'],
+                a: 2,
+                exp: '只认官网与官方应用商店；第三方"高速下载"往往是捆绑全家桶的重灾区。'
+            },
+            {
+                q: '装软件时发现"自定义安装"里有几个勾选项，正确做法是？',
+                opts: ['全部勾选，功能多总没错', '取消无关勾选（捆绑项），看清每一步', '无所谓，直接下一步', '不装这个软件'],
+                a: 1,
+                exp: '捆绑项藏在勾选里，务必取消勾选再继续。'
+            },
+            {
+                q: '关于杀毒防护，下列做法正确的是？',
+                opts: ['装 2-3 套杀毒软件交叉防护', '只留系统自带 Defender，实时保护打开', '关掉实时保护省资源', '定期给系统盘拍照片当防护'],
+                a: 1,
+                exp: '多杀毒互相冲突反而拖慢；Defender 对普通用户已足够。'
+            },
+            {
+                q: '"明明办的 300 兆宽带，下载只有 30 多 MB/s"，正确解释是？',
+                opts: ['运营商坑钱', 'Mbps 是兆比特，除以 8 才是兆字节', '电脑有病毒', '路由器坏了要换 1000 元的'],
+                a: 1,
+                exp: '300Mbps ÷ 8 ≈ 37.5MB/s，属正常；区别在小写 b（bit）与大写 B（Byte）。'
+            },
+            {
+                q: '电脑"卡成 PPT"，第一步应该做什么？',
+                opts: ['重装系统', '打开任务管理器看 CPU/内存/磁盘占用', '清理桌面图标', '换电脑'],
+                a: 1,
+                exp: '先看占用揪出"吃货"，再对症下药；重装是最后手段。'
+            },
+            {
+                q: '程序假死（无响应），正确处理是？',
+                opts: ['立刻长按电源键', 'Ctrl+Shift+Esc 打开任务管理器结束该程序', '敲键盘发泄', '拔掉网线'],
+                a: 1,
+                exp: '任务管理器 → 结束任务能救回系统；强关电源是最后手段。'
+            },
+            {
+                q: '蓝屏上的关键词 MEMORY_MANAGEMENT 通常提示？',
+                opts: ['内存或驱动问题', '网速太慢', '屏幕坏了', 'Office 需要续费'],
+                a: 0,
+                exp: '这类代码提示内存/驱动异常，先插拔内存、更新驱动，再查内存健康。'
+            },
+            {
+                q: 'C 盘快满了，最稳妥的清理动作是？',
+                opts: ['删掉 C:\\Windows 里的文件', '用系统存储管理清理临时文件/缓存，大文件搬 D 盘', '格式化 C 盘', '把浏览器缓存拷去 D 盘继续用'],
+                a: 1,
+                exp: '设置→存储 逐项清理最安全；C:\\Windows 里的文件别乱删，那不是垃圾。'
+            }
+        ]
+    });
+});
+</script>
+</body>
+</html>

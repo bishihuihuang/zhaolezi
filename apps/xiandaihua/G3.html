@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CSS 入门 - 现代化·知识学习站</title>
+<meta name="description" content="CSS 入门：选择器、属性写法、盒模型、Flex 布局、类与 id、CSS 变量，让网页变好看的魔法。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="G3.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块G · 怎么开发网页</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">CSS 入门</h1>
+        <p class="lesson-sub">模块G · 第 3 课 | 选择器、盒模型与布局</p>
+
+        <div class="toc">
+            <b>📑 本课目录</b>
+            <ol>
+                <li><a href="#s1">CSS 怎么"穿"到 HTML 上</a></li>
+                <li><a href="#s2">选择器</a></li>
+                <li><a href="#s3">颜色、字体与文字</a></li>
+                <li><a href="#s4">盒模型</a></li>
+                <li><a href="#s5">Flex 布局：排排站</a></li>
+                <li><a href="#s6">CSS 变量：一套主题</a></li>
+                <li><a href="#s7">实战：给按钮变好看</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、CSS 怎么"穿"到 HTML 上</h2>
+        <p>三种方式：<strong>外部文件</strong>（推荐）、<strong>页内 &lt;style&gt;</strong>、<strong>内联 style 属性</strong>：</p>
+        <div class="code-block"><pre>&lt;!-- 外部：head 里引入，全站复用（本站的 common.css 就是） --&gt;
+&lt;link rel="stylesheet" href="common.css"&gt;
+
+&lt;!-- 页内：只给本页用 --&gt;
+&lt;style&gt; h1 { color: red; } &lt;/style&gt;
+
+&lt;!-- 内联：只给一个元素用（优先级最高，慎用） --&gt;
+&lt;p style="color: blue;"&gt;…&lt;/p&gt;</pre></div>
+
+        <h2 id="s2">二、选择器</h2>
+        <p>CSS 规则 = <strong>选择器 + 声明块</strong>：选谁、改什么。</p>
+        <div class="code-block"><pre>/* 标签选择器：所有 p 段落 */
+p { color: #333; }
+
+/* 类选择器：class="card" 的元素（. 开头） */
+.card { border-radius: 12px; }
+
+/* id 选择器：# 开头，页面唯一 */
+#logo { width: 60px; }
+
+/* 后代选择器：.nav 里的 a 链接 */
+.nav a { text-decoration: none; }</pre></div>
+        <div class="callout info">
+            <b>💡 类 vs id</b>
+            一个元素可以有多个类（<code>class="card card-blue"</code>）用来组合样式；id 一页只能有一个。本站大量用类选择器。
+        </div>
+
+        <h2 id="s3">三、颜色、字体与文字</h2>
+        <div class="code-block"><pre>.title {
+  color: #667eea;              /* 文字颜色（十六进制） */
+  background: linear-gradient(135deg, #667eea, #764ba2); /* 渐变背景 */
+  font-size: 24px;             /* 字号 */
+  font-weight: 800;            /* 字重：粗体 */
+  text-align: center;          /* 居中 */
+  line-height: 1.8;            /* 行距 */
+  font-family: "Microsoft YaHei", sans-serif; /* 字体栈 */
+}</pre></div>
+
+        <h2 id="s4">四、盒模型</h2>
+        <p>每个元素都是一只"盒子"：从外到内是 <strong>margin（外边距）→ border（边框）→ padding（内边距）→ 内容</strong>。</p>
+        <div class="code-block"><pre>.card {
+  width: 300px;
+  padding: 16px;        /* 内容和边框之间的空间 */
+  border: 2px solid #e8e8e8; /* 边框 */
+  border-radius: 12px;  /* 圆角 */
+  margin: 20px auto;    /* 外边距：上下 20，左右自动居中 */
+  box-sizing: border-box; /* 重要：让 padding 计入宽度，不撑大盒子 */
+}</pre></div>
+        <div class="callout warn">
+            <b>⚠️ 最坑的一课</b>
+            不给 <code>box-sizing: border-box</code> 时，width 300 + padding 16×2 + border 2×2 = 实际 336px，布局就"爆了"。建议全局都开：<code>* { box-sizing: border-box; }</code>
+        </div>
+
+        <h2 id="s5">五、Flex 布局：排排站</h2>
+        <p>把一堆元素水平/垂直排列，Flex 是最常用方案：</p>
+        <div class="code-block"><pre>.row {
+  display: flex;              /* 开启弹性布局 */
+  justify-content: space-between; /* 主轴对齐：两端分布 */
+  align-items: center;        /* 交叉轴：垂直居中 */
+  gap: 12px;                  /* 元素间距 */
+  flex-wrap: wrap;            /* 放不下自动换行 */
+}</pre></div>
+        <p>本站首页的模块卡片、导航、表格行几乎都靠 Flex 排布——按 F12 选一个 .card 看看它的样式。</p>
+
+        <h2 id="s6">六、CSS 变量：一套主题</h2>
+        <p>把常用颜色存成变量，换主题只需改一处：</p>
+        <div class="code-block"><pre>:root {
+  --blue: #667eea;
+  --line: #e8e8e8;
+}
+.card { border: 1px solid var(--line); color: var(--blue); }</pre></div>
+        <p>本站的暗色/金色主题就是这么实现的（theme.js 换一套变量值，全站跟着变）。</p>
+
+        <h2 id="s7">七、实战：给按钮变好看</h2>
+        <div class="code-block"><pre>&lt;button class="btn"&gt;点我&lt;/button&gt;
+
+.btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform .2s;   /* 动画过渡 */
+}
+.btn:hover { transform: translateY(-2px); } /* 悬停上浮 */</pre></div>
+        <p>做完在浏览器打开，把鼠标放上去——按钮会"浮起来"。这就是你写的第一个交互样式。</p>
+
+        <h2>本课小结</h2>
+        <ul>
+            <li>选择器：标签/类/ id/后代；规则 = 选谁 + 改什么。</li>
+            <li>盒模型从外到内：margin → border → padding → 内容；记得 box-sizing。</li>
+            <li>Flex 排布局、CSS 变量管主题、hover + transition 做动效。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="G2.html">HTML 入门</a> · 下一课：<a href="G4.html">JavaScript 入门</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

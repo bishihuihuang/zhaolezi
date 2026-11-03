@@ -1,0 +1,28 @@
+{
+  "name": "全能文件保存",
+  "short_name": "全能保存",
+  "description": "文本与文件分类管理：标签分类、时间追溯、状态标记、置顶、回收站、导出导入、11 套主题。数据仅存浏览器本地。",
+  "start_url": "./全能文件保存.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0e1a",
+  "theme_color": "#0b0e1a",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JavaScript 入门 - 现代化·知识学习站</title>
+<meta name="description" content="JavaScript 入门：变量、数据类型、函数、事件监听、操作 DOM、控制台与调试入门。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="G4.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块G · 怎么开发网页</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">JavaScript 入门</h1>
+        <p class="lesson-sub">模块G · 第 4 课 | 变量、函数、事件与 DOM</p>
+
+        <div class="toc">
+            <b>📑 本课目录</b>
+            <ol>
+                <li><a href="#s1">JS 是页面的"肌肉"</a></li>
+                <li><a href="#s2">变量与类型</a></li>
+                <li><a href="#s3">函数</a></li>
+                <li><a href="#s4">操作 DOM</a></li>
+                <li><a href="#s5">事件：点一下就有反应</a></li>
+                <li><a href="#s6">控制台与调试</a></li>
+                <li><a href="#s7">动手：写一个计数器</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、JS 是页面的"肌肉"</h2>
+        <p>HTML 摆结构、CSS 做样式，<strong>JavaScript（JS）让页面"动起来"</strong>：点击、输入、数据变化、动画、与服务器通信都靠它。本站的进度记录、测验判定、快捷键练习器、打字测试——全是 JS 写的。</p>
+
+        <h2 id="s2">二、变量与类型</h2>
+        <div class="code-block"><pre>let 名字 = "小明";      // 字符串（可变的量）
+const 出生年 = 2008;     // 常量：不可变，通常大写
+var 老写法 = 1;          // 旧语法，能不用就不用
+
+// 常见类型
+let 数字 = 42;
+let 布尔 = true;         // true / false
+let 数组 = [1, 2, 3];    // 一组数据
+let 对象 = { 名: "小明", 年龄: 15 };</pre></div>
+        <div class="callout info">
+            <b>💡 命名规范</b>
+            用英文+驼峰：<code>myScore</code>、<code>userName</code>，别用拼音缩写。本站代码就遵循这个风格。
+        </div>
+
+        <h2 id="s3">三、函数</h2>
+        <p>函数 = 打包一段可重复调用的动作：</p>
+        <div class="code-block"><pre>function 打招呼(name) {
+  return "你好，" + name + "！";
+}
+console.log(打招呼("小明"));  // 控制台输出：你好，小明！
+
+// 箭头函数（现代写法）
+const 加两倍 = (x) =&gt; x * 2;</pre></div>
+
+        <h2 id="s4">四、操作 DOM</h2>
+        <p>DOM = 浏览器把 HTML 变成的"元素树"。JS 通过 <code>document</code> 找到并修改元素：</p>
+        <div class="code-block"><pre>let box = document.getElementById('myBox');  // 按 id 找元素
+box.textContent = '新内容';                    // 改文字
+box.style.color = '#667eea';                   // 改样式
+box.classList.add('active');                   // 加一个类</pre></div>
+
+        <h2 id="s5">五、事件：点一下就有反应</h2>
+        <div class="code-block"><pre>let btn = document.getElementById('goBtn');
+btn.addEventListener('click', function () {
+  alert('你点了我！');
+});</pre></div>
+        <p>常用事件：<code>click</code>（点击）、<code>input</code>（输入）、<code>keydown</code>（按键）、<code>change</code>（选择框变化）。本站快捷键练习器的"按了真实键"就是用 keydown 实现的。</p>
+
+        <h2 id="s6">六、控制台与调试</h2>
+        <p><kbd>F12</kbd> → Console（控制台）是 JS 的"黑匣子"：</p>
+        <ul>
+            <li><code>console.log(变量)</code>：把值打到控制台，看程序在想什么。</li>
+            <li>报错会显示红色信息+行号，点它跳到出错的代码。</li>
+            <li>在控制台可以直接输入 JS 试运行（回车执行）。</li>
+        </ul>
+        <div class="callout warn">
+            <b>⚠️ 常见翻车点</b>
+            ① <code>getElementById</code> 找不到元素返回 null，对它操作就报错——检查 id 是否拼对；② 脚本放在 body 底部或等 DOMContentLoaded，保证元素已存在再操作。
+        </div>
+
+        <h2 id="s7">七、动手：写一个计数器</h2>
+        <div class="code-block"><pre>&lt;button id="minus"&gt;-&lt;/button&gt;
+&lt;span id="num"&gt;0&lt;/span&gt;
+&lt;button id="plus"&gt;+&lt;/button&gt;
+
+&lt;script&gt;
+  let n = 0;
+  const num = document.getElementById('num');
+  document.getElementById('plus').addEventListener('click', () =&gt; {
+    num.textContent = ++n;
+  });
+  document.getElementById('minus').addEventListener('click', () =&gt; {
+    num.textContent = --n;
+  });
+&lt;/script&gt;</pre></div>
+        <p>把代码放进一个 html 文件打开，点 + / - 数字会动。恭喜，你写出了第一个有交互的程序。</p>
+
+        <h2>本课小结</h2>
+        <ul>
+            <li>变量（let/const）、函数、数组/对象是基础积木。</li>
+            <li>用 document 操作 DOM，用 addEventListener 绑定事件。</li>
+            <li>调试三件套：console.log、看报错行号、控制台试运行。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="G3.html">CSS 入门</a> · 下一课：<a href="G5.html">调试与 F12 开发者工具</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

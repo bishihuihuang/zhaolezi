@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>IP、域名与 DNS - 现代化·知识学习站</title>
+<meta name="description" content="IP 地址详解、公网与内网 IP、域名结构、DNS 解析全过程、为什么有时 DNS 慢、常用域名后缀。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="C2.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块C · 网络与服务器</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">IP、域名与 DNS</h1>
+        <p class="lesson-sub">C2 · 网络与服务器 | 互联网的门牌与电话簿</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">网址的两副面孔</a></li>
+                <li><a href="#s2">IP 家族：v4 与 v6、公网与内网</a></li>
+                <li><a href="#s3">域名结构：从右往左读</a></li>
+                <li><a href="#s4">DNS：全球电话簿</a></li>
+                <li><a href="#s5">解析慢/失败怎么办</a></li>
+                <li><a href="#s6">自己动手查地址</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、网址的两副面孔</h2>
+        <p>一台服务器在网上的"真地址"是 IP（一串数字，如 142.250.66.238），但人记数字费劲——于是有了<strong>域名</strong>（如 google.com）。你输 <code>www.baidu.com</code>，浏览器需要先把它"翻译"成某台服务器的 IP，这活儿归 <strong>DNS</strong>（域名系统）。</p>
+
+        <h2 id="s2">二、IP 家族：v4 与 v6、公网与内网</h2>
+        <table class="xd-table">
+            <tr><th>类别</th><th>说明</th><th>示例</th></tr>
+            <tr><td>IPv4</td><td>32 位，约 43 亿个，已枯竭，大量靠 NAT 复用</td><td>223.5.5.5</td></tr>
+            <tr><td>IPv6</td><td>128 位，几乎取之不尽的"新一代地址"</td><td>240e:390:2a00:…</td></tr>
+            <tr><td>公网 IP</td><td>全球唯一，可直接被访问（服务器用它）</td><td>120.xx.xx.xx</td></tr>
+            <tr><td>内网 IP</td><td>私有网段，只在局域网内有效（你家设备）</td><td>192.168.1.5</td></tr>
+        </table>
+
+        <h2 id="s3">三、域名结构：从右往左读</h2>
+        <p>以 <code>www.baidu.com</code> 为例，从右往左一层层缩小范围：</p>
+        <div class="code-block"><pre>www . baidu . com
+│      │      └── 顶级域（.com 商业 / .cn 中国 / .org 组织）
+│      └───────── 主域名（b站注册的一级域名）
+└──────────────── 子域名（该站的"接待入口"；常是 www 或 空）</pre></div>
+        <p>顶级域还有 .net、.edu（教育）、.gov（政府）、.io/.dev（开发者爱用）等。主域名注册要向域名商付费租用，一年几十到几百元不等。</p>
+
+        <h2 id="s4">四、DNS：全球电话簿</h2>
+        <p>全球有无数台 <strong>DNS 服务器</strong>层层协作，把"名字"翻译成"号码"。你查一次 <code>www.baidu.com</code> 大致流程：</p>
+        <ol class="step-list">
+            <li class="step">本地 DNS 缓存（浏览器/系统里存过的结果）先找，命中直接用。</li>
+            <li class="step">没命中 → 问运营商/公共 DNS（如 223.5.5.5）。</li>
+            <li class="step">它再层层问根服务器 → 顶级域服务器 → 该域名的权威服务器，拿到 IP 返回给你。</li>
+            <li class="step">你带着 IP 去访问网站（C3 讲这一步）。</li>
+        </ol>
+        <div class="callout info">
+            <b>💡 为什么换 DNS 能"变快/能上了"？</b>
+            运营商 DNS 偶尔慢/缓存陈旧/解析异常，换成大厂公共 DNS（阿里 223.5.5.5、腾讯 119.29.29.29、Cloudflare 1.1.1.1）往往立竿见影——电话簿换成了"全国联网版"。具体改法见 B5。
+        </div>
+
+        <h2 id="s5">五、解析慢/失败怎么办</h2>
+        <ul>
+            <li>网页"找不到服务器/无法访问此网站"，先确认：其他网站能上吗？能=问题可能在这站或 DNS。</li>
+            <li>清 DNS 缓存：Win+R → <code>cmd</code> → <code>ipconfig /flushdns</code>。</li>
+            <li>换公共 DNS（见上）。</li>
+            <li>还不行：可能是那个网站自己的服务器挂了——换个时间再试，或用"网站状态检测"网站确认。</li>
+        </ul>
+
+        <h2 id="s6">六、自己动手查地址</h2>
+        <div class="code-block"><pre>// 命令行工具（Win+R 输 cmd）
+nslookup baidu.com      ← 查域名对应的 IP
+ping baidu.com          ← 测试连通性与延迟
+
+// 在浏览器输 IP 直接访问服务器？（大部分网站 443 默认端口，浏览器会尝试）</pre></div>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            把 B5 学会的"改 DNS"和这里连起来：你改的是<strong>本地网络设置里的 DNS 服务器</strong>；而 każdej 网站自己的 DNS 记录，是站长在域名商后台配置的。两个"DNS"在同一套系统里，只是你改的是"查电话簿的那家店"。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="C.html">模块C 目录</a> · 下一节：<a href="C3.html">网页打开的全过程</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>接口速查与升级决策 - 现代化·知识学习站</title>
+<meta name="description" content="USB/HDMI/DP/RJ45 等常见接口速查表，看懂配置单示例，以及"电脑卡了该升级什么"的症状决策表。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A2-5.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 硬件</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">接口速查与升级决策</h1>
+        <p class="lesson-sub">A2-5 | 看懂配置单，对症下药</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">常见接口速查</a></li>
+                <li><a href="#s2">实战：看懂一份配置单</a></li>
+                <li><a href="#s3">卡了升级什么：症状决策表</a></li>
+                <li><a href="#s4">购机预算思路</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、常见接口速查</h2>
+        <table class="xd-table">
+            <tr><th>接口</th><th>长什么样 / 用途</th><th>备注</th></tr>
+            <tr><td>USB-A</td><td>扁长方形，插 U 盘鼠标键盘</td><td>正反有方向</td></tr>
+            <tr><td>USB-C</td><td>椭圆小口，正反可插</td><td>新机主力：可充电、传数据、输出视频三合一</td></tr>
+            <tr><td>HDMI</td><td>梯形口，接显示器/电视</td><td>音视频一线同传</td></tr>
+            <tr><td>DP</td><td>梯形口（单边缺口）</td><td>高刷新率显示器常用</td></tr>
+            <tr><td>RJ45</td><td>大水晶头，插网线</td><td>以太网，比 WiFi 稳定</td></tr>
+            <tr><td>3.5mm</td><td>圆形耳机孔</td><td>🎧 标志</td></tr>
+            <tr><td>SD 卡槽</td><td>相机存储卡直插</td><td>摄影用户关注</td></tr>
+        </table>
+        <div class="callout info">
+            <b>🔌 USB 版本速记</b>
+            USB 2.0（约 35MB/s）→ USB 3.0/3.2 Gen1（约 400MB/s，口内蓝色）→ USB 3.2 Gen2/雷电（1000MB/s+）。拷大文件慢，先看是不是插在了 2.0 口上。
+        </div>
+
+        <h2 id="s2">二、实战：看懂一份配置单</h2>
+        <div class="code-block"><pre><span class="cmt">// 一台主流办公本的配置单解读</span>
+CPU      : Intel 酷睿 i5-1340P（14核20线程）  ← 中端，办公足够
+内存     : 16GB DDR4-3200                    ← 舒适容量
+硬盘     : 512GB NVMe SSD                    ← 系统盘，够快
+显卡     : Intel Iris Xe 核显                ← 无独显，不打大型游戏
+屏幕     : 14英寸 1920x1200 100% sRGB        ← 日常够用
+电池     : 60Wh                              ← 中等偏上</pre></div>
+
+        <h2 id="s3">三、卡了升级什么：症状决策表</h2>
+        <table class="xd-table">
+            <tr><th>症状</th><th>嫌疑零件</th><th>动作</th></tr>
+            <tr><td>开机慢、软件打开慢</td><td>机械硬盘</td><td>换/加 SSD（效果最明显）</td></tr>
+            <tr><td>开几个网页就卡死</td><td>内存不足</td><td>加内存条（8→16GB）</td></tr>
+            <tr><td>只在玩游戏时卡</td><td>显卡</td><td>降低画质，或换独显（笔记本多数不可换）</td></tr>
+            <tr><td>风扇狂转、越用越卡</td><td>散热积灰</td><td>清灰、换硅脂</td></tr>
+            <tr><td>莫名死机重启</td><td>电源/内存故障</td><td>先重插内存排查，再查电源</td></tr>
+        </table>
+
+        <h2 id="s4">四、购机预算思路</h2>
+        <ul>
+            <li><strong>先定用途再定预算</strong>：文档网课 → 3000-4000 档核显机；编程设计 → 5000-7000 档 16GB；游戏创作 → 7000+ 独显机。</li>
+            <li><strong>优先级</strong>：SSD（必）&gt; 内存 16G（必）&gt; 屏幕素质 &gt; CPU 档次 &gt; 独显（按需）。</li>
+            <li><strong>警惕</strong>：低配机的"4GB 内存 + 机械硬盘"组合，比 CPU 慢更影响体验。</li>
+        </ul>
+
+        <h2>本页小结（A2 硬件子模块收官）</h2>
+        <ul>
+            <li>接口认全 USB-C/HDMI/RJ45，拷贝慢先查 USB 版本。</li>
+            <li>配置单逐行读：CPU 定位、内存容量、SSD 有无、屏幕素质。</li>
+            <li>升级按症状下药：开机慢换 SSD，多开卡加内存，游戏卡看显卡，越用越卡清灰。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 模块自测</b>
+            不翻前页，试着回答：CPU 四指标是什么？内存和硬盘谁断电丢数据？这两个问题答得上来，硬件关就算过了。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A2.html">硬件目录</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

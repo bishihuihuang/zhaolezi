@@ -1,0 +1,365 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵感火花·创意点子生成器｜创意引擎</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="favicon-48.png">
+    <link rel="canonical" href="https://your-name.github.io/creativity/1.html">
+    <style>
+        .slot-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .slot-chip {
+            padding: 7px 12px; border-radius: 10px; font-size: 13px; cursor: pointer;
+            background: var(--zl-card-2); border: 1px solid var(--zl-border); color: var(--zl-text);
+            transition: all .2s; user-select: none; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .slot-chip:hover { border-color: var(--zl-accent); }
+        .slot-chip .lk { font-size: 11px; opacity: .55; }
+        .slot-chip.locked { border-style: dashed; border-color: var(--zl-accent); background: var(--zl-accent); color: var(--zl-btn-text); }
+        .idea-main {
+            font-size: 17px; line-height: 1.9; color: var(--zl-text);
+            background: var(--zl-card-2); border: 1px solid var(--zl-border);
+            border-radius: 14px; padding: 16px 18px; margin-bottom: 8px;
+            min-height: 96px;
+        }
+        .gen-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+        .gen-item {
+            background: var(--zl-card-2); border: 1px solid var(--zl-border); border-radius: 12px;
+            padding: 12px 14px; font-size: 14px; line-height: 1.8; color: var(--zl-text);
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .gen-item .txt { flex: 1; }
+        .tag-pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--zl-accent); color: var(--zl-btn-text); margin-right: 6px; }
+    </style>
+
+    <link rel="stylesheet" href="common.css">
+    <script src="theme-init.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="创意引擎">
+    <meta name="description" content="组合式创意点子生成器：写作题材、产品创意、品牌命名、营销活动等 8 大领域，数千种组合，专治灵感枯竭。">
+    <link rel="stylesheet" href="common.css">
+    <script defer src="common.js"></script>
+    <script defer src="theme.js"></script>
+    <script defer src="cy-features.js"></script>
+</head>
+<body>
+
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+    </div>
+
+    <header class="cy-shell">
+        <h1>创意引擎 · 灵感火花</h1>
+    </header>
+
+    <main class="cy-page">
+        <div class="cy-card">
+            <h2>💡 灵感火花</h2>
+            <div class="sub">组合式点子生成器 —— 选择领域，把「对象 × 场景 × 转折」随机拼装；点槽位可🔒锁定，只重掷其余部分。</div>
+            <div class="cy-tab-row" id="catRow"></div>
+            <div id="ideaBox"></div>
+            <div class="cy-toolbar">
+                <button class="cy-btn" id="btnReroll">🎲 重掷未锁定</button>
+                <button class="cy-btn cy-btn-ghost" id="btnBatch">🧨 一次生成 5 条</button>
+                <button class="cy-btn cy-btn-ghost" id="btnFav">♥ 收藏这条</button>
+                <button class="cy-btn cy-btn-ghost" id="btnCopy">📋 复制</button>
+                <button class="cy-btn cy-btn-ghost" id="btnShowFav">📥 我的收藏（<span id="favCount">0</span>）</button>
+            </div>
+            <div id="batchList" class="gen-list"></div>
+        </div>
+    </main>
+
+    <script>
+    /* ========== 领域数据：模板 + 槽位词池 ========== */
+    const CATS = [
+        { id: 'write', name: '✏️ 写作题材', templates: [
+            '一个{role}在{scene}中意外获得{power}，却发现{twist}。',
+            '那天夜里，{role}收到一封来自{place}的信，信里说{twist}。',
+            '{role}决定离开{place}，只带上一件{obj}，踏上了{quest}。',
+            '如果{power}是真的，{role}的第一个念头却是{twist}。'
+        ], slots: {
+            role: ['退休刑警', '失眠的图书管理员', '外卖骑手', '失忆的歌手', '会讲方言的AI助手', '少年画家', '菜市场鱼贩', '辞职的程序员', '养老院护士', '古董钟表匠'],
+            scene: ['深夜图书馆', '末班地铁', '台风夜的便利店', '废弃游乐园', '山顶天文台', '凌晨的菜市场', '旧城区的理发店', '下雪的火车站', '海底隧道', '八十年代录像厅'],
+            power: ['能听见物品的记忆', '看见他人十年后的模样', '与植物交谈', '让时间暂停十秒', '听懂动物的牢骚', '把梦境写进现实', '闻到未来的气味', '让任何门通向想去的方向'],
+            twist: ['这份能力来自一次失败的实验', '使用代价是失去一段记忆', '早被某个神秘组织盯上', '它悄然改变了一桩旧案的结局', '得到它的人其实不止一个', '发现这一切只是个铺垫', '能力开始反噬日常生活'],
+            place: ['从未寄达的地址', '一百年前的老宅', '地图上没有的小镇', '海边的灯塔', '废弃的钟楼', '云端之上的邮局', '巷子尽头的旧书店', '一艘搁浅的船'],
+            obj: ['老怀表', '半张照片', '生锈的钥匙', '发黄的日记本', '一截粉笔', '旧口琴', '褪色的车票', '一盆快枯的花'],
+            quest: ['寻找失散多年的亲人', '解开一桩连环谜题', '抵达传说中的地方', '送一件遗物回家', '写完外婆没写完的故事', '给全城的人道歉', '找回被偷走的影子']
+        } },
+        { id: 'product', name: '🛍️ 产品创意', templates: [
+            '为{user}设计一款{obj}，核心功能是{func}，应用在{scene}。',
+            '把{obj}与{other}结合，解决「{pain}」这个痛点，目标人群是{user}。',
+            '一款面向{user}的{obj}，最大的卖点是{func}，售价不超过{price}。',
+            '重新设计{obj}：外观{style}，内里{func}，让{user}在{scene}更轻松。'
+        ], slots: {
+            user: ['独居老人', '熬夜学生', '新手父母', '通勤族', '猫奴', '旅行者', '健身党', '自由职业者', '小学生家长', '露营爱好者'],
+            obj: ['水杯', '背包', '台灯', '日历', '蓝牙音箱', '雨伞', '键盘', '宠物窝', '行李箱', '床头柜'],
+            other: ['冰箱', '吉他', '书架', '时钟', '镜子', '灯泡', '钥匙', '眼镜', '气球', '花盆'],
+            func: ['自动消毒', '语音陪伴', '模块化拼接', '太阳能充电', '情绪感知变色', '定位防丢', '一键收纳', '静音降噪', '记忆回放', '手势操控'],
+            scene: ['通勤路上', '深夜加班', '出差旅行', '居家健身', '周末露营', '厨房做饭', '哄娃入睡', '书房写作', '雨天出行', '长途自驾'],
+            pain: ['东西总丢', '睡眠不好', '社交尴尬', '拖延成瘾', '收纳困难', '忘记吃药', '怕黑失眠', '手机依赖', '点外卖选择困难', '记不住纪念日'],
+            price: ['99 元以内', '两百元档', '一杯奶茶钱', '一个月的饭钱', '千元以内', '9 块 9 包邮'],
+            style: ['极简纯白', '复古黄铜', '半透明磨砂', '圆润马卡龙', '硬朗机甲', '原木质感']
+        } },
+        { id: 'brand', name: '🏷️ 品牌命名', templates: [
+            '为{cat}品牌取一个「{style}」风格的名字，围绕字根「{root}」，传递{emotion}。',
+            '帮一家{cat}店起名：要{style}、好记，最好带「{root}」字，让人感到{emotion}。',
+            '新品牌要做{cat}，slogan 想传达{emotion}，名字希望是「{style}」路线，可以谐音「{root}」。'
+        ], slots: {
+            cat: ['新中式茶饮', '轻护肤', '家庭健身', '智能家居', '宠物用品', '数码配件', '独立书店', '烘焙咖啡', '户外装备', '香薰蜡烛'],
+            style: ['东方意蕴', '科技未来感', '温暖治愈', '硬核力量', '文艺清新', '极简抽象', '复古港风', '自然森系'],
+            root: ['山', '川', '星', '月', '云', '光', '木', '舟', '焰', '澜', '屿', '晴'],
+            emotion: ['宁静', '活力', '高级感', '治愈', '自由', '可靠', '仪式感', '松弛感']
+        } },
+        { id: 'marketing', name: '🎪 营销活动', templates: [
+            '为{industry}策划一场{theme}活动，用{game}做主力玩法，用{hook}引流，预算控制在{budget}。',
+            '{theme}到了，{industry}可以办一场「{game}」活动：进店即可{hook}，再配合{kicker}冲业绩。',
+            '帮{industry}设计周末引流活动：主题{theme}，核心是{game}，用{hook}制造排队效应。'
+        ], slots: {
+            industry: ['奶茶店', '健身房', '独立书店', '美妆集合店', '宠物店', '精品咖啡', '花店', '数码店', '服装店', '甜品店'],
+            game: ['集章打卡', '盲盒福袋', '老客召回', '组队拼单', '晒图返券', '快闪主题店', '会员日', '跨界联名', '二十四节气限定', '限时寻宝'],
+            theme: ['毕业季', '开学季', '新年', '七夕', '店庆', '二十四节气', '夏日清凉', '冬日暖饮', '宠物友好日', '城市漫游'],
+            hook: ['免费试吃', '限量徽章', '抽免单', '定制周边', '公益捐赠', '一元换购', '集章兑礼', '会员双倍积分'],
+            budget: ['三百元以内', '千元以内', '三千元预算', '零预算靠流量'],
+            kicker: ['朋友圈裂变', '本地博主打卡', '社群秒杀预告', '地推扫码', '电梯广告']
+        } },
+        { id: 'video', name: '🎬 短视频选题', templates: [
+            '拍摄「{person}在{scene}完成一件事」，制造{conflict}，结尾带{twist}。',
+            '{person}用{budget}预算在{scene}改造自己，中途遭遇{conflict}，结局{twist}。',
+            '一条{person}的 Vlog：地点{scene}，任务是{pain}，难度来自{conflict}，最后{twist}。'
+        ], slots: {
+            person: ['新手爸妈', '独居女生', '健身教练', '程序员', '旅行博主', '手艺人', '退休大爷', '美术生', '美食摊主', '民宿老板'],
+            scene: ['凌晨的厨房', '10 平出租屋', '山间民宿', '公司茶水间', '旧货市场', '地下车库', '城中村天台', '深夜烧烤摊', '图书馆角落', '雨后的公园'],
+            conflict: ['预算只有 100 元', '三天内必须出片', '道具中途全坏了', '突然停电', '观众留言要求加更', '搭档临时放鸽子', '天气骤变', '被保安驱赶'],
+            twist: ['结果出乎意料', '被路人神助攻', '发现隐藏彩蛋', '竟被官方转发', '一夜涨粉十万', '被迫改行', '原来都是梦境', '意外治愈了陌生人'],
+            budget: ['50 元', '100 元', '一块钱', '零预算', '借来的 500 元'],
+            pain: ['学会做饭', '整理房间', '减重五斤', '戒掉手机', '练习口语', '攒钱旅行', '修复老物件']
+        } },
+        { id: 'art', name: '🎨 画作意象', templates: [
+            '画一幅{media}作品：{subject}立于{env}，传达{emotion}。',
+            '用{media}表现「{subject} × {env}」，情绪关键词：{emotion}。',
+            '命题创作：{subject}遇见{env}，媒介{media}，标题里带「{emotion}」。'
+        ], slots: {
+            media: ['水彩', '油画', '炭笔素描', '像素风', '水墨', '丙烯', '彩铅', '数字板绘'],
+            subject: ['鲸鱼', '灯塔', '少女', '旧钟', '老树', '纸飞机', '猫', '城市剪影', '宇航员', '邮筒'],
+            env: ['雾中', '极光下', '海底', '废墟', '云端', '雪夜', '黄昏街头', '星空下', '雨中巷口', '沙漠'],
+            emotion: ['孤独', '希望', '静谧', '躁动', '怀旧', '自由', '释然', '期待']
+        } },
+        { id: 'startup', name: '🚀 创业机会', templates: [
+            '针对{people}的{pain}，结合{resource}，用{model}模式做成一个轻项目。',
+            '发现{people}在{scene}常为{pain}烦恼——如果利用{resource}做服务，走{model}路线，会怎样？',
+            '一个面向{people}的小生意：切入{pain}，靠{resource}获客，盈利方式是{model}。'
+        ], slots: {
+            people: ['银发族', '独居青年', '新手宝妈', '宠物主', '自由职业者', '小镇青年', '大学生', '双职工家庭'],
+            pain: ['没人陪着聊天', '不会做饭', '信息过载', '物品闲置', '技能焦虑', '出行不便', '整理收纳难', '节日送礼选择困难'],
+            resource: ['社区闲置空间', '本地供应链', 'AI 工具', '二手平台', '邻里互助网络', '共享技能', '短视频流量', '校园社团'],
+            model: ['订阅制', '拼团', '以旧换新', '会员制', '按次付费', '众筹预售', '佣金分成'],
+            scene: ['社区', '校园', '写字楼', '县城', '景区', '线上社群']
+        } },
+        { id: 'game', name: '🎮 游戏玩法', templates: [
+            '一款{genre}游戏，主题是{theme}，核心机制是{mech}，最爽的是{fun}。',
+            '如果把「{theme}」做成{genre}：机制用{mech}，玩家每天沉迷的点是{fun}。',
+            '独立小游戏提案：{genre} × 主题「{theme}」，机制{mech}，关卡围绕{fun}展开。'
+        ], slots: {
+            genre: ['解谜', 'Roguelike', '模拟经营', '塔防', '跑酷', '卡牌构筑', '放置养成', '双人合作'],
+            theme: ['古籍修复', '太空种植', '城市排水', '梦境维修', '时间管理局', '猫咪快递', '地下集市', '情绪调香师'],
+            mech: ['资源循环', '因果倒置', '昼夜切换', '重力翻转', '声控指令', '连锁消除', '时间回溯', '共生操控'],
+            fun: ['连锁消除爽感', '随机掉落惊喜', '剧情分支选择', '排行榜攀爬', '收集图鉴', '无限组合实验', '隐藏彩蛋探索']
+        } }
+    ];
+
+    /* ========== 状态 ========== */
+    let cur = null; // {catIdx, tplIdx, picks, locks}
+
+    const ideaBox = document.getElementById('ideaBox');
+    const batchList = document.getElementById('batchList');
+
+    function randItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function renderText(cat, tpl, picks) {
+        return tpl.replace(/\{(\w+)\}/g, function (_, slotKey) { return picks[slotKey] || '【' + slotKey + '】'; });
+    }
+
+    function newIdea() {
+        const catIdx = parseInt(ideaBox.dataset.cat || '0');
+        const cat = CATS[catIdx];
+        const tplIdx = Math.floor(Math.random() * cat.templates.length);
+        const tpl = cat.templates[tplIdx];
+        const keys = tpl.match(/\{(\w+)\}/g).map(s => s.slice(1, -1));
+        const picks = {}, locks = {};
+        keys.forEach(slotKey => { picks[slotKey] = randItem(cat.slots[slotKey]); locks[slotKey] = false; });
+        cur = { catIdx: catIdx, tplIdx: tplIdx, picks: picks, locks: locks };
+        draw();
+    }
+
+    function rerollUnlocked() {
+        if (!cur) return;
+        const cat = CATS[cur.catIdx];
+        const keys = Object.keys(cur.picks);
+        keys.forEach(slotKey => { if (!cur.locks[slotKey]) cur.picks[slotKey] = randItem(cat.slots[slotKey]); });
+        draw();
+    }
+
+    function draw() {
+        if (!cur) { ideaBox.innerHTML = '<div class="cy-empty">选择一个领域，然后点击下方按钮开始</div>'; return; }
+        const cat = CATS[cur.catIdx];
+        const tpl = cat.templates[cur.tplIdx];
+        const keys = Object.keys(cur.picks);
+        const text = renderText(cat, tpl, cur.picks);
+
+        let chips = '';
+        keys.forEach(slotKey => {
+            const locked = cur.locks[slotKey];
+            chips += '<span class="slot-chip' + (locked ? ' locked' : '') + '" data-k="' + slotKey + '">' +
+                '<span class="lk">' + (locked ? '🔒' : '🔓') + '</span>' + CY.escapeHtml(cur.picks[slotKey]) + '</span>';
+        });
+
+        ideaBox.dataset.cat = cur.catIdx;
+        ideaBox.innerHTML =
+            '<div class="idea-main">' + CY.escapeHtml(text) + '</div>' +
+            '<div class="slot-chips">' + chips + '</div>' +
+            '<div class="sub" style="margin-top:8px;">点击槽位 🔒 锁定，再点「重掷未锁定」只换其余部分</div>';
+    }
+
+    function batch(count) {
+        const catIdx = parseInt(ideaBox.dataset.cat || '0');
+        const cat = CATS[catIdx];
+        const arr = [];
+        for (let idx = 0; idx < count; idx++) {
+            const tpl = randItem(cat.templates);
+            const keys = tpl.match(/\{(\w+)\}/g).map(s => s.slice(1, -1));
+            const picks = {};
+            keys.forEach(slotKey => { picks[slotKey] = randItem(cat.slots[slotKey]); });
+            arr.push({ cat: cat.name, text: renderText(cat, tpl, picks) });
+        }
+        batchList.innerHTML = arr.map((it, idx) =>
+            '<div class="gen-item"><span class="txt"><span class="tag-pill">' + CY.escapeHtml(it.cat.replace(/^[^\s]+\s/, '')) + '</span>' + CY.escapeHtml(it.text) +
+            '</span><span class="ops"><button class="cy-icon-btn fav" title="收藏" data-i="' + idx + '" data-t="' + CY.escapeHtml(it.text).replace(/"/g, '&quot;') + '">♥</button></span></div>'
+        ).join('');
+        batchList.querySelectorAll('button.fav').forEach(btn => {
+            btn.onclick = function () { addFav(this.dataset.t); };
+        });
+        if (count > 0) {
+            if (window.CY && CY.activity) CY.activity.add({ type: 'gen_idea', page: '1.html' });
+            if (window.CY && CY.unlock) CY.unlock('idea_first');
+        }
+    }
+
+    function addFav(text) {
+        const list = JSON.parse(localStorage.getItem('cy_fav_ideas') || '[]');
+        if (list.indexOf(text) >= 0) { CY.showToast('已在收藏中'); return; }
+        list.unshift(text);
+        localStorage.setItem('cy_fav_ideas', JSON.stringify(list.slice(0, 60)));
+        updateFavCount();
+        CY.showToast('♥ 已收藏，可在「我的收藏」查看');
+    }
+
+    function updateFavCount() {
+        const list = JSON.parse(localStorage.getItem('cy_fav_ideas') || '[]');
+        document.getElementById('favCount').textContent = list.length;
+    }
+
+    /* ========== 收藏面板 ========== */
+    function showFav() {
+        const list = JSON.parse(localStorage.getItem('cy_fav_ideas') || '[]');
+        const panel = document.createElement('div');
+        panel.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:2147483646;background:rgba(8,10,30,.6);display:flex;align-items:flex-start;justify-content:center;padding-top:10vh;';
+        panel.innerHTML = '<div style="width:min(640px,94%);background:var(--card);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5);overflow:hidden;max-height:78vh;display:flex;flex-direction:column;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);color:var(--txt);font-weight:700;">📥 我的收藏（' + list.length + '）' +
+            '<span style="cursor:pointer;color:var(--dim);" id="favClose">✕</span></div>' +
+            '<div style="overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;" id="favBody">' +
+            (list.length ? '' : '<div style="text-align:center;color:var(--dim);padding:30px;">还没有收藏，快去生成几条吧</div>') +
+            '</div>' +
+            (list.length ? '<div style="padding:12px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:center;">' +
+            '<button class="cy-btn cy-btn-sm" id="favExport">导出 .txt</button>' +
+            '<button class="cy-btn cy-btn-sm cy-btn-danger" id="favClear">清空</button></div>' : '') + '</div>';
+        document.body.appendChild(panel);
+        const body = panel.querySelector('#favBody');
+        list.forEach((text, idx) => {
+            const row = document.createElement('div');
+            row.style.cssText = 'background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14px;color:var(--txt);line-height:1.8;display:flex;gap:8px;align-items:flex-start;';
+            row.innerHTML = '<span style="flex:1;">' + CY.escapeHtml(text) + '</span><button class="cy-icon-btn" data-i="' + idx + '">🗑️</button>';
+            body.appendChild(row);
+        });
+        body.querySelectorAll('button').forEach(btn => {
+            btn.onclick = function () {
+                const li = JSON.parse(localStorage.getItem('cy_fav_ideas') || '[]');
+                li.splice(parseInt(this.dataset.i), 1);
+                localStorage.setItem('cy_fav_ideas', JSON.stringify(li));
+                panel.remove();
+                showFav();
+                updateFavCount();
+            };
+        });
+        const ex = document.getElementById('favExport');
+        if (ex) ex.onclick = function () { CY.download('灵感收藏.txt', list.join('\n\n'), 'text/plain;charset=utf-8'); };
+        const cl = document.getElementById('favClear');
+        if (cl) cl.onclick = function () {
+            if (confirm('确定清空全部收藏吗？')) {
+                localStorage.setItem('cy_fav_ideas', '[]');
+                panel.remove();
+                updateFavCount();
+            }
+        };
+        document.getElementById('favClose').onclick = function () { panel.remove(); };
+        panel.onclick = function (event) { if (event.target === panel) panel.remove(); };
+    }
+
+    /* ========== 事件绑定 ========== */
+    document.getElementById('catRow').innerHTML = CATS.map((cat, idx) =>
+        '<span class="cy-tab' + (idx === 0 ? ' active' : '') + '" data-i="' + idx + '">' + cat.name + '</span>'
+    ).join('');
+
+    document.getElementById('catRow').querySelectorAll('.cy-tab').forEach(tab => {
+        tab.onclick = function () {
+            document.getElementById('catRow').querySelectorAll('.cy-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            ideaBox.dataset.cat = this.dataset.i;
+            newIdea();
+        };
+    });
+
+    document.getElementById('btnReroll').onclick = function () { if (cur) { rerollUnlocked(); } else { newIdea(); } };
+    document.getElementById('btnBatch').onclick = function () { batch(5); };
+    document.getElementById('btnFav').onclick = function () {
+        if (!cur) return;
+        const cat = CATS[cur.catIdx];
+        addFav(renderText(cat, cat.templates[cur.tplIdx], cur.picks));
+    };
+    document.getElementById('btnCopy').onclick = function () {
+        if (!cur) return;
+        const cat = CATS[cur.catIdx];
+        const text = renderText(cat, cat.templates[cur.tplIdx], cur.picks);
+        navigator.clipboard.writeText(text).then(function () {
+            CY.showToast('已复制到剪贴板');
+            if (window.CY && CY.saveRecent) CY.saveRecent('cy_recent_ideas', text);
+        }).catch(function () {});
+    };
+    document.getElementById('btnShowFav').onclick = showFav;
+
+    /* 槽位点击：锁定切换 */
+    ideaBox.addEventListener('click', function (event) {
+        const chip = event.target.closest('.slot-chip');
+        if (!chip || !cur) return;
+        const slotKey = chip.dataset.k;
+        cur.locks[slotKey] = !cur.locks[slotKey];
+        draw();
+    });
+
+    /* 公共脚本 common.js / theme.js / cy-features.js 都是 defer 加载，而本段内联脚本不带 defer，
+       会抢先执行——那时 CY 还没定义，newIdea() 里的 draw() 用 CY.escapeHtml 抛 ReferenceError，灵感卡片全空。
+       把初始化挪到 DOMContentLoaded：defer 脚本在此事件之前一定已执行完。 */
+    document.addEventListener('DOMContentLoaded', function () {
+        newIdea();
+        updateFavCount();
+    });
+    </script>
+</body>
+</html>

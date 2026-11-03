@@ -1,0 +1,497 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创意引擎·灵感工坊——优质创作工具箱</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="favicon-48.png">
+    <link rel="canonical" href="https://your-name.github.io/creativity/index.html">
+    <style>
+        /* ========== 全局重置 ========== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ========== 背景流光层（20秒无缝循环） ========== */
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
+        .bg-flow-1 {
+            position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
+            background: var(--flow-grad);
+            background-size: 400% 400%;
+            animation: flowGradient 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute; top: -60%; left: -40%; width: 220%; height: 220%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(99,102,241,.30), transparent 50%),
+                radial-gradient(ellipse at 65% 35%, rgba(168,85,247,.26), transparent 45%),
+                radial-gradient(ellipse at 80% 80%, rgba(34,211,238,.20), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute; top: -30%; left: -20%; width: 180%; height: 180%;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.10), transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(34,211,238,.16), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes flowDrift { 0% { transform: translate(0,0) scale(1) rotate(0deg); } 50% { transform: translate(3%,-4%) scale(1.05) rotate(5deg); } 100% { transform: translate(-2%,3%) scale(.97) rotate(-5deg); } }
+        @keyframes flowRotate { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.08); } 100% { transform: rotate(360deg) scale(1); } }
+
+        /* ========== 悬浮球 ========== */
+        .orb {
+            position: absolute; border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.3), rgba(255,255,255,.1) 50%, transparent 70%);
+            box-shadow: 0 0 60px rgba(255,255,255,.08), inset 0 0 30px rgba(255,255,255,.04);
+            pointer-events: none; will-change: transform, opacity;
+        }
+        .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+        .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+        @keyframes orbFloatA {
+            0% { transform: translate(0,0) scale(1); opacity: .6; }
+            30% { transform: translate(18px,-22px) scale(1.04); opacity: .8; }
+            60% { transform: translate(-12px,10px) scale(.96); opacity: .5; }
+            100% { transform: translate(0,0) scale(1); opacity: .6; }
+        }
+        @keyframes orbFloatB {
+            0% { transform: translate(0,0) scale(1); opacity: .5; }
+            35% { transform: translate(-20px,12px) scale(1.06); opacity: .7; }
+            70% { transform: translate(14px,-15px) scale(.94); opacity: .4; }
+            100% { transform: translate(0,0) scale(1); opacity: .5; }
+        }
+        @keyframes orbSpin { to { transform: rotate(360deg); } }
+
+        /* ========== 头部 ========== */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; text-align: center;
+            padding: 18px 20px;
+            background: linear-gradient(180deg, rgba(8,10,30,.9), rgba(10,14,39,.5), transparent);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            box-shadow: 0 4px 40px rgba(0,0,0,.3);
+        }
+        header h1 {
+            font-size: 28px; font-weight: 900; letter-spacing: 5px;
+            background: linear-gradient(90deg, #6366f1, #a855f7, #22d3ee, #6366f1);
+            background-size: 200% 100%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 3s linear infinite;
+            display: inline-block;
+            text-shadow: 0 0 30px rgba(99,102,241,.3);
+        }
+        @keyframes textShine { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+
+        /* ========== 主体 ========== */
+        main {
+            padding-top: 100px; position: relative; z-index: 10; min-height: 100vh;
+            display: flex; justify-content: center; align-items: flex-start; padding-bottom: 50px;
+        }
+        .container {
+            width: 80%; max-width: 1440px;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.3), inset 0 1px 0 rgba(255,255,255,.6);
+            max-height: calc(100vh - 130px);
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+        .container::-webkit-scrollbar { width: 10px; }
+        .container::-webkit-scrollbar-track { background: rgba(0,0,0,.04); border-radius: 12px; }
+        .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 12px; border: 2px solid rgba(255,255,255,.4); }
+
+        /* ========== 网格布局（6列） ========== */
+        .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; padding: 6px; }
+        @supports not (display: grid) {
+            .grid { display: flex; flex-wrap: wrap; gap: 12px; }
+            .title-area { flex: 1 1 100%; min-height: 100px; }
+            .tool-box { flex: 1 1 calc(16.66% - 12px); min-width: 120px; }
+        }
+
+        /* ========== 标题区域（前2行前4列） ========== */
+        .title-area {
+            grid-column: 1 / 5; grid-row: 1 / 3;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #101430, #1a1a4e, #3b1d78, #1a1a4e);
+            background-size: 300% 300%;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(20,15,80,.45), inset 0 1px 0 rgba(255,255,255,.12);
+            position: relative; overflow: hidden; cursor: default;
+            transition: transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s ease;
+            padding: 16px;
+        }
+        .title-area:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 18px 60px rgba(30,25,100,.5), 0 0 50px rgba(99,102,241,.25); }
+        .title-area h2 {
+            font-size: 40px; font-weight: 900; text-align: center; line-height: 1.3;
+            letter-spacing: 5px;
+            background: linear-gradient(90deg, #6366f1, #ffffff, #22d3ee, #6366f1);
+            background-size: 300% 100%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+        .title-area .tagline { color: rgba(255,255,255,.75); font-size: 13px; letter-spacing: 3px; margin-top: 6px; }
+        .title-area .stats { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+        .title-area .stat-chip {
+            padding: 6px 12px; border-radius: 999px; font-size: 12px; color: #fff;
+            background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
+            backdrop-filter: blur(6px);
+        }
+        .title-area::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,.12) 50%, transparent 70%);
+            animation: titleSweep 5s ease-in-out infinite;
+        }
+        @keyframes titleShine { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes titleSweep { 0% { transform: translateX(-60%) rotate(0deg); } 100% { transform: translateX(60%) rotate(0deg); } }
+
+        /* ========== 工具框 ========== */
+        .tool-box {
+            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 112px; height: 112px; border-radius: 14px; padding: 12px 8px;
+            text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.15);
+            transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s ease;
+            cursor: pointer; will-change: transform; overflow: hidden; isolation: isolate;
+        }
+        .tool-box::before {
+            content: ''; position: absolute; top: -80%; left: -80%; width: 260%; height: 260%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,.18) 50%, transparent 60%);
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform .6s ease; z-index: 0;
+        }
+        .tool-box:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 14px 35px rgba(0,0,0,.25), 0 0 40px rgba(120,150,255,.2); }
+        .tool-box:hover::before { transform: rotate(45deg) translateX(100%); }
+        .tool-box:active { transform: translateY(-2px) scale(.94); box-shadow: 0 4px 12px rgba(0,0,0,.2); transition-duration: .1s; }
+        .color-0 { background: linear-gradient(135deg, #1e3a8a, #6366f1); }
+        .color-1 { background: linear-gradient(135deg, #6d28d9, #a855f7); }
+        .color-2 { background: linear-gradient(135deg, #0f766e, #22d3ee); }
+        .color-3 { background: linear-gradient(135deg, #b45309, #fbbf24); }
+        .color-4 { background: linear-gradient(135deg, #be123c, #fb7185); }
+        .tool-box .tool-icon { font-size: 24px; line-height: 1; margin-bottom: 6px; position: relative; z-index: 2; display: block; }
+        .tool-box .tool-icon:empty { display: none; }
+        .tool-box .tool-title {
+            position: relative; z-index: 2; display: flex; align-items: center; justify-content: center;
+            width: 100%; text-align: center; line-height: 1.4; font-size: 14px;
+            text-shadow: 0 2px 6px rgba(0,0,0,.2); word-break: normal; overflow-wrap: anywhere;
+            min-height: 2.8em;
+        }
+        .tool-box .tooltip {
+            position: absolute; bottom: calc(100% + 10px); left: 50%;
+            transform: translateX(-50%) translateY(8px) scale(.9);
+            background: rgba(15,18,40,.95); color: #fff; padding: 8px 14px; border-radius: 12px;
+            font-size: 12px; line-height: 1.4; white-space: nowrap;
+            box-shadow: 0 8px 30px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.1);
+            pointer-events: none; opacity: 0; visibility: hidden;
+            transition: opacity .3s ease, transform .3s ease, visibility .3s; z-index: 9999;
+        }
+        .tool-box .tooltip::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border: 6px solid transparent; border-top-color: rgba(15,18,40,.95);
+        }
+        .tool-box:hover .tooltip { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0) scale(1); }
+
+        /* ========== 跳转覆盖层 ========== */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(8,10,25,.72); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            opacity: 0; visibility: hidden; transition: opacity .4s ease, visibility .4s ease; pointer-events: none;
+        }
+        .overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        .loader-wrap { position: relative; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
+        .loader-ring {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%;
+            border: 3px solid rgba(255,255,255,.1); border-top-color: #6366f1; border-right-color: #22d3ee;
+            animation: ringSpin .8s linear infinite; box-sizing: border-box;
+        }
+        .loader-ring::before {
+            content: ''; position: absolute; top: 12px; left: 12px; right: 12px; bottom: 12px; border-radius: 50%;
+            border: 2px solid transparent; border-bottom-color: #a855f7; border-left-color: #6366f1;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: ''; position: absolute; top: 28px; left: 28px; right: 28px; bottom: 28px; border-radius: 50%;
+            border: 1px solid transparent; border-top-color: #fb7185; border-right-color: #22d3ee;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative; z-index: 5; font-size: 24px; font-weight: 900; letter-spacing: 4px;
+            background: linear-gradient(90deg, #6366f1, #a855f7, #6366f1);
+            background-size: 200% 100%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 1024px) {
+            .container { width: 92%; padding: 14px; }
+            .grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+            .title-area { grid-column: 1 / -1; grid-row: auto; min-height: 130px; }
+            .title-area h2 { font-size: 30px; letter-spacing: 3px; }
+        }
+        @media (max-width: 768px) {
+            header { padding: 14px 16px; }
+            header h1 { font-size: 20px; letter-spacing: 2px; }
+            main { padding-top: 80px; }
+            .container { width: 94%; max-width: 100%; padding: 12px; max-height: none; border-radius: 18px; }
+            .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px; }
+            .title-area { grid-column: 1 / -1; grid-row: auto; min-height: 110px; border-radius: 16px; }
+            .title-area h2 { font-size: 24px; letter-spacing: 2px; }
+            .tool-box { min-height: 96px; height: auto; padding: 10px 6px; border-radius: 12px; }
+            .tool-box .tool-icon { font-size: 22px; margin-bottom: 4px; }
+            .tool-box .tool-title { font-size: 12px; line-height: 1.35; min-height: auto; letter-spacing: .5px; }
+            .tool-box .tooltip { display: none; }
+        }
+        @media (max-width: 480px) {
+            header h1 { font-size: 18px; letter-spacing: 1px; }
+            .container { width: 96%; padding: 10px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .title-area { min-height: 100px; }
+            .title-area h2 { font-size: 21px; letter-spacing: 1px; }
+            .tool-box { min-height: 100px; padding: 12px 8px; }
+            .tool-box .tool-icon { font-size: 24px; }
+            .tool-box .tool-title { font-size: 13px; line-height: 1.4; }
+        }
+        @supports not (display: grid) {
+            .grid { display: flex; flex-wrap: wrap; gap: 12px; }
+            .title-area { flex: 1 1 100%; min-height: 100px; }
+            .tool-box { flex: 1 1 calc(16.66% - 12px); min-width: 120px; }
+            @media (max-width: 768px) { .tool-box { flex: 1 1 calc(33.33% - 8px); min-width: 0; } }
+            @media (max-width: 480px) { .tool-box { flex: 1 1 calc(50% - 8px); } }
+        }
+    </style>
+
+    <link rel="stylesheet" href="common.css">
+    <script src="theme-init.js"></script>
+
+    <!-- PWA支持 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="创意引擎">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- SEO/分享元信息 -->
+    <meta name="description" content="创意引擎——为灵感而生的创作工具箱｜点子生成、文案、摘要、配色、生成艺术等 12 个工具">
+    <meta property="og:title" content="创意引擎·灵感工坊">
+    <meta property="og:description" content="创意引擎——为灵感而生的创作工具箱｜点子生成、文案、摘要、配色、生成艺术等 12 个工具">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="创意引擎">
+    <meta property="og:url" content="https://your-name.github.io/creativity/index.html">
+
+    <script defer src="common.js"></script>
+    <script defer src="theme.js"></script>
+    <script defer src="cy-features.js"></script>
+    <script defer src="cy-dashboard.js"></script>
+</head>
+<body>
+
+    <!-- 背景流光层 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 头部 -->
+    <header>
+        <h1>创意引擎 · 灵感工坊</h1>
+    </header>
+
+    <!-- 主体内容 -->
+    <main>
+        <div class="container">
+            <!-- 灵感运营看板：承载「水滴分裂筛选」与「图表就地放大」 -->
+            <section id="cyDash" class="cy-dash">
+                <div class="cy-dash-head">
+                    <div class="cy-dash-title">📊 灵感运营看板
+                        <small>演示数据 · 点击任意图表可就地放大，底部缩略条可切换</small>
+                    </div>
+                    <div id="cyDrip"></div>
+                </div>
+                <div class="cy-metrics" id="cyMetrics"></div>
+                <div class="cy-dash-grid" id="cyDashGrid"></div>
+            </section>
+            <div class="grid" id="grid"></div>
+        </div>
+    </main>
+
+    <!-- 跳转覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">灵感迸发～</div>
+        </div>
+    </div>
+
+    <script>
+        /* ========== 工具配置（单一来源） ========== */
+        const toolsConfig = [
+            { title: '💡 灵感火花', desc: '组合式创意点子生成器：8 大领域、数千种组合，专治灵感枯竭', link: '1.html', icon: '💡' },
+            { title: '✍️ 文案工坊', desc: '品牌标语 / 广告标题 / 社交金句 / 祝福文案，5 种模式一键产出', link: '2.html', icon: '✍️' },
+            { title: '📑 摘要萃取', desc: '抽取式智能摘要：自动提炼长文核心句与关键词', link: '3.html', icon: '📑' },
+            { title: '🔍 文本体检', desc: '字数 / 词频 / 词云 / 阅读时长 / 情感倾向，全方位文本分析', link: '4.html', icon: '🔍' },
+            { title: '🎨 配色灵感', desc: '6 种配色算法 + WCAG 对比度检查，灵感配色一键带走', link: '5.html', icon: '🎨' },
+            { title: '🖼️ 生成艺术', desc: '流场 / 分形 / 粒子等 6 种代码画布，生成独一无二的艺术图', link: '6.html', icon: '🖼️' },
+            { title: '⚖️ 决策矩阵', desc: '加权打分 + 敏感性分析，让选择不再凭感觉', link: '7.html', icon: '⚖️' },
+            { title: '🎯 目标拆解', desc: 'SMART 体检 + 里程碑自动规划 + 甘特图可视化', link: '8.html', icon: '🎯' },
+            { title: '📓 灵感记录本', desc: '想法速记 / 标签管理 / 搜索 / 导入导出，灵感不流失', link: '9.html', icon: '📓' },
+            { title: '🧩 创意连线', desc: '随机词汇强制连接训练，练出天马行空的联想力', link: '10.html', icon: '🧩' },
+            { title: '📚 创作方法库', desc: '头脑风暴 / SCAMPER / 六顶思考帽，交互式创作方法论', link: '11.html', icon: '📚' },
+            { title: 'ℹ️ 关于与更新', desc: '项目说明 / 更新日志 / 每日签到 / 使用统计', link: '12.html', icon: 'ℹ️' },
+            { title: '🛡️ 全站自检', desc: '一键体检全站状态：存储 / 离线 / 页面可达性', link: 'verify.html', icon: '🛡️' }
+        ];
+
+        /* 纯本地页面，无需域名规范化 */
+        function normalizeLink(link) {
+            if (!link) return '#';
+            if (/^www\./i.test(link)) return 'https://' + link;
+            return link;
+        }
+
+        /* ========== 创建工具框 ========== */
+        function createToolBox(index) {
+            const a = document.createElement('a');
+            a.className = 'tool-box color-' + (index % 5);
+            a.dataset.index = index;
+
+            const config = toolsConfig[index];
+
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'tool-icon';
+
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'tool-title';
+
+            const tooltipSpan = document.createElement('span');
+            tooltipSpan.className = 'tooltip';
+
+            if (config && config.title) {
+                iconSpan.textContent = config.icon || '';
+                var titleText = config.title;
+                var lastDashIdx = titleText.lastIndexOf(' ');
+                if (lastDashIdx !== -1 && lastDashIdx + 1 < titleText.length) {
+                    titleSpan.innerHTML = titleText.substring(0, lastDashIdx + 1) + '<br class="mobile-break">' + titleText.substring(lastDashIdx + 1);
+                } else {
+                    titleSpan.textContent = titleText;
+                }
+                tooltipSpan.textContent = config.desc || '点我试试～';
+                a.href = normalizeLink(config.link);
+                a.setAttribute('aria-label', config.title + (config.desc ? ' - ' + config.desc : ''));
+                a.setAttribute('title', config.desc || config.title);
+            } else {
+                iconSpan.textContent = '';
+                titleSpan.textContent = '敬请期待～';
+                tooltipSpan.textContent = '敬请期待～';
+                a.href = '#';
+                a.setAttribute('aria-label', '敬请期待～');
+                a.setAttribute('title', '敬请期待～');
+            }
+
+            a.appendChild(iconSpan);
+            a.appendChild(titleSpan);
+            a.appendChild(tooltipSpan);
+
+            a.addEventListener('click', function (event) {
+                event.preventDefault();
+                const url = (config && config.link) ? config.link : '';
+                showLoadingOverlay(url);
+            });
+
+            return a;
+        }
+
+        /* ========== 渲染工具网格 ========== */
+        function renderTools() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            const titleArea = document.createElement('div');
+            titleArea.className = 'title-area';
+            titleArea.innerHTML = '<h2>创意引擎<br class="mobile-break">灵感工坊</h2>' +
+                '<div class="tagline">为灵感而生的创作工具箱</div>' +
+                '<div class="stats" id="heroStats"></div>';
+            grid.appendChild(titleArea);
+
+            renderHeroStats();
+
+            for (let i = 0; i < toolsConfig.length; i++) {
+                grid.appendChild(createToolBox(i));
+            }
+        }
+
+        /* ========== 英雄区动态统计 ========== */
+        function renderHeroStats() {
+            const box = document.getElementById('heroStats');
+            if (!box) return;
+            let today = 0, streak = 0, ach = 0;
+            try {
+                if (window.CY && CY.activity) { today = CY.activity.todayCount(); streak = CY.activity.streakDays(); }
+                ach = (CY.getUnlocked ? CY.getUnlocked() : []).length;
+            } catch (err) {}
+            box.innerHTML =
+                '<span class="stat-chip">🔥 今日灵感 ' + today + '</span>' +
+                '<span class="stat-chip">📅 连续活跃 ' + streak + ' 天</span>' +
+                '<span class="stat-chip">🏆 已点亮 ' + ach + ' / ' + (window.CY && CY.ACHIEVEMENTS ? CY.ACHIEVEMENTS.length : 12) + ' 徽章</span>';
+        }
+
+        /* ========== 跳转覆盖层 ========== */
+        let overlayTimer = null;
+        function showLoadingOverlay(url) {
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+            if (overlayTimer) clearTimeout(overlayTimer);
+            overlayTimer = setTimeout(() => {
+                overlay.classList.remove('active');
+                if (!url || url === '#') return;
+                const target = normalizeLink(url);
+                window.location.href = target;
+            }, 900);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderTools();
+            /* 工具卡是此刻才渲染出来的，common.js 的 boot 跑在前面，这里补挂跟随柔光 */
+            if (window.CY && CY.glass && CY.glass.enableTilt) {
+                CY.glass.enableTilt('.tool-box', { maxTilt: 7, lift: 8, zoom: 1.02 });
+            }
+            window.refreshTools = function (newConfig) {
+                if (newConfig && Array.isArray(newConfig)) {
+                    toolsConfig.length = 0;
+                    toolsConfig.push(...newConfig);
+                }
+                renderTools();
+            };
+        });
+
+        /* 公共函数挂到 window，供调试/后续扩展 */
+        if (!('normalizeLink' in window)) window.normalizeLink = normalizeLink;
+        if (!('createToolBox' in window)) window.createToolBox = createToolBox;
+        if (!('renderTools' in window)) window.renderTools = renderTools;
+        if (!('showLoadingOverlay' in window)) window.showLoadingOverlay = showLoadingOverlay;
+    </script>
+
+</body>
+</html>

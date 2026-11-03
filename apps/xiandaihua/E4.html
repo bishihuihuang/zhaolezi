@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>提示词实验室 - 现代化·知识学习站</title>
+<meta name="description" content="提示词实验室：按场景点选组件，自动组装成一条完整的五要素提示词，一键复制去 AI 工具里用。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    #lab { width: 100%; }
+    .lab-card {
+        background: var(--card-2); border: 2px solid var(--line); border-radius: 16px;
+        padding: 18px 20px; margin-top: 16px;
+    }
+    .lab-field { margin-bottom: 14px; }
+    .lab-field label { display: block; font-size: 13px; font-weight: 800; color: var(--blue); margin-bottom: 6px; }
+    .lab-field select, .lab-field textarea, .lab-field input {
+        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+        font-size: 14px; background: var(--card); color: var(--txt); outline: none; box-sizing: border-box;
+    }
+    .lab-field select:focus, .lab-field textarea:focus, .lab-field input:focus {
+        border-color: var(--blue); box-shadow: 0 0 0 3px rgba(102, 126, 234, .2);
+    }
+    .lab-hint { font-size: 12px; color: var(--dim); margin-top: 5px; }
+    .role-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip {
+        border: 1px solid var(--line); background: var(--card); color: var(--txt);
+        padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all .2s;
+    }
+    .chip:hover { border-color: var(--blue); color: var(--blue); }
+    .chip.on { background: var(--btn-grad); color: #fff; border-color: transparent; }
+    #labOut {
+        width: 100%; min-height: 150px; border: 1px solid var(--line); border-radius: 10px;
+        padding: 12px; font-size: 14px; line-height: 1.8; background: var(--card); color: var(--txt);
+        box-sizing: border-box; outline: none;
+    }
+    .lab-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .lab-preview { margin-top: 8px; font-size: 12px; color: var(--dim); }
+</style>
+</head>
+<body data-page="E4.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块E · 如何使用 AI</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">🧪 提示词实验室</h1>
+        <p class="lesson-sub">模块E · 第 4 课 | 组装式提示词生成器</p>
+
+        <div class="callout info">
+            <b>怎么玩</b>
+            选一个场景，填好<strong>角色 / 任务 / 上下文 / 格式</strong>四块积木，点「生成提示词」，把成品复制到任何 AI 对话框使用。参考 E2 的五要素，越具体效果越好。
+        </div>
+
+        <div id="lab">
+            <div class="lab-card">
+                <div class="lab-field">
+                    <label>① 场景模板（选一个，自动填好角色）</label>
+                    <select id="sceneSel">
+                        <option value="learn">学习提问：把概念讲明白</option>
+                        <option value="write">写文章：按受众产出</option>
+                        <option value="polish">改稿：保留原意改风格</option>
+                        <option value="plan">做计划：表格化任务安排</option>
+                        <option value="debug">代码排错：报错秒懂</option>
+                        <option value="custom">自定义：从零组装</option>
+                    </select>
+                </div>
+                <div class="lab-field">
+                    <label>② 角色（AI 以什么身份回答你）</label>
+                    <input id="roleIn" type="text" placeholder="例：一位耐心的初中数学老师">
+                    <div class="role-chips" id="roleChips">
+                        <span class="chip">耐心的老师</span>
+                        <span class="chip">资深编辑</span>
+                        <span class="chip">求职辅导师</span>
+                        <span class="chip">健身教练</span>
+                        <span class="chip">Python 导师</span>
+                        <span class="chip">产品经理</span>
+                    </div>
+                </div>
+                <div class="lab-field">
+                    <label>③ 任务（要 AI 做什么？带上约束）</label>
+                    <input id="taskIn" type="text" placeholder="例：用 200 字以内的通俗语言解释「量子纠缠」，并给 1 个生活例子">
+                    <div class="lab-hint">动词开头 + 字数/条数/风格等约束，效果最好。</div>
+                </div>
+                <div class="lab-field">
+                    <label>④ 上下文（给 AI 喂背景 / 原材料）</label>
+                    <textarea id="ctxIn" rows="3" placeholder="例：我是零基础的初中生；目标读者是 55 岁阿姨；粘贴你的原稿…"></textarea>
+                </div>
+                <div class="lab-field">
+                    <label>⑤ 格式（输出长什么样）</label>
+                    <select id="fmtSel">
+                        <option value="分点列出">分点列出，每点不超过 20 字</option>
+                        <option value="表格">用 Markdown 表格输出</option>
+                        <option value="段落">连贯段落，不用编号</option>
+                        <option value="代码">只输出代码，不加解释</option>
+                        <option value="自由">自由发挥</option>
+                    </select>
+                </div>
+                <div class="lab-row">
+                    <button class="btn" id="genBtn">⚡ 生成提示词</button>
+                    <button class="btn btn-secondary" id="copyBtn">📋 复制成品</button>
+                </div>
+                <div class="lab-field" style="margin-top:14px;">
+                    <label>生成的提示词</label>
+                    <textarea id="labOut" readonly placeholder="点「生成提示词」后，成品会出现在这里…"></textarea>
+                </div>
+                <div class="lab-preview" id="labNote"></div>
+            </div>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="E3.html">AI 工具地图与工作流</a> · 下一课：<a href="E5.html">测验：如何使用 AI</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* ============================================================
+ * 提示词实验室（页面内联脚本，立即执行）
+ * 场景模板 + 角色/任务/上下文/格式 四块积木组装五要素提示词，
+ * 生成与复制均在本地完成，不依赖网络
+ * ============================================================ */
+(function () {
+    var sceneSel = document.getElementById('sceneSel');
+    var roleIn = document.getElementById('roleIn');
+    var taskIn = document.getElementById('taskIn');
+    var ctxIn = document.getElementById('ctxIn');
+    var fmtSel = document.getElementById('fmtSel');
+    var labOut = document.getElementById('labOut');
+    var labNote = document.getElementById('labNote');
+    var genBtn = document.getElementById('genBtn');
+    var copyBtn = document.getElementById('copyBtn');
+
+    var SCENES = {
+        learn: { role: '一位耐心的初中数学老师，讲解要通俗，避免术语堆砌', task: '用通俗的语言解释「这里填概念」，并给 1 个生活中的例子' },
+        write: { role: '资深新媒体编辑，擅长面向大众写文章', task: '写一篇关于「这里填主题」的短文，受众是普通读者，结尾给一个行动号召' },
+        polish: { role: '资深中文编辑，润色文字但绝不改变原意', task: '帮我改下面这段文字，要求更口语化、更有感情' },
+        plan: { role: '效率规划师，擅长把目标拆成可执行任务', task: '帮我制定一个「这里填目标」的 7 天计划，每天安排具体任务' },
+        debug: { role: '经验丰富的程序员，解释报错简洁准确', task: '我运行代码报错：请解释原因并给出修复代码，不要长篇大论' },
+        custom: { role: '', task: '' }
+    };
+
+    function onScene() {
+        var s = SCENES[sceneSel.value];
+        if (s && s.role) roleIn.value = s.role;
+        if (s && s.task) taskIn.value = s.task;
+        if (sceneSel.value !== 'custom') { ctxIn.placeholder = '例：我是零基础的初中生；目标读者是 55 岁阿姨；粘贴你的原稿…'; }
+    }
+    sceneSel.addEventListener('change', onScene);
+
+    var chips = document.querySelectorAll('.chip');
+    chips.forEach(function (c) {
+        c.addEventListener('click', function () {
+            chips.forEach(function (x) { x.classList.remove('on'); });
+            c.classList.add('on');
+            roleIn.value = c.textContent;
+        });
+    });
+
+    function build() {
+        var role = roleIn.value.trim();
+        var task = taskIn.value.trim();
+        var ctx = ctxIn.value.trim();
+        var fmt = fmtSel.value === '自由' ? '' : fmtSel.value;
+        if (!task) { labOut.value = ''; labNote.textContent = '任务还没填哦，至少写一句「要 AI 做什么」。'; return; }
+        var parts = [];
+        if (role) parts.push('【角色】' + role);
+        parts.push('【任务】' + task);
+        if (ctx) parts.push('【上下文】' + ctx);
+        if (fmt) parts.push('【格式】' + fmt);
+        labOut.value = parts.join('\n');
+        labNote.textContent = '已按五要素组装，共 ' + parts.length + ' 个组件；复制后去 AI 对话框粘贴即可。';
+    }
+    genBtn.addEventListener('click', build);
+    copyBtn.addEventListener('click', function () {
+        if (!labOut.value) { build(); if (!labOut.value) return; }
+        if (window.XD && XD.copy) XD.copy(labOut.value, '提示词已复制，去 AI 工具粘贴吧 ✨');
+    });
+
+    onScene();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>快捷键练习器 - 现代化·知识学习站</title>
+<meta name="description" content="真实按键判定的快捷键练习器：出题-按键-即时判分，虚拟键盘高亮提示，连击与错题本，支持入门/进阶/系统三级训练。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    /* 本页专属布局 */
+    .trainer-panel { background: var(--card-2); border: 2px solid var(--line); border-radius: var(--radius); padding: 20px; margin: 16px 0; text-align: center; position: relative; }
+    .trainer-panel .action-name { font-size: clamp(24px, 5vw, 40px); font-weight: 900; color: var(--gold); margin: 8px 0 4px; letter-spacing: 2px; }
+    .trainer-panel .action-keys { min-height: 34px; font-size: 15px; color: var(--dim); margin-bottom: 6px; }
+    .trainer-panel .state-msg { font-size: 15px; font-weight: 700; min-height: 24px; }
+    .trainer-panel .state-msg.ok { color: var(--green); }
+    .trainer-panel .state-msg.bad { color: var(--red); }
+    .trainer-panel .os-tip { font-size: 12.5px; color: var(--dim); margin-top: 6px; }
+    .mode-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 12px 0; }
+    .err-list { margin-top: 10px; }
+    .err-item { display: flex; align-items: center; gap: 10px; background: var(--card-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; margin: 6px 0; font-size: 14px; }
+    .err-item .k { font-family: Consolas, monospace; color: var(--gold); font-weight: 700; }
+    .err-item button { margin-left: auto; }
+</style>
+</head>
+<body data-page="D3.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块D · 键盘与快捷键</span>
+</header>
+
+<nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">⌨️ 快捷键练习器</h1>
+        <p class="lesson-sub">模块D · 第 4 课 | 看动作 → 按组合键，练成肌肉记忆</p>
+
+        <div class="callout info">
+            <b>🎮 怎么练</b>
+            屏幕给出一个动作（如「复制」），直接在键盘上按下对应组合键（如 <kbd>Ctrl</kbd>+<kbd>C</kbd>），系统即时判定。虚拟键盘会高亮提示该按的键。带 ⚠ 的题是操作系统级组合键（浏览器拦不住），请改用<strong>点击虚拟键盘上的按键</strong>作答后点「确认」。进度与错题自动记录，成绩计入<a href="41.html">学习仪表盘</a>。
+        </div>
+
+        <div class="mode-row">
+            <button class="btn green" data-mode="1">入门（基础操作）</button>
+            <button class="btn" data-mode="2">进阶（浏览器与编辑）</button>
+            <button class="btn" data-mode="3">系统级 ⚠</button>
+            <button class="btn ghost" data-mode="0">混合全部</button>
+            <button class="btn ghost" id="challengeBtn">⏱ 60 秒挑战</button>
+        </div>
+
+        <div class="stat-row" id="statRow">
+            <div class="stat-cell"><b id="stScore">0</b><span>本轮答对</span></div>
+            <div class="stat-cell"><b id="stCombo">0</b><span>当前连击</span></div>
+            <div class="stat-cell"><b id="stBest">0</b><span>最高连击</span></div>
+            <div class="stat-cell"><b id="stWrong">0</b><span>本轮答错</span></div>
+            <div class="stat-cell"><b id="stTotal">0</b><span>累计答对（总）</span></div>
+            <div class="stat-cell"><b id="stTime">--</b><span>剩余时间</span></div>
+        </div>
+
+        <div class="trainer-panel">
+            <div style="font-size:13px;color:var(--dim);">请按出这个动作的快捷键：</div>
+            <div class="action-name" id="actionName">点击上方任一模式开始</div>
+            <div class="action-keys" id="actionKeys"></div>
+            <div class="state-msg" id="stateMsg"></div>
+            <div class="os-tip" id="osTip"></div>
+            <div class="mode-row" id="clickRow" style="display:none;">
+                <button class="btn green" id="confirmBtn">✔ 确认</button>
+                <button class="btn ghost" id="clearBtn">清空</button>
+            </div>
+        </div>
+
+        <h2>虚拟键盘</h2>
+        <p style="color:var(--dim);font-size:13.5px;">金色发光 = 需要按的键；系统级题目可点击按键作答（修饰键可反复点击切换）。</p>
+        <div class="vk" id="vk"><!-- JS 渲染 --></div>
+
+        <h2 style="margin-top:26px;">📕 我的错题本</h2>
+        <p style="color:var(--dim);font-size:13.5px;">答错的组合会记在这里，点击「练它」单独强化；答对后自动移出。</p>
+        <div class="err-list" id="errList"><p style="color:var(--dim);">暂无错题，继续保持！</p></div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>下一课：<a href="D4.html">打字速度测试</a></span>
+        </div>
+    </article>
+</main>
+
+<script>
+(function () {
+    /* ========== 题库（os:true 表示操作系统级，浏览器无法拦截，须点虚拟键盘作答） ========== */
+    var BANK = [
+        // 入门
+        { t: '复制', keys: ['Ctrl', 'C'], lv: 1 },
+        { t: '剪切', keys: ['Ctrl', 'X'], lv: 1 },
+        { t: '粘贴', keys: ['Ctrl', 'V'], lv: 1 },
+        { t: '撤销上一步', keys: ['Ctrl', 'Z'], lv: 1 },
+        { t: '全选', keys: ['Ctrl', 'A'], lv: 1 },
+        { t: '保存', keys: ['Ctrl', 'S'], lv: 1 },
+        { t: '查找', keys: ['Ctrl', 'F'], lv: 1 },
+        { t: '打印', keys: ['Ctrl', 'P'], lv: 1 },
+        { t: '刷新页面', keys: ['F5'], lv: 1 },
+        { t: '取消 / 关闭弹窗', keys: ['Esc'], lv: 1 },
+        // 进阶
+        { t: '重做（恢复撤销）', keys: ['Ctrl', 'Y'], lv: 2 },
+        { t: '加粗文字', keys: ['Ctrl', 'B'], lv: 2 },
+        { t: '斜体文字', keys: ['Ctrl', 'I'], lv: 2 },
+        { t: '打开新标签页', keys: ['Ctrl', 'T'], lv: 2 },
+        { t: '恢复刚关闭的标签页', keys: ['Ctrl', 'Shift', 'T'], lv: 2 },
+        { t: '无痕模式新窗口', keys: ['Ctrl', 'Shift', 'N'], lv: 2 },
+        { t: '查看下载内容', keys: ['Ctrl', 'J'], lv: 2 },
+        { t: '查看历史记录', keys: ['Ctrl', 'H'], lv: 2 },
+        { t: '打开开发者工具', keys: ['F12'], lv: 2 },
+        { t: '浏览器全屏切换', keys: ['F11'], lv: 2 },
+        { t: '文件重命名（资源管理器）', keys: ['F2'], lv: 2 },
+        { t: '新建文件夹', keys: ['Ctrl', 'Shift', 'N'], lv: 2 },
+        // 系统级
+        { t: '切换窗口', keys: ['Alt', 'Tab'], lv: 3, os: true },
+        { t: '永久删除（跳过回收站）', keys: ['Shift', 'Delete'], lv: 3, os: true },
+        { t: '显示桌面', keys: ['Win', 'D'], lv: 3, os: true },
+        { t: '打开资源管理器', keys: ['Win', 'E'], lv: 3, os: true },
+        { t: '锁定电脑', keys: ['Win', 'L'], lv: 3, os: true },
+        { t: '截图工具（区域截图）', keys: ['Win', 'Shift', 'S'], lv: 3, os: true },
+        { t: '打开"运行"对话框', keys: ['Win', 'R'], lv: 3, os: true },
+        { t: '打开设置', keys: ['Win', 'I'], lv: 3, os: true },
+        { t: '打开任务管理器', keys: ['Ctrl', 'Shift', 'Esc'], lv: 3, os: true },
+        { t: '切换输入语言', keys: ['Win', 'Space'], lv: 3, os: true }
+    ];
+
+    var MODIFIERS = ['Ctrl', 'Win', 'Alt', 'Shift'];
+
+    /* ========== 虚拟键盘布局 ========== */
+    var ROWS = [
+        [['Esc', ''], ['1'], ['2'], ['3'], ['4'], ['5'], ['6'], ['7'], ['8'], ['9'], ['0'], ['-'], ['='], ['⌫ 退格', 'wide']],
+        [['Tab', 'wide'], ['Q'], ['W'], ['E'], ['R'], ['T'], ['Y'], ['U'], ['I'], ['O'], ['P'], ['['], [']'], ['\\']],
+        [['Caps 大写', 'wide'], ['A'], ['S'], ['D'], ['F'], ['G'], ['H'], ['J'], ['K'], ['L'], [';'], ["'"], ['⏎ 回车', 'wide']],
+        [['Shift', 'xw'], ['Z'], ['X'], ['C'], ['V'], ['B'], ['N'], ['M'], [','], ['.'], ['/'], ['Shift', 'xw']],
+        [['Ctrl', 'wide'], ['Win', 'wide'], ['Alt', 'wide'], ['Space 空格', 'xw'], ['Alt', 'wide'], ['Ctrl', 'wide'], ['←'], ['↑'], ['↓'], ['→']]
+    ];
+
+    /* ========== 本地存储 ========== */
+    function loadStats() {
+        try { return JSON.parse(localStorage.getItem('xd_shortcut_stats_v1')) || { total: 0, best60: 0 }; } catch (e) { return { total: 0, best60: 0 }; }
+    }
+    function saveStats(s) { try { localStorage.setItem('xd_shortcut_stats_v1', JSON.stringify(s)); } catch (e) {} }
+    function loadErr() {
+        try { return JSON.parse(localStorage.getItem('xd_shortcut_err_v1')) || []; } catch (e) { return []; }
+    }
+    function saveErr(a) {
+        try { localStorage.setItem('xd_shortcut_err_v1', JSON.stringify(a)); } catch (e) {}
+        try { if (window.XD) XD.emit('shortcut.errbook', {}); } catch (e) {}
+    }
+
+    /* ========== 状态 ========== */
+    var S = {
+        mode: 0, cur: null, score: 0, combo: 0, best: 0, wrong: 0,
+        held: [], clicked: [], timer: null, left: 0, challenge: false,
+        stats: loadStats()
+    };
+
+    var el = function (id) { return document.getElementById(id); };
+
+    function norm(e) {
+        var k = e.key;
+        if (k === 'Control') return 'Ctrl';
+        if (k === 'Meta') return 'Win';
+        if (k === ' ') return 'Space';
+        if (k === 'Escape') return 'Esc';
+        if (k === 'Backspace') return '⌫ 退格';
+        if (k === 'Enter') return '⏎ 回车';
+        if (k === 'CapsLock') return 'Caps 大写';
+        if (k === 'Tab') return 'Tab';
+        if (k === 'ArrowLeft') return '←';
+        if (k === 'ArrowRight') return '→';
+        if (k === 'ArrowUp') return '↑';
+        if (k === 'ArrowDown') return '↓';
+        if (k === 'Delete') return 'Del';
+        if (k.length === 1) {
+            var up = k.toUpperCase();
+            if (/[A-Z0-9]/.test(up)) return up;
+            if (k === '\\') return '\\';
+            if (k === '-') return '-';
+            if (k === '=') return '=';
+            if (k === '[') return '[';
+            if (k === ']') return ']';
+            if (k === ';') return ';';
+            if (k === "'") return "'";
+            if (k === ',') return ',';
+            if (k === '.') return '.';
+            if (k === '/') return '/';
+        }
+        if (/^F\d{1,2}$/.test(k)) return k;
+        return null;
+    }
+
+    /* ========== 渲染虚拟键盘 ========== */
+    function buildVK() {
+        var vk = el('vk');
+        var html = '';
+        for (var r = 0; r < ROWS.length; r++) {
+            html += '<div class="vk-row">';
+            for (var i = 0; i < ROWS[r].length; i++) {
+                var k = ROWS[r][i][0], cls = ROWS[r][i][1] || '';
+                html += '<div class="vk-key ' + cls + '" data-k="' + k + '">' + k + '</div>';
+            }
+            html += '</div>';
+        }
+        vk.innerHTML = html;
+        vk.addEventListener('click', function (e) {
+            var key = e.target.closest ? e.target.closest('.vk-key') : null;
+            if (!key) return;
+            var name = key.getAttribute('data-k');
+            if (!S.cur || !S.cur.os) { flashKey(name); return; }
+            // 点按作答模式
+            if (MODIFIERS.indexOf(name) >= 0 || name === 'Space 空格') {
+                var nm = name === 'Space 空格' ? 'Space' : name;
+                var ix = S.clicked.indexOf(nm);
+                if (ix >= 0) S.clicked.splice(ix, 1); else S.clicked.push(nm);
+            } else {
+                var plain = name.split(' ')[0];
+                S.clicked = S.clicked.filter(function (x) { return MODIFIERS.indexOf(x) < 0 && x !== 'Space'; });
+                S.clicked.push(plain);
+            }
+            renderVK();
+        });
+    }
+
+    function renderVK() {
+        var keys = document.querySelectorAll('#vk .vk-key');
+        var need = S.cur ? S.cur.keys : [];
+        var clickMark = S.cur && S.cur.os ? S.clicked : [];
+        for (var i = 0; i < keys.length; i++) {
+            var name = keys[i].getAttribute('data-k');
+            var plain = name.split(' ')[0];
+            var needHit = need.indexOf(plain) >= 0 || need.indexOf(name) >= 0 || (plain === 'Space' && need.indexOf('Space') >= 0);
+            keys[i].classList.toggle('need', needHit);
+            keys[i].classList.remove('hit', 'miss');
+            if (clickMark.indexOf(plain) >= 0 || (name.indexOf(clickMark.join(' ')) >= 0 && clickMark.length && name !== '')) {
+                if (S.cur && S.cur.os && (name === 'Space 空格' ? clickMark.indexOf('Space') >= 0 : clickMark.indexOf(plain) >= 0)) keys[i].classList.add('hit');
+            }
+        }
+    }
+
+    function flashKey(name, ok) {
+        var keys = document.querySelectorAll('#vk .vk-key');
+        for (var i = 0; i < keys.length; i++) {
+            var plain = keys[i].getAttribute('data-k').split(' ')[0];
+            if (plain === name.split(' ')[0]) {
+                keys[i].classList.add(ok === false ? 'miss' : 'hit');
+                (function (k) { setTimeout(function () { k.classList.remove('hit', 'miss'); }, 350); })(keys[i]);
+            }
+        }
+    }
+
+    /* ========== 出题 ========== */
+    function next() {
+        var pool;
+        if (S.focusErr) {
+            pool = S.focusErr;
+        } else if (S.mode > 0) {
+            pool = BANK.filter(function (q) { return q.lv === S.mode; });
+        } else {
+            pool = BANK;
+        }
+        if (!pool.length) { S.focusErr = null; return next(); }
+        var q;
+        var guard = 0;
+        do {
+            q = pool[Math.floor(Math.random() * pool.length)];
+            guard++;
+        } while (pool.length > 1 && S.cur && q.t === S.cur.t && guard < 20);
+        S.cur = q;
+        S.held = [];
+        S.clicked = [];
+        el('actionName').textContent = q.t + (q.os ? ' ⚠' : '');
+        el('actionKeys').textContent = '';
+        var msg = el('stateMsg');
+        msg.textContent = '';
+        msg.className = 'state-msg';
+        el('osTip').textContent = q.os ? '⚠ 系统级组合键：浏览器拦不住它，请点击下方虚拟键盘上的按键拼出答案，再点「确认」。' : '直接在键盘上按出来即可（按错会立即判定）。';
+        el('clickRow').style.display = q.os ? 'flex' : 'none';
+        renderVK();
+    }
+
+    /* ========== 判定 ========== */
+    function judge(pressed, ok) {
+        var msg = el('stateMsg');
+        var keysStr = S.cur.keys.join(' + ');
+        if (ok) {
+            S.score++; S.combo++;
+            if (S.combo > S.best) S.best = S.combo;
+            S.stats.total++;
+            saveStats(S.stats);
+            // 错题答对移除
+            var errs = loadErr().filter(function (x) { return x.t !== S.cur.t; });
+            saveErr(errs);
+            msg.textContent = '✔ 正确！' + keysStr;
+            msg.className = 'state-msg ok';
+            S.cur.keys.forEach(function (k) { flashKey(k); });
+            if (window.XD) {
+                XD.studyLog.add({ type: 'shortcut', itemId: S.cur.t, mod: 'D' });
+                if (S.stats.total >= 10) XD.achieve.unlock('shortcut_10');
+                if (S.stats.total >= 50) XD.achieve.unlock('shortcut_50');
+            }
+            updateStats();
+            setTimeout(next, 550);
+        } else {
+            S.wrong++; S.combo = 0;
+            var errs2 = loadErr();
+            if (!errs2.some(function (x) { return x.t === S.cur.t; })) {
+                errs2.push({ t: S.cur.t, keys: S.cur.keys });
+                saveErr(errs2);
+            }
+            msg.textContent = '✘ 不对哦，正确答案是 ' + keysStr;
+            msg.className = 'state-msg bad';
+            S.cur.keys.forEach(function (k) { flashKey(k); });
+            S.cur.keys.forEach(function (k) {
+                var ks = document.querySelectorAll('#vk .vk-key');
+                for (var i = 0; i < ks.length; i++) {
+                    if (ks[i].getAttribute('data-k').split(' ')[0] === k) ks[i].classList.add('miss');
+                }
+            });
+            setTimeout(function () { renderVK(); }, 700);
+            updateStats();
+            setTimeout(next, 1400);
+        }
+        renderErr();
+    }
+
+    function sameSet(a, b) {
+        if (a.length !== b.length) return false;
+        var x = a.slice().sort(), y = b.slice().sort();
+        for (var i = 0; i < x.length; i++) if (x[i] !== y[i]) return false;
+        return true;
+    }
+
+    /* ========== 物理键盘监听 ========== */
+    document.addEventListener('keydown', function (e) {
+        if (!S.cur) return;
+        // 页面输入框中不作答
+        var tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
+        // 搜索框打开时不抢按键
+        if (document.querySelector('.xd-search-mask.open')) return;
+
+        if (S.cur.os) return; // 系统题等点击确认
+
+        var k = norm(e);
+        if (!k) return;
+        e.preventDefault();
+
+        if (S.held.indexOf(k) < 0) S.held.push(k);
+        // 每按一键先闪一下反馈
+        flashKey(k);
+
+        var need = S.cur.keys;
+        // 全部所需键已按下 → 判定
+        var allHeld = true;
+        for (var i = 0; i < need.length; i++) if (S.held.indexOf(need[i]) < 0) { allHeld = false; break; }
+        if (allHeld && S.held.length >= need.length) {
+            if (sameSet(S.held, need)) { judge(S.held, true); S.held = []; }
+            else { judge(S.held, false); S.held = []; }
+            return;
+        }
+        // 按了不在答案里的键 → 立即判错
+        for (var j = 0; j < S.held.length; j++) {
+            if (need.indexOf(S.held[j]) < 0) { judge(S.held, false); S.held = []; return; }
+        }
+    });
+    document.addEventListener('keyup', function (e) {
+        var k = norm(e);
+        if (!k) return;
+        var ix = S.held.indexOf(k);
+        if (ix >= 0) S.held.splice(ix, 1);
+    });
+
+    /* ========== 点击作答（系统题） ========== */
+    function confirmClick() {
+        if (!S.cur || !S.cur.os) return;
+        var plain = S.clicked.map(function (x) { return x; });
+        judge(plain, sameSet(plain, S.cur.keys));
+        S.clicked = [];
+    }
+
+    /* ========== 60 秒挑战 ========== */
+    function startChallenge() {
+        stopChallenge();
+        S.challenge = true;
+        S.score = 0; S.wrong = 0; S.combo = 0;
+        S.left = 60;
+        S.focusErr = null;
+        el('stTime').textContent = S.left;
+        S.timer = setInterval(function () {
+            S.left--;
+            el('stTime').textContent = S.left;
+            if (S.left <= 0) {
+                stopChallenge();
+                if (S.score > S.stats.best60) {
+                    S.stats.best60 = S.score;
+                    saveStats(S.stats);
+                }
+                updateStats();
+                var msg = el('stateMsg');
+                msg.textContent = '⏰ 时间到！本轮答对 ' + S.score + ' 题' +
+                    (S.score >= 12 ? '，手速飞快，已经是高手水平！'
+                        : S.score >= 8 ? '，不错！再练几轮，正确率会更高。'
+                        : '，刚开始都会慢——记住"慢就是快"，按准了再提速。');
+                msg.className = 'state-msg';
+                if (window.XD) XD.showToast('60秒挑战结束：答对 ' + S.score + ' 题');
+                S.cur = null;
+                el('actionName').textContent = '挑战结束，点上方按钮再来';
+            }
+        }, 1000);
+        next();
+    }
+    function stopChallenge() {
+        if (S.timer) { clearInterval(S.timer); S.timer = null; }
+        S.challenge = false;
+        el('stTime').textContent = '--';
+    }
+
+    /* ========== UI 刷新 ========== */
+    function updateStats() {
+        el('stScore').textContent = S.score;
+        el('stCombo').textContent = S.combo;
+        el('stBest').textContent = S.best;
+        el('stWrong').textContent = S.wrong;
+        el('stTotal').textContent = S.stats.total;
+    }
+    function renderErr() {
+        var box = el('errList');
+        var errs = loadErr();
+        if (!errs.length) { box.innerHTML = '<p style="color:var(--dim);">暂无错题，继续保持！</p>'; return; }
+        var html = '';
+        for (var i = 0; i < errs.length; i++) {
+            html += '<div class="err-item"><span>' + errs[i].t + '</span><span class="k">' + errs[i].keys.join('+') + '</span>' +
+                '<button class="btn ghost" style="padding:6px 14px;font-size:13px;" data-t="' + errs[i].t + '">练它</button></div>';
+        }
+        box.innerHTML = html;
+    }
+
+    /* ========== 初始化 ========== */
+    document.addEventListener('DOMContentLoaded', function () {
+        buildVK();
+        updateStats();
+        renderErr();
+
+        var modeBtns = document.querySelectorAll('[data-mode]');
+        for (var i = 0; i < modeBtns.length; i++) {
+            modeBtns[i].addEventListener('click', function () {
+                stopChallenge();
+                S.focusErr = null;
+                S.mode = +this.getAttribute('data-mode');
+                S.score = 0; S.wrong = 0; S.combo = 0;
+                updateStats();
+                next();
+            });
+        }
+        el('challengeBtn').addEventListener('click', startChallenge);
+        el('confirmBtn').addEventListener('click', confirmClick);
+        el('clearBtn').addEventListener('click', function () { S.clicked = []; renderVK(); });
+        el('errList').addEventListener('click', function (e) {
+            var b = e.target.closest ? e.target.closest('[data-t]') : null;
+            if (!b) return;
+            var t = b.getAttribute('data-t');
+            var errs = loadErr();
+            var q = null;
+            for (var j = 0; j < errs.length; j++) if (errs[j].t === t) q = errs[j];
+            if (!q) return;
+            stopChallenge();
+            S.focusErr = errs.filter(function (x) { return x.t === t; });
+            S.cur = null;
+            next();
+        });
+    });
+})();
+</script>
+</body>
+</html>

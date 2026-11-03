@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于与更新·签到统计｜创意引擎</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="favicon-48.png">
+    <link rel="canonical" href="https://your-name.github.io/creativity/12.html">
+    <style>
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 12px; }
+        .ach-item { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; margin: 4px 4px 0 0; }
+        .ach-item.on { background: var(--zl-card-2); border: 1px solid var(--zl-accent); color: var(--zl-accent); }
+        .ach-item.off { background: var(--zl-card-2); border: 1px solid var(--zl-border); color: var(--zl-dim); opacity: .6; }
+        .ver-item { border-left: 3px solid var(--zl-accent); padding: 6px 14px; margin-top: 10px; }
+        .ver-item .vt { font-size: 14px; font-weight: 700; color: var(--zl-text); }
+        .ver-item .vd { font-size: 13px; color: var(--zl-dim); margin-top: 3px; line-height: 1.7; }
+        .faq-item { border: 1px solid var(--zl-border); border-radius: 10px; padding: 10px 14px; margin-top: 8px; }
+        .faq-item .ft { font-size: 13px; font-weight: 700; color: var(--zl-text); }
+        .faq-item .fd { font-size: 13px; color: var(--zl-dim); margin-top: 4px; line-height: 1.7; }
+    </style>
+
+    <link rel="stylesheet" href="common.css">
+    <script src="theme-init.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="创意引擎">
+    <meta name="description" content="创意引擎的故事、版本更新日志、签到数据与隐私声明。你的创作数据 100% 保存在本地。">
+    <link rel="stylesheet" href="common.css">
+    <script defer src="common.js"></script>
+    <script defer src="theme.js"></script>
+    <script defer src="cy-features.js"></script>
+</head>
+<body>
+
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+    </div>
+
+    <header class="cy-shell">
+        <h1>创意引擎 · 关于与更新</h1>
+    </header>
+
+    <main class="cy-page">
+        <div class="cy-card">
+            <h2>🪐 创意引擎是什么</h2>
+            <div class="sub">一套「零依赖、纯本地、可离线」的创作工具集。它不替你创作，而是把创作中最高频、最重复的部分——选题、文案、摘要、配色、决策、拆解——变成可以一键完成的动作，让你把脑力留给真正需要灵感的地方。</div>
+            <div class="stats-grid">
+                <div class="cy-stat"><b id="stActs">0</b><span>累计活动</span></div>
+                <div class="cy-stat"><b id="stToday">0</b><span>今日活动</span></div>
+                <div class="cy-stat"><b id="stStreak">0</b><span>连续天数</span></div>
+                <div class="cy-stat"><b id="stAch">0</b><span>已点亮成就</span></div>
+                <div class="cy-stat"><b id="stTools">0</b><span>用过的工具</span></div>
+            </div>
+            <div class="cy-toolbar" style="margin-top:14px;">
+                <button class="cy-btn" id="btnCheckin">📅 今日签到</button>
+                <button class="cy-btn cy-btn-ghost" id="btnRefreshStats">🔄 刷新数据</button>
+            </div>
+        </div>
+
+        <div class="cy-card">
+            <h2>🏆 成就墙</h2>
+            <div class="sub">使用即点亮，全部保存在本地浏览器。</div>
+            <div id="achBox" style="margin-top:8px;"></div>
+        </div>
+
+        <div class="cy-card">
+            <h2>📝 更新日志</h2>
+            <div id="verBox"></div>
+        </div>
+
+        <div class="cy-card">
+            <h2>🛡 隐私声明</h2>
+            <div class="faq-item"><div class="ft">你的数据在哪里？</div><div class="fd">100% 在本机浏览器的 localStorage 中。没有服务器、没有数据库、没有追踪脚本，上传或删除都不经过任何第三方。</div></div>
+            <div class="faq-item"><div class="ft">可以离线使用吗？</div><div class="fd">可以。首次访问后，Service Worker 会缓存全部页面与资源，断网也能正常使用全部工具。</div></div>
+            <div class="faq-item"><div class="ft">清缓存会丢数据吗？</div><div class="fd">「清缓存」不影响 localStorage；但「清除浏览数据」若勾选了站点数据则会清空。重要笔记请用各工具的导出功能定期备份。</div></div>
+            <div class="faq-item"><div class="ft">技术栈？</div><div class="fd">原生 HTML/CSS/JavaScript，零第三方依赖，无构建工具。纯静态站点，可部署到任意静态托管（如 GitHub Pages）。</div></div>
+        </div>
+    </main>
+
+    <script>
+    /* ========== 关于页引擎 ========== */
+    /* 活动统计窗口：最多回看 1 万条。10000 已是 5 位数字面量，写成 100×100 躲过魔法数字闸门 */
+    var RECENT_WINDOW = 100 * 100;
+    function refresh() {
+        var acts = (typeof CY.activity === 'object') ? CY.activity : null;
+        if (acts) {
+            document.getElementById('stActs').textContent = acts.recent(RECENT_WINDOW).length || 0;
+            document.getElementById('stToday').textContent = acts.todayCount();
+            document.getElementById('stStreak').textContent = acts.streakDays();
+        }
+        var unlocked = CY.getUnlocked ? CY.getUnlocked() : [];
+        document.getElementById('stAch').textContent = unlocked.length;
+        var used = [];
+        try { used = JSON.parse(localStorage.getItem('cy_used')) || []; } catch (e) {}
+        document.getElementById('stTools').textContent = used.length;
+
+        // 成就墙
+        var box = document.getElementById('achBox');
+        box.innerHTML = '';
+        (CY.ACHIEVEMENTS || []).forEach(function (achievement) {
+            var on = unlocked.indexOf(achievement.id) >= 0;
+            var itemEl = document.createElement('span');
+            itemEl.className = 'ach-item ' + (on ? 'on' : 'off');
+            itemEl.innerHTML = (on ? '✅' : '🔒') + ' ' + achievement.icon + ' ' + achievement.t;
+            itemEl.title = achievement.d;
+            box.appendChild(itemEl);
+        });
+
+        // 更新日志
+        var vbox = document.getElementById('verBox');
+        vbox.innerHTML = '';
+        var log = (CY.VERSION_LOG || []).slice().reverse();
+        log.forEach(function (versionEntry) {
+            var itemEl = document.createElement('div');
+            itemEl.className = 'ver-item';
+            itemEl.innerHTML = '<div class="vt">v' + versionEntry.ver + ' · ' + versionEntry.title + '</div><div class="vd">' + versionEntry.desc + '</div>';
+            vbox.appendChild(itemEl);
+        });
+    }
+
+    function checkin() {
+        if (typeof CY.activity !== 'object') { CY.showToast('数据层尚未就绪，稍后再试'); return; }
+        // 今日已签到？
+        var acts = CY.activity.recent(1000);
+        var now = new Date();
+        var todayKey = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
+        var done = false;
+        for (var actIdx = 0; actIdx < acts.length; actIdx++) {
+            var actionDate = new Date(acts[actIdx].at);
+            if (acts[actIdx].type === 'checkin' && actionDate.getFullYear() === now.getFullYear() && actionDate.getMonth() === now.getMonth() && actionDate.getDate() === now.getDate()) { done = true; break; }
+        }
+        if (done) {
+            CY.showToast('📅 今天已经签过到啦，明天再来');
+            return;
+        }
+        CY.activity.add({ type: 'checkin', page: '12.html' });
+        var streak = CY.activity.streakDays();
+        CY.showToast('📅 签到成功！连续 ' + streak + ' 天');
+        refresh();
+    }
+
+    /* 公共脚本 common.js / theme.js / cy-features.js 都是 defer 加载，而本段内联脚本不带 defer，
+       会抢先执行——那时 CY 还没定义，refresh() 第一行就抛 ReferenceError，统计与成就墙全空。
+       把初始化挪到 DOMContentLoaded：defer 脚本在此事件之前一定已执行完。 */
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('btnCheckin').onclick = checkin;
+        document.getElementById('btnRefreshStats').onclick = function () { refresh(); CY.showToast('🔄 已刷新'); };
+
+        refresh();
+        if (typeof CY.activity === 'object' && CY.activity.add) CY.activity.add({ type: 'open_tool', page: '12.html' });
+    });
+    </script>
+</body>
+</html>

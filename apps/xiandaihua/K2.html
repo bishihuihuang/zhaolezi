@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Excel 入门 - 现代化·知识学习站</title>
+<meta name="description" content="用 Excel 做表格和算账：认识单元格、输入数据、自动求和、排序，把家里的账本和清单搬进电脑。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="K2.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块K · 办公与文档</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">Excel 入门</h1>
+        <p class="lesson-sub">K2 · Excel | 让表格帮你算账</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">Excel 是什么</a></li>
+                <li><a href="#s2">认识表格：行、列、单元格</a></li>
+                <li><a href="#s3">输入数据与自动求和</a></li>
+                <li><a href="#s4">排序：让数据排排队</a></li>
+                <li><a href="#s5">生活中的用途</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、Excel 是什么</h2>
+        <p><strong>Excel 是微软 Office 里的"表格软件"</strong>（免费替代是 WPS 表格）。它是一张巨大的网格纸，能放文字、数字，还能<strong>自动计算</strong>：记个家庭账本、做个通讯录、列一张购物清单，用它最合适。</p>
+        <div class="callout tip">
+            <b>💡 什么时候用 Excel？</b>
+            有<strong>规律的数据</strong>就用表格：账目、名单、时间表、统计数字。一列一列排整齐，还能自动算总和——比手写账本省心一万倍。
+        </div>
+
+        <h2 id="s2">二、认识表格：行、列、单元格</h2>
+        <p>打开 Excel，看到满屏的格子：</p>
+        <table class="xd-table">
+            <tr><th>概念</th><th>长什么样</th><th>打个比方</th></tr>
+            <tr><td>列</td><td>竖着的格子（顶部是 A、B、C…）</td><td>房间的一排柜子</td></tr>
+            <tr><td>行</td><td>横着的格子（左边是 1、2、3…）</td><td>柜子的一层搁板</td></tr>
+            <tr><td>单元格</td><td>一个格子，地址用"列+行"表示</td><td>柜子里的一个格口</td></tr>
+            <tr><td>活动单元格</td><td>当前选中的格子（有粗边框）</td><td>你正打开的那个格口</td></tr>
+        </table>
+        <p>操作要领：<strong>点哪个格子，字就输进哪个格子</strong>。比如点 B2（B 列第 2 行），再打字，内容就进 B2 了。输完按 <kbd>Enter</kbd> 跳到下一格，按 <kbd>Tab</kbd> 跳到右边一格。</p>
+
+        <h2 id="s3">三、输入数据与自动求和</h2>
+        <h3>做个买菜清单</h3>
+        <ol class="step-list">
+            <li>A1 输入"项目"，B1 输入"金额"（这是表头，说明每列是什么）。</li>
+            <li>往下填：A2"猪肉"、B2"35"；A3"鸡蛋"、B3"18"；A4"青菜"、B4"8"……</li>
+            <li>点 A5 输入"合计"，再点 B5。</li>
+            <li>点顶部工具栏的「<strong>Σ 自动求和</strong>」（或按住 B2 拖到 B4 选中后点 Σ）→ 回车。</li>
+            <li>B5 立刻显示总和——<strong>数字改了，总和自动跟着变</strong>。</li>
+        </ol>
+        <div class="callout info">
+            <b>🧠 Excel 的魔法：公式</b>
+            求和用的是"公式"（=SUM(B2:B4)）。你不需要懂公式，只要记住：<strong>想算总和，点 Σ 自动求和</strong>，Excel 帮你干最烦的算术。
+        </div>
+
+        <h2 id="s4">四、排序：让数据排排队</h2>
+        <p>想把通讯录按名字排、把账目按金额排？选中数据 → 点工具栏「<strong>排序</strong>」→ 选"升序/降序"：</p>
+        <ul>
+            <li><strong>升序</strong>：从小到大（数字 1→9，日期从前到后）。</li>
+            <li><strong>降序</strong>：从大到小。</li>
+            <li><strong>按谁排</strong>：排序前先点表头那一列（比如"金额"），Excel 知道按哪列排。</li>
+        </ul>
+        <div class="callout warn">
+            <b>⚠️ 排序前先选中全部数据</b>
+            只点一列排序，其他列不跟着动，表格就"错位"了。正确做法：<strong>选中整个数据区域</strong>（表头+所有行）再排序，让每一行整整齐齐一起动。
+        </div>
+
+        <h2 id="s5">五、生活中的用途</h2>
+        <table class="xd-table">
+            <tr><th>用途</th><th>怎么做</th></tr>
+            <tr><td>家庭账本</td><td>三列表：日期 / 项目 / 金额，每月底自动求和，月底对账一目了然</td></tr>
+            <tr><td>通讯录</td><td>四列表：姓名 / 电话 / 住址 / 备注；按姓名排序好查</td></tr>
+            <tr><td>吃药提醒表</td><td>列表：药名 / 每天几次 / 每次几片 / 注意事项，打印出来贴冰箱</td></tr>
+            <tr><td>旅行计划</td><td>列表：日期 / 行程 / 住宿 / 花费预算</td></tr>
+            <tr><td>同学聚会名单</td><td>列表：姓名 / 是否参加 / 联系电话，统计"参加人数"用求和或数数</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>💡 打印表格</b>
+            做好表格想打出来：点「文件 → 打印」，先<strong>预览</strong>看看排版，再点打印（K4 课细讲打印设置）。
+        </div>
+
+        <h2>本页小结</h2>
+        <ul>
+            <li>Excel 是"电子账本"：<strong>点哪个格子，字进哪个格子</strong>；顶部 A/B/C 是列，左边 1/2/3 是行。</li>
+            <li>算总和：点「<strong>Σ 自动求和</strong>」，数字变了总和自动更新。</li>
+            <li>排序要<strong>选中整个数据区域</strong>，防止表格错位。</li>
+            <li>家庭账本、通讯录、吃药表都是 Excel 的好用武之地。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后练习</b>
+            建一个"本月买菜账"，记录最近 7 天买菜花了多少钱，用自动求和算出总花费，再按金额从大到小排序——看看哪几天最"烧钱"。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="K.html">模块K 目录</a> · 上一课：<a href="K1.html">Word 入门</a> · 下一课：<a href="K3.html">PPT 入门</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

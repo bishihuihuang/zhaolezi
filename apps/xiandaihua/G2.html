@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>HTML 入门 - 现代化·知识学习站</title>
+<meta name="description" content="HTML 入门：标签语法、文档结构、常用标签（标题/段落/链接/图片/列表/表格/表单）、语义化与新手常见错误。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="G2.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块G · 怎么开发网页</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">HTML 入门</h1>
+        <p class="lesson-sub">模块G · 第 2 课 | 标签、结构与第一个页面</p>
+
+        <div class="toc">
+            <b>📑 本课目录</b>
+            <ol>
+                <li><a href="#s1">标签语法</a></li>
+                <li><a href="#s2">文档骨架</a></li>
+                <li><a href="#s3">常用标签</a></li>
+                <li><a href="#s4">属性和链接</a></li>
+                <li><a href="#s5">列表、表格与表单</a></li>
+                <li><a href="#s6">语义化</a></li>
+                <li><a href="#s7">新手常见错误</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、标签语法</h2>
+        <p>HTML 由<strong>标签（Tag）</strong>组成。绝大多数标签成对出现：开始标签 + 内容 + 结束标签：</p>
+        <div class="code-block"><pre>&lt;p&gt;这是一段文字。&lt;/p&gt;      ← 段落标签
+&lt;h1&gt;大标题&lt;/h1&gt;            ← 一级标题
+&lt;img src="a.png" alt="图"&gt;  ← 自闭合标签：没有结束标签，用属性给信息</pre></div>
+        <ul>
+            <li>结束标签在名字前加 <code>/</code>；标签可以嵌套（<code>&lt;p&gt;&lt;b&gt;加粗&lt;/b&gt;&lt;/p&gt;</code>）。</li>
+            <li>标签名不区分大小写，但惯例用小写。</li>
+        </ul>
+
+        <h2 id="s2">二、文档骨架</h2>
+        <div class="code-block"><pre>&lt;!DOCTYPE html&gt;                 ← 声明这是 HTML5
+&lt;html lang="zh-CN"&gt;              ← 根元素，lang 声明语言
+  &lt;head&gt;                         ← 头部：页面"元信息"（不显示在页面里）
+    &lt;meta charset="UTF-8"&gt;      ← 编码，中文不乱码的关键
+    &lt;title&gt;网页标题&lt;/title&gt;      ← 浏览器标签页上的名字
+  &lt;/head&gt;
+  &lt;body&gt;                         ← 主体：页面上能看到的所有内容
+    &lt;h1&gt;你好&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre></div>
+
+        <h2 id="s3">三、常用标签</h2>
+        <table class="xd-table">
+            <tr><th>标签</th><th>作用</th></tr>
+            <tr><td><code>&lt;h1&gt;~&lt;h6&gt;</code></td><td>标题，h1 最大；一页通常只用一个 h1</td></tr>
+            <tr><td><code>&lt;p&gt;</code></td><td>段落</td></tr>
+            <tr><td><code>&lt;a href="..."&gt;</code></td><td>超链接（点它跳转）</td></tr>
+            <tr><td><code>&lt;img src="..." alt="..."&gt;</code></td><td>图片，alt 是图片加载失败时/读屏软件读的文字</td></tr>
+            <tr><td><code>&lt;ul&gt;&lt;li&gt;</code></td><td>无序列表（圆点）</td></tr>
+            <tr><td><code>&lt;ol&gt;&lt;li&gt;</code></td><td>有序列表（数字）</td></tr>
+            <tr><td><code>&lt;strong&gt;</code> / <code>&lt;em&gt;</code></td><td>强调（粗体）/ 斜体</td></tr>
+            <tr><td><code>&lt;br&gt;</code></td><td>换行（自闭合）</td></tr>
+            <tr><td><code>&lt;div&gt;</code> / <code>&lt;span&gt;</code></td><td>无意义的"容器"，用来包住内容好加样式</td></tr>
+        </table>
+
+        <h2 id="s4">四、属性和链接</h2>
+        <p>属性写在开始标签里，格式 <code>属性名="值"</code>。最常用的是 <code>href</code>（链接目标）和 <code>src</code>（资源地址）：</p>
+        <div class="code-block"><pre>&lt;a href="https://github.com" target="_blank"&gt;打开 GitHub 新窗口&lt;/a&gt;
+&lt;a href="page2.html"&gt;本站内部页面跳转&lt;/a&gt;
+&lt;img src="images/me.png" alt="我的照片" width="200"&gt;</pre></div>
+        <div class="callout info">
+            <b>💡 绝对 vs 相对路径</b>
+            <code>https://.../xxx.png</code> 是绝对路径（完整网址）；<code>images/me.png</code> 是相对路径（相对当前文件位置）。做自己的站点基本都用相对路径，换域名不用改。
+        </div>
+
+        <h2 id="s5">五、列表、表格与表单</h2>
+        <div class="code-block"><pre>&lt;!-- 有序列表 --&gt;
+&lt;ol&gt;
+  &lt;li&gt;第一步&lt;/li&gt;
+  &lt;li&gt;第二步&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;!-- 表格 --&gt;
+&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;科目&lt;/th&gt;&lt;th&gt;分数&lt;/th&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;语文&lt;/td&gt;&lt;td&gt;95&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;!-- 表单（按钮） --&gt;
+&lt;button onclick="alert('你好！')"&gt;点我&lt;/button&gt;</pre></div>
+        <p>表格的 <code>tr</code> 是行、<code>th</code> 是表头、<code>td</code> 是单元格。本站的速查表（D2 系列）就是这么写的，按 F12 就能看到。</p>
+
+        <h2 id="s6">六、语义化</h2>
+        <p>用"有意义"的标签而不是清一色 <code>&lt;div&gt;</code>：<code>&lt;header&gt;</code>（页头）、<code>&lt;nav&gt;</code>（导航）、<code>&lt;main&gt;</code>（主体）、<code>&lt;footer&gt;</code>（页脚）。好处：搜索引擎更懂你的页面，读屏软件更好用，代码更易读。</p>
+
+        <h2 id="s7">七、新手常见错误</h2>
+        <table class="xd-table">
+            <tr><th>错误</th><th>后果</th><th>修法</th></tr>
+            <tr><td>忘记写 <code>&lt;meta charset="UTF-8"&gt;</code></td><td>中文乱码</td><td>head 里补上</td></tr>
+            <tr><td>结束标签漏写 <code>/</code></td><td>结构错乱、样式错位</td><td>养成标签成对写再填内容</td></tr>
+            <tr><td>嵌套交叉 <code>&lt;b&gt;&lt;i&gt;..&lt;/b&gt;&lt;/i&gt;</code></td><td>浏览器自动"猜"结构</td><td>先关内层再关外层</td></tr>
+            <tr><td>图片 src 写错路径</td><td>显示裂图</td><td>用相对路径并核对文件名/大小写</td></tr>
+        </table>
+
+        <h2>本课小结</h2>
+        <ul>
+            <li>HTML=结构；标签成对、可嵌套，属性写在开始标签。</li>
+            <li>骨架：DOCTYPE → html → head（meta/title）+ body。</li>
+            <li>常用标签练熟：h1~h6/p/a/img/ul/ol/table/button；多用语义化标签。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="G1.html">开发总览</a> · 下一课：<a href="G3.html">CSS 入门</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

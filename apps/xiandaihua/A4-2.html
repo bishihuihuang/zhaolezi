@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>字符编码 - 现代化·知识学习站</title>
+<meta name="description" content="字符编码：ASCII、GBK、Unicode、UTF-8 演变，一个字符占多少字节，乱码的真相与解决办法。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="A4-2.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块A · 计算机基础</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">字符编码</h1>
+        <p class="lesson-sub">A4-2 · 数据与二进制 | 乱码的真相：文字如何变成数字</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">文字进机器：先编号</a></li>
+                <li><a href="#s2">ASCII：英文的起点</a></li>
+                <li><a href="#s3">中文的本地编码：GBK</a></li>
+                <li><a href="#s4">Unicode：全球统一编号</a></li>
+                <li><a href="#s5">UTF-8：互联网事实标准</a></li>
+                <li><a href="#s6">乱码的真相与自救</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、文字进机器：先编号</h2>
+        <p>计算机只认数字。让"字"进机器，就得先给每个字发一个<strong>身份证号（编码）</strong>，再按号码存取。这套"字 ↔ 数字"的对照表，就是<strong>字符编码</strong>。一个问题随之而来：<strong>全世界这么多字，谁来编号？编号重复了怎么办？</strong>——这正是编码演进史的主线。</p>
+        <div class="flow-line">
+            <span class="node">你打"中"</span><span class="arr">→</span>
+            <span class="node">查编码表得数字</span><span class="arr">→</span>
+            <span class="node">数字存进硬盘</span><span class="arr">→</span>
+            <span class="node">读取时再查表还原"中"</span>
+        </div>
+
+        <h2 id="s2">二、ASCII：英文的起点</h2>
+        <p>1963 年美国制定 <strong>ASCII（美国信息交换标准代码）</strong>：给英文字母、数字、常用符号分配编号，共 <strong>128 个字符</strong>，正好用 1 个字节（7 位有效）装下。</p>
+        <table class="xd-table">
+            <tr><th>字符</th><th>十进制</th><th>二进制</th></tr>
+            <tr><td>A</td><td>65</td><td>01000001</td></tr>
+            <tr><td>a</td><td>97</td><td>01100001</td></tr>
+            <tr><td>0</td><td>48</td><td>00110000</td></tr>
+            <tr><td>空格</td><td>32</td><td>00100000</td></tr>
+        </table>
+        <p>记两个规律：大写 A 是 65，小写 a 是 97（差 32），数字 0 是 48。到现在，这些编号仍然是谁都不能动的"地基"。</p>
+
+        <h2 id="s3">三、中文的本地编码：GBK</h2>
+        <p>字符集只 128 个，装汉字远远不够——常用汉字就有 3000+。于是各国各搞各的：中国大陆制定了 <strong>GB2312 / GBK</strong>（简体中文，常用汉字用 2 字节 16 位表示），台湾有 Big5（繁体），日本有 Shift-JIS。</p>
+        <div class="callout warn">
+            <b>⚠️ 各说各话的代价</b>
+            同一个二进制数字 <code>D6D0</code>，用 GBK 解是"中"，用 Big5 解是另一个字。跨地区传文件，就开始出现<strong>乱码</strong>。
+        </div>
+
+        <h2 id="s4">四、Unicode：全球统一编号</h2>
+        <p>1991 年，<strong>Unicode 联盟</strong>推出 Unicode（统一码）：给<strong>全世界所有字符</strong>分配唯一编号。比如 A = U+0041，"中" = U+4E2D，emoji 😀 = U+1F600。它只负责"编号"，不管"怎么存"。但存法必须统一——否则编号一样、存取规则不同还是会乱。</p>
+
+        <h2 id="s5">五、UTF-8：互联网事实标准</h2>
+        <p><strong>UTF-8 是 Unicode 的存储方案</strong>，也是当今互联网事实标准（本站每个页面都写着 UTF-8）。巧妙之处：</p>
+        <ul>
+            <li><strong>兼容 ASCII</strong>：英文仍是 1 字节，和旧世界完全兼容。</li>
+            <li><strong>中文 3 字节</strong>：绝大多数汉字用 3 字节表示，根据首字节可自动判断字符长度。</li>
+            <li><strong>可变长</strong>：常用字符短、生僻字长，总体省空间。</li>
+        </ul>
+        <table class="xd-table">
+            <tr><th>字符</th><th>编码</th><th>UTF-8 字节</th></tr>
+            <tr><td>A（英文）</td><td>U+0041</td><td>1 字节：41</td></tr>
+            <tr><td>中（汉字）</td><td>U+4E2D</td><td>3 字节：E4 B8 AD</td></tr>
+            <tr><td>😀（emoji）</td><td>U+1F600</td><td>4 字节：F0 9F 98 80</td></tr>
+        </table>
+
+        <h2 id="s6">六、乱码的真相与自救</h2>
+        <div class="callout info">
+            <b>🧩 乱码 = 用错编码表</b>
+            乱码的本质是<strong>编码错配</strong>：文件用 UTF-8 写成，却被当成 GBK 打开，数字自然对不上号，于是出现"æµ‹è¯•"这类天书。
+        </div>
+        <p>自救三招：</p>
+        <ul>
+            <li><strong>换编码重开</strong>：记事本"文件 → 另存为"，下方"编码"选 UTF-8 保存；VS Code 右下角点编码 → "通过编码重新打开"。</li>
+            <li><strong>让工具自动识别</strong>：现代浏览器、编辑器多数能自动探测 UTF-8，乱码多补一个 <code>&lt;meta charset="UTF-8"&gt;</code> 就能好。</li>
+            <li><strong>统一规范</strong>：自己写文件、写网页一律 UTF-8，乱码与你无缘。</li>
+        </ul>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            为什么本站 index.html 的 <code>&lt;head&gt;</code> 第一行就是 <code>&lt;meta charset="UTF-8"&gt;</code>？删掉它再刷新页面看看会发生什么——你已经能解释了。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="A4.html">A4 子模块目录</a> · 下一节：<a href="A4-3.html">图片与声音的数字化</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

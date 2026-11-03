@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>调试与 F12 开发者工具 - 现代化·知识学习站</title>
+<meta name="description" content="调试与 F12 开发者工具：元素面板、控制台、网络面板、Sources 与断点调试，用真实网页练手。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="G5.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块G · 怎么开发网页</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">调试与 F12 开发者工具</h1>
+        <p class="lesson-sub">模块G · 第 5 课 | 元素、控制台与网络面板实战</p>
+
+        <div class="toc">
+            <b>📑 本课目录</b>
+            <ol>
+                <li><a href="#s1">F12 是什么</a></li>
+                <li><a href="#s2">Elements：看结构改样式</a></li>
+                <li><a href="#s3">Console：看日志找报错</a></li>
+                <li><a href="#s4">Network：看网络请求</a></li>
+                <li><a href="#s5">Sources 与断点</a></li>
+                <li><a href="#s6">真机演练</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、F12 是什么</h2>
+        <p>浏览器自带的<strong>开发者工具（DevTools）</strong>，按 <kbd>F12</kbd> 或 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> 打开。它不是黑客工具，而是每个开发者的"手术室"——本站特意不屏蔽右键和 F12，就是鼓励你大胆拆解。</p>
+
+        <h2 id="s2">二、Elements：看结构改样式</h2>
+        <ul>
+            <li>鼠标移到页面元素上点右键 → "检查"，直接定位到它的 HTML。</li>
+            <li>左侧是 DOM 树（结构），右侧是 Styles（应用的 CSS 规则）。</li>
+            <li><strong>可以在右侧临时改样式</strong>（比如把颜色改一下）——刷新前一直生效，是调样式的神器。</li>
+            <li>左上角箭头按钮（Ctrl+Shift+C）可点选页面任意元素直接定位。</li>
+        </ul>
+
+        <h2 id="s3">三、Console：看日志找报错</h2>
+        <ul>
+            <li>红色 = 报错（点右侧文件名/行号跳过去）。</li>
+            <li>黄色 = 警告（不致命但要注意）。</li>
+            <li>你也可以直接在 Console 敲 JS 试运行，比如输入 <code>1+1</code> 回车。</li>
+        </ul>
+        <div class="code-block"><pre>// 判断一个元素存不存在
+document.getElementById('xxx')  // 返回 null 就是没找到
+typeof 42                        // "number"</pre></div>
+
+        <h2 id="s4">四、Network：看网络请求</h2>
+        <ul>
+            <li>打开 Network 面板后刷新页面，能看到每个文件（html/css/js/图片）的加载情况。</li>
+            <li><strong>红色条目 = 加载失败</strong>，Status 404 就说明文件路径错了——排查"样式没生效""图片裂了"必看。</li>
+            <li>本站是静态站，你会看到 common.css、xd-features.js 等全部请求成功才算健康。</li>
+        </ul>
+
+        <h2 id="s5">五、Sources 与断点</h2>
+        <p>想知道"这段 JS 到底执行到哪一步了"，用<strong>断点</strong>：</p>
+        <div class="step-list">
+            <div class="step">Sources 面板打开要调试的 .js 文件。</div>
+            <div class="step">点行号左侧设置断点（出现红点）。</div>
+            <div class="step">重新触发该段代码（如点击按钮），执行会停在断点，逐行查看变量值。</div>
+        </div>
+        <p>调试按钮：<strong>继续</strong>、<strong>单步执行</strong>、<strong>进入/跳出函数</strong>。断点是排查"逻辑 bug"最有效的武器。</p>
+
+        <h2 id="s6">六、真机演练</h2>
+        <ol>
+            <li>打开本站任一页，F12 → Elements，用箭头工具点一下右上角"首页"链接，看看它的 HTML 和样式。</li>
+            <li>Console 里输入 <code>XD.progress.overall()</code> 回车——能看到你的学习总进度（想不通的查 xd-features.js）。</li>
+            <li>Network 刷新本页，确认 favicon.svg 等资源全部 200。</li>
+            <li>把页面缩到手机宽度（DevTools 里的设备模拟图标），体验响应式布局。</li>
+        </ol>
+        <div class="callout tip">
+            <b>💡 记住口诀</b>
+            "样式不对 → Elements 改着看；脚本报错 → Console 找行号；资源没加载 → Network 查 404；逻辑想不通 → Sources 下断点。"
+        </div>
+
+        <h2>本课小结</h2>
+        <ul>
+            <li>Elements 看结构改样式；Console 看日志找报错。</li>
+            <li>Network 查资源加载，红色条目=失败。</li>
+            <li>Sources 断点逐行调试，是排查逻辑 bug 的核心手段。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="G4.html">JavaScript 入门</a> · 下一课：<a href="G6.html">实战：个人主页开发与发布</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

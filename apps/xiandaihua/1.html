@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>全站目录树 - 现代化·知识学习站</title>
+<meta name="description" content="现代化学习站全站目录树：十四大模块及其全部子模块层层展开，点击任意节点直达，进度一目了然。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    /* 目录树专属 */
+    .tree { margin: 10px 0; }
+    .tree-node { margin: 4px 0; }
+    .tree-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--card-2); border: 1px solid var(--line); flex-wrap: wrap; }
+    .tree-row:hover { border-color: var(--gold); }
+    .tree-row .t-icon { font-size: 18px; }
+    .tree-row a { font-weight: 700; }
+    .tree-row .t-d { color: var(--dim); font-size: 12.5px; flex: 1; min-width: 140px; }
+    .tree-row .t-p { font-size: 12px; font-weight: 800; color: var(--btn-txt); background: var(--btn-grad); border-radius: 999px; padding: 2px 10px; }
+    .tree-row .t-p.done { background: var(--back-grad); }
+    .tree-kids { margin: 4px 0 4px 26px; padding-left: 12px; border-left: 2px solid var(--line); }
+    .tree-toggle { border: none; background: transparent; cursor: pointer; font-size: 12px; color: var(--dim); padding: 2px 6px; }
+</style>
+</head>
+<body data-page="1.html" data-kind="dir">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">🗂 全站目录树</span>
+</header>
+
+<main>
+    <div class="container">
+        <h1 class="lesson-title">全站目录树</h1>
+        <p class="lesson-sub">十四大模块 → 子模块 → 子子模块……层层展开，点任意名称直达</p>
+
+        <div class="callout info">
+            <b>📌 结构说明</b>
+            带 <b>📁</b> 标记的是<strong>目录页</strong>：点进去还能看到更细分的子模块；带 📖/📝/🧪 的是<strong>内容页</strong>（图文课/测验/互动工具）。目录可以套目录（系统支持最多 10 层），右侧百分比是该分支的完成度。
+        </div>
+
+        <div class="tree" id="tree"><!-- JS 渲染 --></div>
+    </div>
+</main>
+
+<script>
+/* ============================================================
+ * 全站目录树（页面内联脚本）
+ * 递归展开 XD.TREE：目录/内容页辨识、完成度百分比、叶子统计
+ * ============================================================ */
+(function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        if (!window.XD) return;
+        var wrap = document.getElementById('tree');
+        if (!wrap) return;
+
+        function renderNode(nd, depth) {
+            var isDir = nd.children && nd.children.length;
+            var p = XD.progress.nodeProgress(nd);
+            var icon = nd.icon || (isDir ? '📁' : nd.quiz ? '📝' : nd.tool ? '🧪' : '📖');
+            var html = '<div class="tree-node">';
+            html += '<div class="tree-row">';
+            html += '<span class="t-icon">' + icon + '</span>';
+            html += '<a href="' + nd.f + '">' + XD.escapeHtml(nd.n) + '</a>';
+            html += '<span class="t-p' + (p === 100 ? ' done' : '') + '">' + (p === 100 ? '✅ 100%' : p + '%') + '</span>';
+            if (nd.d) html += '<span class="t-d">' + XD.escapeHtml(nd.d) + '</span>';
+            if (isDir) html += '<span style="font-size:12px;color:var(--dim);">' + XD.leafCount(nd) + ' 页</span>';
+            html += '</div>';
+            if (isDir) {
+                html += '<div class="tree-kids">';
+                for (var i = 0; i < nd.children.length; i++) {
+                    html += renderNode(nd.children[i], depth + 1);
+                }
+                html += '</div>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        var html = '';
+        for (var i = 0; i < XD.TREE.length; i++) {
+            html += renderNode(XD.TREE[i], 0);
+        }
+        wrap.innerHTML = html;
+    });
+})();
+</script>
+</body>
+</html>

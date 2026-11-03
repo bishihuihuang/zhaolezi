@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>开发总览 - 现代化·知识学习站</title>
+<meta name="description" content="开发总览：HTML/CSS/JS 三件套分工、浏览器如何渲染网页、开发工具推荐与文件组织方式。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="G1.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块G · 怎么开发网页</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">开发总览</h1>
+        <p class="lesson-sub">模块G · 第 1 课 | 三件套分工、工具与文件组织</p>
+
+        <div class="toc">
+            <b>📑 本课目录</b>
+            <ol>
+                <li><a href="#s1">网页的骨架：三件套</a></li>
+                <li><a href="#s2">浏览器是怎么把代码变成页面的</a></li>
+                <li><a href="#s3">需要什么工具</a></li>
+                <li><a href="#s4">文件怎么组织</a></li>
+                <li><a href="#s5">第一个"能打开的网页"</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、网页的骨架：三件套</h2>
+        <table class="xd-table">
+            <tr><th>技术</th><th>类比</th><th>负责什么</th><th>文件后缀</th></tr>
+            <tr><td>HTML</td><td>骨架 / 结构</td><td>标题、段落、按钮、图片这些"内容元素"</td><td>.html</td></tr>
+            <tr><td>CSS</td><td>皮肤 / 样式</td><td>颜色、字体、大小、间距、布局"长得好看"</td><td>.css</td></tr>
+            <tr><td>JavaScript</td><td>肌肉 / 行为</td><td>点击、弹窗、数据变化、动画等"互动"</td><td>.js</td></tr>
+        </table>
+        <div class="flow-line">
+            <span class="node">HTML<br>（有什么）</span><span class="arr">+</span>
+            <span class="node">CSS<br>（长什么样）</span><span class="arr">+</span>
+            <span class="node">JS<br>（能干什么）</span><span class="arr">=</span>
+            <span class="node">网页</span>
+        </div>
+        <p>你正在看的本站就是三件套写出来的：页面结构是 HTML，渐变背景和卡片样式是 CSS，模块树、进度、测验都是 JavaScript。</p>
+
+        <h2 id="s2">二、浏览器是怎么把代码变成页面的</h2>
+        <ol>
+            <li><strong>请求</strong>：你输入网址，浏览器向服务器要回 HTML 文件。</li>
+            <li><strong>解析</strong>：浏览器把 HTML 读成结构树（DOM），遇到 <code>&lt;link&gt;</code> 再拉 CSS，遇到 <code>&lt;script&gt;</code> 再拉 JS。</li>
+            <li><strong>渲染</strong>：按 CSS 规则画出来；JS 运行后还能改结构、改样式、响应你的点击。</li>
+        </ol>
+        <div class="callout info">
+            <b>💡 本站就是例子</b>
+            打开本站任选一课，按 <kbd>F12</kbd> 切到 Elements 面板，就能看到页面真实的 DOM 结构——这正是 G5 的预习。
+        </div>
+
+        <h2 id="s3">三、需要什么工具</h2>
+        <ul>
+            <li><strong>编辑器</strong>：VS Code（免费、最主流）或记事本也够用起步。装个中文界面/自动补全插件体验更好。</li>
+            <li><strong>浏览器</strong>：Chrome / Edge 都行，F12 开发者工具是调试利器。</li>
+            <li><strong>本地服务器（进阶）</strong>：用 VS Code 的 Live Server 插件，能即时预览改动（本站纯静态也能直接双击打开）。</li>
+        </ul>
+
+        <h2 id="s4">四、文件怎么组织</h2>
+        <div class="code-block"><pre>my-site/
+├── index.html      ← 入口页（网页必须有它）
+├── style.css       ← 样式
+├── script.js       ← 行为
+└── images/         ← 图片文件夹</pre></div>
+        <p>规则很简单：<strong>一个页面一个 .html</strong>，公共样式/脚本拆出来共用一个 .css / .js。本站就是这么组织的——每个模块一课一个 html，公共样式都在 common.css。</p>
+
+        <h2 id="s5">五、第一个"能打开的网页"</h2>
+        <p>新建一个 <code>index.html</code>，粘贴下面内容，双击用浏览器打开：</p>
+        <div class="code-block"><pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;我的第一个网页&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;你好，世界！&lt;/h1&gt;
+  &lt;p&gt;这是我写的第一行网页。&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div>
+        <div class="callout tip">
+            <b>💡 看到了什么</b>
+            <code>&lt;h1&gt;</code> 是大标题，<code>&lt;p&gt;</code> 是段落，<code>&lt;meta charset="UTF-8"&gt;</code> 保证中文不乱码（A4 那课提过）。下一课 G2 逐个讲这些标签。
+        </div>
+
+        <h2>本课小结</h2>
+        <ul>
+            <li>三件套：HTML 结构、CSS 样式、JS 行为。</li>
+            <li>浏览器：请求 → 解析 → 渲染，JS 还能动态改页面。</li>
+            <li>工具：VS Code + 浏览器即可；一个页面一个 html，公共样式拆出来。</li>
+        </ul>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>下一课：<a href="G2.html">HTML 入门</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本课无额外交互逻辑 */
+</script>
+</body>
+</html>

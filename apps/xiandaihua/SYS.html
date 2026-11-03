@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>学习系统 - 现代化·知识学习站</title>
+<meta name="description" content="学习系统：学习仪表盘、成就徽章墙、测验中心与错题本——把每天的积累看得见。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="zoom-capture.js"></script>
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="SYS.html" data-kind="dir">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">学习系统</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">📊 学习系统</h1>
+        <p class="lesson-sub">进度、成就与错题，都替你记着</p>
+
+        <div class="callout info">
+            <b>这里不讲课，只看你的成长</b>
+            <strong>学习仪表盘</strong>（41）把你读过的每一页、做过的每次测验聚合成进度和连续天数；<strong>成就徽章墙</strong>（42）把学习路上的里程碑变成 24 枚徽章；<strong>测验中心与错题本</strong>（43）汇总十三套模块测验入口，并把做错的题收集起来供你复习。
+        </div>
+
+        <div class="card-grid" id="dir">
+            <!-- 子模块由 JS 渲染 -->
+        </div>
+    </article>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.XD && XD.renderDir) XD.renderDir('dir', 'SYS');
+});
+</script>
+</body>
+</html>

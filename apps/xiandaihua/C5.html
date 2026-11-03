@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>网站托管与 GitHub Pages - 现代化·知识学习站</title>
+<meta name="description" content="网站托管与 GitHub Pages：什么是托管、托管方式对比（虚拟主机/云服务器/静态托管）、GitHub Pages 免费托管静态网站、自定义域名。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+</head>
+<body data-page="C5.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块C · 网络与服务器</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">网站托管与 GitHub Pages</h1>
+        <p class="lesson-sub">C5 · 网络与服务器 | 把网站"放到网上"的三种姿势</p>
+
+        <div class="toc">
+            <b>📑 本页目录</b>
+            <ol>
+                <li><a href="#s1">什么叫"托管"</a></li>
+                <li><a href="#s2">三大托管方式对比</a></li>
+                <li><a href="#s3">GitHub Pages：免费静态托管</a></li>
+                <li><a href="#s4">Pages 如何使用（概念版）</a></li>
+                <li><a href="#s5">自定义域名</a></li>
+                <li><a href="#s6">选型决策表</a></li>
+            </ol>
+        </div>
+
+        <h2 id="s1">一、什么叫"托管"</h2>
+        <p>把网站文件放到一台 24 小时在线的机器上并让人能访问，就是<strong>托管（Hosting）</strong>。本质=处理三件事：<strong>存放文件、分配地址（域名/IP）、带宽传输</strong>。你不需要自己买服务器，向托管商"租地方"即可。</p>
+
+        <h2 id="s2">二、三大托管方式对比</h2>
+        <table class="xd-table">
+            <tr><th>方式</th><th>适合</th><th>价格</th><th>你要做</th></tr>
+            <tr><td>静态托管平台（GitHub Pages/Netlify/Vercel）</td><td>纯 HTML/CSS/JS 的静态站</td><td>常免费</td><td>上传文件，平台分发 CDN</td></tr>
+            <tr><td>虚拟主机/空间</td><td>个人站、企业小站</td><td>几十元/年</td><td>FTP 传文件，面板管理</td></tr>
+            <tr><td>云服务器（自己装环境）</td><td>动态站、高自定义</td><td>几十~几百元/月</td><td>装系统、装 Nginx/程序、维护安全</td></tr>
+        </table>
+        <div class="callout info">
+            <b>💡 本站的答案</b>
+            本站是纯静态站，所以选<strong>GitHub Pages</strong>：免费、全球 CDN 加速、带 HTTPS 证书，还和学习链（F/G 模块）本地闭环——你即将会亲手发布它。
+        </div>
+
+        <h2 id="s3">三、GitHub Pages：免费静态托管</h2>
+        <p><strong>GitHub Pages</strong> 是 GitHub 免费提供的静态网站托管：把你仓库里的文件，通过 <code>用户名.github.io/仓库名/</code> 变成可访问的网站。</p>
+        <ul>
+            <li>1GB 空间、每月 100GB 流量以内全免费，个人/开源项目完全够用。</li>
+            <li>自动配 HTTPS 证书（地址带锁），每人有 <code>用户名.github.io</code> 这个"个人网盘域名"。</li>
+            <li>天然和 Git 绑定：<strong>代码一推送，网站自动更新</strong>（构建发布流水线，F/G 模块实战）。</li>
+            <li>还能配合 Jekyll 模板、子路径部署、自定义域名。</li>
+        </ul>
+
+        <h2 id="s4">四、Pages 如何使用（概念版）</h2>
+        <ol class="step-list">
+            <li class="step"><strong>建仓库</strong>：GitHub 新建仓库，名字取 <code>仓库名</code>（如 xiandaihua）。</li>
+            <li class="step"><strong>推代码</strong>：把网站根目录文件提交并推送到仓库（F 模块实际操作）。</li>
+            <li class="step"><strong>开 Pages</strong>：仓库 Settings → Pages → 选择分支（main + 根目录）→ Save。</li>
+            <li class="step"><strong>等 1-2 分钟</strong>，访问 <code>https://用户名.github.io/仓库名/</code>，上线！</li>
+        </ol>
+        <div class="callout tip">
+            <b>💡 两种 Pages 地址</b>
+            仓库名若是 <code>用户名.github.io</code>，网站地址就是根域名（无子路径）；其他仓库名则是 <code>用户名.github.io/仓库名/</code>。本站构建脚本的 SITE_BASE 就是按后者配置的。
+        </div>
+
+        <h2 id="s5">五、自定义域名</h2>
+        <p>想用你自己的域名（如 myname.com）替代 xxx.github.io？两步：<strong>① 到域名商加一条 DNS 记录（CNAME），指向 用户名.github.io；② 在仓库 Settings → Pages → Custom domain 里填上你的域名</strong>，GitHub 会自动签发证书。一般个人站免费托管 + 便宜域名（几十元/年）就够。</p>
+
+        <h2 id="s6">六、选型决策表</h2>
+        <table class="xd-table">
+            <tr><th>我的网站是</th><th>推荐托管</th><th>理由</th></tr>
+            <tr><td>个人主页/文档/简历</td><td>GitHub Pages / Netlify</td><td>免费 + 秒级上线</td></tr>
+            <tr><td>带联系表单的小站</td><td>静态托管 + 表单服务</td><td>不必买服务器</td></tr>
+            <tr><td>需要登录/数据库</td><td>云服务器</td><td>动态能力自建</td></tr>
+            <tr><td>公司官网、量大稳定</td><td>云厂商托管服务</td><td>SLA 保障 + 售后</td></tr>
+        </table>
+        <div class="callout tip">
+            <b>🤔 课后思考</b>
+            既然 GitHub Pages 免费又好用，为什么企业还要花钱买服务器？——因为动态功能、数据库、合规（国内备案）、定制能力它给不了。免费是"够用"，不是"万能"。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>返回：<a href="C.html">模块C 目录</a> · 下一步：<a href="C6.html">模块C 结业测验</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* 本页无额外交互逻辑 */
+</script>
+</body>
+</html>

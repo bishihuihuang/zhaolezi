@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>测验中心与错题本 - 现代化·知识学习站</title>
+<meta name="description" content="测验中心与错题本：十三套模块测验一键直达，做错的题自动收进错题本，随时复习、单独删除或全部清空。">
+<link rel="icon" href="favicon.svg">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    .quiz-centers { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 14px; }
+    .qc-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; display: block; text-decoration: none; transition: transform .15s ease, box-shadow .15s ease; }
+    .qc-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, .12); }
+    .qc-card b { display: block; font-size: 15px; color: var(--txt); margin-bottom: 4px; }
+    .qc-card .sub { font-size: 12.5px; color: var(--dim); }
+    .qc-card .score { display: inline-block; margin-top: 8px; font-size: 12.5px; font-weight: 700; padding: 2px 10px; border-radius: 10px; background: rgba(102, 126, 234, .12); color: var(--blue); }
+    .qc-card .score.best { background: rgba(38, 198, 138, .14); color: var(--green); }
+    .qc-card .score.fail { background: rgba(229, 57, 53, .13); color: var(--red); }
+    .errbook { margin-top: 22px; }
+    .err-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .err-count { font-size: 13px; color: var(--dim); }
+    .err-item { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-top: 12px; }
+    .err-q { font-size: 14.5px; font-weight: 700; color: var(--txt); margin-bottom: 8px; }
+    .err-q .q-tag { display: inline-block; font-size: 11.5px; font-weight: 700; color: var(--blue); background: rgba(102, 126, 234, .12); padding: 1px 8px; border-radius: 8px; margin-right: 8px; }
+    .err-opts { margin: 0; padding: 0; list-style: none; }
+    .err-opts li { font-size: 13.5px; padding: 5px 10px; border-radius: 8px; margin: 4px 0; background: var(--card-2); color: var(--txt); }
+    .err-opts li.right { background: rgba(38, 198, 138, .14); color: var(--green); font-weight: 700; }
+    .err-opts li.yours { background: rgba(229, 57, 53, .13); color: var(--red); text-decoration: line-through; }
+    .err-exp { font-size: 13px; color: var(--dim); background: rgba(102, 126, 234, .08); border-left: 3px solid var(--blue); padding: 8px 12px; border-radius: 0 8px 8px 0; margin-top: 10px; }
+    .err-ops { margin-top: 10px; display: flex; gap: 8px; }
+    .btn-danger { background: rgba(229, 57, 53, .9); color: #fff; }
+    .btn-danger:hover { background: rgba(229, 57, 53, 1); }
+</style>
+</head>
+<body data-page="43.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="index.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">学习系统 · 测验</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">📝 测验中心与错题本</h1>
+        <p class="lesson-sub">十三个模块测验全在这里，做错的题自动进错题本</p>
+
+        <div class="callout info">
+            <b>怎么用？</b>
+            每个模块学完后，到对应测验页考一次：<strong>60 分以上算通过</strong>，考得差随时可以重做（成绩只记最好的一次）。做错的题会自动进入下面的错题本，可以<strong>逐题删除</strong>或<strong>一键清空</strong>。键盘模块（D）没有测验，以<strong>快捷键练习器</strong>和<strong>打字测试</strong>代替考核，记得去 <a href="D3.html">练习器</a> 和 <a href="D4.html">打字测试</a> 练练手。
+        </div>
+
+        <h2 style="margin-top:18px;">🧪 十三套模块测验</h2>
+        <div class="quiz-centers" id="quizCenters"></div>
+
+        <div class="errbook">
+            <div class="err-head">
+                <h2 style="margin:0;">📕 错题本</h2>
+                <span class="err-count" id="errCount"></span>
+            </div>
+            <div style="margin-top:8px;" id="errList"></div>
+            <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;" id="errActions"></div>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>❌ 错题会一直保留，直到你删掉</span>
+            <span>仪表盘：<a href="41.html">看成绩</a> · 成就墙：<a href="42.html">看徽章</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/* ============================================================
+ * 测验中心与错题本（页面内联脚本）
+ * 十三套测验直达卡片（含最高分标记）+ 错题本：逐题删除、一键清空
+ * ============================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.XD || !XD.quiz) return;
+    var QUIZ_MAP = [
+        { id: 'A', f: 'A5.html', n: '计算机基础', sub: '12 题 · 模块A' },
+        { id: 'B', f: 'B7.html', n: '电脑使用', sub: '12 题 · 模块B' },
+        { id: 'C', f: 'C6.html', n: '网络与服务器', sub: '10 题 · 模块C' },
+        { id: 'E', f: 'E5.html', n: '如何使用 AI', sub: '8 题 · 模块E' },
+        { id: 'F', f: 'F7.html', n: 'Git 与 GitHub', sub: '10 题 · 模块F' },
+        { id: 'G', f: 'G7.html', n: '怎么开发网页', sub: '10 题 · 模块G' },
+        { id: 'H', f: 'H6.html', n: '手机与平板', sub: '10 题 · 模块H' },
+        { id: 'I', f: 'I6.html', n: '微信与生活服务', sub: '10 题 · 模块I' },
+        { id: 'J', f: 'J7.html', n: '网络安全与防诈骗', sub: '10 题 · 模块J' },
+        { id: 'K', f: 'K6.html', n: '办公与文档', sub: '10 题 · 模块K' },
+        { id: 'L', f: 'L6.html', n: '网上购物与现代消费', sub: '10 题 · 模块L' },
+        { id: 'M', f: 'M7.html', n: '数字生活进阶', sub: '10 题 · 模块M' },
+        { id: 'N', f: 'N7.html', n: '旅游与出行', sub: '10 题 · 模块N' }
+    ];
+    var all = XD.quiz.results();
+
+    var qc = document.getElementById('quizCenters');
+    var html = '';
+    for (var i = 0; i < QUIZ_MAP.length; i++) {
+        var qm = QUIZ_MAP[i];
+        var r = all[qm.id] || null;
+        var tag;
+        if (!r) tag = '<span class="score">未开始</span>';
+        else if (r.score >= 60) tag = '<span class="score best">✅ ' + r.score + ' 分 · ' + r.right + '/' + r.total + '</span>';
+        else tag = '<span class="score fail">' + r.score + ' 分 · 未通过</span>';
+        html += '<a class="qc-card" href="' + qm.f + '"><b>' + qm.n + '</b><span class="sub">' + qm.sub + '</span>' + tag + '</a>';
+    }
+    qc.innerHTML = html;
+
+    function renderErrs() {
+        var errs = XD.quiz.errItems();
+        var count = document.getElementById('errCount');
+        count.textContent = '共 ' + errs.length + ' 道错题';
+        var box = document.getElementById('errList');
+        var acts = document.getElementById('errActions');
+        if (!errs.length) {
+            box.innerHTML = '<div class="callout tip" style="margin-top:12px;"><b>🎉 错题本是空的</b>做测验时答错的题会自动出现在这里。没有错题，说明你掌握得很扎实。</div>';
+            acts.innerHTML = '';
+            return;
+        }
+        var h = '';
+        for (var e = 0; e < errs.length; e++) {
+            var it = errs[e];
+            h += '<div class="err-item" data-qid="' + XD.escapeHtml(it.qid) + '">' +
+                '<div class="err-q"><span class="q-tag">' + XD.escapeHtml(it.quizTitle || it.qid) + '</span>' + XD.escapeHtml(it.q) + '</div>' +
+                '<ul class="err-opts">';
+            for (var o = 0; o < it.opts.length; o++) {
+                var cls = o === it.a ? 'right' : '';
+                if (o === it.a && it.yourPick != null && o === it.yourPick) cls = 'right yours';
+                h += '<li class="' + cls + '">' + String.fromCharCode(65 + o) + '. ' + XD.escapeHtml(it.opts[o]) + (o === it.a ? ' ✅' : '') + '</li>';
+            }
+            h += '</ul>';
+            if (it.exp) h += '<div class="err-exp">💡 ' + XD.escapeHtml(it.exp) + '</div>';
+            h += '<div class="err-ops"><button class="btn btn-danger err-del" data-qid="' + XD.escapeHtml(it.qid) + '">🗑️ 删掉这道</button></div></div>';
+        }
+        box.innerHTML = h;
+        acts.innerHTML = '<button class="btn btn-danger" id="errClear">🗑️ 清空全部错题</button>';
+
+        box.querySelectorAll('.err-del').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                XD.quiz.removeErr(btn.getAttribute('data-qid'));
+                renderErrs();
+            });
+        });
+        var clearBtn = document.getElementById('errClear');
+        if (clearBtn) clearBtn.addEventListener('click', function () {
+            if (window.confirm('确定清空全部错题吗？此操作不可恢复。')) {
+                XD.quiz.clearErr();
+                renderErrs();
+            }
+        });
+    }
+    renderErrs();
+    if (XD.on) XD.on('errbook.changed', renderErrs);
+});
+</script>
+</body>
+</html>
