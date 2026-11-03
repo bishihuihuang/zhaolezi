@@ -251,10 +251,18 @@
 // V259：2026-11-01 自动构建（公共层/页面更新，缓存随构建递增）
 // V260：2026-11-01 自动构建（公共层/页面更新，缓存随构建递增）
 // V261：2026-11-01 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v261';
+// V262：2026-11-04 自动构建（公共层/页面更新，缓存随构建递增）
+// V263：2026-11-04 V2.7.0 四站并入（apps/ 四站入口页入预缓存）
+// V264：2026-11-04 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v264';
 const ASSETS = [
   './',
   './index.html',
+  // V2.7.0 四站并入：apps/ 四站入口页（子目录静态站，内部资源走运行时缓存）
+  './apps/ai-prompts/index.html',
+  './apps/xiandaihua/index.html',
+  './apps/creativity/index.html',
+  './apps/all-file-saver/index.html',
   // V2.3.3 顶层精简：业务页迁 pages/（index.html 留根，PWA start_url 与站点根 URL 不变）；
   // cache.addAll 全成功或全失败，任一路径写错则 SW 无法安装，故与目录搬迁同提交修改
   './pages/1.html', './pages/2.html', './pages/3.html', './pages/4.html', './pages/5.html', './pages/6.html',
