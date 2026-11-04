@@ -22,42 +22,6 @@
     var panel = null;
 
     /* ---- 字号调节 A− / A / A+（持久化 xd_font_scale，0.8–1.4，默认 1） ---- */
-    var FS_KEY = 'xd_font_scale';
-    var fScale = parseFloat(localStorage.getItem(FS_KEY));
-    if (isNaN(fScale) || fScale < 0.8 || fScale > 1.4) fScale = 1;
-    function clampFont(s) {
-        return Math.min(1.4, Math.max(0.8, Math.round(s * 10) / 10));
-    }
-    function applyFont(s) {
-        fScale = clampFont(s);
-        document.documentElement.style.setProperty('--font-scale', fScale);
-        try { localStorage.setItem(FS_KEY, String(fScale)); } catch (e) {}
-        try {
-            if (window.XD && XD.showToast) {
-                XD.showToast('🔠 字号 ' + Math.round(fScale * 100) + '%（' + (fScale === 1 ? '默认' : fScale > 1 ? '放大' : '缩小') + '）', 1800);
-            }
-        } catch (e) {}
-    }
-    function buildFontBox() {
-        // 每次注入前先移除旧的，防止重复初始化
-        var old = document.getElementById('xdFontBtns');
-        if (old && old.parentNode) old.parentNode.removeChild(old);
-        var box = document.createElement('div');
-        box.id = 'xdFontBtns';
-        box.className = 'xd-font-box';
-        box.setAttribute('role', 'group');
-        box.setAttribute('aria-label', '字号调节');
-        box.innerHTML = '<button class="xd-font-btn" type="button" data-f="-0.1" title="减小字号">A−</button>' +
-                        '<button class="xd-font-btn" type="button" data-f="0" title="恢复默认字号">A</button>' +
-                        '<button class="xd-font-btn" type="button" data-f="0.1" title="增大字号">A+</button>';
-        box.addEventListener('click', function (e) {
-            var b = e.target.closest('.xd-font-btn');
-            if (!b) return;
-            var d = parseFloat(b.getAttribute('data-f'));
-            applyFont(d === 0 ? 1 : fScale + d);
-        });
-        document.body.appendChild(box);
-    }
 
     /* ---- 自定义背景：应用已存图片 / 上传新图压缩入库 ---- */
     function applyCustomBg() {
@@ -180,11 +144,36 @@
         document.body.appendChild(panel);
     }
 
-    /* ---- 入口：应用主题字号 → 两个悬浮按钮 → 面板 → 外点关闭 ---- */
+    /* ---- 入口：应用主题 → 右上导航双键 → 两个悬浮按钮 → 面板 → 外点关闭 ---- */
+    /* ---- 右上角导航双键（sticky 顶栏下方、滚动跟随）：返回上一页 + 返回找乐子导航站 ----
+     * 主站键用 <a href="../../index.html">，由统一跳转 hook 拦截播放与主站一致的转场动画；
+     * 返回键走 history.back()，无历史时回落到本站目录页。 ---- */
+    function buildNavKeys() {
+        if (document.getElementById('xdNavKeys')) return;
+        var wrap = document.createElement('div');
+        wrap.id = 'xdNavKeys';
+        wrap.style.cssText = 'position:fixed;top:74px;right:16px;z-index:2147483000;display:flex;flex-direction:column;gap:10px;';
+        var back = document.createElement('button');
+        back.id = 'xdBackBtn';
+        back.title = '返回上一页';
+        back.setAttribute('aria-label', '返回上一页');
+        back.textContent = '←';
+        back.style.cssText = 'width:44px;height:44px;border-radius:50%;border:1px solid rgba(110,110,180,.25);background:rgba(255,255,255,.92);color:#23263a;font-size:20px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(20,26,46,.22);user-select:none;-webkit-user-select:none;';
+        back.onclick = function () { if (history.length > 1) history.back(); else location.href = 'index.html'; };
+        var home = document.createElement('a');
+        home.id = 'xdHomeBtn';
+        home.title = '返回找乐子导航站';
+        home.setAttribute('aria-label', '返回找乐子导航站');
+        home.textContent = '🏠';
+        home.href = '../../index.html';
+        home.style.cssText = 'width:44px;height:44px;border-radius:50%;border:1px solid rgba(110,110,180,.25);background:rgba(255,255,255,.92);color:#23263a;font-size:20px;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 6px 18px rgba(20,26,46,.22);user-select:none;-webkit-user-select:none;';
+        wrap.appendChild(back);
+        wrap.appendChild(home);
+        document.body.appendChild(wrap);
+    }
     function init() {
         apply(current);
-        applyFont(fScale);
-        buildFontBox();
+        buildNavKeys();
         var btn = document.createElement('div');
         btn.id = 'xdThemeBtn';
         btn.title = '切换主题';

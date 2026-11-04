@@ -2,7 +2,7 @@
 // 策略：导航请求（页面）网络优先保证新版本；静态资源缓存优先加快加载。
 // 警告：ASSETS 清单与 CACHE_VERSION 由 _构建.js 自动生成/升版，请勿手改版本号。
 // BUILD:CACHE_VERSION_START
-const CACHE_VERSION = 'xd-v71';
+const CACHE_VERSION = 'xd-v72';
 // BUILD:CACHE_VERSION_END
 // BUILD:ASSETS_START
 const ASSETS = [

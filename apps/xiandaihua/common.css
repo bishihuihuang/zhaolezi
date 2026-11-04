@@ -453,7 +453,7 @@ kbd { display: inline-block; padding: 2px 9px; border-radius: 7px; border: 1px s
 
 /* 打印（教学页可打印讲义） */
 @media print {
-    .bg-animation, .site-header, .lesson-nav, .overlay, #xdThemeBtn, #xdAdmireBtn, .to-top, .xd-font-box { display: none !important; }
+    .bg-animation, .site-header, .lesson-nav, .overlay, #xdThemeBtn, #xdAdmireBtn, .to-top { display: none !important; }
     body { background: #fff; color: #000; }
     .container { box-shadow: none; width: 100%; }
 }
@@ -577,15 +577,9 @@ a:focus-visible, button:focus-visible, .quiz-opt:focus-visible, .btn:focus-visib
 .guide-dots i.on { background: var(--gold); width: 22px; border-radius: 999px; }
 
 /* 字号调节按钮组（theme.js A−/A+ 注入） */
-.xd-font-box { position: fixed; bottom: 76px; left: 20px; z-index: 2147483001; display: flex; flex-direction: column; align-items: stretch; gap: 6px; width: 44px;
-    background: rgba(18, 22, 44, .92); padding: 6px; border-radius: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); }
-.xd-font-btn { width: 100%; min-height: 34px; border: none; border-radius: 9px; cursor: pointer; font-family: inherit;
-    font-weight: 800; font-size: 13px; color: var(--btn-txt); background: var(--btn-grad); transition: transform .15s; }
-.xd-font-btn:hover { transform: translateY(-1px); }
 
 @media (max-width: 768px) {
     .to-top { right: 12px; bottom: 72px; width: 40px; height: 40px; font-size: 17px; }
-    .xd-font-box { left: 12px; bottom: 72px; }
     .speak-bar { bottom: 120px; }
 }
 
@@ -627,7 +621,7 @@ a:focus-visible, button:focus-visible, .quiz-opt:focus-visible, .btn:focus-visib
 @media print {
     body { background: #fff !important; }
     .bg-animation, .site-header, .crumbs, .lesson-nav, .lesson-footer, .to-top, .page-actions,
-    .speak-bar, .eye-tip, .copy-btn, .xd-font-box, .guide-mask, .xd-search-mask, .xd-search-box,
+    .speak-bar, .eye-tip, .copy-btn, .guide-mask, .xd-search-mask, .xd-search-box,
     .quiz-opt, .quiz-ctrl, .qr-actions, #xdPrevNext { display: none !important; }
     main { padding: 0 !important; display: block !important; }
     .container { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important;
@@ -814,7 +808,6 @@ body { line-height: 1.8; }
 }
 
 /* ---- 七、悬浮件归位：左下 欣赏/字号并排；右下 返回顶部/主题纵向错开 ---- */
-@media (min-width: 769px) { .xd-font-box { left: 76px; bottom: 20px; } }
 
 /* ---- 八、全主题双色系收敛：--gold-grad 一律"主题金→次金"两段 ---- */
 :root[data-theme="blue"] { --gold-grad: linear-gradient(135deg, var(--gold), var(--gold-2)); }
