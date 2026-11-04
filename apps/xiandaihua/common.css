@@ -173,7 +173,7 @@ button, .btn, [class*="btn"], .quiz-opt, .xd-theme-item { min-width: 44px; min-h
 @keyframes orbRotate { to { transform: rotate(360deg); } }
 
 /* 欣赏模式（隐藏界面只看背景） */
-body.xd-admire > *:not(.bg-animation) { opacity: 0 !important; transition: opacity .4s; pointer-events: none; }
+body.xd-admire > *:not(.bg-animation):not(#xdAdmireBtn) { opacity: 0 !important; transition: opacity .4s; pointer-events: none; }
 
 /* ---------- 页面骨架 ---------- */
 main { position: relative; z-index: 10; padding: 24px 0 108px; display: flex; justify-content: center; align-items: flex-start; }
@@ -577,9 +577,9 @@ a:focus-visible, button:focus-visible, .quiz-opt:focus-visible, .btn:focus-visib
 .guide-dots i.on { background: var(--gold); width: 22px; border-radius: 999px; }
 
 /* 字号调节按钮组（theme.js A−/A+ 注入） */
-.xd-font-box { position: fixed; bottom: 76px; left: 20px; z-index: 2147483001; display: flex; gap: 6px;
+.xd-font-box { position: fixed; bottom: 76px; left: 20px; z-index: 2147483001; display: flex; flex-direction: column; align-items: stretch; gap: 6px; width: 44px;
     background: rgba(18, 22, 44, .92); padding: 6px; border-radius: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); }
-.xd-font-btn { min-width: 38px; min-height: 34px; border: none; border-radius: 9px; cursor: pointer; font-family: inherit;
+.xd-font-btn { width: 100%; min-height: 34px; border: none; border-radius: 9px; cursor: pointer; font-family: inherit;
     font-weight: 800; font-size: 13px; color: var(--btn-txt); background: var(--btn-grad); transition: transform .15s; }
 .xd-font-btn:hover { transform: translateY(-1px); }
 
@@ -658,31 +658,6 @@ a:focus-visible, button:focus-visible, .quiz-opt:focus-visible, .btn:focus-visib
     .card, .module-card, .qc-card, .scene-card { transform: none !important; }
 }
 
-/* ========== v1.5 玻璃停靠栏（底部居中图标 dock） ========== */
-.glass-dock {
-    position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
-    z-index: 2147483002; display: flex; align-items: flex-end; gap: 4px;
-    padding: 8px 12px; border-radius: 999px;
-    background: rgba(16, 20, 44, .58); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, .12); box-shadow: 0 16px 44px rgba(0, 0, 0, .38);
-    max-width: 96vw;
-}
-.glass-dock a, .glass-dock .dock-btn {
-    display: flex; align-items: center; justify-content: center; flex: none;
-    width: 46px; height: 46px; border-radius: 16px; border: none; cursor: pointer;
-    font-size: 21px; line-height: 1; text-decoration: none !important;
-    background: rgba(255, 255, 255, .06); color: #fff;
-    transition: transform .28s cubic-bezier(.34, 1.56, .64, 1), background .2s;
-}
-.glass-dock a:hover, .glass-dock .dock-btn:hover { background: rgba(255, 255, 255, .15); }
-.glass-dock a.on { background: rgba(246, 211, 101, .22); box-shadow: inset 0 0 0 1.5px rgba(246, 211, 101, .55); }
-.glass-dock .lift { transform: translateY(-4px) scale(1.14); }
-.glass-dock .lift-lg { transform: translateY(-9px) scale(1.32); }
-@media (max-width: 768px) {
-    .glass-dock { gap: 2px; padding: 6px 8px; bottom: 10px; }
-    .glass-dock a, .glass-dock .dock-btn { width: 40px; height: 40px; border-radius: 13px; font-size: 19px; }
-}
-@media print { .glass-dock { display: none !important; } }
 
 /* ========== v1.5 液态模块导航条（目录页顶部 A-N 玻璃胶囊 + 液态滑块回弹） ========== */
 .mod-strip { position: relative; margin: 6px 0 22px; }
@@ -759,7 +734,7 @@ a:focus-visible, button:focus-visible, .quiz-opt:focus-visible, .btn:focus-visib
 .drop-metric b { display: block; font-size: 28px; color: var(--gold); font-weight: 900; }
 .drop-metric span { font-size: 12.5px; color: var(--dim); }
 @media (prefers-reduced-motion: reduce) {
-    .drop-opt, .drop-pill, .zoom-stage, .mod-slider, .glass-dock a { transition: none !important; }
+    .drop-opt, .drop-pill, .zoom-stage, .mod-slider { transition: none !important; }
 }
 
 /* ============================================================
@@ -851,10 +826,8 @@ body { line-height: 1.8; }
 /* ---- 九、等级徽章对齐按钮渐变（浅底主题下保持可读） ---- */
 .lv-badge { background: var(--btn-grad); color: var(--btn-txt); box-shadow: var(--sh-1); }
 
-/* ---- 十、停靠栏文字徽标 + 窄屏适配 ---- */
-.glass-dock a, .glass-dock .dock-btn { font-size: 13px; font-weight: 800; letter-spacing: 1px; color: rgba(255, 255, 255, .95); }
+/* ---- 十、模块导航圆点 + 窄屏适配 ---- */
 .mod-pill i { display: inline-block; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--glow); opacity: .9; }
 @media (max-width: 768px) {
-    .glass-dock a, .glass-dock .dock-btn { font-size: 12px; }
     .hero-panel { padding: 16px 14px 10px; }
 }

@@ -1257,69 +1257,6 @@
             else if (tiltEl) { clearTilt(tiltEl); tiltEl = null; }
         }, true);
 
-        /* ---- 玻璃停靠栏：DOCK 数据 + 惰性构建 + 悬停提升 ----
-         * v1.6：图标由 emoji 改为跨平台一致的文字徽标（s 字段），
-         * 渲染不再受操作系统 emoji 字体差异影响。 */
-        var DOCK = [
-            { f: 'index.html', s: '首页', t: '首页' },
-            { f: '1.html', s: '目录', t: '全站目录' },
-            { f: '41.html', s: '仪表', t: '学习仪表盘' },
-            { f: '42.html', s: '徽章', t: '成就徽章墙' },
-            { f: '43.html', s: '测验', t: '测验中心' },
-            { f: 'SYS4.html', s: '场景', t: '场景速查' },
-            { f: 'SYS5.html', s: '词典', t: '术语词典' },
-            { f: 'SYS6.html', s: '证书', t: '毕业证书' },
-            { f: null, s: '搜索', t: '搜索' } /* 无页面 → 打开命令面板 */
-        ];
-        function dockItemHtml(d, cur) {
-            if (d.f) return '<a href="' + d.f + '" title="' + d.t + '"' + (d.f === cur ? ' class="on"' : '') + '>' + d.s + '</a>';
-            return '<button type="button" class="dock-btn" data-dock="search" title="' + d.t + '">' + d.s + '</button>';
-        }
-        function bindSearchBtns(dock) {
-            var btns = dock.querySelectorAll('.dock-btn[data-dock="search"]');
-            for (var s = 0; s < btns.length; s++) {
-                (function (b) {
-                    b.addEventListener('click', function () { if (window.XD && XD.search) XD.search.open(); });
-                })(btns[s]);
-            }
-        }
-        function bindLift(items) {
-            function idxOf(it) {
-                for (var q = 0; q < items.length; q++) if (items[q] === it) return q;
-                return -1;
-            }
-            for (var k = 0; k < items.length; k++) {
-                (function (it) {
-                    it.addEventListener('mouseenter', function () {
-                        it.classList.add('lift-lg');
-                        var i = idxOf(it);
-                        if (i > 0) items[i - 1].classList.add('lift');
-                        if (i >= 0 && i < items.length - 1) items[i + 1].classList.add('lift');
-                    });
-                    it.addEventListener('mouseleave', function () {
-                        it.classList.remove('lift-lg');
-                        for (var q = 0; q < items.length; q++) items[q].classList.remove('lift');
-                    });
-                })(items[k]);
-            }
-        }
-        function buildDock() {
-            if (!document.body || document.getElementById('xdDock')) return; /* 幂等 */
-            var cur = document.body.getAttribute('data-page') || '';
-            var dock = document.createElement('div');
-            dock.className = 'glass-dock';
-            dock.id = 'xdDock';
-            var h = '';
-            for (var i = 0; i < DOCK.length; i++) h += dockItemHtml(DOCK[i], cur);
-            dock.innerHTML = h;
-            document.body.appendChild(dock);
-            bindSearchBtns(dock);
-            bindLift(dock.children);
-        }
-        if (document.body) {
-            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', buildDock);
-            else buildDock();
-        }
     })();
 
     /* ============================================================
