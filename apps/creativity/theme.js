@@ -253,8 +253,34 @@
     var bag = (window.CY && window.CY._theme);
     if (!bag) return;
 
+
+    /* ---- 右上角导航双键（sticky 顶栏下方、滚动跟随）：返回上一页 + 返回找乐子导航站 ---- */
+    function buildNavKeys() {
+        if (document.getElementById('cyNavKeys')) return;
+        var wrap = document.createElement('div');
+        wrap.id = 'cyNavKeys';
+        wrap.style.cssText = 'position:fixed;top:74px;right:16px;z-index:2147483000;display:flex;flex-direction:column;gap:10px;';
+        var back = document.createElement('button');
+        back.id = 'cyBackBtn';
+        back.title = '返回上一页';
+        back.setAttribute('aria-label', '返回上一页');
+        back.textContent = '←';
+        back.style.cssText = 'width:44px;height:44px;border-radius:50%;border:1px solid rgba(110,110,180,.25);background:rgba(255,255,255,.92);color:#23263a;font-size:20px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(20,26,46,.22);user-select:none;-webkit-user-select:none;';
+        back.onclick = function () { if (history.length > 1) history.back(); else location.href = 'index.html'; };
+        var home = document.createElement('a');
+        home.id = 'cyHomeBtn';
+        home.title = '返回找乐子导航站';
+        home.setAttribute('aria-label', '返回找乐子导航站');
+        home.textContent = '🏠';
+        home.href = '../../index.html';
+        home.style.cssText = 'width:44px;height:44px;border-radius:50%;border:1px solid rgba(110,110,180,.25);background:rgba(255,255,255,.92);color:#23263a;font-size:20px;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 6px 18px rgba(20,26,46,.22);user-select:none;-webkit-user-select:none;';
+        wrap.appendChild(back);
+        wrap.appendChild(home);
+        document.body.appendChild(wrap);
+    }
     function init() {
         bag.apply(bag.current);
+        bag.buildNavKeys();
         bag.buildThemeBtn();
         bag.buildAdmireBtn();
         bag.buildPanel();

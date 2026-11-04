@@ -170,14 +170,6 @@
 /* 防小白保护结束 */
 
 
-/* Service Worker 注册（离线缓存支持） */
-(function(){
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-            navigator.serviceWorker.register('service-worker.js').catch(function(err){});
-        });
-    }
-})();
 
 
 /* =====================================================================
@@ -265,9 +257,7 @@
                         frame = 0;
                         node.style.setProperty('--mx', mx.toFixed(1) + '%');
                         node.style.setProperty('--my', my.toFixed(1) + '%');
-                        node.style.transform = 'perspective(900px) rotateX(' + rx.toFixed(2) +
-                            'deg) rotateY(' + ry.toFixed(2) +
-                            'deg) translateY(' + (-lift) + 'px) scale(' + zoom + ')';
+                        node.style.transform = 'translateY(' + (-lift) + 'px) scale(' + zoom + ')';
                     });
                 }
             });
@@ -1001,133 +991,116 @@
 })();
 
 /* ========== 全站统一跳转动画（跨 5 站共享，2026-10-11） ==========
- * 用户点击"跳向本站任意 HTML"时，统一显示 zhaolezi 圆环转圈动画。
- * 中心文字规则：跳 index.html 按站点品牌显示；其他跳转取目标 <title> 剥离品牌后的最长段。
- * 实现：全局 click 捕获阶段拦截 <a href="*.html"> 与 onclick 里的 location 赋值。
- * 不改 HTML、不删旧动画代码，纯增量 hook；启动屏自动跳转（setTimeout 内）不拦截。 */
-(function () {
-    if (window.__JUMP_ANIM_INIT__) return;
+ * 用户点击"跳向本站任意 HTML"的按键时，统一显示 zhaolezi 圆环转圈动画。
+ * 中心文字规则：
+ *   - 跳 index.html → 按当前站点品牌显示（zhaolezi=找乐子 / creativity=创意引擎 /
+ *                     xiandaihua=现代化 / all-file-saver=全能文件保存 / ai-prompts=AI 提示词库）
+ *   - 其他跳转 → 目标 HTML 的 <title> 剥离品牌名后取最长段
+ * 实现方式：全局 click 捕获阶段拦截 <a href="*.html"> 和 onclick="location.*='***.html'>"。
+ * 不改 HTML、不删旧动画代码，纯增量 hook。启动屏自动跳转（setTimeout 内）不拦截。 */
+(function(){
+    if(window.__JUMP_ANIM_INIT__) return;
     window.__JUMP_ANIM_INIT__ = true;
-    var jump = (window.CY.jump = window.CY.jump || {});
-    var Z_TOP = '2147483647';
-    jump.STYLE_ID = 'zl-jump-anim-style';
-    jump.OVERLAY_ID = 'zl-jump-overlay';
-    jump.locked = false;
+    var STYLE_ID = 'zl-jump-anim-style';
+    var OVERLAY_ID = 'zl-jump-overlay';
+    var jumpLocked = false;
 
-    jump.ensureStyle = function () {
-        if (document.getElementById(jump.STYLE_ID)) return;
-        var styleNode = document.createElement('style');
-        styleNode.id = jump.STYLE_ID;
-        styleNode.textContent = '#' + jump.OVERLAY_ID + '{position:fixed;inset:0;z-index:' + Z_TOP + ';background:rgba(6,8,24,.72);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;pointer-events:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;}'
-            + '#' + jump.OVERLAY_ID + '.active{opacity:1;visibility:visible;pointer-events:auto;}'
-            + '.zl-jump-wrap{position:relative;width:180px;height:180px;display:flex;align-items:center;justify-content:center;flex-direction:column;}'
-            + '.zl-jump-ring{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;border:3px solid rgba(255,255,255,.14);border-top-color:#38ef7d;animation:zlJumpSpin .9s linear infinite;box-shadow:0 0 32px rgba(56,239,125,.25);}'
-            + '@keyframes zlJumpSpin{to{transform:rotate(360deg)}}'
-            + '.zl-jump-label{margin-top:26px;font-size:16px;color:#fff;letter-spacing:.05em;font-weight:500;text-align:center;max-width:280px;word-break:break-word;line-height:1.4;}'
-            + '@media (prefers-reduced-motion:reduce){.zl-jump-ring{animation-duration:2s}}';
-        document.head.appendChild(styleNode);
-    };
-})();
-
-/* 跳转覆盖层：惰性创建圆环 + 文字；跳 index.html 时按站点品牌显示文案 */
-(function () {
-    var jump = (window.CY.jump = window.CY.jump || {});
-
-    jump.ensureOverlay = function () {
-        var overlay = document.getElementById(jump.OVERLAY_ID);
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = jump.OVERLAY_ID;
-            overlay.innerHTML = '<div class="zl-jump-wrap"><div class="zl-jump-ring"></div><div class="zl-jump-label">跳转中...</div></div>';
-            (document.body || document.documentElement).appendChild(overlay);
+    function ensureStyle(){
+        if(document.getElementById(STYLE_ID)) return;
+        var s = document.createElement('style');
+        s.id = STYLE_ID;
+        s.textContent = '#'+OVERLAY_ID+'{position:fixed;inset:0;z-index:2147483647;background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;pointer-events:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;}'
+            +'#'+OVERLAY_ID+'.active{opacity:1;visibility:visible;pointer-events:auto;}'
+            +'.zl-jump-wrap{position:relative;width:180px;height:180px;display:flex;align-items:center;justify-content:center;}'
+            +'.zl-jump-ring{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color:#F6D365;border-right-color:#FDA085;animation:zlJumpSpin .8s linear infinite;}'
+            +'.zl-jump-ring::before{content:"";position:absolute;inset:14px;border-radius:50%;border:2px solid transparent;border-bottom-color:#A78BFA;border-left-color:#667EEA;animation:zlJumpSpin 1.4s linear infinite reverse;}'
+            +'.zl-jump-label{position:relative;z-index:2;font-size:22px;font-weight:700;letter-spacing:.1em;color:#F6D365;text-align:center;max-width:280px;word-break:break-word;line-height:1.4;}'
+            +'@keyframes zlJumpSpin{to{transform:rotate(360deg)}}'
+            +'@media (prefers-reduced-motion:reduce){.zl-jump-ring,.zl-jump-ring::before{animation-duration:2s}}';
+        document.head.appendChild(s);
+    }
+    function ensureOverlay(){
+        var o = document.getElementById(OVERLAY_ID);
+        if(!o){
+            o = document.createElement('div');
+            o.id = OVERLAY_ID;
+            o.innerHTML = '<div class="zl-jump-wrap"><div class="zl-jump-ring"></div><div class="zl-jump-label">跳转中...</div></div>';
+            /* V126 视觉：复刻原生三层 loader-ring 设计（外环 accent 顺时针 + 内环反旋 + 居中品牌文字），替换 V1 单层绿圆环 */
+            (document.body||document.documentElement).appendChild(o);
         }
-        return overlay;
-    };
-
-    jump.pickBrandForIndex = function () {
-        var path = (window.location.pathname || '').toLowerCase();
-        if (path.indexOf('zhaolezi') >= 0) return '找乐子';
-        if (path.indexOf('creativity') >= 0) return '创意引擎';
-        if (path.indexOf('xiandaihua') >= 0) return '现代化';
-        if (path.indexOf('all-file-saver') >= 0) return '全能文件保存';
-        if (path.indexOf('ai-prompts') >= 0) return 'AI 提示词库';
+        return o;
+    }
+    function pickBrandForIndex(){
+        var p = (window.location.pathname||'').toLowerCase();
+        if(p.indexOf('zhaolezi') >= 0) return '找乐子';
+        if(p.indexOf('creativity') >= 0) return '创意引擎';
+        if(p.indexOf('xiandaihua') >= 0) return '现代化';
+        if(p.indexOf('all-file-saver') >= 0) return '全能文件保存';
+        if(p.indexOf('ai-prompts') >= 0) return 'AI 提示词库';
         return '找乐子';
-    };
-})();
-
-/* 标题抽取与品牌剥离：取 <title> 文本，剥掉站点品牌名后保留最长语义段 */
-(function () {
-    var jump = (window.CY.jump = window.CY.jump || {});
-
-    jump.extractTitle = function (text) {
-        var match = text.match(/<title[^>]*>([^<]+)<\/title>/i);
-        return match ? match[1].trim() : '';
-    };
-
-    jump.cleanTitleForLabel = function (title, fallback) {
-        var brands = ['找乐子', '现代化·知识学习站', 'AI 提示词库', 'AI提示词库', '创意引擎', '全能文件保存', '现代化', '创意'];
-        var cleaned = title;
-        for (var index = 0; index < brands.length; index++) { cleaned = cleaned.split(brands[index]).join(' '); }
-        var segs = cleaned.split(/[\-|｜·•—–]+|\s{2,}/).map(function (part) { return part.trim(); }).filter(Boolean);
-        segs.sort(function (left, right) { return right.length - left.length; });
+    }
+    function extractTitle(text){
+        var m = text.match(/<title[^>]*>([^<]+)<\/title>/i);
+        return m ? m[1].trim() : '';
+    }
+    function cleanTitleForLabel(title, fallback){
+        var brands = ['找乐子','现代化·知识学习站','AI 提示词库','AI提示词库','创意引擎','全能文件保存','现代化','创意'];
+        var t = title;
+        for(var i=0;i<brands.length;i++){ t = t.split(brands[i]).join(' '); }
+        var segs = t.split(/[-|｜·•—–]+|\s{2,}/).map(function(s){return s.trim();}).filter(Boolean);
+        segs.sort(function(a,b){return b.length - a.length;});
         return segs[0] || fallback;
-    };
-
-    jump.showJump = function (target) {
-        if (jump.locked) return;
-        jump.locked = true;
-        jump.ensureStyle();
-        var overlay = jump.ensureOverlay();
-        var labelEl = overlay.querySelector('.zl-jump-label');
-        var fallback = target.replace(/\?.*$/, '').replace(/\.html$/, '');
-        if (/(^|\/)index\.html(\?|$)/i.test(target)) {
-            labelEl.textContent = jump.pickBrandForIndex();
+    }
+    function showJump(target){
+        if(jumpLocked) return;
+        jumpLocked = true;
+        ensureStyle();
+        var o = ensureOverlay();
+        var labelEl = o.querySelector('.zl-jump-label');
+        var fallback = target.replace(/\?.*$/,'').replace(/\.html$/,'');
+        if(/(^|\/)index\.html(\?|$)/i.test(target)){
+            labelEl.textContent = pickBrandForIndex();
         } else {
             labelEl.textContent = '跳转中...';
-            fetch(target, { cache: 'force-cache' }).then(function (resp) { return resp.text(); })
-                .then(function (html) {
-                    var titleText = jump.extractTitle(html);
-                    if (titleText) labelEl.textContent = jump.cleanTitleForLabel(titleText, fallback);
+            fetch(target, {cache:'force-cache'}).then(function(r){ return r.text(); })
+                .then(function(html){
+                    var t = extractTitle(html);
+                    if(t) labelEl.textContent = cleanTitleForLabel(t, fallback);
                 })
-                .catch(function () { /* 保留"跳转中..." */ });
+                .catch(function(){ /* 保留"跳转中..." */ });
         }
-        overlay.classList.add('active');
-        setTimeout(function () {
-            jump.locked = false;
+        o.classList.add('active');
+        setTimeout(function(){
+            jumpLocked = false;
             window.location.href = target;
         }, 900);
-    };
-})();
-
-/* 全局 click 捕获：拦 <a href="*.html"> 与 onclick 里的 location 赋值，统一走跳转动画 */
-(function () {
-    var jump = (window.CY.jump = window.CY.jump || {});
-
-    document.addEventListener('click', function (ev) {
-        if (jump.locked) return;
-        var anchor = ev.target.closest && ev.target.closest('a[href]');
-        if (anchor) {
-            var href = anchor.getAttribute('href') || '';
-            if (/\.(html|htm)(\?|$)/i.test(href) && !/^https?:\/\//i.test(href) &&
-                !href.startsWith('/') && !href.startsWith('#') && !href.startsWith('mailto:')) {
-                ev.preventDefault();
-                ev.stopPropagation();
-                ev.stopImmediatePropagation();
-                jump.showJump(href);
+    }
+    document.addEventListener('click', function(e){
+        if(jumpLocked) return;
+        // 1. 拦截 <a href="*.html">
+        var a = e.target.closest && e.target.closest('a[href]');
+        if(a){
+            var href = a.getAttribute('href') || '';
+            if(/\.(html|htm)(\?|$)/i.test(href) && !/^https?:\/\//i.test(href) && !href.startsWith('/') && !href.startsWith('#') && !href.startsWith('mailto:')){
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                showJump(href);
                 return;
             }
         }
-        var btn = ev.target.closest && ev.target.closest('[onclick]');
-        if (btn) {
+        // 2. 拦截 onclick 里含 location.*= 或 location.replace()/assign() 的按钮
+        var btn = e.target.closest && e.target.closest('[onclick]');
+        if(btn){
             var oc = btn.getAttribute('onclick') || '';
-            var match = oc.match(/(?:location\.href\s*=\s*["']([^"']+\.html[^"']*)["']|location\.replace\(\s*["']([^"']+\.html[^"']*)["']\s*\)|location\.assign\(\s*["']([^"']+\.html[^"']*)["']\s*\)|window\.location\s*=\s*["']([^"']+\.html[^"']*)["'])/i);
-            if (match) {
-                var targetPath = (match[1] || match[2] || match[3] || match[4] || '');
-                if (targetPath && !/^https?:\/\//i.test(targetPath) && !targetPath.startsWith('/')) {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    ev.stopImmediatePropagation();
-                    jump.showJump(targetPath);
+            var m = oc.match(/(?:location\.href\s*=\s*["']([^"']+\.html[^"']*)["']|location\.replace\(\s*["']([^"']+\.html[^"']*)["']\s*\)|location\.assign\(\s*["']([^"']+\.html[^"']*)["']\s*\)|window\.location\s*=\s*["']([^"']+\.html[^"']*)["'])/i);
+            if(m){
+                var t = (m[1]||m[2]||m[3]||m[4]||'');
+                if(t && !/^https?:\/\//i.test(t) && !t.startsWith('/')){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    showJump(t);
                 }
             }
         }
