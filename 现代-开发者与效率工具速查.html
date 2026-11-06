@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>开发者与效率工具速查 - 现代化·知识学习站</title>
+<meta name="description" content="开发者与效率工具快捷键速查：命令行、代码编辑器、F12 调试、任务管理器、剪贴板历史与虚拟桌面，支持关键词搜索。">
+<link rel="icon" href="xd-favicon.svg">
+<link rel="manifest" href="xd-manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="xd-common.css">
+<script defer src="xd-common.js"></script>
+<script defer src="xd-theme.js"></script>
+<script defer src="xd-features.js"></script>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——开发者与效率工具速查 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:title" content="开发者与效率工具速查 - 现代化·知识学习站">
+<meta property="og:description" content="找乐子——开发者与效率工具速查 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/现代-开发者与效率工具速查.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body data-page="现代-开发者与效率工具速查.html" data-kind="doc">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="现代-全站目录树.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块D · 键盘与快捷键</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">开发者与效率工具速查</h1>
+        <p class="lesson-sub">D2-3 · 快捷键速查库 | 命令行的加速器、F12 与多任务高手</p>
+
+        <div class="callout info">
+            <b>🔎 怎么查</b>
+            表格支持搜索，输入关键词（如"注释""终端"）即时过滤。本页面向模块F/G 的准开发者，也适合一切想提高效率的人。
+        </div>
+
+        <h2>一、命令行常用快捷键（Windows 终端）</h2>
+        <div class="search-bar">
+            <input type="text" id="filter" placeholder="搜索快捷键，例如：命令、终端、Tab…">
+        </div>
+        <table class="xd-table" id="shortcutTable">
+            <tr><th>快捷键</th><th>作用</th><th>说明</th></tr>
+            <tr><td><kbd>Win</kbd> + <kbd>R</kbd> → 输入 <code>cmd</code></td><td>打开命令行</td><td>或 Win+X → 终端</td></tr>
+            <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>上/下一条历史命令</td><td>重敲命令的神器</td></tr>
+            <tr><td><kbd>Tab</kbd></td><td>自动补全文件名 / 命令</td><td>按两次 Tab 浏览候选</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>C</kbd></td><td>终止当前正在跑的命令</td><td>命令卡死按它</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>V</kbd></td><td>粘贴</td><td>终端里也可以按 Shift+Insert</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>A</kbd></td><td>光标移到行首</td><td>Ctrl+E 到行尾</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>L</kbd></td><td>清屏</td><td>等于输入 cls</td></tr>
+        </table>
+
+        <h2>二、代码编辑器（VSCode 等）</h2>
+        <table class="xd-table">
+            <tr><th>快捷键</th><th>作用</th><th>说明</th></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>P</kbd></td><td>快速打开文件</td><td>模糊搜索文件名，秒开</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>F</kbd></td><td>当前文件查找</td><td>Ctrl+H 查找替换</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td><td>整个项目查找</td><td>—</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>/</kbd></td><td>注释 / 取消注释</td><td>新手必学第一招</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>D</kbd></td><td>选中下一个相同词</td><td>连续按可多光标批量改</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>S</kbd></td><td>保存</td><td>强迫症福音</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>`</kbd></td><td>打开内置终端</td><td>写码跑命令无缝切换</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td><td>光标位置换行</td><td>不用跑到行尾</td></tr>
+        </table>
+
+        <h2>三、F12 开发者工具</h2>
+        <table class="xd-table">
+            <tr><th>快捷键</th><th>作用</th><th>说明</th></tr>
+            <tr><td><kbd>F12</kbd></td><td>开/关开发者工具</td><td>模块G 的调试都靠它</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd></td><td>选取网页元素</td><td>鼠标点哪看哪的代码</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>F</kbd></td><td>在调试面板内查找</td><td>—</td></tr>
+            <tr><td><kbd>Esc</kbd></td><td>呼出/收起控制台面板</td><td>—</td></tr>
+            <tr><td>面板内 <kbd>Ctrl</kbd> + <kbd>`</kbd></td><td>切换控制台</td><td>—</td></tr>
+        </table>
+
+        <h2>四、系统效率工具</h2>
+        <table class="xd-table">
+            <tr><th>快捷键</th><th>作用</th><th>说明</th></tr>
+            <tr><td><kbd>Win</kbd> + <kbd>V</kbd></td><td>剪贴板历史</td><td>不只复制一条，可回看最近 20+ 条</td></tr>
+            <tr><td><kbd>Win</kbd> + <kbd>Tab</kbd></td><td>任务视图</td><td>可新建"虚拟桌面"分工作区</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>Win</kbd> + <kbd>D</kbd></td><td>新建虚拟桌面</td><td>Ctrl+Win+F4 关闭当前</td></tr>
+            <tr><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Esc</kbd></td><td>任务管理器</td><td>看哪个程序吃内存，可强制结束</td></tr>
+            <tr><td><kbd>Win</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd></td><td>区域截图</td><td>截图自动进剪贴板，Ctrl+V 即用</td></tr>
+            <tr><td><kbd>Win</kbd> + <kbd>G</kbd></td><td>游戏栏（录屏）</td><td>录制屏幕 / 截图</td></tr>
+            <tr><td><kbd>Win</kbd> + <kbd>K</kbd></td><td>无线投射</td><td>投到电视 / 第二屏</td></tr>
+        </table>
+
+        <div class="callout tip">
+            <b>💡 练习建议</b>
+            挑 5 个"今天就要用"的组合（如 Ctrl 补全、Win+V 剪贴板、Win+D 显示桌面），先在本周刻意使用；习惯了再去 <a href="现代-快捷键练习器.html">快捷键练习器</a> 全面打磨。一次练太多反而记不住。
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一节：<a href="现代-浏览器与文本编辑速查.html">浏览器与文本编辑速查</a> · <a href="现代-打字速度测试.html">打字速度测试</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("CihmdW5jdGlvbiAoKSB7CiAgICB2YXIgaW5wdXQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZmlsdGVyJyk7CiAgICBpZiAoIWlucHV0KSByZXR1cm47CiAgICBpbnB1dC5hZGRFdmVudExpc3RlbmVyKCdpbnB1dCcsIGZ1bmN0aW9uICgpIHsKICAgICAgICB2YXIga3cgPSBpbnB1dC52YWx1ZS50cmltKCkudG9Mb3dlckNhc2UoKTsKICAgICAgICB2YXIgcm93cyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoJyNzaG9ydGN1dFRhYmxlIHRyJyk7CiAgICAgICAgZm9yICh2YXIgaSA9IDE7IGkgPCByb3dzLmxlbmd0aDsgaSsrKSB7CiAgICAgICAgICAgIHJvd3NbaV0uc3R5bGUuZGlzcGxheSA9ICgha3cgfHwgcm93c1tpXS50ZXh0Q29udGVudC50b0xvd2VyQ2FzZSgpLmluZGV4T2Yoa3cpID49IDApID8gJycgOiAnbm9uZSc7CiAgICAgICAgfQogICAgfSk7Cn0pKCk7Cg==");
+</script>
+</body>
+</html>

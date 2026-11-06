@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://bishihuihuang.github.io/xiandaihua/sitemap.xml

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Git 命令演练场 - 现代化·知识学习站</title>
+<meta name="description" content="Git 命令演练场：模拟终端分步闯关，练习 init/add/commit/status/log/push/pull，完成全部关卡获得成就。">
+<link rel="icon" href="xd-favicon.svg">
+<link rel="manifest" href="xd-manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="xd-common.css">
+<script defer src="xd-common.js"></script>
+<script defer src="xd-theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    #stage {
+        background: var(--card-2); border: 2px solid var(--line); border-radius: 16px;
+        padding: 18px 20px; margin-top: 16px;
+    }
+    #stageHead { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    #stageTitle { font-size: 16px; font-weight: 800; color: var(--blue); }
+    #stageHint { font-size: 13px; color: var(--dim); line-height: 1.7; background: rgba(102,126,234,.06); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+    .term { background: #101423; color: #d9e2f5; border-radius: 12px; padding: 14px; font-family: Consolas, "Courier New", monospace; font-size: 13.5px; line-height: 1.8; min-height: 110px; white-space: pre-wrap; }
+    .term .t-in { color: #7dffb0; }
+    .term .t-err { color: #ff7b7b; }
+    .term .t-dim { color: #6f7fa8; }
+    .term-input-row { display: flex; gap: 8px; align-items: center; background: #101423; border-radius: 0 0 12px 12px; padding: 10px 14px; margin-top: -14px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,.08); border-top: none; }
+    .term-input-row .ps { color: #7dffb0; font-family: Consolas, monospace; font-size: 13.5px; }
+    #cmdInput {
+        flex: 1; background: transparent; border: none; outline: none; color: #d9e2f5;
+        font-family: Consolas, "Courier New", monospace; font-size: 13.5px;
+    }
+    #stageCtrl { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    .done-line { color: var(--green); font-weight: 800; }
+</style>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——Git 命令演练场 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:title" content="Git 命令演练场 - 现代化·知识学习站">
+<meta property="og:description" content="找乐子——Git 命令演练场 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/现代-Git命令演练场.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body data-page="现代-Git命令演练场.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="现代-全站目录树.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块F · Git 与 GitHub</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">🐚 Git 命令演练场</h1>
+        <p class="lesson-sub">模块F · 第 6 课 | 模拟终端闯关练习</p>
+
+        <div class="callout info">
+            <b>怎么玩</b>
+            这是一个<strong>模拟终端</strong>：按提示在下方输入真实的 git 命令（如 <code>git init</code>），回车"执行"。完成全部 7 关即练熟核心命令。提示词里带 <code>？</code> 的地方可以用任意内容，比如 <code>git commit -m "第一版"</code>。
+        </div>
+
+        <div id="stage">
+            <div id="stageHead">
+                <span id="stageTitle">第 1 关 / 7</span>
+                <span class="rank-progress" id="stageTag"></span>
+            </div>
+            <div id="stageHint"></div>
+            <div class="term" id="termOut"></div>
+            <div class="term-input-row">
+                <span class="ps">$&nbsp;</span>
+                <input id="cmdInput" type="text" placeholder="输入命令后回车…" autocomplete="off" spellcheck="false">
+            </div>
+            <div id="stageCtrl">
+                <button class="btn btn-secondary" id="resetBtn">↺ 重玩</button>
+                <button class="btn btn-secondary" id="skipBtn">⏭ 看答案</button>
+            </div>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="现代-上传网页到GitHubPages全流程.html">上传网页全流程</a> · 下一课：<a href="现代-模块F测验：Git与GitHub.html">测验：Git 与 GitHub</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("Ci8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogKiBHaXQg5ZG95Luk5ryU57uD5Zy677yI6aG16Z2i5YaF6IGU6ISa5pys77yM56uL5Y2z5omn6KGM77yJCiAqIOaooeaLn+e7iOerr+mXr+WFs++8mmluaXQvc3RhdHVzL2FkZC9jb21taXQvbG9nL3JlbW90ZS9wdXNoIOS4g+WFs++8jAogKiDov5vluqblrZggbG9jYWxTdG9yYWdl77yIeGRfZ2l0X2xhYl92Me+8ie+8jOmAmuWFs+WNs+iusOW9leS4gOasoee7g+S5oAogKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8KKGZ1bmN0aW9uICgpIHsKICAgIHZhciB0ZXJtT3V0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Rlcm1PdXQnKTsKICAgIHZhciBjbWRJbnB1dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjbWRJbnB1dCcpOwogICAgdmFyIHN0YWdlVGl0bGUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc3RhZ2VUaXRsZScpOwogICAgdmFyIHN0YWdlVGFnID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3N0YWdlVGFnJyk7CiAgICB2YXIgc3RhZ2VIaW50ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3N0YWdlSGludCcpOwogICAgdmFyIHJlc2V0QnRuID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Jlc2V0QnRuJyk7CiAgICB2YXIgc2tpcEJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdza2lwQnRuJyk7CgogICAgLyog5YWz5Y2h5a6a5LmJ77yabWF0Y2gg5piv5q2j5YiZ77yM5YWB6K6455So5oi36Ieq55Sx5Y+R5oyl55qE6YOo5YiG55SoIC4qICovCiAgICB2YXIgTEVWRUxTID0gWwogICAgICAgIHsgaGludDogJ+aKiuW9k+WJjeebruW9leWPmOaIkOS4gOS4qiBHaXQg5LuT5bqT77yI56ysIDIg6K++6K6y6L+H77yJ44CCJywgbWF0Y2g6IC9eZ2l0IGluaXQkLywgYW5zOiAnZ2l0IGluaXQnLCBlY2hvOiAnSW5pdGlhbGl6ZWQgZW1wdHkgR2l0IHJlcG9zaXRvcnkgaW4gL215LXNpdGUvLmdpdC8nIH0sCiAgICAgICAgeyBoaW50OiAn55yL55yL5b2T5YmN5LuT5bqT55qE54q25oCB77yI5ZOq5Liq5paH5Lu25pS55LqG44CB6L+Y5rKh5o+Q5Lqk77yJ44CCJywgbWF0Y2g6IC9eZ2l0IHN0YXR1cyQvLCBhbnM6ICdnaXQgc3RhdHVzJywgZWNobzogJ09uIGJyYW5jaCBtYWluXG5ub3RoaW5nIHRvIGNvbW1pdCwgd29ya2luZyB0cmVlIGNsZWFuJyB9LAogICAgICAgIHsgaGludDogJ+aKiuaUueWKqOeahOaWh+S7tuaUvui/myLotK3nianovaYi77yI5pqC5a2Y5Yy677yJ44CC6K+V6L+HIGFkZCDmn5DkuKrmlofku7bmiJYgYWRkIC4g5ZCX77yfJywgbWF0Y2g6IC9eZ2l0IGFkZCAoXC58W14gXSspJC8sIGFuczogJ2dpdCBhZGQgLicsIGVjaG86ICcgIDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyknIH0sCiAgICAgICAgeyBoaW50OiAn57uZ5pqC5a2Y55qE5YaF5a655ouN5LiA5byg5b+r54Wn77yM6K6w5b6X5bim6K+05piO77yM5L6L5aaCIC1tICLnrKzkuIDniYgi44CCJywgbWF0Y2g6IC9eZ2l0IGNvbW1pdCAtbSAiPy4qIj8kLywgYW5zOiAnZ2l0IGNvbW1pdCAtbSAi56ys5LiA54mIIicsIGVjaG86ICdbbWFpbiA0ZjNhMmIxXSDnrKzkuIDniYhcbiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspJyB9LAogICAgICAgIHsgaGludDogJ+eci+S4gOecvOaPkOS6pOWOhuWPsu+8jOeyvueugOaooeW8j+ivleivlSAtLW9uZWxpbmXjgIInLCBtYXRjaDogL15naXQgbG9nKCAtLW9uZWxpbmUpPyQvLCBhbnM6ICdnaXQgbG9nIC0tb25lbGluZScsIGVjaG86ICc0ZjNhMmIxIOesrOS4gOeJiCAoSEVBRCAtPiBtYWluKScgfSwKICAgICAgICB7IGhpbnQ6ICflhbPogZTov5znqIvku5PlupMgb3JpZ2lu77yM5Zyw5Z2A5pivIGh0dHBzOi8vZ2l0aHViLmNvbS9iaXNoaWh1aWh1YW5nL3hpYW5kYWlodWEuZ2l077yI56ysIDTjgIE1IOivvu+8ieOAgicsIG1hdGNoOiAvXmdpdCByZW1vdGUgYWRkIG9yaWdpbiBodHRwczpcL1wvZ2l0aHViXC5jb21cL1teIF0rXC9bXiBdK1wuZ2l0JC8sIGFuczogJ2dpdCByZW1vdGUgYWRkIG9yaWdpbiBodHRwczovL2dpdGh1Yi5jb20vYmlzaGlodWlodWFuZy94aWFuZGFpaHVhLmdpdCcsIGVjaG86ICfvvIjml6DovpPlh7rvvIzooajnpLrmiJDlip/vvIknIH0sCiAgICAgICAgeyBoaW50OiAn5pyA5ZCO5oqK5pys5Zyw5o+Q5Lqk5o6o6YCB5Yiw6L+c56iL77yMLXUg6K6w5L2P5YiG5pSv44CCJywgbWF0Y2g6IC9eZ2l0IHB1c2goIC11IG9yaWdpbiBtYWluKT8kLywgYW5zOiAnZ2l0IHB1c2ggLXUgb3JpZ2luIG1haW4nLCBlY2hvOiAnVG8gaHR0cHM6Ly9naXRodWIuY29tL2Jpc2hpaHVpaHVhbmcveGlhbmRhaWh1YS5naXRcbiAqIFtuZXcgYnJhbmNoXSBtYWluIC0+IG1haW4nIH0KICAgIF07CgogICAgdmFyIEtFWSA9ICd4ZF9naXRfbGFiX3YxJzsKICAgIHZhciBzdGVwID0gMDsKICAgIHZhciBsb2cgPSBbXTsKCiAgICBmdW5jdGlvbiBzYXZlKCkgeyB0cnkgeyBsb2NhbFN0b3JhZ2Uuc2V0SXRlbShLRVksIFN0cmluZyhzdGVwKSk7IH0gY2F0Y2ggKGUpIHt9IH0KICAgIGZ1bmN0aW9uIGxvYWQoKSB7IHRyeSB7IHZhciB2ID0gbG9jYWxTdG9yYWdlLmdldEl0ZW0oS0VZKTsgc3RlcCA9IHYgPyBwYXJzZUludCh2LCAxMCkgfHwgMCA6IDA7IH0gY2F0Y2ggKGUpIHsgc3RlcCA9IDA7IH0gfQogICAgZnVuY3Rpb24gcmVuZGVyKCkgewogICAgICAgIGlmIChzdGVwID49IExFVkVMUy5sZW5ndGgpIHsKICAgICAgICAgICAgc3RhZ2VUaXRsZS50ZXh0Q29udGVudCA9ICfwn46JIOWFqOmDqOmAmuWFs++8gSc7CiAgICAgICAgICAgIHN0YWdlSGludC5pbm5lckhUTUwgPSAn5L2g5bey57uP57uD54afIGluaXQgLyBzdGF0dXMgLyBhZGQgLyBjb21taXQgLyBsb2cgLyByZW1vdGUgLyBwdXNoIOS4g+Wkp+WRveS7pOOAguWOuyA8YSBocmVmPSLnjrDku6Mt5LiK5Lyg572R6aG15YiwR2l0SHViUGFnZXPlhajmtYHnqIsuaHRtbCI+RjUg5LiK5Lyg572R6aG15YWo5rWB56iLPC9hPiDlrp7miJjkuIDmrKHvvIzmiJbph43njqnlt6nlm7rogozogonorrDlv4bjgIInOwogICAgICAgICAgICB0ZXJtT3V0LmlubmVySFRNTCA9IGxvZy5qb2luKCdcbicpICsgKGxvZy5sZW5ndGggPyAnXG4nIDogJycpICsgJzxzcGFuIGNsYXNzPSJkb25lLWxpbmUiPuKclCDmga3llpzlrozmiJAgR2l0IOWRveS7pOa8lOe7g+Wcuu+8gTwvc3Bhbj4nOwogICAgICAgICAgICBpZiAod2luZG93LlhEICYmIFhELnN0dWR5TG9nKSBYRC5zdHVkeUxvZy5hZGQoeyB0eXBlOiAncHJhY3RpY2UnLCBpdGVtSWQ6ICdGNicsIG1vZDogJ0YnIH0pOwogICAgICAgICAgICBzdGFnZVRhZy50ZXh0Q29udGVudCA9ICflt7LpgJrlhbMg8J+Phic7CiAgICAgICAgICAgIHJldHVybjsKICAgICAgICB9CiAgICAgICAgdmFyIGx2ID0gTEVWRUxTW3N0ZXBdOwogICAgICAgIHN0YWdlVGl0bGUudGV4dENvbnRlbnQgPSAn56ysICcgKyAoc3RlcCArIDEpICsgJyDlhbMgLyAnICsgTEVWRUxTLmxlbmd0aDsKICAgICAgICBzdGFnZVRhZy50ZXh0Q29udGVudCA9ICfov5vluqYgJyArIE1hdGgucm91bmQoc3RlcCAvIExFVkVMUy5sZW5ndGggKiAxMDApICsgJyUnOwogICAgICAgIHN0YWdlSGludC5pbm5lckhUTUwgPSBsdi5oaW50OwogICAgICAgIHRlcm1PdXQuaW5uZXJIVE1MID0gbG9nLmpvaW4oJ1xuJykgKyAobG9nLmxlbmd0aCA/ICdcbicgOiAnJykgKyAnPHNwYW4gY2xhc3M9InQtZGltIj7igJQg562J5L2g5Zyo5LiL5pa56L6T5YWl5ZG95LukIOKAlDwvc3Bhbj4nOwogICAgICAgIGNtZElucHV0LnZhbHVlID0gJyc7CiAgICAgICAgY21kSW5wdXQuZm9jdXMoKTsKICAgIH0KICAgIGZ1bmN0aW9uIHByaW50TGluZShodG1sKSB7IGxvZy5wdXNoKGh0bWwpOyB9CiAgICBmdW5jdGlvbiByZXNldEFsbCgpIHsKICAgICAgICBsb2cgPSBbXTsKICAgICAgICBzdGVwID0gMDsKICAgICAgICB0cnkgeyBsb2NhbFN0b3JhZ2UucmVtb3ZlSXRlbShLRVkpOyB9IGNhdGNoIChlKSB7fQogICAgICAgIHJlbmRlcigpOwogICAgfQogICAgZnVuY3Rpb24gZG9Db21tYW5kKHJhdykgewogICAgICAgIHZhciB2ID0gKHJhdyB8fCAnJykudHJpbSgpOwogICAgICAgIGlmICghdikgcmV0dXJuOwogICAgICAgIHByaW50TGluZSgnPHNwYW4gY2xhc3M9InQtaW4iPiQgJyArIFhELmVzY2FwZUh0bWwodikgKyAnPC9zcGFuPicpOwogICAgICAgIHZhciBsdiA9IExFVkVMU1tzdGVwXTsKICAgICAgICBpZiAobHYgJiYgbHYubWF0Y2gudGVzdCh2KSkgewogICAgICAgICAgICBwcmludExpbmUoWEQuZXNjYXBlSHRtbChsdi5lY2hvKSk7CiAgICAgICAgICAgIHN0ZXArKzsKICAgICAgICAgICAgc2F2ZSgpOwogICAgICAgICAgICByZW5kZXIoKTsKICAgICAgICB9IGVsc2UgewogICAgICAgICAgICB2YXIgbXNnID0gJ2Jhc2g6ICcgKyBYRC5lc2NhcGVIdG1sKHYuc3BsaXQoJyAnKVswXSkgKyAnOiBjb21tYW5kIG5vdCBmb3VuZCc7CiAgICAgICAgICAgIGlmICgvXmdpdCBbYS16XSsvLnRlc3QodikpIG1zZyA9ICfwn5iFIOWRveS7pOS4jeWvue+8jOeci+eci+aPkOekuu+8mumcgOimgeeahOaYr+OAjCcgKyBYRC5lc2NhcGVIdG1sKGx2LmFucykgKyAn44CNJzsKICAgICAgICAgICAgcHJpbnRMaW5lKCc8c3BhbiBjbGFzcz0idC1lcnIiPicgKyBtc2cgKyAnPC9zcGFuPicpOwogICAgICAgICAgICByZW5kZXIoKTsKICAgICAgICB9CiAgICB9CgogICAgY21kSW5wdXQuYWRkRXZlbnRMaXN0ZW5lcigna2V5ZG93bicsIGZ1bmN0aW9uIChlKSB7CiAgICAgICAgaWYgKGUua2V5ID09PSAnRW50ZXInKSB7IGUucHJldmVudERlZmF1bHQoKTsgZG9Db21tYW5kKGNtZElucHV0LnZhbHVlKTsgfQogICAgfSk7CiAgICByZXNldEJ0bi5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIHJlc2V0QWxsKTsKICAgIHNraXBCdG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoKSB7CiAgICAgICAgdmFyIGx2ID0gTEVWRUxTW3N0ZXBdOwogICAgICAgIGlmICghbHYpIHJldHVybjsKICAgICAgICBwcmludExpbmUoJzxzcGFuIGNsYXNzPSJ0LWluIj4kICcgKyBYRC5lc2NhcGVIdG1sKGx2LmFucykgKyAnPC9zcGFuPicpOwogICAgICAgIHByaW50TGluZShYRC5lc2NhcGVIdG1sKGx2LmVjaG8pKTsKICAgICAgICBzdGVwKys7CiAgICAgICAgc2F2ZSgpOwogICAgICAgIHJlbmRlcigpOwogICAgfSk7CgogICAgbG9hZCgpOwogICAgcmVuZGVyKCk7Cn0pKCk7CgoKLyog6Ieq5Yqo5YWo5bGA5oyC6L2977yI5L6b5YaF6IGU5LqL5Lu25bGe5oCn6LCD55So77yJICovCmlmKCEoJ3NhdmUnIGluIHdpbmRvdykpd2luZG93LnNhdmU9c2F2ZTsKaWYoISgnbG9hZCcgaW4gd2luZG93KSl3aW5kb3cubG9hZD1sb2FkOwppZighKCdyZW5kZXInIGluIHdpbmRvdykpd2luZG93LnJlbmRlcj1yZW5kZXI7CmlmKCEoJ3ByaW50TGluZScgaW4gd2luZG93KSl3aW5kb3cucHJpbnRMaW5lPXByaW50TGluZTsKaWYoISgncmVzZXRBbGwnIGluIHdpbmRvdykpd2luZG93LnJlc2V0QWxsPXJlc2V0QWxsOwppZighKCdkb0NvbW1hbmQnIGluIHdpbmRvdykpd2luZG93LmRvQ29tbWFuZD1kb0NvbW1hbmQ7");
+</script>
+</body>
+</html>

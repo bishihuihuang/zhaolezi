@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>摘要萃取·智能摘要提炼｜创意引擎</title>
+    <link rel="icon" href="cy-favicon.ico" sizes="any">
+    <link rel="icon" href="cy-favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="cy-favicon-48.png">
+    <link rel="canonical" href="创意-摘要萃取.html">
+    <style>
+        .kw { display: inline-flex; align-items: center; gap: 4px; margin: 3px; padding: 4px 10px; border-radius: 999px; font-size: 12px; background: var(--zl-card-2); border: 1px solid var(--zl-border); color: var(--zl-text); }
+        .kw b { color: var(--zl-accent); font-size: 11px; }
+        .summ { background: var(--zl-card-2); border: 1px solid var(--zl-border); border-radius: 12px; padding: 14px 16px; line-height: 2; font-size: 15px; color: var(--zl-text); }
+        mark { background: #fde68a; color: #333; border-radius: 4px; padding: 1px 2px; }
+        :root[data-theme] mark { background: var(--zl-accent); color: var(--zl-btn-text); }
+        .sent { line-height: 2; }
+        .slider-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .slider-row input[type=range] { flex: 1; min-width: 140px; accent-color: var(--zl-accent); }
+        .slider-row output { font-weight: 800; color: var(--zl-accent); min-width: 20px; text-align: center; }
+    </style>
+
+    <link rel="stylesheet" href="cy-common.css">
+    <script src="cy-theme-init.js"></script>
+    <link rel="manifest" href="cy-manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="创意引擎">
+    <meta name="description" content="抽取式智能摘要：无需联网，在浏览器本地自动提炼长文的核心句与关键词，支持高亮原文与导出。">
+    <link rel="stylesheet" href="cy-common.css">
+    <script defer src="cy-common.js"></script>
+    <script defer src="cy-theme.js"></script>
+    <script defer src="cy-features.js"></script>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——摘要萃取·智能摘要提炼｜创意引擎，趣味工具与小游戏合集">
+<meta property="og:title" content="摘要萃取·智能摘要提炼｜创意引擎">
+<meta property="og:description" content="找乐子——摘要萃取·智能摘要提炼｜创意引擎，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/创意-摘要萃取.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body>
+
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+    </div>
+
+    <header class="cy-shell">
+        <h1>创意引擎 · 摘要萃取</h1>
+    </header>
+
+    <main class="cy-page">
+        <div class="cy-card">
+            <h2>📑 摘要萃取</h2>
+            <div class="sub">把长文粘贴进来，算法按「词频 × 句子位置」给每个句子打分，挑出最能代表全文的句子拼成摘要。全程本地运行，不联网、不泄露。</div>
+            <textarea class="cy-textarea" id="ta" style="min-height:180px;" placeholder="粘贴新闻、报告、文章正文……例如：&#10;「人工智能正在改变我们的生活方式。据统计，超过六成的企业已经在业务流程中引入智能技术。……」（建议 200 字以上效果更好）"></textarea>
+            <div class="slider-row" style="margin-top:12px;">
+                <span style="font-size:13px;color:var(--zl-muted);">摘要句数</span>
+                <input type="range" id="nSent" min="1" max="6" value="3">
+                <output id="nSentOut">3</output>
+            </div>
+            <div class="cy-toolbar">
+                <button class="cy-btn" id="btnRun">⚡ 开始萃取</button>
+                <button class="cy-btn cy-btn-ghost" id="btnCopy">📋 复制摘要</button>
+                <button class="cy-btn cy-btn-ghost" id="btnSave">💾 存到记录本</button>
+                <button class="cy-btn cy-btn-ghost" id="btnExample">📄 填入示例</button>
+            </div>
+        </div>
+
+        <div class="cy-card" id="resultCard" style="display:none;">
+            <h2>🧩 萃取结果</h2>
+            <div class="sub">关键词权重为词频得分（越高越核心）</div>
+            <div class="summ" id="summBox"></div>
+            <div style="margin-top:12px;" id="kwBox"></div>
+            <div style="margin-top:12px;font-size:12px;color:var(--zl-muted);" id="metaBox"></div>
+            <h2 style="margin-top:18px;">🔦 原文高亮</h2>
+            <div class="sub">黄色标出被摘取的核心句</div>
+            <div id="origBox" style="font-size:14px;color:var(--zl-text);"></div>
+        </div>
+    </main>
+
+    <script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("CiAgICAvKiA9PT09PT09PT09IOWBnOeUqOWtl++8iOWNleWtl+ivreazleivje+8iSA9PT09PT09PT09ICovCiAgICBjb25zdCBTVE9QX0NIQVJTID0gJ+eahOS6huaYr+WcqOWSjOaciemDveWwseedgOS5n+i/mOWPiOiAjOaIluS4juWPiuaKiuiiq+S9huiZveeEtuiAjOiLpeWImeS4lOWboOaVheS6juatpOWFtuS4uuS7juWvueWQkeS9jeS6juS7peS4iuS4reS5i+WGheeahOWklumXtOS7pScuc3BsaXQoJycpOwogICAgY29uc3QgU1RPUF9XT1JEUyA9IFsn5oiR5LusJywgJ+S9oOS7rCcsICfku5bku6wnLCAn5aW55LusJywgJ+Wug+S7rCcsICfov5nkuKonLCAn6YKj5LiqJywgJ+i/meS6mycsICfpgqPkupsnLCAn6Ieq5bexJywgJ+S4gOS4qicsICfkuIDnp40nLCAn5Y+v5LulJywgJ+ayoeaciScsICfkuI3mmK8nLCAn5bey57uPJywgJ+S9huaYrycsICflm6DkuLonLCAn5omA5LulJywgJ+WmguaenCcsICfomb3nhLYnLCAn6ICM5LiUJywgJ+W5tuS4lCcsICfmiJbogIUnLCAn5Y+q5pivJywgJ+WwseaYrycsICfov5jmmK8nLCAn6YCa6L+HJywgJ+WvueS6jicsICflhbPkuo4nLCAn55Sx5LqOJywgJ+WFtuS4rScsICfku6Xlj4onLCAn5L6L5aaCJywgJ+avlOWmgicsICfpmo/nnYAnLCAn5ZCM5pe2JywgJ+atpOWklicsICfnhLblkI4nLCAn5LmL5ZCOJywgJ+S5i+WJjScsICfku4rlpKknLCAn546w5ZyoJywgJ+ebruWJjScsICfku4rlubQnLCAn6L+R5Yeg5bm05p2lJ107CgogICAgZnVuY3Rpb24gdG9rZW5pemUodGV4dCkgewogICAgICAgIC8vIOi/lOWbniBbe3Rvaywgc2NvcmV9Xe+8muS4reaWh+WPjOWtl+ivjeadg+mHjTEuNuOAgeWNleWtlzEuMO+8m+iLseaWh+WNleivjeadg+mHjTEuMAogICAgICAgIGNvbnN0IHRva3MgPSBbXTsKICAgICAgICBjb25zdCBjamsgPSB0ZXh0LnJlcGxhY2UoL1teXHU0ZTAwLVx1OWZmZl0vZywgJycpOwogICAgICAgIGNvbnN0IGVuID0gdGV4dC5tYXRjaCgvW2EtekEtWl17Mix9L2cpIHx8IFtdOwogICAgICAgIC8vIOWPjOWtlwogICAgICAgIGZvciAobGV0IGlkeCA9IDA7IGlkeCA8IGNqay5sZW5ndGggLSAxOyBpZHgrKykgewogICAgICAgICAgICBjb25zdCBiaWcgPSBjamtbaWR4XSArIGNqa1tpZHggKyAxXTsKICAgICAgICAgICAgaWYgKFNUT1BfV09SRFMuaW5kZXhPZihiaWcpIDwgMCkgdG9rcy5wdXNoKHsgdG9rOiBiaWcsIHc6IDEuNiB9KTsKICAgICAgICB9CiAgICAgICAgLy8g5Y2V5a2X77yI5Y675YGc55So5a2X77yJCiAgICAgICAgZm9yIChsZXQgaWR4ID0gMDsgaWR4IDwgY2prLmxlbmd0aDsgaWR4KyspIHsKICAgICAgICAgICAgY29uc3QgY2hhciA9IGNqa1tpZHhdOwogICAgICAgICAgICBpZiAoU1RPUF9DSEFSUy5pbmRleE9mKGNoYXIpIDwgMCkgdG9rcy5wdXNoKHsgdG9rOiBjaGFyLCB3OiAxLjAgfSk7CiAgICAgICAgfQogICAgICAgIGVuLmZvckVhY2godyA9PiB0b2tzLnB1c2goeyB0b2s6IHcsIHc6IDEuMCB9KSk7CiAgICAgICAgcmV0dXJuIHRva3M7CiAgICB9CgogICAgZnVuY3Rpb24gc3BsaXRTZW50ZW5jZXModGV4dCkgewogICAgICAgIGNvbnN0IHBhcnRzID0gdGV4dC5yZXBsYWNlKC9cbisvZywgJ+OAgicpLnNwbGl0KC8oPzw9W+OAgu+8ge+8nyE/4oCmXSkvKTsKICAgICAgICByZXR1cm4gcGFydHMubWFwKHNlbnRlbmNlID0+IHNlbnRlbmNlLnRyaW0oKSkuZmlsdGVyKHNlbnRlbmNlID0+IHNlbnRlbmNlLmxlbmd0aCA+PSA2KTsKICAgIH0KCiAgICBmdW5jdGlvbiBzdW1tYXJpemUodGV4dCwgY291bnQpIHsKICAgICAgICBjb25zdCBzZW50cyA9IHNwbGl0U2VudGVuY2VzKHRleHQpOwogICAgICAgIGlmIChzZW50cy5sZW5ndGggPT09IDApIHJldHVybiBudWxsOwogICAgICAgIC8vIOivjemikee7n+iuoQogICAgICAgIGNvbnN0IGZyZXEgPSB7fTsKICAgICAgICB0b2tlbml6ZSh0ZXh0KS5mb3JFYWNoKHRva2VuID0+IHsgZnJlcVt0b2tlbi50b2tdID0gKGZyZXFbdG9rZW4udG9rXSB8fCAwKSArIHRva2VuLnc7IH0pOwogICAgICAgIC8vIOWPpeWtkOaJk+WIhgogICAgICAgIGNvbnN0IHNjb3JlZCA9IHNlbnRzLm1hcCgoc2VudGVuY2UsIGlkeCkgPT4gewogICAgICAgICAgICBsZXQgc2NvcmUgPSAwLCBjbnQgPSAwOwogICAgICAgICAgICB0b2tlbml6ZShzZW50ZW5jZSkuZm9yRWFjaCh0b2tlbiA9PiB7CiAgICAgICAgICAgICAgICBpZiAoZnJlcVt0b2tlbi50b2tdKSB7IHNjb3JlICs9IGZyZXFbdG9rZW4udG9rXSAqIHRva2VuLnc7IGNudCsrOyB9CiAgICAgICAgICAgIH0pOwogICAgICAgICAgICAvLyDkvY3nva7liqDmiJDvvJrpppblj6Uv5pyr5Y+l55Wl5Yqg5p2DCiAgICAgICAgICAgIGNvbnN0IHBvcyA9IGlkeCA9PT0gMCA/IDEuMTUgOiAoaWR4ID09PSBzZW50cy5sZW5ndGggLSAxID8gMS4wNSA6IDEpOwogICAgICAgICAgICBjb25zdCBsZW4gPSBzZW50ZW5jZS5sZW5ndGg7CiAgICAgICAgICAgIHNjb3JlID0gKHNjb3JlIC8gTWF0aC5tYXgoMSwgbGVuKSkgKiBwb3M7CiAgICAgICAgICAgIHJldHVybiB7IHNlbnRlbmNlLCBzY29yZSwgaWR4IH07CiAgICAgICAgfSk7CiAgICAgICAgLy8g5Y+W5YmNIGNvdW50IOWPpe+8iOaMieWIhuaVsO+8ie+8jOaMieWOn+aWh+mhuuW6j+i+k+WHugogICAgICAgIGNvbnN0IHRvcCA9IHNjb3JlZC5zbGljZSgpLnNvcnQoKGxocywgcmhzKSA9PiByaHMuc2NvcmUgLSBsaHMuc2NvcmUpLnNsaWNlKDAsIGNvdW50KS5zb3J0KChsaHMsIHJocykgPT4gbGhzLmlkeCAtIHJocy5pZHgpOwogICAgICAgIC8vIOWFs+mUruivje+8muaMieivjemikeWPluWJjSAxMu+8jOi/h+a7pOWNleWtl+S4juaVsOWtlwogICAgICAgIGNvbnN0IGt3cyA9IE9iamVjdC5rZXlzKGZyZXEpLnNvcnQoKGxocywgcmhzKSA9PiBmcmVxW3Joc10gLSBmcmVxW2xoc10pLnNsaWNlKDAsIDEyKQogICAgICAgICAgICAuZmlsdGVyKGsgPT4gISgvXltcZC5dKyQvLnRlc3QoaykpICYmIChrLmxlbmd0aCA+IDEgfHwgU1RPUF9DSEFSUy5pbmRleE9mKGspIDwgMCkpCiAgICAgICAgICAgIC5zbGljZSgwLCA4KTsKICAgICAgICByZXR1cm4gewogICAgICAgICAgICBzdW1tYXJ5OiB0b3AubWFwKGl0ZW0gPT4gaXRlbS5zZW50ZW5jZSkuam9pbignJyksCiAgICAgICAgICAgIHNlbnRlbmNlczogdG9wLm1hcChpdGVtID0+IGl0ZW0uc2VudGVuY2UpLAogICAgICAgICAgICB0b3BJZHg6IHRvcC5tYXAoaXRlbSA9PiBpdGVtLmlkeCksCiAgICAgICAgICAgIGt3czoga3dzLm1hcChrID0+ICh7IHc6IGssIGY6IE1hdGgucm91bmQoZnJlcVtrXSAqIDEwKSAvIDEwIH0pKSwKICAgICAgICAgICAgbWV0YTogeyB0b3RhbFNlbnQ6IHNlbnRzLmxlbmd0aCwgdG90YWxDaGFyOiB0ZXh0Lmxlbmd0aCwgY29tcHJlc3M6IE1hdGgucm91bmQodG9wLmpvaW4oJycpLmxlbmd0aCAvIHRleHQubGVuZ3RoICogMTAwKSB9CiAgICAgICAgfTsKICAgIH0KCiAgICBjb25zdCBFWEFNUExFID0gJ+S6uuW3peaZuuiDveato+WcqOa3seWIu+aUueWPmOaIkeS7rOeahOeUn+a0u+aWueW8j+OAguaNrue7n+iuoe+8jOi2hei/h+WFreaIkOeahOS8geS4muW3sue7j+WcqOS4muWKoea1geeoi+S4reW8leWFpeaZuuiDveaKgOacr++8jOiAjOS4ieW5tOWJjei/meS4quaVsOWtl+i/mOS4jeWIsOS4pOaIkOOAguaZuuiDveWuouacjeezu+e7n+iuqeacjeWKoeWTjeW6lOaXtumXtOS7juW5s+Wdh+S6lOWIhumSn+e8qeefreWIsOS4ieWNgeenku+8jOaYvuiRl+aPkOWNh+S6hueUqOaIt+S9k+mqjOOAglxu5Zyo5pWZ6IKy6aKG5Z+f77yM6Ieq6YCC5bqU5a2m5Lmg57O757uf6IO95aSf5qC55o2u5a2m55Sf55qE562U6aKY5oOF5Ya15Yqo5oCB6LCD5pW06aKY55uu6Zq+5bqm77yM55yf5q2j5a6e546w5Zug5p2Q5pa95pWZ44CC5LiA5Lqb5YGP6L+c5Zyw5Yy655qE5a2m5qCh6YCa6L+H6L+c56iL6K++5aCC77yM56ys5LiA5qyh5Lqr5Y+X5Yiw5LqG5ZCN5biI6LWE5rqQ44CCXG7kvYbmioDmnK/lj5HlsZXkuZ/luKbmnaXkuobmlrDnmoTmjJHmiJjjgILmlbDmja7pmpDnp4Hpl67popjml6Xnm4rnqoHlh7rvvIznrpfms5Xmrafop4bnmoTpo47pmankuI3lrrnlv73op4bvvIzpg6jliIbkvKDnu5/lspfkvY3pnaLkuLTooqvmm7/ku6PnmoTljovlipvjgILkuJPlrrblu7rorq7vvIzlnKjmi6XmirHmioDmnK/nmoTlkIzml7bvvIzlupTliqDlv6vlrozlloTms5Xlvovms5Xop4TvvIzliqDlvLrlhazmsJHmlbDlrZfntKDlhbvmlZnogrLjgIJcbuacquadpeWNgeW5tO+8jOS6uuW3peaZuuiDveWwhuS4juWMu+eWl+OAgeWItumAoOOAgeWGnOS4mua3seW6puiejeWQiO+8jOS6uuexu+WSjOacuuWZqOWwhui/m+WFpeWNj+S9nOWFseeUn+eahOaWsOmYtuauteOAguiwgeWFiOaOjOaPoeS6uuS4juaKgOacr+WNj+WQjOeahOiDveWKm++8jOiwgeWwseWwhuWcqOS4i+S4gOi9ruernuS6ieS4reWNoOaNruWFiOacuuOAgic7CgogICAgY29uc3QgdGEgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgndGEnKTsKICAgIGNvbnN0IG5TZW50ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ25TZW50Jyk7CiAgICBjb25zdCBuU2VudE91dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCduU2VudE91dCcpOwoKICAgIG5TZW50Lm9uaW5wdXQgPSBmdW5jdGlvbiAoKSB7IG5TZW50T3V0LnRleHRDb250ZW50ID0gdGhpcy52YWx1ZTsgfTsKCiAgICBmdW5jdGlvbiBydW4oKSB7CiAgICAgICAgY29uc3QgdGV4dCA9IHRhLnZhbHVlLnRyaW0oKTsKICAgICAgICBpZiAodGV4dC5sZW5ndGggPCA0MCkgeyBDWS5zaG93VG9hc3QoJ+WGheWuueWkquefreWVpu+8jOiHs+WwkSA0MCDlrZfmlYjmnpzmiY3lpb0nKTsgcmV0dXJuOyB9CiAgICAgICAgY29uc3Qgc2VudGVuY2VDb3VudCA9IHBhcnNlSW50KG5TZW50LnZhbHVlKTsKICAgICAgICBjb25zdCByZXMgPSBzdW1tYXJpemUodGV4dCwgc2VudGVuY2VDb3VudCk7CiAgICAgICAgaWYgKCFyZXMpIHsgQ1kuc2hvd1RvYXN0KCfmsqHmib7liLDmnInmlYjlj6XlrZDvvIzor7fmo4Dmn6XlhoXlrrknKTsgcmV0dXJuOyB9CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3N1bW1Cb3gnKS50ZXh0Q29udGVudCA9IHJlcy5zdW1tYXJ5OwogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdrd0JveCcpLmlubmVySFRNTCA9IHJlcy5rd3MubWFwKGsgPT4KICAgICAgICAgICAgJzxzcGFuIGNsYXNzPSJrdyI+PGI+JyArIGsuZiArICc8L2I+JyArIENZLmVzY2FwZUh0bWwoay53KSArICc8L3NwYW4+JwogICAgICAgICkuam9pbignJyk7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ21ldGFCb3gnKS5pbm5lckhUTUwgPQogICAgICAgICAgICAn5Y6f5paHICcgKyByZXMubWV0YS50b3RhbFNlbnQgKyAnIOWPpSDCtyAnICsgcmVzLm1ldGEudG90YWxDaGFyICsgJyDlrZfvvZzmkZjopoHnuqYgJyArIHJlcy5tZXRhLmNvbXByZXNzICsgJyUg55qE5L2T6YePJzsKICAgICAgICAvLyDljp/mlofpq5jkuq4KICAgICAgICBjb25zdCBzZW50cyA9IHNwbGl0U2VudGVuY2VzKHRleHQpOwogICAgICAgIGNvbnN0IHRvcFNldCA9IHt9OwogICAgICAgIHJlcy50b3BJZHguZm9yRWFjaChpZHggPT4gdG9wU2V0W2lkeF0gPSAxKTsKICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnb3JpZ0JveCcpLmlubmVySFRNTCA9IHNlbnRzLm1hcCgoc2VudGVuY2UsIGlkeCkgPT4KICAgICAgICAgICAgJzxzcGFuIGNsYXNzPSJzZW50Ij4nICsgKHRvcFNldFtpZHhdID8gJzxtYXJrPicgKyBDWS5lc2NhcGVIdG1sKHNlbnRlbmNlKSArICc8L21hcms+JyA6IENZLmVzY2FwZUh0bWwoc2VudGVuY2UpKSArICc8L3NwYW4+JwogICAgICAgICkuam9pbignJyk7CiAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Jlc3VsdENhcmQnKS5zdHlsZS5kaXNwbGF5ID0gJyc7CiAgICAgICAgaWYgKHdpbmRvdy5DWSAmJiBDWS5hY3Rpdml0eSkgQ1kuYWN0aXZpdHkuYWRkKHsgdHlwZTogJ3N1bW1hcml6ZScsIHBhZ2U6ICfliJvmhI8t5pGY6KaB6JCD5Y+WLmh0bWwnIH0pOwogICAgICAgIGlmICh3aW5kb3cuQ1kgJiYgQ1kudW5sb2NrKSBDWS51bmxvY2soJ2RpZ2VzdF9maXJzdCcpOwogICAgICAgIENZLnNob3dUb2FzdCgn6JCD5Y+W5a6M5oiQJyk7CiAgICB9CgogICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2J0blJ1bicpLm9uY2xpY2sgPSBydW47CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYnRuRXhhbXBsZScpLm9uY2xpY2sgPSBmdW5jdGlvbiAoKSB7CiAgICAgICAgdGEudmFsdWUgPSBFWEFNUExFOwogICAgICAgIHRhLmZvY3VzKCk7CiAgICAgICAgQ1kuc2hvd1RvYXN0KCfnpLrkvovlt7LloavlhaXvvIzngrnlh7vjgIzlvIDlp4vokIPlj5bjgI0nKTsKICAgIH07CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYnRuQ29weScpLm9uY2xpY2sgPSBmdW5jdGlvbiAoKSB7CiAgICAgICAgY29uc3Qgc3VtbWFyeVRleHQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc3VtbUJveCcpLnRleHRDb250ZW50OwogICAgICAgIGlmICghc3VtbWFyeVRleHQpIHJldHVybjsKICAgICAgICBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dChzdW1tYXJ5VGV4dCkudGhlbihmdW5jdGlvbiAoKSB7IENZLnNob3dUb2FzdCgn5pGY6KaB5bey5aSN5Yi2Jyk7IH0pLmNhdGNoKGZ1bmN0aW9uICgpIHt9KTsKICAgIH07CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYnRuU2F2ZScpLm9uY2xpY2sgPSBmdW5jdGlvbiAoKSB7CiAgICAgICAgY29uc3Qgc3VtbWFyeVRleHQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc3VtbUJveCcpLnRleHRDb250ZW50OwogICAgICAgIGlmICghc3VtbWFyeVRleHQpIHJldHVybjsKICAgICAgICB0cnkgewogICAgICAgICAgICBjb25zdCBub3RlcyA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oJ2N5X25vdGVzX3YxJykgfHwgJ1tdJyk7CiAgICAgICAgICAgIG5vdGVzLnVuc2hpZnQoeyBpZDogJ24nICsgRGF0ZS5ub3coKSwgdGV4dDogJ+OAkOaRmOimgeOAkScgKyBzdW1tYXJ5VGV4dCwgdGFnczogWyfmkZjopoEnXSwgZmF2OiBmYWxzZSwgYXQ6IERhdGUubm93KCkgfSk7CiAgICAgICAgICAgIGxvY2FsU3RvcmFnZS5zZXRJdGVtKCdjeV9ub3Rlc192MScsIEpTT04uc3RyaW5naWZ5KG5vdGVzLnNsaWNlKDAsIDMwMCkpKTsKICAgICAgICAgICAgQ1kuc2hvd1RvYXN0KCflt7LlrZjlhaXngbXmhJ/orrDlvZXmnKzvvIg5IOWPt+mhteWPr+afpeeci++8iScpOwogICAgICAgIH0gY2F0Y2ggKGUpIHt9CiAgICB9OwoKICAgIC8qIOWGkueDn+iHquajgOi+heWKqe+8muaatOmcsuWHveaVsCAqLwogICAgaWYgKCEoJ3N1bW1hcml6ZScgaW4gd2luZG93KSkgd2luZG93LnN1bW1hcml6ZSA9IHN1bW1hcml6ZTsKICAgIGlmICghKCdzcGxpdFNlbnRlbmNlcycgaW4gd2luZG93KSkgd2luZG93LnNwbGl0U2VudGVuY2VzID0gc3BsaXRTZW50ZW5jZXM7CiAgICBpZiAoISgndG9rZW5pemUnIGluIHdpbmRvdykpIHdpbmRvdy50b2tlbml6ZSA9IHRva2VuaXplOwogICAgCgovKiDoh6rliqjlhajlsYDmjILovb3vvIjkvpvlhoXogZTkuovku7blsZ7mgKfosIPnlKjvvIkgKi8KaWYoISgncnVuJyBpbiB3aW5kb3cpKXdpbmRvdy5ydW49cnVuOw==");
+</script>
+</body>
+</html>

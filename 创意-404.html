@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面走丢了｜创意引擎</title>
+    <link rel="icon" href="cy-favicon.ico" sizes="any">
+    <link rel="icon" href="cy-favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="cy-favicon-48.png">
+    <link rel="manifest" href="cy-manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="你要找的页面不存在，5 秒后返回创意引擎首页。">
+    <!-- 404 页不参与权重：不带 canonical（会误导搜索引擎），改由 noindex 排除 -->
+    <meta name="robots" content="noindex,follow">
+    <script src="cy-theme-init.js"></script>
+    <style>
+        html, body { height: 100%; margin: 0; }
+        body {
+            display: flex; align-items: center; justify-content: center;
+            font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, sans-serif;
+            background: #0a0e1f; color: #e7e9f4; text-align: center;
+            overflow: hidden;
+        }
+        [data-theme="light"] body { background: #f6f7fb; color: #1b1e2c; }
+        [data-theme="zhaolezi"] body { background: #f6f7fd; color: #23263a; }
+        [data-theme="light"] .wrap { box-shadow: 0 20px 60px rgba(99,102,241,.12); }
+        .wrap {
+            position: relative; z-index: 2;
+            max-width: 520px; padding: 56px 40px;
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 22px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 24px 70px rgba(0,0,0,.45);
+        }
+        [data-theme="light"] .wrap { background: #fff; border-color: #eceef6; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .5; z-index: 1; pointer-events: none; }
+        .orb.a { width: 340px; height: 340px; background: #6366f1; top: -120px; left: -100px; }
+        .orb.b { width: 300px; height: 300px; background: #a855f7; bottom: -110px; right: -80px; }
+        .orb.c { width: 240px; height: 240px; background: #22d3ee; bottom: 10%; left: 30%; opacity: .28; }
+        .emoji { font-size: 68px; line-height: 1; margin-bottom: 18px; }
+        .code {
+            font-size: 84px; font-weight: 800; letter-spacing: -3px; margin: 0 0 6px;
+            background: linear-gradient(120deg, #6366f1, #a855f7 55%, #22d3ee);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        h1 { font-size: 21px; font-weight: 700; margin: 0 0 12px; }
+        p { font-size: 14.5px; line-height: 1.9; margin: 0 0 26px; opacity: .82; }
+        a.go {
+            display: inline-block; padding: 13px 30px; border-radius: 999px; text-decoration: none;
+            font-size: 15px; font-weight: 700; color: #fff;
+            background: linear-gradient(120deg, #6366f1, #a855f7);
+            box-shadow: 0 10px 30px rgba(99,102,241,.45);
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+        a.go:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(99,102,241,.55); }
+        .tip { margin-top: 20px; font-size: 12px; opacity: .5; }
+        .tip b { color: #22d3ee; opacity: 1; }
+        .foot {
+            position: fixed; bottom: 22px; left: 0; right: 0; text-align: center;
+            font-size: 11.5px; opacity: .42; letter-spacing: .5px;
+        }
+        @media (max-width: 520px) {
+            .wrap { padding: 44px 26px; margin: 0 16px; }
+            .code { font-size: 68px; }
+        }
+    </style>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——页面走丢了｜创意引擎，趣味工具与小游戏合集">
+<meta property="og:title" content="页面走丢了｜创意引擎">
+<meta property="og:description" content="找乐子——页面走丢了｜创意引擎，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/创意-404.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body>
+    <div class="orb a"></div>
+    <div class="orb b"></div>
+    <div class="orb c"></div>
+
+    <div class="wrap">
+        <div class="emoji">🔭</div>
+        <div class="code">404</div>
+        <h1>这片星际上没有你要的页面</h1>
+        <p>它可能已经改名、搬走，或者从未被创造过。<br>别担心 —— 灵感引擎的 12 件工具箱全都还在原位。</p>
+        <a class="go" href="创意-首页.html">✨ 回到首页</a>
+        <div class="tip">本页将在 <b id="cnt">5</b> 秒后自动返回首页</div>
+    </div>
+
+    <div class="foot">创意引擎 · Muse</div>
+
+    <script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("CiAgICAgICAgKGZ1bmN0aW9uICgpIHsKICAgICAgICAgICAgdmFyIGNvdW50ZG93biA9IDUsIGVsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NudCcpOwogICAgICAgICAgICB2YXIgaW50ZXJ2YWxJZCA9IHNldEludGVydmFsKGZ1bmN0aW9uICgpIHsKICAgICAgICAgICAgICAgIGNvdW50ZG93bi0tOwogICAgICAgICAgICAgICAgaWYgKGVsKSBlbC50ZXh0Q29udGVudCA9IGNvdW50ZG93bjsKICAgICAgICAgICAgICAgIGlmIChjb3VudGRvd24gPD0gMCkgeyBjbGVhckludGVydmFsKGludGVydmFsSWQpOyBsb2NhdGlvbi5yZXBsYWNlKCfliJvmhI8t6aaW6aG1Lmh0bWwnKTsgfQogICAgICAgICAgICB9LCAxMDAwKTsKICAgICAgICB9KSgpOwogICAg");
+</script>
+</body>
+</html>

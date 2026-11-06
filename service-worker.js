@@ -261,29 +261,40 @@
 // V269：2026-11-04 自动构建（公共层/页面更新，缓存随构建递增）
 // V270：2026-11-05 自动构建（公共层/页面更新，缓存随构建递增）
 // V271：2026-11-05 自动构建（公共层/页面更新，缓存随构建递增）
-const CACHE_NAME = 'zhaolezi-v271';
+// V272：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V273：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V274：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V275：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V276：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V277：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V278：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V279：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V280：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V281：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+// V282：2026-11-06 自动构建（公共层/页面更新，缓存随构建递增）
+const CACHE_NAME = 'zhaolezi-v282';
 const ASSETS = [
   './',
   './index.html',
   // V2.7.0 四站并入：apps/ 四站入口页（子目录静态站，内部资源走运行时缓存）
-  './apps/ai-prompts/index.html',
-  './apps/xiandaihua/index.html',
-  './apps/creativity/index.html',
-  './apps/all-file-saver/index.html',
+  '提示词-欢迎页.html',
+  '现代-全站目录树.html',
+  '创意-首页.html',
+  '全能-首页.html',
   // V2.3.3 顶层精简：业务页迁 pages/（index.html 留根，PWA start_url 与站点根 URL 不变）；
   // cache.addAll 全成功或全失败，任一路径写错则 SW 无法安装，故与目录搬迁同提交修改
-  './pages/1.html', './pages/2.html', './pages/3.html', './pages/4.html', './pages/5.html', './pages/6.html',
-  './pages/7.html', './pages/8.html', './pages/9.html', './pages/10.html', './pages/11.html', './pages/12.html',
-  './pages/13.html', './pages/14.html', './pages/15.html', './pages/16.html', './pages/17.html', './pages/18.html',
-  './pages/19.html', './pages/20.html', './pages/21.html', './pages/22.html', './pages/23.html', './pages/24.html',
-  './pages/25.html', './pages/26.html', './pages/27.html', './pages/28.html', './pages/29.html', './pages/30.html',
-  './pages/31.html', './pages/32.html', './pages/34.html', './pages/36.html',
-  './pages/37.html', './pages/38.html', './pages/39.html', './pages/41.html', './pages/42.html',
-  './pages/46.html',
-  './pages/文件搜索.html',
-  './pages/verify.html',
-  './pages/offline.html',
-  './pages/17-data.js',
+  '密码登录.html', '授权协议.html', '授权确认.html', '选择IP.html', '媒体池.html', '作者介绍.html',
+  '优质工具箱.html', '背包.html', '文本生成文件.html', '后台修改.html', '赞赏支持.html', '基础计算器.html',
+  '日期计算器.html', '虚拟消费系统.html', '强密码生成器.html', '黑客模拟器.html', '古今中外暗号大全.html', '单位换算.html',
+  '网页备忘录.html', '五子棋.html', '记忆配对游戏.html', '扫雷.html', '在线词典.html', '词频统计.html',
+  '字数统计.html', '二维码生成器.html', '摩斯密码转换.html', '免责声明.html', '反馈渠道.html', '更新公告.html',
+  '娱乐游戏.html', '工具导航.html', '打字测试.html', '双人井字棋.html',
+  '每日一题.html', '成就中心.html', '分享卡片.html', '看看作业.html', '看看作业-更新公告.html',
+  '学习计时.html',
+  '文件搜索.html',
+  '作业验证.html',
+  '离线页.html',
+  '17-data.js',
   './manifest.json',
   './common.css',
   './common.js',
@@ -294,17 +305,7 @@ const ASSETS = [
   './favicon.svg',
   './favicon-48.png',
   './robots.txt',
-  './sitemap.xml',
-  './pages/images/bg-blue-pc.jpg',
-  './pages/images/bg-blue-mobile.jpg',
-  './pages/images/bg-gold-pc.jpg',
-  './pages/images/bg-gold-mobile.jpg',
-  './pages/images/bg-light-pc.jpg',
-  './pages/images/bg-light-mobile.jpg',
-  './pages/images/bg-snowsun-pc.jpg',
-  './pages/images/bg-snowsun-mobile.jpg',
-  './pages/images/bg-aurora-pc.jpg',
-  './pages/images/bg-aurora-mobile.jpg'
+  './sitemap.xml'
 ];
 
 // 安装：预缓存核心资源
@@ -353,7 +354,7 @@ self.addEventListener('fetch', (event) => {
           // 网络失败：先看当前页面缓存，再回落到离线提示页，最后首页
           return caches.match(event.request).then((cached) => {
             if (cached) return cached;
-            return caches.match('./pages/offline.html').then((off) => off || caches.match('./index.html'));
+            return caches.match('离线页.html').then((off) => off || caches.match('./index.html'));
           });
         })
     );
@@ -398,7 +399,7 @@ self.addEventListener('fetch', (event) => {
           .catch(() => {
             // 离线且无缓存：先回退到 offline.html 兜底页，miss 再走首页
             // 此前此处返回 undefined 会让 respondWith 无响应，导致 23 页分片离线时静默失败
-            return caches.match('./pages/offline.html').then((off) => off || caches.match('./index.html'));
+            return caches.match('离线页.html').then((off) => off || caches.match('./index.html'));
           });
       })
   );

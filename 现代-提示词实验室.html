@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>提示词实验室 - 现代化·知识学习站</title>
+<meta name="description" content="提示词实验室：按场景点选组件，自动组装成一条完整的五要素提示词，一键复制去 AI 工具里用。">
+<link rel="icon" href="xd-favicon.svg">
+<link rel="manifest" href="xd-manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="xd-common.css">
+<script defer src="xd-common.js"></script>
+<script defer src="xd-theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    #lab { width: 100%; }
+    .lab-card {
+        background: var(--card-2); border: 2px solid var(--line); border-radius: 16px;
+        padding: 18px 20px; margin-top: 16px;
+    }
+    .lab-field { margin-bottom: 14px; }
+    .lab-field label { display: block; font-size: 13px; font-weight: 800; color: var(--blue); margin-bottom: 6px; }
+    .lab-field select, .lab-field textarea, .lab-field input {
+        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+        font-size: 14px; background: var(--card); color: var(--txt); outline: none; box-sizing: border-box;
+    }
+    .lab-field select:focus, .lab-field textarea:focus, .lab-field input:focus {
+        border-color: var(--blue); box-shadow: 0 0 0 3px rgba(102, 126, 234, .2);
+    }
+    .lab-hint { font-size: 12px; color: var(--dim); margin-top: 5px; }
+    .role-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip {
+        border: 1px solid var(--line); background: var(--card); color: var(--txt);
+        padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all .2s;
+    }
+    .chip:hover { border-color: var(--blue); color: var(--blue); }
+    .chip.on { background: var(--btn-grad); color: #fff; border-color: transparent; }
+    #labOut {
+        width: 100%; min-height: 150px; border: 1px solid var(--line); border-radius: 10px;
+        padding: 12px; font-size: 14px; line-height: 1.8; background: var(--card); color: var(--txt);
+        box-sizing: border-box; outline: none;
+    }
+    .lab-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .lab-preview { margin-top: 8px; font-size: 12px; color: var(--dim); }
+</style>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——提示词实验室 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:title" content="提示词实验室 - 现代化·知识学习站">
+<meta property="og:description" content="找乐子——提示词实验室 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/现代-提示词实验室.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body data-page="现代-提示词实验室.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="现代-全站目录树.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块E · 如何使用 AI</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">🧪 提示词实验室</h1>
+        <p class="lesson-sub">模块E · 第 4 课 | 组装式提示词生成器</p>
+
+        <div class="callout info">
+            <b>怎么玩</b>
+            选一个场景，填好<strong>角色 / 任务 / 上下文 / 格式</strong>四块积木，点「生成提示词」，把成品复制到任何 AI 对话框使用。参考 E2 的五要素，越具体效果越好。
+        </div>
+
+        <div id="lab">
+            <div class="lab-card">
+                <div class="lab-field">
+                    <label>① 场景模板（选一个，自动填好角色）</label>
+                    <select id="sceneSel">
+                        <option value="learn">学习提问：把概念讲明白</option>
+                        <option value="write">写文章：按受众产出</option>
+                        <option value="polish">改稿：保留原意改风格</option>
+                        <option value="plan">做计划：表格化任务安排</option>
+                        <option value="debug">代码排错：报错秒懂</option>
+                        <option value="custom">自定义：从零组装</option>
+                    </select>
+                </div>
+                <div class="lab-field">
+                    <label>② 角色（AI 以什么身份回答你）</label>
+                    <input id="roleIn" type="text" placeholder="例：一位耐心的初中数学老师">
+                    <div class="role-chips" id="roleChips">
+                        <span class="chip">耐心的老师</span>
+                        <span class="chip">资深编辑</span>
+                        <span class="chip">求职辅导师</span>
+                        <span class="chip">健身教练</span>
+                        <span class="chip">Python 导师</span>
+                        <span class="chip">产品经理</span>
+                    </div>
+                </div>
+                <div class="lab-field">
+                    <label>③ 任务（要 AI 做什么？带上约束）</label>
+                    <input id="taskIn" type="text" placeholder="例：用 200 字以内的通俗语言解释「量子纠缠」，并给 1 个生活例子">
+                    <div class="lab-hint">动词开头 + 字数/条数/风格等约束，效果最好。</div>
+                </div>
+                <div class="lab-field">
+                    <label>④ 上下文（给 AI 喂背景 / 原材料）</label>
+                    <textarea id="ctxIn" rows="3" placeholder="例：我是零基础的初中生；目标读者是 55 岁阿姨；粘贴你的原稿…"></textarea>
+                </div>
+                <div class="lab-field">
+                    <label>⑤ 格式（输出长什么样）</label>
+                    <select id="fmtSel">
+                        <option value="分点列出">分点列出，每点不超过 20 字</option>
+                        <option value="表格">用 Markdown 表格输出</option>
+                        <option value="段落">连贯段落，不用编号</option>
+                        <option value="代码">只输出代码，不加解释</option>
+                        <option value="自由">自由发挥</option>
+                    </select>
+                </div>
+                <div class="lab-row">
+                    <button class="btn" id="genBtn">⚡ 生成提示词</button>
+                    <button class="btn btn-secondary" id="copyBtn">📋 复制成品</button>
+                </div>
+                <div class="lab-field" style="margin-top:14px;">
+                    <label>生成的提示词</label>
+                    <textarea id="labOut" readonly placeholder="点「生成提示词」后，成品会出现在这里…"></textarea>
+                </div>
+                <div class="lab-preview" id="labNote"></div>
+            </div>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="现代-AI工具地图与工作流.html">AI 工具地图与工作流</a> · 下一课：<a href="现代-模块E测验：如何使用AI.html">测验：如何使用 AI</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("Ci8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogKiDmj5DnpLror43lrp7pqozlrqTvvIjpobXpnaLlhoXogZTohJrmnKzvvIznq4vljbPmiafooYzvvIkKICog5Zy65pmv5qih5p2/ICsg6KeS6ImyL+S7u+WKoS/kuIrkuIvmlocv5qC85byPIOWbm+Wdl+enr+acqOe7hOijheS6lOimgee0oOaPkOekuuivje+8jAogKiDnlJ/miJDkuI7lpI3liLblnYflnKjmnKzlnLDlrozmiJDvvIzkuI3kvp3otZbnvZHnu5wKICogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICovCihmdW5jdGlvbiAoKSB7CiAgICB2YXIgc2NlbmVTZWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2NlbmVTZWwnKTsKICAgIHZhciByb2xlSW4gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncm9sZUluJyk7CiAgICB2YXIgdGFza0luID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Rhc2tJbicpOwogICAgdmFyIGN0eEluID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2N0eEluJyk7CiAgICB2YXIgZm10U2VsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZtdFNlbCcpOwogICAgdmFyIGxhYk91dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdsYWJPdXQnKTsKICAgIHZhciBsYWJOb3RlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2xhYk5vdGUnKTsKICAgIHZhciBnZW5CdG4gPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZ2VuQnRuJyk7CiAgICB2YXIgY29weUJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjb3B5QnRuJyk7CgogICAgdmFyIFNDRU5FUyA9IHsKICAgICAgICBsZWFybjogeyByb2xlOiAn5LiA5L2N6ICQ5b+D55qE5Yid5Lit5pWw5a2m6ICB5biI77yM6K6y6Kej6KaB6YCa5L+X77yM6YG/5YWN5pyv6K+t5aCG56CMJywgdGFzazogJ+eUqOmAmuS/l+eahOivreiogOino+mHiuOAjOi/memHjOWhq+amguW/teOAje+8jOW5tue7mSAxIOS4queUn+a0u+S4reeahOS+i+WtkCcgfSwKICAgICAgICB3cml0ZTogeyByb2xlOiAn6LWE5rex5paw5aqS5L2T57yW6L6R77yM5pOF6ZW/6Z2i5ZCR5aSn5LyX5YaZ5paH56ugJywgdGFzazogJ+WGmeS4gOevh+WFs+S6juOAjOi/memHjOWhq+S4u+mimOOAjeeahOefreaWh++8jOWPl+S8l+aYr+aZrumAmuivu+iAhe+8jOe7k+Wwvue7meS4gOS4quihjOWKqOWPt+WPrCcgfSwKICAgICAgICBwb2xpc2g6IHsgcm9sZTogJ+i1hOa3seS4reaWh+e8lui+ke+8jOa2puiJsuaWh+Wtl+S9hue7neS4jeaUueWPmOWOn+aEjycsIHRhc2s6ICfluK7miJHmlLnkuIvpnaLov5nmrrXmloflrZfvvIzopoHmsYLmm7Tlj6Por63ljJbjgIHmm7TmnInmhJ/mg4UnIH0sCiAgICAgICAgcGxhbjogeyByb2xlOiAn5pWI546H6KeE5YiS5biI77yM5pOF6ZW/5oqK55uu5qCH5ouG5oiQ5Y+v5omn6KGM5Lu75YqhJywgdGFzazogJ+W4ruaIkeWItuWumuS4gOS4quOAjOi/memHjOWhq+ebruagh+OAjeeahCA3IOWkqeiuoeWIku+8jOavj+WkqeWuieaOkuWFt+S9k+S7u+WKoScgfSwKICAgICAgICBkZWJ1ZzogeyByb2xlOiAn57uP6aqM5Liw5a+M55qE56iL5bqP5ZGY77yM6Kej6YeK5oql6ZSZ566A5rSB5YeG56GuJywgdGFzazogJ+aIkei/kOihjOS7o+eggeaKpemUme+8muivt+ino+mHiuWOn+WboOW5tue7meWHuuS/ruWkjeS7o+egge+8jOS4jeimgemVv+evh+Wkp+iuuicgfSwKICAgICAgICBjdXN0b206IHsgcm9sZTogJycsIHRhc2s6ICcnIH0KICAgIH07CgogICAgZnVuY3Rpb24gb25TY2VuZSgpIHsKICAgICAgICB2YXIgcyA9IFNDRU5FU1tzY2VuZVNlbC52YWx1ZV07CiAgICAgICAgaWYgKHMgJiYgcy5yb2xlKSByb2xlSW4udmFsdWUgPSBzLnJvbGU7CiAgICAgICAgaWYgKHMgJiYgcy50YXNrKSB0YXNrSW4udmFsdWUgPSBzLnRhc2s7CiAgICAgICAgaWYgKHNjZW5lU2VsLnZhbHVlICE9PSAnY3VzdG9tJykgeyBjdHhJbi5wbGFjZWhvbGRlciA9ICfkvovvvJrmiJHmmK/pm7bln7rnoYDnmoTliJ3kuK3nlJ/vvJvnm67moIfor7vogIXmmK8gNTUg5bKB6Zi/5aeo77yb57KY6LS05L2g55qE5Y6f56i/4oCmJzsgfQogICAgfQogICAgc2NlbmVTZWwuYWRkRXZlbnRMaXN0ZW5lcignY2hhbmdlJywgb25TY2VuZSk7CgogICAgdmFyIGNoaXBzID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnLmNoaXAnKTsKICAgIGNoaXBzLmZvckVhY2goZnVuY3Rpb24gKGMpIHsKICAgICAgICBjLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKCkgewogICAgICAgICAgICBjaGlwcy5mb3JFYWNoKGZ1bmN0aW9uICh4KSB7IHguY2xhc3NMaXN0LnJlbW92ZSgnb24nKTsgfSk7CiAgICAgICAgICAgIGMuY2xhc3NMaXN0LmFkZCgnb24nKTsKICAgICAgICAgICAgcm9sZUluLnZhbHVlID0gYy50ZXh0Q29udGVudDsKICAgICAgICB9KTsKICAgIH0pOwoKICAgIGZ1bmN0aW9uIGJ1aWxkKCkgewogICAgICAgIHZhciByb2xlID0gcm9sZUluLnZhbHVlLnRyaW0oKTsKICAgICAgICB2YXIgdGFzayA9IHRhc2tJbi52YWx1ZS50cmltKCk7CiAgICAgICAgdmFyIGN0eCA9IGN0eEluLnZhbHVlLnRyaW0oKTsKICAgICAgICB2YXIgZm10ID0gZm10U2VsLnZhbHVlID09PSAn6Ieq55SxJyA/ICcnIDogZm10U2VsLnZhbHVlOwogICAgICAgIGlmICghdGFzaykgeyBsYWJPdXQudmFsdWUgPSAnJzsgbGFiTm90ZS50ZXh0Q29udGVudCA9ICfku7vliqHov5jmsqHloavlk6bvvIzoh7PlsJHlhpnkuIDlj6XjgIzopoEgQUkg5YGa5LuA5LmI44CN44CCJzsgcmV0dXJuOyB9CiAgICAgICAgdmFyIHBhcnRzID0gW107CiAgICAgICAgaWYgKHJvbGUpIHBhcnRzLnB1c2goJ+OAkOinkuiJsuOAkScgKyByb2xlKTsKICAgICAgICBwYXJ0cy5wdXNoKCfjgJDku7vliqHjgJEnICsgdGFzayk7CiAgICAgICAgaWYgKGN0eCkgcGFydHMucHVzaCgn44CQ5LiK5LiL5paH44CRJyArIGN0eCk7CiAgICAgICAgaWYgKGZtdCkgcGFydHMucHVzaCgn44CQ5qC85byP44CRJyArIGZtdCk7CiAgICAgICAgbGFiT3V0LnZhbHVlID0gcGFydHMuam9pbignXG4nKTsKICAgICAgICBsYWJOb3RlLnRleHRDb250ZW50ID0gJ+W3suaMieS6lOimgee0oOe7hOijhe+8jOWFsSAnICsgcGFydHMubGVuZ3RoICsgJyDkuKrnu4Tku7bvvJvlpI3liLblkI7ljrsgQUkg5a+56K+d5qGG57KY6LS05Y2z5Y+v44CCJzsKICAgIH0KICAgIGdlbkJ0bi5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGJ1aWxkKTsKICAgIGNvcHlCdG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoKSB7CiAgICAgICAgaWYgKCFsYWJPdXQudmFsdWUpIHsgYnVpbGQoKTsgaWYgKCFsYWJPdXQudmFsdWUpIHJldHVybjsgfQogICAgICAgIGlmICh3aW5kb3cuWEQgJiYgWEQuY29weSkgWEQuY29weShsYWJPdXQudmFsdWUsICfmj5DnpLror43lt7LlpI3liLbvvIzljrsgQUkg5bel5YW357KY6LS05ZCnIOKcqCcpOwogICAgfSk7CgogICAgb25TY2VuZSgpOwp9KSgpOwoKCi8qIOiHquWKqOWFqOWxgOaMgui9ve+8iOS+m+WGheiBlOS6i+S7tuWxnuaAp+iwg+eUqO+8iSAqLwppZighKCdvblNjZW5lJyBpbiB3aW5kb3cpKXdpbmRvdy5vblNjZW5lPW9uU2NlbmU7CmlmKCEoJ2J1aWxkJyBpbiB3aW5kb3cpKXdpbmRvdy5idWlsZD1idWlsZDs=");
+</script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>作者介绍 - 找乐子</title>
+<style>
+/* ========== 基础重置 ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* 【优化】移除触摸高亮 */
+}
+
+/* ========== 1. 流光溢彩动态背景（与系列页面一致） ========== */
+body {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    /* 六主题适配：背景随主题（原霓虹流动渐变 + background-position 动画移除，触性能铁律） */
+    background: var(--bg);
+}
+
+/* ========== 背景漂浮光球 ========== */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--glow) 14%, transparent);
+    filter: blur(2px);
+    z-index: 1;
+    animation: orbFloat 8s ease-in-out infinite;
+}
+.orb1 { width: 120px; height: 120px; top: 15%; left: 12%; }
+.orb2 { width: 80px;  height: 80px;  bottom: 18%; right: 15%; animation-delay: -3s; }
+.orb3 { width: 50px;  height: 50px;  top: 65%; left: 22%; animation-delay: -5s; }
+@keyframes orbFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-25px) scale(1.08); }
+}
+
+/* ========== 2. 中央白色正方形卡片 ========== */
+.card {
+    position: relative;
+    width: 440px;
+    height: 440px;                    /* 宽高相等 => 正方形 */
+    background: var(--card);
+    backdrop-filter: blur(10px);      /* 磨砂玻璃效果 */
+    border-radius: 25px;              /* 大圆角 */
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;          /* 内容整体垂直居中 */
+    align-items: center;
+    gap: 22px;
+    z-index: 10;
+    animation: cardEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    /* 顶部四色装饰条 */
+    border-top: none;
+}
+/* 卡片顶部四色渐变装饰条 */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 55%;
+    height: 5px;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); /* 页系签名霓虹条（白名单） */
+}
+
+/* 卡片入场动画（上浮淡入） */
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(40px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 小屏幕适配：整体等比缩小，仍保持正方形 */
+@media (max-width: 480px) {
+    .card { width: 92vw; height: 92vw; }
+    .card { padding: 20px; } /* 【优化】增加内边距，避免内容贴边 */
+    .author-name { font-size: 20px; } /* 【优化】缩字号保证可读性 */
+    .intro-text { font-size: 13px; }  /* 【优化】缩字号 */
+}
+
+/* ========== 3. 左上角"返回"胶囊按钮 ========== */
+.back-link {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--glow);
+    text-decoration: none;
+    background: var(--card-2);
+    border: 1px solid var(--line);
+    padding: 7px 18px;
+    border-radius: 50px;              /* 胶囊形 */
+    transition: all 0.3s ease;
+    z-index: 20;
+    /* 【优化】确保触摸目标尺寸不小于44×44 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+}
+.back-link:hover {
+    background: var(--glow);
+    color: var(--btn-txt);
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--glow) 35%, transparent);
+}
+
+/* ========== 4. 头像小正方形（内放 1.jpg） ========== */
+.avatar-box {
+    width: 140px;
+    height: 140px;                    /* 小正方形 */
+    border-radius: 18px;
+    padding: 6px;
+    background: var(--card-2);        /* 相框边→主题卡面 */
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+    transform: rotate(-3deg);         /* 轻微歪头，俏皮感 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.avatar-box:hover {
+    transform: rotate(0deg) scale(1.06);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+.avatar-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;                /* 图片铺满小方块，不变形 */
+    border-radius: 12px;
+    display: block;
+}
+/* 图片缺失时的占位提示 */
+.avatar-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--glow) 12%, var(--card-2)), color-mix(in srgb, var(--blue) 12%, var(--card-2)));
+    color: var(--dim);
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* ========== 5. 作者署名（楷体 + 香槟金渐变，与 3.html 一致） ========== */
+.author-name {
+    font-family: "KaiTi", "STKaiti", "FangSong", "Microsoft YaHei", serif;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    background: var(--title-grad);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 5px color-mix(in srgb, var(--gold) 30%, transparent));
+    animation: goldFlow 4s linear infinite;   /* 金光缓缓流转 */
+}
+@keyframes goldFlow {
+    to { background-position: 200% center; }
+}
+
+/* 两侧细金线 + 菱形点缀 */
+.author-deco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.author-deco .line {
+    width: 46px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 60%, transparent), transparent);
+}
+.author-deco .diamond {
+    width: 6px;
+    height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    opacity: 0.8;
+}
+
+/* ========== 6. 简介文字 ========== */
+.intro-text {
+    font-size: 14px;
+    color: var(--dim);
+    letter-spacing: 1px;
+}
+
+/* ========== 7. 转场遮罩层（与 1/2/3.html 一致） ========== */
+#transitionMask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    /* 六主题适配：遮罩随主题底色 */
+    background: var(--bg);
+    /* 【优化】无障碍角色 */
+    role: dialog;
+    aria-modal: true;
+}
+#transitionMask.show {
+    display: flex;
+    animation: maskFadeIn 0.3s ease;
+}
+@keyframes maskFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* 遮罩正中间的旋转小圆 */
+.spinner-circle {
+    width: 100px;
+    height: 100px;
+    border: 5px solid color-mix(in srgb, var(--txt) 35%, transparent);
+    border-top-color: var(--txt);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: spinRotate 1.5s linear infinite;
+}
+.spinner-circle span {
+    color: var(--txt);
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: spinReverse 1.5s linear infinite;
+}
+@keyframes spinRotate  { to { transform: rotate(360deg); } }
+@keyframes spinReverse { to { transform: rotate(-360deg); } }
+
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid var(--line) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+
+    /* ========== 返回主程序·小房子键（V2.5.3 全站统一，左下角浮动） ========== */
+    .home-fab {
+        position: fixed;
+        top: 14px;
+        right: 16px;
+        z-index: 2147483647;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        line-height: 1;
+        color: #fff;
+        text-decoration: none;
+        background: linear-gradient(145deg, rgba(17, 153, 142, .94), rgba(10, 90, 84, .94));
+        border: 2px solid rgba(255, 255, 255, .35);
+        border-radius: 50%;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(255, 255, 255, .25);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        transition: transform .3s, box-shadow .3s;
+    }
+    .home-fab:hover { transform: translateY(-4px) scale(1.06); box-shadow: 0 16px 36px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.25); }
+    .home-fab:active { transform: translateY(-1px) scale(.94); }
+
+    /* ========== 返回主程序·转场遮罩（与39/36同款） ========== */
+    .home-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(8, 10, 25, .72);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .4s ease, visibility .4s ease;
+        pointer-events: none;
+    }
+    .home-overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
+    .home-loader-wrap { position: relative; width: 170px; height: 170px; display: flex; align-items: center; justify-content: center; }
+    .home-loader-ring {
+        position: absolute; width: 100%; height: 100%; border-radius: 50%;
+        border: 3px solid rgba(255,255,255,.1);
+        border-top-color: #f6d365; border-right-color: #fda085;
+        animation: homeRingSpin .8s linear infinite;
+    }
+    .home-loader-ring::before {
+        content: ''; position: absolute; inset: 22px; border-radius: 50%;
+        border: 3px solid rgba(255,255,255,.08);
+        border-bottom-color: #5ee7df; border-left-color: #b490ca;
+        animation: homeRingSpin 1.1s linear infinite reverse;
+    }
+    .home-loader-text { color: #fff; font-size: 19px; font-weight: 700; letter-spacing: 5px; }
+    @keyframes homeRingSpin { to { transform: rotate(360deg); } }
+</style>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="作者介绍 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:title" content="作者介绍 - 找乐子">
+<meta property="og:description" content="作者介绍 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/作者介绍.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body>
+
+<!-- 背景漂浮光球 -->
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+
+<!-- 中央白色正方形卡片 -->
+<div class="card">
+
+    <!-- 左上角返回按钮：点击跳转回 3.html -->
+    <a class="back-link" id="backLink" href="授权确认.html" aria-label="返回上一页" title="返回">&larr; 返回</a>
+
+    <!-- 小正方形：头像图片 1.jpg -->
+    <div class="avatar-box">
+        <img src="images/fake_qrcode.png" alt="作者头像"
+             onerror="this.outerHTML='<div class=&quot;avatar-fallback&quot;>图片未找到</div>';">
+    </div>
+
+    <!-- 作者署名 -->
+    <div class="author-name">作者：碧世辉煌</div>
+    <div class="author-deco">
+        <span class="line"></span>
+        <span class="diamond"></span>
+        <span class="line"></span>
+    </div>
+
+    <!-- 笔名 -->
+    <div class="intro-text" style="color:var(--dim); font-family:'KaiTi','STKaiti',serif;">啥也没有</div>
+
+    <!-- 简介 -->
+    <div class="intro-text">你的简介空空如也。</div>
+
+</div>
+
+<!-- 转场遮罩层 -->
+<div id="transitionMask" role="dialog" aria-modal="true" aria-label="页面加载中">
+    <div class="spinner-circle"><span>找乐子</span></div>
+</div>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQovKiA9PT09PT09PT09IOi/lOWbnuaMiemSru+8muaSreaUviLmib7kuZDlrZAi6L2s5Zy65ZCO6Lez6L2sIDMuaHRtbCA9PT09PT09PT09ICovDQooZnVuY3Rpb24gKCkgew0KICAgIGxldCBpc1RyYW5zaXRpb25pbmcgPSBmYWxzZTsgLy8g6Ziy5q2i6L+e54K56YeN5aSN6Kem5Y+RDQoNCiAgICBmdW5jdGlvbiBzaG93VHJhbnNpdGlvbih0YXJnZXRVcmwpIHsNCiAgICAgICAgaWYgKGlzVHJhbnNpdGlvbmluZykgcmV0dXJuOw0KICAgICAgICBpc1RyYW5zaXRpb25pbmcgPSB0cnVlOw0KDQogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0cmFuc2l0aW9uTWFzaycpLmNsYXNzTGlzdC5hZGQoJ3Nob3cnKTsNCg0KICAgICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsNCiAgICAgICAgICAgIHdpbmRvdy5sb2NhdGlvbi5ocmVmID0gdGFyZ2V0VXJsOw0KICAgICAgICB9LCAxMDAwKTsgLy8gMSDnp5LlkI7ot7PovawNCiAgICB9DQoNCiAgICBsZXQgYmFja0xpbmsgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmFja0xpbmsnKTsNCiAgICBiYWNrTGluay5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uIChlKSB7DQogICAgICAgIGUucHJldmVudERlZmF1bHQoKTsNCiAgICAgICAgc2hvd1RyYW5zaXRpb24oJ+aOiOadg+ehruiupC5odG1sJyk7DQogICAgfSk7DQoNCiAgICAvLyA9PT09PSDjgJDmlrDlop7jgJHmjIkgRXNjIOWFs+mXrei9rOWcuumBrue9qe+8iOS7heWFs+mXreWKqOeUu++8jOS4jeaUueWPmOi3s+i9rOmAu+i+ke+8iSA9PT09PQ0KICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICBpZiAoZS5rZXkgPT09ICdFc2NhcGUnKSB7DQogICAgICAgICAgICBsZXQgbWFzayA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0cmFuc2l0aW9uTWFzaycpOw0KICAgICAgICAgICAgaWYgKG1hc2suY2xhc3NMaXN0LmNvbnRhaW5zKCdzaG93JykpIHsNCiAgICAgICAgICAgICAgICBtYXNrLmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsNCiAgICAgICAgICAgICAgICAvLyDph43nva7ovazlnLrnirbmgIHvvIzlhYHorrjlho3mrKHop6blj5ENCiAgICAgICAgICAgICAgICBpc1RyYW5zaXRpb25pbmcgPSBmYWxzZTsNCiAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KICAgIH0pOw0Kd2luZG93LnNob3dUcmFuc2l0aW9uID0gc2hvd1RyYW5zaXRpb247DQp9KSgpOw0K");
+</script>
+
+
+<a class="home-fab" id="homeFab" href="娱乐游戏.html" aria-label="返回主程序" title="返回主程序">🏠</a>
+<div class="home-overlay" id="homeOverlay" role="dialog" aria-modal="true" aria-label="页面跳转中">
+    <div class="home-loader-wrap"><div class="home-loader-ring"></div><div class="home-loader-text">找乐子～</div></div>
+</div>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQooZnVuY3Rpb24gKCkgew0KICAgIHZhciBmYWIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaG9tZUZhYicpOw0KICAgIHZhciBvdiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdob21lT3ZlcmxheScpOw0KICAgIGlmICghZmFiIHx8ICFvdikgcmV0dXJuOw0KICAgIHZhciBidXN5ID0gZmFsc2U7DQogICAgZmFiLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKGUpIHsNCiAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOw0KICAgICAgICBpZiAoYnVzeSkgcmV0dXJuOw0KICAgICAgICBidXN5ID0gdHJ1ZTsNCiAgICAgICAgb3YuY2xhc3NMaXN0LmFkZCgnc2hvdycpOw0KICAgICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsgd2luZG93LmxvY2F0aW9uLmhyZWYgPSBmYWIuZ2V0QXR0cmlidXRlKCdocmVmJyk7IH0sIDEyMDApOw0KICAgIH0pOw0KICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICBpZiAoZS5rZXkgPT09ICdFc2NhcGUnICYmIG92LmNsYXNzTGlzdC5jb250YWlucygnc2hvdycpKSB7IG92LmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsgYnVzeSA9IGZhbHNlOyB9DQogICAgfSk7DQp9KSgpOw0K");
+</script>
+</body>
+</html>

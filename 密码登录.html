@@ -1,0 +1,549 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>密码登录</title>
+    <style>
+        /* === [CSS 区块] 视觉与动画 === */
+
+        /* 全局重置 */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: rgba(0,0,0,0); }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 高级感动态背景：流动的极光色 */
+            /* 六主题适配：霓虹流动渐变→主题底色（background-position 动画已随移除） */
+            background: var(--bg);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+        }
+
+        /* 背景流光动画 */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 浅绿色正方形容器 - 玻璃拟态风格 */
+        .login-square {
+            width: min(85vw, 450px);
+            aspect-ratio: 1 / 1; /* 强制保持正方形 */
+            background: var(--card); /* 半透明白底 */
+            backdrop-filter: blur(10px); /* 磨砂效果 */
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            animation: float 6s ease-in-out infinite; /* 悬浮呼吸感 */
+        }
+
+        /* 悬浮动画 */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* 标题样式 */
+        .title {
+            font-size: 32px;
+            color: var(--txt);
+            margin-bottom: 40px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0px color-mix(in srgb, var(--card-2) 90%, transparent);
+        }
+
+        /* 输入框区域 */
+        .input-group {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 3px solid var(--gold-2); /* 橙色边框 */
+            border-radius: 50px; /* 圆角矩形 */
+            background: white;
+            color: var(--txt);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        input[type="password"]:hover {
+            transform: scale(1.02); /* 放大到 1.02 倍，比按钮稍微小一点，显得精致 */
+        }
+
+        input[type="password"]:focus {
+            box-shadow: 0 0 15px color-mix(in srgb, var(--gold-2) 50%, transparent);
+            transform: scale(1.02);
+        }
+
+        /* 按钮组布局 - 核心修改点 */
+        .btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between; /* 两端对齐，中间留空 */
+            gap: 20px; /* 按钮间距 */
+        }
+
+        /* 统一按钮样式 - 确保一样大 */
+        .btn {
+            flex: 1;
+            padding: 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background: var(--btn-grad); /* 橙色渐变 */
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease; /* 让变化过程平滑，0.3秒完成 */
+            transform: scale(1);       /* 设定初始大小为 1倍 */
+            min-height: 50px;          /* 触摸目标最小高度（优化） */
+        }
+
+        .btn:hover {
+            transform: scale(1.05); /* 鼠标放上去放大 1.05 倍 */
+        }
+
+        /* 确定按钮交互 */
+        .btn-confirm:active {
+            transform: scale(0.95);
+            background: color-mix(in srgb, var(--gold-2) 85%, #000);
+        }
+
+        /* 取消按钮交互 (稍微淡一点的橙色以示区分，但大小一致) */
+        .btn-cancel {
+            background: color-mix(in srgb, var(--gold-2) 18%, var(--card-2));
+            color: var(--gold-2);
+        }
+        .btn-cancel:active {
+            transform: scale(0.95);
+            background: var(--gold-2);
+        }
+
+        /* 错误时的抖动动画 */
+        .shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* ================= 新增：返回主程序按钮（左上角透明链接） ================= */
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            display: inline-block;
+            padding: 10px 16px;
+            color: var(--txt);
+            background: color-mix(in srgb, var(--glow) 10%, transparent);
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            min-height: 44px; /* 触摸目标最小高度（优化） */
+            display: inline-flex;
+            align-items: center;
+        }
+        .back-home:hover {
+            background: color-mix(in srgb, var(--glow) 18%, transparent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        }
+
+        /* ================= 转场遮罩层（替换为与 index.html 一致） ================= */
+        #transitionMask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background: rgba(8, 10, 25, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s, visibility 0.4s;
+            pointer-events: none;
+            /* 可访问性优化 */
+            role: dialog;
+            aria-modal: true;
+        }
+        #transitionMask.show {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* 转圈动画：圆环 */
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin 0.8s linear infinite;
+            box-sizing: border-box;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* ========== 新增：移动端适配媒体查询 ========== */
+        @media (max-width: 768px) {
+            .login-square {
+                width: 90vw;
+                aspect-ratio: auto;
+                min-height: 400px;
+                padding: 30px 25px;
+                border-radius: 24px;
+            }
+            .title {
+                font-size: 26px;
+                margin-bottom: 30px;
+                letter-spacing: 1px;
+            }
+            .input-group {
+                margin-bottom: 30px;
+            }
+            input[type="password"] {
+                padding: 12px 16px;
+                font-size: 16px;
+            }
+            .btn {
+                padding: 12px 0;
+                font-size: 17px;
+                min-height: 44px;
+                border-radius: 40px;
+            }
+            .btn-container {
+                gap: 12px;
+            }
+            .back-home {
+                top: 15px;
+                left: 15px;
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+
+    /* ========== 返回主程序·小房子键（V2.5.3 全站统一，左下角浮动） ========== */
+    .home-fab {
+        position: fixed;
+        top: 14px;
+        right: 16px;
+        z-index: 2147483647;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        line-height: 1;
+        color: #fff;
+        text-decoration: none;
+        background: linear-gradient(145deg, rgba(17, 153, 142, .94), rgba(10, 90, 84, .94));
+        border: 2px solid rgba(255, 255, 255, .35);
+        border-radius: 50%;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(255, 255, 255, .25);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        transition: transform .3s, box-shadow .3s;
+    }
+    .home-fab:hover { transform: translateY(-4px) scale(1.06); box-shadow: 0 16px 36px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.25); }
+    .home-fab:active { transform: translateY(-1px) scale(.94); }
+
+    /* ========== 返回主程序·转场遮罩（与39/36同款） ========== */
+    .home-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(8, 10, 25, .72);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .4s ease, visibility .4s ease;
+        pointer-events: none;
+    }
+    .home-overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
+    .home-loader-wrap { position: relative; width: 170px; height: 170px; display: flex; align-items: center; justify-content: center; }
+    .home-loader-ring {
+        position: absolute; width: 100%; height: 100%; border-radius: 50%;
+        border: 3px solid rgba(255,255,255,.1);
+        border-top-color: #f6d365; border-right-color: #fda085;
+        animation: homeRingSpin .8s linear infinite;
+    }
+    .home-loader-ring::before {
+        content: ''; position: absolute; inset: 22px; border-radius: 50%;
+        border: 3px solid rgba(255,255,255,.08);
+        border-bottom-color: #5ee7df; border-left-color: #b490ca;
+        animation: homeRingSpin 1.1s linear infinite reverse;
+    }
+    .home-loader-text { color: #fff; font-size: 19px; font-weight: 700; letter-spacing: 5px; }
+    @keyframes homeRingSpin { to { transform: rotate(360deg); } }
+</style>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——密码登录，趣味工具与小游戏合集">
+<meta property="og:title" content="密码登录">
+<meta property="og:description" content="找乐子——密码登录，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/密码登录.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body>
+
+    <!-- 浅绿色正方形主体 -->
+    <div class="login-square" id="loginBox">
+        <div class="title" role="heading" aria-level="2">密码登录</div>
+
+        <div class="input-group">
+            <input type="password" id="pwdInput" placeholder="请输入密码" aria-label="密码输入框">
+        </div>
+
+        <div class="remember-group" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:14px;">
+            <input type="checkbox" id="rememberMe" style="width:16px;height:16px;accent-color:#667eea;cursor:pointer;">
+            <label for="rememberMe" style="font-size:13px;color:inherit;cursor:pointer;user-select:none;">记住登录状态（下次免密码进入主站）</label>
+        </div>
+
+        <div class="btn-container">
+            <!-- 确定按钮 (左) -->
+            <button class="btn btn-confirm" onclick="checkLogin()" aria-label="确定登录" title="确定登录">确定</button>
+
+            <!-- 取消按钮 (右) -->
+            <button class="btn btn-cancel" onclick="clearInput()" aria-label="取消" title="取消">取消</button>
+        </div>
+    </div>
+
+    <!-- 转场遮罩层 -->
+    <div id="transitionMask" role="dialog" aria-modal="true" aria-label="页面跳转中">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQogICAgICAgIC8vID09PSBbSlMg5Yy65Z2XXSDpgLvovpHmjqfliLYgPT09DQoNCiAgICAgICAgbGV0IGlzVHJhbnNpdGlvbmluZyA9IGZhbHNlOyAgIC8vIOmYsuatoui/nueCuemHjeWkjeinpuWPkei9rOWcug0KDQogICAgICAgIC8vIOWvhueggeS7pSBTSEEtMjU2IOWTiOW4jOW9ouW8j+WtmOWCqO+8jOa6kOeggeS4jeWHuueOsOaYjuaWh++8iOmYsuWwj+eZveWNh+e6p++8iQ0KICAgICAgICBjb25zdCBQV0RfSEFTSCA9ICdiYWZkMDUwMjJhNDQ3MmM3YjM3YTkwMjAwZTM1ZDM2OGE2MDQxMjU2NjU0M2Q4ZGQyMzBmNzc2YWYzNDg2ZTY1JzsNCg0KICAgICAgICBmdW5jdGlvbiBzaGEyNTZIZXgoc3RyKSB7DQogICAgICAgICAgICBpZiAod2luZG93LmNyeXB0byAmJiBjcnlwdG8uc3VidGxlKSB7DQogICAgICAgICAgICAgICAgcmV0dXJuIGNyeXB0by5zdWJ0bGUuZGlnZXN0KCdTSEEtMjU2JywgbmV3IFRleHRFbmNvZGVyKCkuZW5jb2RlKHN0cikpDQogICAgICAgICAgICAgICAgICAgIC50aGVuKGZ1bmN0aW9uIChidWYpIHsNCiAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBBcnJheS5mcm9tKG5ldyBVaW50OEFycmF5KGJ1ZikpLm1hcChmdW5jdGlvbiAoYnl0ZSkgew0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBieXRlLnRvU3RyaW5nKDE2KS5wYWRTdGFydCgyLCAnMCcpOw0KICAgICAgICAgICAgICAgICAgICAgICAgfSkuam9pbignJyk7DQogICAgICAgICAgICAgICAgICAgIH0pOw0KICAgICAgICAgICAgfQ0KICAgICAgICAgICAgLy8g5YWc5bqV77ya6Z2e5a6J5YWo5LiK5LiL5paH5pe26YCA5YyW5Li6566A5Y2V5ZOI5biM77yI5LuF6Ziy5bCP55m977yJDQogICAgICAgICAgICB2YXIgaGFzaFZhbCA9IDUzODE7DQogICAgICAgICAgICBmb3IgKHZhciBpID0gMDsgaSA8IHN0ci5sZW5ndGg7IGkrKykgew0KICAgICAgICAgICAgICAgIGhhc2hWYWwgPSAoKGhhc2hWYWwgPDwgNSkgKyBoYXNoVmFsICsgc3RyLmNoYXJDb2RlQXQoaSkpID4+PiAwOw0KICAgICAgICAgICAgfQ0KICAgICAgICAgICAgcmV0dXJuIFByb21pc2UucmVzb2x2ZSgnZGpiMl8nICsgaGFzaFZhbC50b1N0cmluZygxNikpOw0KICAgICAgICB9DQoNCiAgICAgICAgZnVuY3Rpb24gY2hlY2tMb2dpbigpIHsNCiAgICAgICAgICAgIGxldCBwd2QgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHdkSW5wdXQnKS52YWx1ZTsNCiAgICAgICAgICAgIGxldCBib3ggPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbG9naW5Cb3gnKTsNCg0KICAgICAgICAgICAgLy8g6aqM6K+B5a+G56CB77yIU0hBLTI1NiDlk4jluIzmr5Tlr7nvvIzmupDnoIHkuI3lh7rnjrDmmI7mlofvvIkNCiAgICAgICAgICAgIHNoYTI1NkhleChwd2QpLnRoZW4oZnVuY3Rpb24gKGhhc2gpIHsNCiAgICAgICAgICAgICAgICBpZiAoaGFzaCA9PT0gUFdEX0hBU0gpIHsNCiAgICAgICAgICAgICAgICAgICAgLy8g5a+G56CB5q2j56Gu77ya6Kem5Y+R6L2s5Zy65Yqo55S7DQogICAgICAgICAgICAgICAgICAgIHRyeSB7IGlmIChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncmVtZW1iZXJNZScpICYmIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZW1lbWJlck1lJykuY2hlY2tlZCkgeyBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgnemxfbG9nZ2VkJywnMScpOyB9IH0gY2F0Y2goZSl7IC8qIOiusOS9j+eZu+W9leeKtuaAgeWGmeWFpeWksei0peaXtumdmem7mO+8muacrOasoeS8muivneS7jeacieaViCAqLyB9DQogICAgICAgICAgICAgICAgICAgIGlmICh3aW5kb3cuWkwgJiYgWkwuYnVtcCkgWkwuYnVtcCgnbG9naW5fZG9uZScsIDEpOw0KICAgICAgICAgICAgICAgICAgICBzaG93VHJhbnNpdGlvbigpOw0KICAgICAgICAgICAgICAgIH0gZWxzZSB7DQogICAgICAgICAgICAgICAgICAgIC8vIOWvhueggemUmeivr++8mua3u+WKoOaKluWKqOeJueaViA0KICAgICAgICAgICAgICAgICAgICBib3guY2xhc3NMaXN0LmFkZCgnc2hha2UnKTsNCiAgICAgICAgICAgICAgICAgICAgLy8gMC4156eS5ZCO56e76Zmk5oqW5Yqo57G777yM5Lul5L6/5LiL5qyh6L+Y6IO96Kem5Y+RDQogICAgICAgICAgICAgICAgICAgIHNldFRpbWVvdXQoZnVuY3Rpb24oKXsNCiAgICAgICAgICAgICAgICAgICAgICAgIGJveC5jbGFzc0xpc3QucmVtb3ZlKCdzaGFrZScpOw0KICAgICAgICAgICAgICAgICAgICB9LCA1MDApOw0KDQogICAgICAgICAgICAgICAgICAgIC8vIOa4heepuui+k+WFpeahhuW5tuiBmueEpg0KICAgICAgICAgICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHdkSW5wdXQnKS52YWx1ZSA9ICcnOw0KICAgICAgICAgICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHdkSW5wdXQnKS5mb2N1cygpOw0KICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgIH0pOw0KICAgICAgICB9DQoNCiAgICAgICAgLy8g6L2s5Zy65ZCO6Lez6L2s5Yiw5oyH5a6a6aG16Z2iDQogICAgICAgIGZ1bmN0aW9uIHNob3dUcmFuc2l0aW9uVG8odXJsKSB7DQogICAgICAgICAgICBpZiAoaXNUcmFuc2l0aW9uaW5nKSByZXR1cm47DQogICAgICAgICAgICBpc1RyYW5zaXRpb25pbmcgPSB0cnVlOw0KICAgICAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RyYW5zaXRpb25NYXNrJykuY2xhc3NMaXN0LmFkZCgnc2hvdycpOw0KICAgICAgICAgICAgc2V0VGltZW91dChmdW5jdGlvbiAoKSB7DQogICAgICAgICAgICAgICAgd2luZG93LmxvY2F0aW9uLmhyZWYgPSB1cmw7DQogICAgICAgICAgICB9LCAxMDAwKTsgLy8gMeenkuWQjui3s+i9rA0KICAgICAgICB9DQoNCiAgICAgICAgLy8g55m75b2V5oiQ5Yqf5ZCO6Lez6L2s5YiwMi5odG1sDQogICAgICAgIGZ1bmN0aW9uIHNob3dUcmFuc2l0aW9uKCkgew0KICAgICAgICAgICAgc2hvd1RyYW5zaXRpb25Ubygn5o6I5p2D5Y2P6K6uLmh0bWwnKTsNCiAgICAgICAgfQ0KDQogICAgICAgIGZ1bmN0aW9uIGNsZWFySW5wdXQoKSB7DQogICAgICAgICAgICAvLyDngrnlh7vlj5bmtojvvJrmuIXnqbrlhoXlrrkNCiAgICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwd2RJbnB1dCcpLnZhbHVlID0gJyc7DQogICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHdkSW5wdXQnKS5mb2N1cygpOw0KICAgICAgICB9DQoNCiAgICAgICAgLy8g5pSv5oyB5oyJ5Zue6L2m6ZSu55m75b2VDQogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwd2RJbnB1dCcpLmFkZEV2ZW50TGlzdGVuZXIoJ2tleXByZXNzJywgZnVuY3Rpb24oZSkgew0KICAgICAgICAgICAgaWYgKGUua2V5ID09PSAnRW50ZXInKSB7DQogICAgICAgICAgICAgICAgY2hlY2tMb2dpbigpOw0KICAgICAgICAgICAgfQ0KICAgICAgICB9KTsNCg0KICAgICAgICAvLyA9PT09PT09PT09IOaWsOWinu+8muaMiSBFc2Mg6ZSu5YWz6Zet6L2s5Zy66KaG55uW5bGC77yI5LuF5YWz6Zet5Yqo55S777yM5LiN5b2x5ZON6Lez6L2s6YC76L6R77yJID09PT09PT09PT0NCiAgICAgICAgZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcigna2V5ZG93bicsIGZ1bmN0aW9uKGUpIHsNCiAgICAgICAgICAgIGlmIChlLmtleSA9PT0gJ0VzY2FwZScpIHsNCiAgICAgICAgICAgICAgICBsZXQgbWFzayA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0cmFuc2l0aW9uTWFzaycpOw0KICAgICAgICAgICAgICAgIGlmIChtYXNrLmNsYXNzTGlzdC5jb250YWlucygnc2hvdycpKSB7DQogICAgICAgICAgICAgICAgICAgIG1hc2suY2xhc3NMaXN0LnJlbW92ZSgnc2hvdycpOw0KICAgICAgICAgICAgICAgICAgICBpc1RyYW5zaXRpb25pbmcgPSBmYWxzZTsgLy8g6YeN572u6L2s5Zy654q25oCB77yM5YWB6K645YaN5qyh6Kem5Y+RDQogICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgfQ0KICAgICAgICB9KTsNCg0KICAgICAgICAvLyDorrDkvY/miJHvvJrlt7LnmbvlvZXnm7TmjqXov5vlhaXnm67moIfpobXvvIjkvJjlhYggP2dvPSDlj4LmlbDmjIflrprnmoTpobXpnaLvvIznvLrnnIHlm57kuLvnq5nvvIkNCiAgICAgICAgKGZ1bmN0aW9uKCl7DQogICAgICAgICAgICB0cnkgew0KICAgICAgICAgICAgICAgIGlmIChsb2NhbFN0b3JhZ2UuZ2V0SXRlbSgnemxfbG9nZ2VkJykgPT09ICcxJykgew0KICAgICAgICAgICAgICAgICAgICB2YXIgZ29NYXRjaCA9IGxvY2F0aW9uLnNlYXJjaC5tYXRjaCgvWz8mXWdvPShbXiZdKykvKTsNCiAgICAgICAgICAgICAgICAgICAgdmFyIGdvUGFyYW0gPSBnb01hdGNoID8gZGVjb2RlVVJJQ29tcG9uZW50KGdvTWF0Y2hbMV0pIDogJyc7DQogICAgICAgICAgICAgICAgICAgIC8vIFAwLTfvvJrlkIzmupDnmb3lkI3ljZXigJTigJTku4XlhYHorrjmnKznq5nmoLnnm67lvZXkuIvnmoQgLmh0bWwg5paH5Lu25ZCN77yI5oum5oiqIGh0dHA6Ly/jgIEvL+OAgS/jgIEuLiDnrYnlvIDmlL7ph43lrprlkJHlkJHph4/vvIkNCiAgICAgICAgICAgICAgICAgICAgaWYgKC9eW1x3XHU0ZTAwLVx1OWZhNV0rXC5odG1sJC8udGVzdChnb1BhcmFtKSkgeyBzaG93VHJhbnNpdGlvblRvKGdvUGFyYW0pOyB9DQogICAgICAgICAgICAgICAgICAgIGVsc2UgeyBzaG93VHJhbnNpdGlvblRvKCdpbmRleC5odG1sJyk7IH0NCiAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICB9IGNhdGNoKGUpeyAvKiBVUkwg5Y+C5pWw6Kej5p6Q5byC5bi45pe26Z2Z6buY77ya55WZ5Zyo5b2T5YmN6aG15Y2z5Y+vICovIH0NCiAgICAgICAgfSkoKTsNCiAgICAKCi8qIOiHquWKqOWFqOWxgOaMgui9ve+8iOS+m+WGheiBlOS6i+S7tuWxnuaAp+iwg+eUqO+8iSAqLwppZighKCdzaGEyNTZIZXgnIGluIHdpbmRvdykpd2luZG93LnNoYTI1NkhleD1zaGEyNTZIZXg7CmlmKCEoJ2NoZWNrTG9naW4nIGluIHdpbmRvdykpd2luZG93LmNoZWNrTG9naW49Y2hlY2tMb2dpbjsKaWYoISgnc2hvd1RyYW5zaXRpb25UbycgaW4gd2luZG93KSl3aW5kb3cuc2hvd1RyYW5zaXRpb25Ubz1zaG93VHJhbnNpdGlvblRvOwppZighKCdzaG93VHJhbnNpdGlvbicgaW4gd2luZG93KSl3aW5kb3cuc2hvd1RyYW5zaXRpb249c2hvd1RyYW5zaXRpb247CmlmKCEoJ2NsZWFySW5wdXQnIGluIHdpbmRvdykpd2luZG93LmNsZWFySW5wdXQ9Y2xlYXJJbnB1dDs=");
+</script>
+
+<a class="home-fab" id="homeFab" href="娱乐游戏.html" aria-label="返回主程序" title="返回主程序">🏠</a>
+<div class="home-overlay" id="homeOverlay" role="dialog" aria-modal="true" aria-label="页面跳转中">
+    <div class="home-loader-wrap"><div class="home-loader-ring"></div><div class="home-loader-text">找乐子～</div></div>
+</div>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQooZnVuY3Rpb24gKCkgew0KICAgIHZhciBmYWIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnaG9tZUZhYicpOw0KICAgIHZhciBvdiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdob21lT3ZlcmxheScpOw0KICAgIGlmICghZmFiIHx8ICFvdikgcmV0dXJuOw0KICAgIHZhciBidXN5ID0gZmFsc2U7DQogICAgZmFiLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKGUpIHsNCiAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOw0KICAgICAgICBpZiAoYnVzeSkgcmV0dXJuOw0KICAgICAgICBidXN5ID0gdHJ1ZTsNCiAgICAgICAgb3YuY2xhc3NMaXN0LmFkZCgnc2hvdycpOw0KICAgICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsgd2luZG93LmxvY2F0aW9uLmhyZWYgPSBmYWIuZ2V0QXR0cmlidXRlKCdocmVmJyk7IH0sIDEyMDApOw0KICAgIH0pOw0KICAgIGRvY3VtZW50LmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbiAoZSkgew0KICAgICAgICBpZiAoZS5rZXkgPT09ICdFc2NhcGUnICYmIG92LmNsYXNzTGlzdC5jb250YWlucygnc2hvdycpKSB7IG92LmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3cnKTsgYnVzeSA9IGZhbHNlOyB9DQogICAgfSk7DQp9KSgpOw0K");
+</script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扫雷 - 找乐子</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--txt);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景流光层（已添加 aria-hidden） */
+        .bg-animation { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; overflow: hidden; pointer-events: none; }
+        .bg-flow-1 { position: absolute; top: -100%; left: -100%; width: 300%; height: 300%; background: var(--flow-grad); background-size: 400% 400%; animation: flowGradient 20s ease-in-out infinite; }
+        .bg-flow-2 { position: absolute; top: -60%; left: -40%; width: 220%; height: 220%; background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.35), transparent 50%), radial-gradient(ellipse at 65% 35%, rgba(120,180,255,.3), transparent 45%), radial-gradient(ellipse at 80% 80%, rgba(220,130,250,.25), transparent 40%); animation: flowDrift 20s ease-in-out infinite alternate; }
+        .bg-flow-3 { position: absolute; top: -30%; left: -20%; width: 180%; height: 180%; background: radial-gradient(circle at 50% 50%, rgba(255,200,130,.15), transparent 60%), radial-gradient(circle at 20% 80%, rgba(80,220,200,.2), transparent 50%); animation: flowRotate 20s linear infinite; }
+        
+        @keyframes flowGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes flowDrift { 0% { transform: translate(0, 0) scale(1) rotate(0deg); } 50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); } 100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); } }
+        @keyframes flowRotate { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.08); } 100% { transform: rotate(360deg) scale(1); } }
+
+        /* 悬浮球 */
+        .orb { position: absolute; border-radius: 50%; background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--card-2) 60%, transparent), color-mix(in srgb, var(--card-2) 15%, transparent) 50%, transparent 70%); box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 8%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent); pointer-events: none; }
+        .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+        .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+
+        @keyframes orbFloatA { 0% { transform: translate(0,0) scale(1); opacity:.6; } 30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; } 60% { transform: translate(-12px,10px) scale(.96); opacity:.5; } 100% { transform: translate(0,0) scale(1); opacity:.6; } }
+        @keyframes orbFloatB { 0% { transform: translate(0,0) scale(1); opacity:.5; } 35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; } 70% { transform: translate(14px,-15px) scale(.94); opacity:.4; } 100% { transform: translate(0,0) scale(1); opacity:.5; } }
+        @keyframes orbSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* 主容器 */
+        main { position: relative; z-index: 10; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 60px 20px 40px; }
+        .container { width: 80%; max-width: 1000px; background: var(--card); border-radius: 24px; box-shadow: 0 25px 70px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.3), inset 0 1px 0 rgba(255,255,255,.6); max-height: calc(100vh - 100px); overflow-y: auto; padding: 20px; color: var(--txt); }
+        .container::-webkit-scrollbar { width: 10px; }
+        .container::-webkit-scrollbar-track { background: rgba(0,0,0,.04); border-radius: 12px; }
+        .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 12px; border: 2px solid rgba(255,255,255,.4); }
+
+        /* 网格布局 */
+        .grid { display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(8, minmax(80px, auto)); gap: 12px; }
+        .title-area { grid-column: 1 / 5; grid-row: 1 / 3; display: flex; align-items: center; justify-content: center; background: var(--title-grad); background-size: 300% 300%; animation: titleGradient 6s ease infinite; border-radius: 20px; box-shadow: 0 12px 40px rgba(255,150,50,.35), inset 0 1px 0 rgba(255,255,255,.2); }
+        .title-area h2 { font-size: 42px; font-weight: 900; letter-spacing: 4px; color: var(--btn-txt); text-shadow: 2px 2px 10px rgba(0,0,0,.3); }
+        @keyframes titleGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .back-area { grid-column: 5 / 7; grid-row: 1 / 3; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--back-grad); border-radius: 20px; box-shadow: 0 12px 40px rgba(17,153,142,.4), inset 0 1px 0 rgba(255,255,255,.2); text-decoration: none; color: #fff; font-size: 22px; font-weight: 800; cursor: pointer; transition: transform .3s, box-shadow .3s; min-height: 80px; min-width: 44px; }
+        .back-area:hover { transform: translateY(-5px); box-shadow: 0 18px 50px color-mix(in srgb, var(--green) 50%, transparent); }
+        .back-area:active { transform: translateY(-2px) scale(.96); }
+
+        /* 游戏区域 */
+        .game-area { grid-column: 1 / 7; grid-row: 3 / 9; background: var(--card); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 15px; }
+        .config-panel { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; background: color-mix(in srgb, var(--glow) 5%, var(--card-2)); padding: 10px 15px; border-radius: 30px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+        .config-panel label { font-size: 14px; font-weight: 600; color: var(--dim); }
+        .config-panel input { width: 60px; padding: 5px; border: 2px solid var(--line); border-radius: 6px; font-size: 14px; text-align: center; outline: none; min-height: 44px; }
+        .config-panel input:focus { border-color: var(--glow); }
+        .config-panel button { padding: 8px 18px; border: none; border-radius: 20px; background: var(--btn-grad); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px color-mix(in srgb, var(--glow) 40%, transparent); transition: transform .2s, box-shadow .2s; min-height: 44px; min-width: 44px; }
+        .config-panel button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px color-mix(in srgb, var(--glow) 50%, transparent); }
+
+        .game-status { font-size: 18px; font-weight: 600; color: var(--txt); text-align: center; min-height: 24px; min-width: 44px; }
+
+        .minefield { display: grid; gap: 2px; background: #c0c0c0; border: 3px solid #808080; padding: 3px; border-radius: 4px; box-shadow: 0 6px 15px rgba(0,0,0,.2); max-width: 100%; overflow-x: auto; }
+        .cell { width: 32px; height: 32px; background: #bdbdbd; border: 2px solid; border-color: #fff #808080 #808080 #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; cursor: pointer; transition: background .1s, transform .1s; user-select: none; outline: none; }
+        .cell:hover { background: #d0d0d0; }
+        .cell:focus-visible { box-shadow: 0 0 0 4px color-mix(in srgb, var(--glow) 40%, transparent); z-index: 1; }
+        .cell.revealed { background: #d7d7d7; border: 1px solid #999; cursor: default; }
+        .cell.revealed:hover { background: #d7d7d7; }
+        .cell.mine-hit { background: #ff0000; }
+        .cell.flagged::after { content: '🚩'; font-size: 18px; }
+        .cell:active:not(.revealed) { transform: scale(.95); }
+
+        /* 转场遮罩 */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999; display: flex; align-items: center; justify-content: center; background: rgba(8,10,25,.72); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); opacity: 0; visibility: hidden; transition: opacity .4s ease, visibility .4s ease; pointer-events: none; }
+        .overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        .loader-wrap { position: relative; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
+        .loader-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid rgba(255,255,255,.1); border-top-color: #f6d365; border-right-color: #fda085; animation: ringSpin .8s linear infinite; }
+        .loader-ring::before { content: ''; position: absolute; top: 12px; left: 12px; right: 12px; bottom: 12px; border-radius: 50%; border: 2px solid transparent; border-bottom-color: #a78bfa; border-left-color: #667eea; animation: ringSpin 1.4s linear infinite reverse; }
+        .loader-ring::after { content: ''; position: absolute; top: 28px; left: 28px; right: 28px; bottom: 28px; border-radius: 50%; border: 1px solid transparent; border-top-color: #fb7185; border-right-color: #2dd4bf; animation: ringSpin 2s linear infinite; }
+        .loader-text { position: relative; z-index: 5; font-size: 24px; font-weight: 900; letter-spacing: 4px; background: linear-gradient(90deg, #f6d365, #fda085, #f6d365); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: textShine 1.5s linear infinite; }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .container { width: 95%; padding: 12px; }
+            .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+            .title-area { grid-column: 1/3; grid-row: auto; min-height: 100px; }
+            .back-area { grid-column: 1/3; grid-row: auto; min-height: 80px; }
+            .game-area { grid-column: 1/3; grid-row: auto; }
+        }
+        @media (max-width: 700px) {
+            .config-panel { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px; }
+            .config-panel label { text-align: center; }
+            .config-panel input { width: 100%; }
+            .minefield { max-width: 100%; overflow-x: auto; }
+            .cell { width: 28px; height: 28px; font-size: 14px; }
+            .cell.flagged::after { font-size: 15px; }
+        }
+        @media (max-width: 480px) {
+            .container { padding: 8px; }
+            .title-area h2 { font-size: 24px; letter-spacing: 2px; }
+            .back-area { font-size: 16px; }
+            .game-area { padding: 10px; gap: 10px; }
+            .cell { width: 24px; height: 24px; font-size: 12px; }
+            .cell.flagged::after { font-size: 13px; }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid var(--line) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+
+        /* ========== 手机端针对性修复：扫雷棋盘格子恢复 ========== */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr !important;
+                grid-template-rows: auto !important;
+            }
+            .title-area, .back-area, .game-area, .game-main {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 恢复扫雷格子固定尺寸，覆盖通用CSS破坏 */
+            .cell {
+                width: 28px !important;
+                height: 28px !important;
+                min-height: 0 !important;
+                padding: 0 !important;
+                font-size: 14px !important;
+                line-height: 1 !important;
+            }
+            .cell.flagged::after {
+                font-size: 15px !important;
+            }
+            /* 棋盘容器自适应，允许横向滚动 */
+            .minefield {
+                width: 100% !important;
+                max-width: 340px !important;
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                margin: 0 auto !important;
+            }
+            .game-area {
+                padding: 12px 8px !important;
+            }
+            .game-status {
+                font-size: 14px !important;
+                padding: 8px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .cell {
+                width: 24px !important;
+                height: 24px !important;
+                font-size: 12px !important;
+            }
+            .cell.flagged::after {
+                font-size: 13px !important;
+            }
+            .minefield {
+                max-width: 280px !important;
+            }
+        }
+</style>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="扫雷 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:title" content="扫雷 - 找乐子">
+<meta property="og:description" content="扫雷 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/扫雷.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body>
+    <!-- 背景（已添加 aria-hidden） -->
+    <div class="bg-animation" aria-hidden="true">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <div class="title-area">
+                    <h2>扫雷</h2>
+                </div>
+                <a href="娱乐游戏.html" class="back-area" id="backHome" aria-label="返回主页">
+                    <span style="font-size:32px;">🏠</span>
+                    返回主页
+                </a>
+
+                <div class="game-area">
+                    <div class="config-panel">
+                        <label>行数：</label><input type="number" id="rowsInput" min="5" max="20" value="9" aria-label="行数">
+                        <label>列数：</label><input type="number" id="colsInput" min="5" max="20" value="9" aria-label="列数">
+                        <label>雷数：</label><input type="number" id="minesInput" min="1" max="80" value="10" aria-label="雷数">
+                        <button id="newGameBtn" aria-label="开始游戏">开始游戏</button>
+                    </div>
+
+                    <div class="game-status" id="status" aria-live="polite">点击格子开始游戏</div>
+                    <div style="display:flex;justify-content:space-between;margin:10px 0;font-weight:bold;color:var(--glow);">
+                        <span id="timerEl">⏱ 0:00</span>
+                        <span id="minesLeftEl">💣 10</span>
+                    </div>
+                    <div id="minefield" class="minefield"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 转场遮罩 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("CiAgICAgICAgKGZ1bmN0aW9uICgpIHsKICAgICAgICAgICAgJ3VzZSBzdHJpY3QnOwoKICAgICAgICAgICAgLy8gRE9N5YWD57SgCiAgICAgICAgICAgIGNvbnN0IHJvd3NJbnB1dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyb3dzSW5wdXQnKTsKICAgICAgICAgICAgY29uc3QgY29sc0lucHV0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NvbHNJbnB1dCcpOwogICAgICAgICAgICBjb25zdCBtaW5lc0lucHV0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ21pbmVzSW5wdXQnKTsKICAgICAgICAgICAgY29uc3QgbmV3R2FtZUJ0biA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCduZXdHYW1lQnRuJyk7CiAgICAgICAgICAgIGNvbnN0IG1pbmVmaWVsZEVsID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ21pbmVmaWVsZCcpOwogICAgICAgICAgICBjb25zdCBzdGF0dXNFbCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzdGF0dXMnKTsKICAgICAgICAgICAgY29uc3QgYmFja0hvbWUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmFja0hvbWUnKTsKICAgICAgICAgICAgY29uc3Qgb3ZlcmxheSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdvdmVybGF5Jyk7CgogICAgICAgICAgICAvLyDmuLjmiI/nirbmgIEKICAgICAgICAgICAgbGV0IHJvd3MgPSA5LCBjb2xzID0gOSwgbWluZXNDb3VudCA9IDEwOwogICAgICAgICAgICBsZXQgYm9hcmQgPSBbXTsKICAgICAgICAgICAgbGV0IGdhbWVPdmVyID0gZmFsc2U7CiAgICAgICAgICAgIGxldCBzdGFydFRpbWUgPSAwOwogICAgICAgICAgICBsZXQgdGltZXJJZCA9IG51bGw7CiAgICAgICAgICAgIGxldCBmaXJzdENsaWNrID0gdHJ1ZTsKCiAgICAgICAgICAgIC8vIOmfs+aViOezu+e7nwogICAgICAgICAgICBsZXQgYXVkaW9DdHggPSBudWxsOwogICAgICAgICAgICBmdW5jdGlvbiBwbGF5U291bmQodHlwZSkgewogICAgICAgICAgICAgICAgdHJ5IHsKICAgICAgICAgICAgICAgICAgICBpZiAoIWF1ZGlvQ3R4KSBhdWRpb0N0eCA9IG5ldyAod2luZG93LkF1ZGlvQ29udGV4dCB8fCB3aW5kb3cud2Via2l0QXVkaW9Db250ZXh0KSgpOwogICAgICAgICAgICAgICAgICAgIGNvbnN0IG9zYyA9IGF1ZGlvQ3R4LmNyZWF0ZU9zY2lsbGF0b3IoKTsKICAgICAgICAgICAgICAgICAgICBjb25zdCBnYWluID0gYXVkaW9DdHguY3JlYXRlR2FpbigpOwogICAgICAgICAgICAgICAgICAgIG9zYy5jb25uZWN0KGdhaW4pOwogICAgICAgICAgICAgICAgICAgIGdhaW4uY29ubmVjdChhdWRpb0N0eC5kZXN0aW5hdGlvbik7CiAgICAgICAgICAgICAgICAgICAgaWYgKHR5cGUgPT09ICdleHBsb2RlJykgewogICAgICAgICAgICAgICAgICAgICAgICBvc2MudHlwZSA9ICdzYXd0b290aCc7CiAgICAgICAgICAgICAgICAgICAgICAgIG9zYy5mcmVxdWVuY3kuc2V0VmFsdWVBdFRpbWUoMTUwLCBhdWRpb0N0eC5jdXJyZW50VGltZSk7CiAgICAgICAgICAgICAgICAgICAgICAgIG9zYy5mcmVxdWVuY3kuZXhwb25lbnRpYWxSYW1wVG9WYWx1ZUF0VGltZSgzMCwgYXVkaW9DdHguY3VycmVudFRpbWUgKyAwLjQpOwogICAgICAgICAgICAgICAgICAgICAgICBnYWluLmdhaW4uc2V0VmFsdWVBdFRpbWUoMC44LCBhdWRpb0N0eC5jdXJyZW50VGltZSk7CiAgICAgICAgICAgICAgICAgICAgICAgIGdhaW4uZ2Fpbi5leHBvbmVudGlhbFJhbXBUb1ZhbHVlQXRUaW1lKDAuMDEsIGF1ZGlvQ3R4LmN1cnJlbnRUaW1lICsgMC40KTsKICAgICAgICAgICAgICAgICAgICAgICAgb3NjLnN0YXJ0KCk7CiAgICAgICAgICAgICAgICAgICAgICAgIG9zYy5zdG9wKGF1ZGlvQ3R4LmN1cnJlbnRUaW1lICsgMC40KTsKICAgICAgICAgICAgICAgICAgICB9IGVsc2UgaWYgKHR5cGUgPT09ICd3aW4nKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIG9zYy50eXBlID0gJ3RyaWFuZ2xlJzsKICAgICAgICAgICAgICAgICAgICAgICAgb3NjLmZyZXF1ZW5jeS5zZXRWYWx1ZUF0VGltZSg0MDAsIGF1ZGlvQ3R4LmN1cnJlbnRUaW1lKTsKICAgICAgICAgICAgICAgICAgICAgICAgb3NjLmZyZXF1ZW5jeS5saW5lYXJSYW1wVG9WYWx1ZUF0VGltZSg4MDAsIGF1ZGlvQ3R4LmN1cnJlbnRUaW1lICsgMC4yKTsKICAgICAgICAgICAgICAgICAgICAgICAgZ2Fpbi5nYWluLnNldFZhbHVlQXRUaW1lKDAuNCwgYXVkaW9DdHguY3VycmVudFRpbWUpOwogICAgICAgICAgICAgICAgICAgICAgICBnYWluLmdhaW4uZXhwb25lbnRpYWxSYW1wVG9WYWx1ZUF0VGltZSgwLjAxLCBhdWRpb0N0eC5jdXJyZW50VGltZSArIDAuMik7CiAgICAgICAgICAgICAgICAgICAgICAgIG9zYy5zdGFydCgpOwogICAgICAgICAgICAgICAgICAgICAgICBvc2Muc3RvcChhdWRpb0N0eC5jdXJyZW50VGltZSArIDAuMik7CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfSBjYXRjaCAoZSkgeyAvKiDpn7PpopHoioLngrnmnKrliJ3lp4vljJYv5bey5YGc5q2i5pe26Z2Z6buY77ya5o+Q56S66Z+z5aSx6LSl5LiN5b2x5ZON5pON5L2cICovIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g5riy5p+T5qOL55uY77yI5q+P5qyh6YeN5bu6RE9N77yM5LiU5q+P5Liq5qC85a2Q57uR5a6a54us56uL5LqL5Lu277yJCiAgICAgICAgICAgIGZ1bmN0aW9uIHJlbmRlckJvYXJkKCkgewogICAgICAgICAgICAgICAgbWluZWZpZWxkRWwuc3R5bGUuZ3JpZFRlbXBsYXRlQ29sdW1ucyA9IGByZXBlYXQoJHtjb2xzfSwgMzJweClgOwogICAgICAgICAgICAgICAgbWluZWZpZWxkRWwuc3R5bGUuZ3JpZFRlbXBsYXRlUm93cyA9IGByZXBlYXQoJHtyb3dzfSwgMzJweClgOwogICAgICAgICAgICAgICAgbWluZWZpZWxkRWwuaW5uZXJIVE1MID0gJyc7CiAgICAgICAgICAgICAgICBmb3IgKGxldCByb3dJZHggPSAwOyByb3dJZHggPCByb3dzOyByb3dJZHgrKykgewogICAgICAgICAgICAgICAgICAgIGZvciAobGV0IGNvbCA9IDA7IGNvbCA8IGNvbHM7IGNvbCsrKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IGNlbGwgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTsKICAgICAgICAgICAgICAgICAgICAgICAgY2VsbC5jbGFzc05hbWUgPSAnY2VsbCc7CiAgICAgICAgICAgICAgICAgICAgICAgIGNlbGwuZGF0YXNldC5yID0gcm93SWR4OwogICAgICAgICAgICAgICAgICAgICAgICBjZWxsLmRhdGFzZXQuYyA9IGNvbDsKICAgICAgICAgICAgICAgICAgICAgICAgY2VsbC50YWJJbmRleCA9IDA7CiAgICAgICAgICAgICAgICAgICAgICAgIGNlbGwuc2V0QXR0cmlidXRlKCdyb2xlJywgJ2dyaWRjZWxsJyk7CiAgICAgICAgICAgICAgICAgICAgICAgIGNlbGwuc2V0QXR0cmlidXRlKCdhcmlhLWxhYmVsJywgYOesrCR7cm93SWR4ICsgMX3ooYznrKwke2NvbCArIDF95YiXYCk7CiAgICAgICAgICAgICAgICAgICAgICAgIC8vIOe7keWumueCueWHu+S6i+S7tgogICAgICAgICAgICAgICAgICAgICAgICBjZWxsLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oKSB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBoYW5kbGVDbGljayhwYXJzZUludCh0aGlzLmRhdGFzZXQuciksIHBhcnNlSW50KHRoaXMuZGF0YXNldC5jKSk7CiAgICAgICAgICAgICAgICAgICAgICAgIH0pOwogICAgICAgICAgICAgICAgICAgICAgICAvLyDnu5Hlrprlj7PplK7kuovku7YKICAgICAgICAgICAgICAgICAgICAgICAgY2VsbC5hZGRFdmVudExpc3RlbmVyKCdjb250ZXh0bWVudScsIGZ1bmN0aW9uKGUpIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGhhbmRsZVJpZ2h0Q2xpY2socGFyc2VJbnQodGhpcy5kYXRhc2V0LnIpLCBwYXJzZUludCh0aGlzLmRhdGFzZXQuYykpOwogICAgICAgICAgICAgICAgICAgICAgICB9KTsKICAgICAgICAgICAgICAgICAgICAgICAgLy8g6ZSu55uY5pON5L2c5pSv5oyB77ya56m65qC857+75byA77yMRuagh+iusOaXl+W4nAogICAgICAgICAgICAgICAgICAgICAgICBjZWxsLmFkZEV2ZW50TGlzdGVuZXIoJ2tleWRvd24nLCBmdW5jdGlvbihlKSB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoZS5rZXkgPT09ICcgJyB8fCBlLmtleSA9PT0gJ0VudGVyJykgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBoYW5kbGVDbGljayhwYXJzZUludCh0aGlzLmRhdGFzZXQuciksIHBhcnNlSW50KHRoaXMuZGF0YXNldC5jKSk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9IGVsc2UgaWYgKGUua2V5ID09PSAnZicgfHwgZS5rZXkgPT09ICdGJykgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBoYW5kbGVSaWdodENsaWNrKHBhcnNlSW50KHRoaXMuZGF0YXNldC5yKSwgcGFyc2VJbnQodGhpcy5kYXRhc2V0LmMpKTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgfSk7CiAgICAgICAgICAgICAgICAgICAgICAgIG1pbmVmaWVsZEVsLmFwcGVuZENoaWxkKGNlbGwpOwogICAgICAgICAgICAgICAgICAgICAgICAvLyDnp7vliqjnq6/plb/mjInmoIfml5fvvIjmjInkvY8gNTAwbXPvvIkKICAgICAgICAgICAgICAgICAgICAgICAgKGZ1bmN0aW9uIChjZWxsRWwsIHJyLCBjYykgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgdmFyIGxwID0gbnVsbDsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNlbGxFbC5hZGRFdmVudExpc3RlbmVyKCd0b3VjaHN0YXJ0JywgZnVuY3Rpb24gKCkgeyBscCA9IHNldFRpbWVvdXQoZnVuY3Rpb24gKCkgeyBoYW5kbGVSaWdodENsaWNrKHJyLCBjYyk7IH0sIDUwMCk7IH0sIHsgcGFzc2l2ZTogdHJ1ZSB9KTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNlbGxFbC5hZGRFdmVudExpc3RlbmVyKCd0b3VjaGVuZCcsIGZ1bmN0aW9uICgpIHsgY2xlYXJUaW1lb3V0KGxwKTsgfSk7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBjZWxsRWwuYWRkRXZlbnRMaXN0ZW5lcigndG91Y2htb3ZlJywgZnVuY3Rpb24gKCkgeyBjbGVhclRpbWVvdXQobHApOyB9KTsKICAgICAgICAgICAgICAgICAgICAgICAgfSkoY2VsbCwgcm93SWR4LCBjb2wpOwogICAgICAgICAgICAgICAgICAgICAgICB1cGRhdGVDZWxsRGlzcGxheShjZWxsLCByb3dJZHgsIGNvbCk7CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CgogICAgICAgICAgICAvLyDmm7TmlrDmoLzlrZDmmL7npLoKICAgICAgICAgICAgZnVuY3Rpb24gdXBkYXRlQ2VsbERpc3BsYXkoY2VsbCwgcm93LCBjb2wpIHsKICAgICAgICAgICAgICAgIGlmICghYm9hcmRbcm93XSB8fCAhYm9hcmRbcm93XVtjb2xdKSByZXR1cm47CiAgICAgICAgICAgICAgICBjb25zdCBkYXRhID0gYm9hcmRbcm93XVtjb2xdOwogICAgICAgICAgICAgICAgY2VsbC5jbGFzc05hbWUgPSAnY2VsbCc7CiAgICAgICAgICAgICAgICBjZWxsLnNldEF0dHJpYnV0ZSgnYXJpYS1sYWJlbCcsIGDnrKwke3JvdyArIDF96KGM56ysJHtjb2wgKyAxfeWIlyR7ZGF0YS5mbGFnZ2VkID8gJ++8jOW3suagh+iusOaXl+W4nCcgOiBkYXRhLnJldmVhbGVkID8gJ++8jOW3sue/u+W8gCcgOiAnJ31gKTsKICAgICAgICAgICAgICAgIGlmIChkYXRhLmZsYWdnZWQpIHsKICAgICAgICAgICAgICAgICAgICBjZWxsLmNsYXNzTGlzdC5hZGQoJ2ZsYWdnZWQnKTsKICAgICAgICAgICAgICAgIH0gZWxzZSBpZiAoZGF0YS5yZXZlYWxlZCkgewogICAgICAgICAgICAgICAgICAgIGNlbGwuY2xhc3NMaXN0LmFkZCgncmV2ZWFsZWQnKTsKICAgICAgICAgICAgICAgICAgICBpZiAoZGF0YS5taW5lKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIGNlbGwudGV4dENvbnRlbnQgPSAn8J+Soyc7CiAgICAgICAgICAgICAgICAgICAgICAgIGNlbGwuY2xhc3NMaXN0LmFkZCgnbWluZS1oaXQnKTsKICAgICAgICAgICAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgICAgICAgICAgICBpZiAoZGF0YS5hZGphY2VudCA+IDApIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNlbGwudGV4dENvbnRlbnQgPSBkYXRhLmFkamFjZW50OwogICAgICAgICAgICAgICAgICAgICAgICAgICAgY2VsbC5zdHlsZS5jb2xvciA9IFsnJywgJyMwMDAwZmYnLCAnIzAwODAwMCcsICcjZmYwMDAwJywgJyMwMDAwODAnLCAnIzgwMDAwMCcsICcjMDA4MDgwJywgJyMwMDAwMDAnLCAnIzgwODA4MCddW2RhdGEuYWRqYWNlbnRdIHx8ICcjMDAwJzsKICAgICAgICAgICAgICAgICAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNlbGwudGV4dENvbnRlbnQgPSAnJzsKICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICAgICAgICAgY2VsbC50ZXh0Q29udGVudCA9ICcnOwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CgogICAgICAgICAgICAvLyDliJ3lp4vljJbmo4vnm5jvvIjmlbDmja4gKyDmuLLmn5PvvIkKICAgICAgICAgICAgZnVuY3Rpb24gaW5pdEJvYXJkKGZpcnN0UiwgZmlyc3RDKSB7CiAgICAgICAgICAgICAgICBib2FyZCA9IEFycmF5LmZyb20oeyBsZW5ndGg6IHJvd3MgfSwgKCkgPT4KICAgICAgICAgICAgICAgICAgICBBcnJheS5mcm9tKHsgbGVuZ3RoOiBjb2xzIH0sICgpID0+ICh7IG1pbmU6IGZhbHNlLCByZXZlYWxlZDogZmFsc2UsIGZsYWdnZWQ6IGZhbHNlLCBhZGphY2VudDogMCB9KSkKICAgICAgICAgICAgICAgICk7CgogICAgICAgICAgICAgICAgbGV0IG1pbmVzUGxhY2VkID0gMDsKICAgICAgICAgICAgICAgIGxldCBhdHRlbXB0cyA9IDA7CiAgICAgICAgICAgICAgICB3aGlsZSAobWluZXNQbGFjZWQgPCBtaW5lc0NvdW50ICYmIGF0dGVtcHRzIDwgMTAwMCkgewogICAgICAgICAgICAgICAgICAgIGNvbnN0IHJhbmRvbVJvdyA9IE1hdGguZmxvb3IoTWF0aC5yYW5kb20oKSAqIHJvd3MpOwogICAgICAgICAgICAgICAgICAgIGNvbnN0IHJhbmRvbUNvbCA9IE1hdGguZmxvb3IoTWF0aC5yYW5kb20oKSAqIGNvbHMpOwogICAgICAgICAgICAgICAgICAgIGF0dGVtcHRzKys7CiAgICAgICAgICAgICAgICAgICAgaWYgKE1hdGguYWJzKHJhbmRvbVJvdyAtIGZpcnN0UikgPD0gMSAmJiBNYXRoLmFicyhyYW5kb21Db2wgLSBmaXJzdEMpIDw9IDEpIGNvbnRpbnVlOwogICAgICAgICAgICAgICAgICAgIGlmICghYm9hcmRbcmFuZG9tUm93XVtyYW5kb21Db2xdLm1pbmUpIHsKICAgICAgICAgICAgICAgICAgICAgICAgYm9hcmRbcmFuZG9tUm93XVtyYW5kb21Db2xdLm1pbmUgPSB0cnVlOwogICAgICAgICAgICAgICAgICAgICAgICBtaW5lc1BsYWNlZCsrOwogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBmb3IgKGxldCByb3dJZHggPSAwOyByb3dJZHggPCByb3dzOyByb3dJZHgrKykgewogICAgICAgICAgICAgICAgICAgIGZvciAobGV0IGNvbCA9IDA7IGNvbCA8IGNvbHM7IGNvbCsrKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIGxldCBjb3VudCA9IDA7CiAgICAgICAgICAgICAgICAgICAgICAgIGZvciAobGV0IGRyID0gLTE7IGRyIDw9IDE7IGRyKyspIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZvciAobGV0IGRjID0gLTE7IGRjIDw9IDE7IGRjKyspIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoZHIgPT09IDAgJiYgZGMgPT09IDApIGNvbnRpbnVlOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0IG5yID0gcm93SWR4ICsgZHIsIG5jID0gY29sICsgZGM7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKG5yID49IDAgJiYgbnIgPCByb3dzICYmIG5jID49IDAgJiYgbmMgPCBjb2xzICYmIGJvYXJkW25yXVtuY10ubWluZSkgY291bnQrKzsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICBib2FyZFtyb3dJZHhdW2NvbF0uYWRqYWNlbnQgPSBjb3VudDsKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBnYW1lT3ZlciA9IGZhbHNlOwogICAgICAgICAgICAgICAgZmlyc3RDbGljayA9IGZhbHNlOwogICAgICAgICAgICAgICAgcmVuZGVyQm9hcmQoKTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g5bem6ZSu54K55Ye75aSE55CGCiAgICAgICAgICAgIGZ1bmN0aW9uIGhhbmRsZUNsaWNrKHJvdywgY29sKSB7CiAgICAgICAgICAgICAgICBpZiAoZ2FtZU92ZXIpIHJldHVybjsKCiAgICAgICAgICAgICAgICBpZiAoZmlyc3RDbGljaykgewogICAgICAgICAgICAgICAgICAgIGluaXRCb2FyZChyb3csIGNvbCk7CiAgICAgICAgICAgICAgICAgICAgc3RhcnRUaW1lcigpOwogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIGlmICghYm9hcmRbcm93XSB8fCAhYm9hcmRbcm93XVtjb2xdKSByZXR1cm47CgogICAgICAgICAgICAgICAgaWYgKGJvYXJkW3Jvd11bY29sXS5mbGFnZ2VkIHx8IGJvYXJkW3Jvd11bY29sXS5yZXZlYWxlZCkgcmV0dXJuOwoKICAgICAgICAgICAgICAgIGlmIChib2FyZFtyb3ddW2NvbF0ubWluZSkgewogICAgICAgICAgICAgICAgICAgIGdhbWVPdmVyID0gdHJ1ZTsKICAgICAgICAgICAgICAgICAgICBzdG9wVGltZXIoKTsKICAgICAgICAgICAgICAgICAgICBwbGF5U291bmQoJ2V4cGxvZGUnKTsKICAgICAgICAgICAgICAgICAgICByZXZlYWxBbGxNaW5lcygpOwogICAgICAgICAgICAgICAgICAgIHVwZGF0ZU1pbmVzTGVmdCgpOwogICAgICAgICAgICAgICAgICAgIHN0YXR1c0VsLnRleHRDb250ZW50ID0gJ/CfkqUg5L2g6Lip5Yiw6Zu35LqG77yB5ri45oiP57uT5p2fJzsKICAgICAgICAgICAgICAgICAgICByZXR1cm47CiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgcmV2ZWFsQ2VsbChyb3csIGNvbCk7CiAgICAgICAgICAgICAgICBjaGVja1dpbigpOwogICAgICAgICAgICB9CgogICAgICAgICAgICAvLyDlj7PplK7moIforrDml5fluJwKICAgICAgICAgICAgZnVuY3Rpb24gaGFuZGxlUmlnaHRDbGljayhyb3csIGNvbCkgewogICAgICAgICAgICAgICAgaWYgKGdhbWVPdmVyKSByZXR1cm47CiAgICAgICAgICAgICAgICBpZiAoIWJvYXJkW3Jvd10gfHwgIWJvYXJkW3Jvd11bY29sXSkgcmV0dXJuOwogICAgICAgICAgICAgICAgaWYgKGJvYXJkW3Jvd11bY29sXS5yZXZlYWxlZCkgcmV0dXJuOwogICAgICAgICAgICAgICAgYm9hcmRbcm93XVtjb2xdLmZsYWdnZWQgPSAhYm9hcmRbcm93XVtjb2xdLmZsYWdnZWQ7CiAgICAgICAgICAgICAgICBjb25zdCBjZWxsID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcihgLmNlbGxbZGF0YS1yPSIke3Jvd30iXVtkYXRhLWM9IiR7Y29sfSJdYCk7CiAgICAgICAgICAgICAgICB1cGRhdGVDZWxsRGlzcGxheShjZWxsLCByb3csIGNvbCk7CiAgICAgICAgICAgICAgICB1cGRhdGVNaW5lc0xlZnQoKTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g6K6h5pe25LiO6Zu35pWwCiAgICAgICAgICAgIGZ1bmN0aW9uIHN0YXJ0VGltZXIoKSB7CiAgICAgICAgICAgICAgICBpZiAodGltZXJJZCkgcmV0dXJuOwogICAgICAgICAgICAgICAgc3RhcnRUaW1lID0gRGF0ZS5ub3coKTsKICAgICAgICAgICAgICAgIHRpbWVySWQgPSBzZXRJbnRlcnZhbCh1cGRhdGVUaW1lciwgMjUwKTsKICAgICAgICAgICAgfQogICAgICAgICAgICBmdW5jdGlvbiBzdG9wVGltZXIoKSB7CiAgICAgICAgICAgICAgICBpZiAodGltZXJJZCkgeyBjbGVhckludGVydmFsKHRpbWVySWQpOyB0aW1lcklkID0gbnVsbDsgfQogICAgICAgICAgICB9CiAgICAgICAgICAgIGZ1bmN0aW9uIHVwZGF0ZVRpbWVyKCkgewogICAgICAgICAgICAgICAgdmFyIGUgPSBNYXRoLmZsb29yKChEYXRlLm5vdygpIC0gc3RhcnRUaW1lKSAvIDEwMDApOwogICAgICAgICAgICAgICAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3RpbWVyRWwnKS50ZXh0Q29udGVudCA9ICfij7EgJyArIE1hdGguZmxvb3IoZSAvIDYwKSArICc6JyArIFN0cmluZyhlICUgNjApLnBhZFN0YXJ0KDIsICcwJyk7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgZnVuY3Rpb24gY291bnRGbGFncygpIHsKICAgICAgICAgICAgICAgIHZhciBmbGFnQ250ID0gMDsKICAgICAgICAgICAgICAgIGZvciAodmFyIHJvd0lkeCA9IDA7IHJvd0lkeCA8IHJvd3M7IHJvd0lkeCsrKSBmb3IgKHZhciBjb2wgPSAwOyBjb2wgPCBjb2xzOyBjb2wrKykgaWYgKGJvYXJkW3Jvd0lkeF0gJiYgYm9hcmRbcm93SWR4XVtjb2xdICYmIGJvYXJkW3Jvd0lkeF1bY29sXS5mbGFnZ2VkKSBmbGFnQ250Kys7CiAgICAgICAgICAgICAgICByZXR1cm4gZmxhZ0NudDsKICAgICAgICAgICAgfQogICAgICAgICAgICBmdW5jdGlvbiB1cGRhdGVNaW5lc0xlZnQoKSB7CiAgICAgICAgICAgICAgICB2YXIgbGVmdCA9IG1pbmVzQ291bnQgLSBjb3VudEZsYWdzKCk7CiAgICAgICAgICAgICAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbWluZXNMZWZ0RWwnKS50ZXh0Q29udGVudCA9ICfwn5KjICcgKyAobGVmdCA8IDAgPyAwIDogbGVmdCk7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIC8vIOWxleW8gOepuueZveWMuuWfn++8iEJGU++8iQogICAgICAgICAgICBmdW5jdGlvbiByZXZlYWxDZWxsKHJvdywgY29sKSB7CiAgICAgICAgICAgICAgICBpZiAoYm9hcmRbcm93XVtjb2xdLnJldmVhbGVkIHx8IGJvYXJkW3Jvd11bY29sXS5mbGFnZ2VkKSByZXR1cm47CiAgICAgICAgICAgICAgICBib2FyZFtyb3ddW2NvbF0ucmV2ZWFsZWQgPSB0cnVlOwogICAgICAgICAgICAgICAgaWYgKGJvYXJkW3Jvd11bY29sXS5hZGphY2VudCA9PT0gMCAmJiAhYm9hcmRbcm93XVtjb2xdLm1pbmUpIHsKICAgICAgICAgICAgICAgICAgICBmb3IgKGxldCBkciA9IC0xOyBkciA8PSAxOyBkcisrKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIGZvciAobGV0IGRjID0gLTE7IGRjIDw9IDE7IGRjKyspIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChkciA9PT0gMCAmJiBkYyA9PT0gMCkgY29udGludWU7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBuciA9IHJvdyArIGRyLCBuYyA9IGNvbCArIGRjOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKG5yID49IDAgJiYgbnIgPCByb3dzICYmIG5jID49IDAgJiYgbmMgPCBjb2xzKSB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYgKCFib2FyZFtucl1bbmNdLnJldmVhbGVkICYmICFib2FyZFtucl1bbmNdLmZsYWdnZWQpIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV2ZWFsQ2VsbChuciwgbmMpOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGNvbnN0IGNlbGwgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGAuY2VsbFtkYXRhLXI9IiR7cm93fSJdW2RhdGEtYz0iJHtjb2x9Il1gKTsKICAgICAgICAgICAgICAgIHVwZGF0ZUNlbGxEaXNwbGF5KGNlbGwsIHJvdywgY29sKTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g5pi+56S65omA5pyJ5Zyw6Zu3CiAgICAgICAgICAgIGZ1bmN0aW9uIHJldmVhbEFsbE1pbmVzKCkgewogICAgICAgICAgICAgICAgZm9yIChsZXQgcm93SWR4ID0gMDsgcm93SWR4IDwgcm93czsgcm93SWR4KyspIHsKICAgICAgICAgICAgICAgICAgICBmb3IgKGxldCBjb2wgPSAwOyBjb2wgPCBjb2xzOyBjb2wrKykgewogICAgICAgICAgICAgICAgICAgICAgICBpZiAoYm9hcmRbcm93SWR4XVtjb2xdLm1pbmUpIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGJvYXJkW3Jvd0lkeF1bY29sXS5yZXZlYWxlZCA9IHRydWU7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBib2FyZFtyb3dJZHhdW2NvbF0uZmxhZ2dlZCA9IGZhbHNlOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3QgY2VsbCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYC5jZWxsW2RhdGEtcj0iJHtyb3dJZHh9Il1bZGF0YS1jPSIke2NvbH0iXWApOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgdXBkYXRlQ2VsbERpc3BsYXkoY2VsbCwgcm93SWR4LCBjb2wpOwogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CgogICAgICAgICAgICAvLyDmo4Dmn6Xog5zliKkKICAgICAgICAgICAgZnVuY3Rpb24gY2hlY2tXaW4oKSB7CiAgICAgICAgICAgICAgICBsZXQgcmV2ZWFsZWRDb3VudCA9IDA7CiAgICAgICAgICAgICAgICBjb25zdCB0b3RhbENlbGxzID0gcm93cyAqIGNvbHM7CiAgICAgICAgICAgICAgICBmb3IgKGxldCByb3dJZHggPSAwOyByb3dJZHggPCByb3dzOyByb3dJZHgrKykgewogICAgICAgICAgICAgICAgICAgIGZvciAobGV0IGNvbCA9IDA7IGNvbCA8IGNvbHM7IGNvbCsrKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIGlmIChib2FyZFtyb3dJZHhdW2NvbF0ucmV2ZWFsZWQpIHJldmVhbGVkQ291bnQrKzsKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBpZiAocmV2ZWFsZWRDb3VudCA9PT0gdG90YWxDZWxscyAtIG1pbmVzQ291bnQpIHsKICAgICAgICAgICAgICAgICAgICBnYW1lT3ZlciA9IHRydWU7CiAgICAgICAgICAgICAgICAgICAgc3RvcFRpbWVyKCk7CiAgICAgICAgICAgICAgICAgICAgdmFyIF9lID0gTWF0aC5mbG9vcigoRGF0ZS5ub3coKSAtIHN0YXJ0VGltZSkgLyAxMDAwKTsKICAgICAgICAgICAgICAgICAgICBzdGF0dXNFbC50ZXh0Q29udGVudCA9ICfwn46JIOaBreWWnO+8jOS9oOi1ouS6hu+8geeUqOaXtiAnICsgTWF0aC5mbG9vcihfZSAvIDYwKSArICc6JyArIFN0cmluZyhfZSAlIDYwKS5wYWRTdGFydCgyLCAnMCcpOwogICAgICAgICAgICAgICAgICAgIHVwZGF0ZU1pbmVzTGVmdCgpOwogICAgICAgICAgICAgICAgICAgIHRyeSB7IHZhciBfYyA9IHBhcnNlSW50KGxvY2FsU3RvcmFnZS5nZXRJdGVtKCd6bF9taW5lc19jbGVhcnMnKXx8JzAnLDEwKSsxOyBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgnemxfbWluZXNfY2xlYXJzJyxfYyk7IGlmKHdpbmRvdy5aTCYmWkwuYnVtcCl7WkwuYnVtcCgnbWluZXNfY2xlYXInLCAxKTt9IGlmKHdpbmRvdy5aTCYmWkwuc2hvd1RvYXN0KXtaTC5zaG93VG9hc3QoJ/CfkqMg57Sv6K6h6YCa5YWz77yaJytfYyk7fSB9IGNhdGNoKGUpeyAvKiDmnKzlnLDorqHliIbkuI7miJDlsLHkuIrmiqXlpLHotKXml7bpnZnpu5jvvJrkuI3lvbHlk43pgJrlhbPnu5PnrpcgKi8gfQogICAgICAgICAgICAgICAgICAgIHBsYXlTb3VuZCgnd2luJyk7CiAgICAgICAgICAgICAgICAgICAgZm9yIChsZXQgcm93SWR4ID0gMDsgcm93SWR4IDwgcm93czsgcm93SWR4KyspIHsKICAgICAgICAgICAgICAgICAgICAgICAgZm9yIChsZXQgY29sID0gMDsgY29sIDwgY29sczsgY29sKyspIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmIChib2FyZFtyb3dJZHhdW2NvbF0ubWluZSAmJiAhYm9hcmRbcm93SWR4XVtjb2xdLmZsYWdnZWQpIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBib2FyZFtyb3dJZHhdW2NvbF0uZmxhZ2dlZCA9IHRydWU7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc3QgY2VsbCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYC5jZWxsW2RhdGEtcj0iJHtyb3dJZHh9Il1bZGF0YS1jPSIke2NvbH0iXWApOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVwZGF0ZUNlbGxEaXNwbGF5KGNlbGwsIHJvd0lkeCwgY29sKTsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g5byA5aeL5paw5ri45oiPCiAgICAgICAgICAgIGZ1bmN0aW9uIHN0YXJ0TmV3R2FtZSgpIHsKICAgICAgICAgICAgICAgIHJvd3MgPSBwYXJzZUludChyb3dzSW5wdXQudmFsdWUpIHx8IDk7CiAgICAgICAgICAgICAgICBjb2xzID0gcGFyc2VJbnQoY29sc0lucHV0LnZhbHVlKSB8fCA5OwogICAgICAgICAgICAgICAgbWluZXNDb3VudCA9IHBhcnNlSW50KG1pbmVzSW5wdXQudmFsdWUpIHx8IDEwOwoKICAgICAgICAgICAgICAgIHJvd3MgPSBNYXRoLm1pbigyMCwgTWF0aC5tYXgoNSwgcm93cykpOwogICAgICAgICAgICAgICAgY29scyA9IE1hdGgubWluKDIwLCBNYXRoLm1heCg1LCBjb2xzKSk7CiAgICAgICAgICAgICAgICBjb25zdCBtYXhNaW5lcyA9IHJvd3MgKiBjb2xzIC0gOTsKICAgICAgICAgICAgICAgIG1pbmVzQ291bnQgPSBNYXRoLm1pbihtYXhNaW5lcywgTWF0aC5tYXgoMSwgbWluZXNDb3VudCkpOwogICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICByb3dzSW5wdXQudmFsdWUgPSByb3dzOwogICAgICAgICAgICAgICAgY29sc0lucHV0LnZhbHVlID0gY29sczsKICAgICAgICAgICAgICAgIG1pbmVzSW5wdXQudmFsdWUgPSBtaW5lc0NvdW50OwoKICAgICAgICAgICAgICAgIGJvYXJkID0gW107CiAgICAgICAgICAgICAgICBnYW1lT3ZlciA9IGZhbHNlOwogICAgICAgICAgICAgICAgZmlyc3RDbGljayA9IHRydWU7CiAgICAgICAgICAgICAgICBzdG9wVGltZXIoKTsKICAgICAgICAgICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0aW1lckVsJykudGV4dENvbnRlbnQgPSAn4o+xIDA6MDAnOwogICAgICAgICAgICAgICAgcmVuZGVyQm9hcmQoKTsKICAgICAgICAgICAgICAgIHN0YXR1c0VsLnRleHRDb250ZW50ID0gJ+eCueWHu+agvOWtkOW8gOWni+a4uOaIjyc7CiAgICAgICAgICAgICAgICB1cGRhdGVNaW5lc0xlZnQoKTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgLy8g5paw5ri45oiP5oyJ6ZKuCiAgICAgICAgICAgIG5ld0dhbWVCdG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBzdGFydE5ld0dhbWUpOwoKICAgICAgICAgICAgLy8g6L+U5Zue5Li76aG16L2s5Zy6CiAgICAgICAgICAgIGxldCBpc1RyYW5zaXRpb25pbmcgPSBmYWxzZTsKICAgICAgICAgICAgYmFja0hvbWUuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoZSkgewogICAgICAgICAgICAgICAgZS5wcmV2ZW50RGVmYXVsdCgpOwogICAgICAgICAgICAgICAgaWYgKGlzVHJhbnNpdGlvbmluZykgcmV0dXJuOwogICAgICAgICAgICAgICAgaXNUcmFuc2l0aW9uaW5nID0gdHJ1ZTsKICAgICAgICAgICAgICAgIG92ZXJsYXkuY2xhc3NMaXN0LmFkZCgnYWN0aXZlJyk7CiAgICAgICAgICAgICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsKICAgICAgICAgICAgICAgICAgICB3aW5kb3cubG9jYXRpb24uaHJlZiA9ICflqLHkuZDmuLjmiI8uaHRtbCc7CiAgICAgICAgICAgICAgICB9LCAxMDAwKTsKICAgICAgICAgICAgfSk7CgogICAgICAgICAgICAvLyDlkK/liqgKICAgICAgICAgICAgc3RhcnROZXdHYW1lKCk7CiAgICAgICAgfSkoKTsKICAgIAoKLyog6Ieq5Yqo5YWo5bGA5oyC6L2977yI5L6b5YaF6IGU5LqL5Lu25bGe5oCn6LCD55So77yJICovCmlmKCEoJ3BsYXlTb3VuZCcgaW4gd2luZG93KSl3aW5kb3cucGxheVNvdW5kPXBsYXlTb3VuZDsKaWYoISgncmVuZGVyQm9hcmQnIGluIHdpbmRvdykpd2luZG93LnJlbmRlckJvYXJkPXJlbmRlckJvYXJkOwppZighKCd1cGRhdGVDZWxsRGlzcGxheScgaW4gd2luZG93KSl3aW5kb3cudXBkYXRlQ2VsbERpc3BsYXk9dXBkYXRlQ2VsbERpc3BsYXk7CmlmKCEoJ2luaXRCb2FyZCcgaW4gd2luZG93KSl3aW5kb3cuaW5pdEJvYXJkPWluaXRCb2FyZDsKaWYoISgnaGFuZGxlQ2xpY2snIGluIHdpbmRvdykpd2luZG93LmhhbmRsZUNsaWNrPWhhbmRsZUNsaWNrOwppZighKCdoYW5kbGVSaWdodENsaWNrJyBpbiB3aW5kb3cpKXdpbmRvdy5oYW5kbGVSaWdodENsaWNrPWhhbmRsZVJpZ2h0Q2xpY2s7CmlmKCEoJ3N0YXJ0VGltZXInIGluIHdpbmRvdykpd2luZG93LnN0YXJ0VGltZXI9c3RhcnRUaW1lcjsKaWYoISgnc3RvcFRpbWVyJyBpbiB3aW5kb3cpKXdpbmRvdy5zdG9wVGltZXI9c3RvcFRpbWVyOwppZighKCd1cGRhdGVUaW1lcicgaW4gd2luZG93KSl3aW5kb3cudXBkYXRlVGltZXI9dXBkYXRlVGltZXI7CmlmKCEoJ2NvdW50RmxhZ3MnIGluIHdpbmRvdykpd2luZG93LmNvdW50RmxhZ3M9Y291bnRGbGFnczsKaWYoISgndXBkYXRlTWluZXNMZWZ0JyBpbiB3aW5kb3cpKXdpbmRvdy51cGRhdGVNaW5lc0xlZnQ9dXBkYXRlTWluZXNMZWZ0OwppZighKCdyZXZlYWxDZWxsJyBpbiB3aW5kb3cpKXdpbmRvdy5yZXZlYWxDZWxsPXJldmVhbENlbGw7CmlmKCEoJ3JldmVhbEFsbE1pbmVzJyBpbiB3aW5kb3cpKXdpbmRvdy5yZXZlYWxBbGxNaW5lcz1yZXZlYWxBbGxNaW5lczsKaWYoISgnY2hlY2tXaW4nIGluIHdpbmRvdykpd2luZG93LmNoZWNrV2luPWNoZWNrV2luOwppZighKCdzdGFydE5ld0dhbWUnIGluIHdpbmRvdykpd2luZG93LnN0YXJ0TmV3R2FtZT1zdGFydE5ld0dhbWU7");
+</script>
+</body>
+</html>

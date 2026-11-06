@@ -213,47 +213,47 @@
     /* ========== 页面索引（站内搜索） ========== */
     ZL.PAGES = [
         { f: 'index.html', t: '找乐子主站·优质工具库', k: '首页 工具库 导航 主程序' },
-        { f: '1.html', t: '密码登录', k: '密码 登录 门禁' },
-        { f: '2.html', t: '第三方信息授权协议', k: '协议 授权' },
-        { f: '3.html', t: '授权确认', k: '协议 勾选 确认' },
-        { f: '4.html', t: '选择IP登录', k: 'IP 登录 选择' },
-        { f: '5.html', t: '找乐子·媒体池', k: '图片 音频 媒体 相册' },
-        { f: '6.html', t: '作者介绍', k: '作者 碧世辉煌 介绍' },
-        { f: '7.html', t: '优质工具箱', k: '工具 工具箱' },
-        { f: '8.html', t: '背包', k: '背包 物品' },
-        { f: '9.html', t: '纯文本一键生成txt', k: 'txt 文本 生成' },
-        { f: '10.html', t: '后台修改办法', k: '后台 修改 维护' },
-        { f: '11.html', t: '赞赏支持', k: '赞赏 支持 捐 助力' },
-        { f: '12.html', t: '基础计算器', k: '计算器 计算' },
-        { f: '13.html', t: '日期计算器', k: '日期 计算 时间' },
-        { f: '14.html', t: '虚拟消费系统', k: '购物 商品 购物车 优惠券 消费' },
-        { f: '15.html', t: '强密码生成器', k: '密码 生成 安全' },
-        { f: '16.html', t: '黑客模拟器', k: '黑客 终端 模拟' },
-        { f: '17.html', t: '古今中外暗号大全', k: '暗号 密码 加密 语言' },
-        { f: '18.html', t: '单位换算', k: '单位 换算 长度 重量' },
-        { f: '19.html', t: '网页备忘录', k: '备忘录 笔记 链接 收藏' },
-        { f: '20.html', t: '五子棋·人机对弈', k: '五子棋 棋 游戏 对战' },
-        { f: '21.html', t: '记忆配对游戏', k: '记忆 配对 游戏 翻牌' },
-        { f: '22.html', t: '扫雷', k: '扫雷 游戏 炸弹' },
-        { f: '23.html', t: '在线词典', k: '词典 单词 翻译' },
-        { f: '24.html', t: '词频统计', k: '词频 统计 文本' },
-        { f: '25.html', t: '字数统计', k: '字数 统计 字符' },
-        { f: '26.html', t: '二维码生成器', k: '二维码 生成 扫码' },
-        { f: '27.html', t: '摩斯密码转换', k: '摩斯 密码 电报 转换' },
-        { f: '28.html', t: '免责声明', k: '声明 免责' },
-        { f: '29.html', t: '反馈渠道', k: '反馈 意见 联系' },
-        { f: '30.html', t: '更新公告', k: '更新 公告 版本' },
-        { f: '31.html', t: '娱乐游戏', k: '游戏 娱乐 导航' },
-        { f: '32.html', t: '找乐子工具', k: '工具 导航' },
+        { f: '密码登录.html', t: '密码登录', k: '密码 登录 门禁' },
+        { f: '授权协议.html', t: '第三方信息授权协议', k: '协议 授权' },
+        { f: '授权确认.html', t: '授权确认', k: '协议 勾选 确认' },
+        { f: '选择IP.html', t: '选择IP登录', k: 'IP 登录 选择' },
+        { f: '媒体池.html', t: '找乐子·媒体池', k: '图片 音频 媒体 相册' },
+        { f: '作者介绍.html', t: '作者介绍', k: '作者 碧世辉煌 介绍' },
+        { f: '优质工具箱.html', t: '优质工具箱', k: '工具 工具箱' },
+        { f: '背包.html', t: '背包', k: '背包 物品' },
+        { f: '文本生成文件.html', t: '纯文本一键生成txt', k: 'txt 文本 生成' },
+        { f: '后台修改.html', t: '后台修改办法', k: '后台 修改 维护' },
+        { f: '赞赏支持.html', t: '赞赏支持', k: '赞赏 支持 捐 助力' },
+        { f: '基础计算器.html', t: '基础计算器', k: '计算器 计算' },
+        { f: '日期计算器.html', t: '日期计算器', k: '日期 计算 时间' },
+        { f: '虚拟消费系统.html', t: '虚拟消费系统', k: '购物 商品 购物车 优惠券 消费' },
+        { f: '强密码生成器.html', t: '强密码生成器', k: '密码 生成 安全' },
+        { f: '黑客模拟器.html', t: '黑客模拟器', k: '黑客 终端 模拟' },
+        { f: '古今中外暗号大全.html', t: '古今中外暗号大全', k: '暗号 密码 加密 语言' },
+        { f: '单位换算.html', t: '单位换算', k: '单位 换算 长度 重量' },
+        { f: '网页备忘录.html', t: '网页备忘录', k: '备忘录 笔记 链接 收藏' },
+        { f: '五子棋.html', t: '五子棋·人机对弈', k: '五子棋 棋 游戏 对战' },
+        { f: '记忆配对游戏.html', t: '记忆配对游戏', k: '记忆 配对 游戏 翻牌' },
+        { f: '扫雷.html', t: '扫雷', k: '扫雷 游戏 炸弹' },
+        { f: '在线词典.html', t: '在线词典', k: '词典 单词 翻译' },
+        { f: '词频统计.html', t: '词频统计', k: '词频 统计 文本' },
+        { f: '字数统计.html', t: '字数统计', k: '字数 统计 字符' },
+        { f: '二维码生成器.html', t: '二维码生成器', k: '二维码 生成 扫码' },
+        { f: '摩斯密码转换.html', t: '摩斯密码转换', k: '摩斯 密码 电报 转换' },
+        { f: '免责声明.html', t: '免责声明', k: '声明 免责' },
+        { f: '反馈渠道.html', t: '反馈渠道', k: '反馈 意见 联系' },
+        { f: '更新公告.html', t: '更新公告', k: '更新 公告 版本' },
+        { f: '娱乐游戏.html', t: '娱乐游戏', k: '游戏 娱乐 导航' },
+        { f: '工具导航.html', t: '找乐子工具', k: '工具 导航' },
         { f: '文件搜索.html', t: '文件搜索', k: '文件 搜索 查找' },
-        { f: '34.html', t: '打字速度测试', k: '打字 速度 WPM 练习' },
-        { f: '36.html', t: '双人井字棋', k: '井字棋 双人 对战 游戏' },
-        { f: '37.html', t: '每日一题', k: '每日 答题 谜题 挑战' },
-        { f: '38.html', t: '签到·成就徽章墙', k: '签到 成就 徽章 打卡' },
-        { f: '39.html', t: '分享卡片生成', k: '分享 卡片 海报 生成' },
-        { f: '41.html', t: '看看作业', k: '作业 照片 查看 学习' },
-        { f: '42.html', t: '看看作业——更新公告', k: '作业 更新 公告' },
-        { f: '46.html', t: '学习计时与专注模式', k: '番茄钟 专注 计时 白噪音 成就 统计 休息' }
+        { f: '打字测试.html', t: '打字速度测试', k: '打字 速度 WPM 练习' },
+        { f: '双人井字棋.html', t: '双人井字棋', k: '井字棋 双人 对战 游戏' },
+        { f: '每日一题.html', t: '每日一题', k: '每日 答题 谜题 挑战' },
+        { f: '成就中心.html', t: '签到·成就徽章墙', k: '签到 成就 徽章 打卡' },
+        { f: '分享卡片.html', t: '分享卡片生成', k: '分享 卡片 海报 生成' },
+        { f: '看看作业.html', t: '看看作业', k: '作业 照片 查看 学习' },
+        { f: '看看作业-更新公告.html', t: '看看作业——更新公告', k: '作业 更新 公告' },
+        { f: '学习计时.html', t: '学习计时与专注模式', k: '番茄钟 专注 计时 白噪音 成就 统计 休息' }
     ];
 
     /* ========== 体系门禁 + 目录分层解析 ==========
@@ -264,15 +264,15 @@
      *   pages/ 内页面跳首页需上一级；根级首页跳业务页需加 pages/ 前缀。
      * ZL.resolve(f) 是唯一入口，返回可直接赋给 href/location 的地址。 */
     var GATE_MAP = {
-        '2.html': '1.html?go=2.html',
-        '3.html': '1.html?go=3.html',
-        '4.html': '1.html?go=4.html',
-        '5.html': '1.html?go=5.html',
-        '6.html': '1.html?go=6.html',
-        '7.html': '1.html?go=7.html',
-        '8.html': '1.html?go=8.html',
-        '41.html': 'verify.html?go=41.html',
-        '42.html': 'verify.html?go=42.html'
+        '授权协议.html': '密码登录.html?go=授权协议.html',
+        '授权确认.html': '密码登录.html?go=授权确认.html',
+        '选择IP.html': '密码登录.html?go=选择IP.html',
+        '媒体池.html': '密码登录.html?go=媒体池.html',
+        '作者介绍.html': '密码登录.html?go=作者介绍.html',
+        '优质工具箱.html': '密码登录.html?go=优质工具箱.html',
+        '背包.html': '密码登录.html?go=背包.html',
+        '看看作业.html': '作业验证.html?go=看看作业.html',
+        '看看作业-更新公告.html': '作业验证.html?go=看看作业-更新公告.html'
     };
     /* 当前页是否在 pages/ 子目录（pathname 结尾 /pages/xxx，兼容 file:// 绝对路径） */
     var IN_PAGES = /\/pages\/[^/]+$/i.test(location.pathname);
@@ -281,7 +281,7 @@
     ZL.resolve = function (f) {
         if (f === 'index.html') return IN_PAGES ? '../index.html' : 'index.html';
         var g = GATE_MAP[f] || f;
-        return IN_PAGES ? g : 'pages/' + g;
+        return g;
     };
     /* 兼容旧调用方：门禁解析与目录分层一并完成 */
     ZL.gateUrl = function (f) { return ZL.resolve(f); };
@@ -626,7 +626,7 @@
             card.innerHTML = '<div style="font-size:30px;flex:none;">' + a.icon + '</div><div style="flex:1;"><div style="font-weight:bold;font-size:15px;">🏆 ' + a.t + ' <span style="font-size:11px;color:' + cfg.col + ';border:1px solid ' + cfg.col + ';border-radius:8px;padding:0 5px;margin-left:4px;">' + cfg.ic + cfg.nm + '</span></div><div style="color:var(--dim,#888);font-size:12px;margin-top:3px;">' + a.d + '</div></div>';
             document.body.appendChild(card);
             /* 点击卡片 → 跳转成就中心（并立即关闭本卡） */
-            function closeAndGo() { try { card.remove(); window.location.href = ZL.resolve('38.html'); } catch (e) {} }
+            function closeAndGo() { try { card.remove(); window.location.href = ZL.resolve('成就中心.html'); } catch (e) {} }
             card.addEventListener('click', closeAndGo);
             card.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); closeAndGo(); } });
             setTimeout(function () { try { card.style.opacity = '1'; card.style.transform = 'translateX(0)'; } catch (e) {} }, 30);
@@ -685,9 +685,9 @@
 
     /* ========== 最近记录面板（#8 优化：二维码/摩斯/暗号等） ========== */
     ZL.RECENT_MAP = {
-        '26.html': { key: 'zl_recent_qr', input: '#qrText', label: '二维码' },
-        '27.html': { key: 'zl_recent_morse', input: '#inputBox', label: '摩斯密码' },
-        '17.html': { key: 'zl_recent_cipher', input: null, label: '暗号' }
+        '二维码生成器.html': { key: 'zl_recent_qr', input: '#qrText', label: '二维码' },
+        '摩斯密码转换.html': { key: 'zl_recent_morse', input: '#inputBox', label: '摩斯密码' },
+        '古今中外暗号大全.html': { key: 'zl_recent_cipher', input: null, label: '暗号' }
     };
     ZL.saveRecent = function (key, text) {
         try {
@@ -944,7 +944,7 @@
 
     /* 自动统计当前页使用（排除门禁/导航页） */
     var cur = (window.location.pathname.split('/').pop() || '').toLowerCase();
-    var skipPages = ['1.html', '2.html', '3.html', '4.html', '28.html', '29.html', '30.html', '10.html'];
+    var skipPages = ['密码登录.html', '授权协议.html', '授权确认.html', '选择IP.html', '免责声明.html', '反馈渠道.html', '更新公告.html', '后台修改.html'];
     if (cur && skipPages.indexOf(cur) < 0 && cur.indexOf('.html') > 0) {
         ZL.trackPage(cur);
     }

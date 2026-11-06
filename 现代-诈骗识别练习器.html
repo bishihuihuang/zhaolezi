@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>诈骗识别练习器 - 现代化·知识学习站</title>
+<meta name="description" content="情景闯关式防诈骗练习器：读一段真实场景，判断是安全、可疑还是骗局，即时解析，把防骗变成本能。">
+<link rel="icon" href="xd-favicon.svg">
+<link rel="manifest" href="xd-manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="xd-common.css">
+<script defer src="xd-common.js"></script>
+<script defer src="xd-theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    /* 本页专属布局 */
+    .case-panel { background: var(--card-2); border: 2px solid var(--line); border-radius: var(--radius); padding: 20px; margin: 16px 0; }
+    .case-panel .case-tag { font-size: 12.5px; color: var(--dim); }
+    .case-panel .case-title { font-size: clamp(18px, 3.5vw, 26px); font-weight: 800; margin: 8px 0 10px; }
+    .case-panel .case-body { font-size: 15.5px; line-height: 1.8; color: var(--text); }
+    .judge-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+    .judge-row .btn { flex: 1; min-width: 130px; padding: 12px 10px; font-size: 15px; }
+    .case-feedback { min-height: 30px; font-size: 15px; font-weight: 700; margin-top: 4px; }
+    .case-feedback.ok { color: var(--green); }
+    .case-feedback.bad { color: var(--red); }
+    .case-feedback .exp { display: block; font-weight: 400; font-size: 13.5px; color: var(--dim); margin-top: 4px; line-height: 1.7; }
+</style>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——诈骗识别练习器 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:title" content="诈骗识别练习器 - 现代化·知识学习站">
+<meta property="og:description" content="找乐子——诈骗识别练习器 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/现代-诈骗识别练习器.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body data-page="现代-诈骗识别练习器.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="现代-全站目录树.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块J · 网络安全与防诈骗</span>
+</header>
+
+<nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">🛡️ 诈骗识别练习器</h1>
+        <p class="lesson-sub">模块J · 第 6 课 | 读情景 → 判危险度，把防骗练成本能</p>
+
+        <div class="callout info">
+            <b>🎮 怎么练</b>
+            每轮 10 个真实场景，读完后判断它是「✅ 安全」「⚠️ 可疑」还是「🚨 骗局」。点选后立即判分并给出解析——答错了也别怕，解析比答对更重要。进度与累计成绩自动记录，计入<a href="现代-学习仪表盘.html">学习仪表盘</a>。答题规则记住三条：<strong>要转账？要验证码？要你点链接？</strong>
+        </div>
+
+        <div class="stat-row" id="statRow">
+            <div class="stat-cell"><b id="stRound">0</b><span>当前第几题</span></div>
+            <div class="stat-cell"><b id="stScore">0</b><span>本轮判对</span></div>
+            <div class="stat-cell"><b id="stWrong">0</b><span>本轮判错</span></div>
+            <div class="stat-cell"><b id="stTotal">0</b><span>累计判对（总）</span></div>
+            <div class="stat-cell"><b id="stBest">0</b><span>最好成绩</span></div>
+        </div>
+
+        <div class="case-panel" id="casePanel">
+            <div class="case-tag" id="caseTag">情景 1/10</div>
+            <div class="case-title" id="caseTitle">准备中…</div>
+            <div class="case-body" id="caseBody"></div>
+            <div class="judge-row" id="judgeRow">
+                <button class="btn green" data-a="0">✅ 安全</button>
+                <button class="btn" data-a="1">⚠️ 可疑</button>
+                <button class="btn" data-a="2">🚨 骗局</button>
+            </div>
+            <div class="case-feedback" id="caseFb"></div>
+            <div class="mode-row" id="nextRow" style="display:none;">
+                <button class="btn ghost" id="nextBtn">下一题 →</button>
+            </div>
+        </div>
+
+        <div class="callout tip" id="doneBox" style="display:none;">
+            <b>🎉 本轮完成！</b><br>
+            <span id="doneText"></span><br>
+            <span style="color:var(--dim);font-size:13px;">想再来一轮，点下面按钮重新出题。span>
+            <div class="mode-row"><button class="btn green" id="restartBtn">🔄 再练一轮</button></div>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="现代-被骗之后：止损与报警.html">被骗之后：止损与报警</a> · 下一课：<a href="现代-模块J测验：网络安全与防诈骗.html">模块J 测验</a></span>
+        </div>
+    </article>
+</main>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("CihmdW5jdGlvbiAoKSB7CiAgICAvKiA9PT09PT09PT09IOmimOW6k++8mmE9MCDlronlhaggLyAxIOWPr+eWkSAvIDIg6aqX5bGAID09PT09PT09PT0gKi8KICAgIHZhciBCQU5LID0gWwogICAgICAgIHsgdDogJ+W/q+mAkueQhui1lCcsIGM6ICfkvaDnvZHotK3lkI7mjqXliLDnlLXor53vvJoi5oKo55qE5b+r6YCS5Zyo6L+Q6L6T5Lit5Lii5aSx77yM5oiR5Lus6KaB57uZ5oKo55CG6LWUIDIwMCDlhYPvvIzor7fmjInmj5DnpLrkuIvovb3nkIbotZQgQXBwIOW5tuW8gOWQr+Wxj+W5leWFseS6q+aTjeS9nOOAgiInLCBhOiAyLCBleHA6ICfpgIDmrL7kvJrljp/ot6/ov5Tlm57vvIzkuI3pnIDopoHkuIvovb0gQXBw44CB5LiN6ZyA6KaB5byA5bGP5bmV5YWx5Lqr44CC6KaB5L2gIuS4i+i9veeQhui1lCBBcHAr5bGP5bmV5YWx5LqrIueahCAxMDAlIOaYr+mql+WxgOOAgicgfSwKICAgICAgICB7IHQ6ICforablr5/mnaXnlLUnLCBjOiAn55S16K+d6Ieq56ewIuWFrOWuieWxgOawkeitpiLvvIzor7TkvaDmtonlq4zmtJfpkrHvvIzorqnkvaDmiorpkrHovazliLAi5a6J5YWo6LSm5oi3IumFjeWQiOiwg+afpe+8jOW5tuW8uuiwgyLkuI3opoHlkYror4nku7vkvZXkuroi44CCJywgYTogMiwgZXhwOiAn5YWs5qOA5rOV57ud5LiN55S16K+d5Yqe5qGI44CB57ud5pegIuWuieWFqOi0puaItyLjgILlh7rnjrAi5a6J5YWo6LSm5oi3K+WIq+WRiuivieWIq+S6uiLmmK/mlZnnp5HkuabnuqfpqpflsYDvvIznm7TmjqXmjILmlq3jgIInIH0sCiAgICAgICAgeyB0OiAn6aqM6K+B56CB57Si6KaBJywgYzogJyLpk7booYzlrqLmnI0i5omT55S16K+d6K+05L2g55qE5L+h55So5Y2h6KaB5Y2H57qn77yM6ZyA6KaB5oqK5Yia5pS25Yiw55qE55+t5L+h6aqM6K+B56CB5b+157uZ5LuW5qC45a+544CCJywgYTogMiwgZXhwOiAn6aqM6K+B56CB562J5LqO6LSm5Y+36ZKl5YyZ77yM5Lu75L2V5Lq657Si6KaB6YO95LiN57uZ44CC6ZO26KGM57ud5LiN5Lya55S16K+d57Si6KaB6aqM6K+B56CB44CCJyB9LAogICAgICAgIHsgdDogJ+WEv+WtkOaxguaVkScsIGM6ICfop4bpopHnlLXor53ph4wi5YS/5a2QIuW4puedgOWTreiFlO+8miLniLjvvIzmiJHlvIDovabmkp7kuobkurrvvIzlr7nmlrnopoEgNSDkuIfnp4HkuobvvIzkuI3nhLbmiqXorabmipPmiJHvvIHljYPkuIfliKvlkYror4nmiJHlpojvvIEi6KeG6aKR6YeM56Gu5a6e5piv5YS/5a2Q55qE6IS45ZKM5aOw6Z+z44CCJywgYTogMiwgZXhwOiAnQUkg5o2i6IS4K+ivremfs+WFi+mahuiDveWGkuWFheS6suS6uuOAgui2iuaYryLntKfmgKUr5Yir5ZGK6K+J5Yir5Lq6Iui2iuimgeWGt+mdme+8muWbnuaLqOmAmuiur+W9lemHjOeahOWPt+eggeOAgemXruWPquacieWutuS6uuefpemBk+eahOS6i+OAgicgfSwKICAgICAgICB7IHQ6ICfkuK3lpZbpgJrnn6UnLCBjOiAn5pS25Yiw55+t5L+h77yaIuaBreWWnOaCqOiiq+aKveS4reW5uOi/kOeUqOaIt++8jOWlluWTgeS4uuS4gOWPsOaJi+acuuOAguivt+eCueWHu+mTvuaOpeeZu+iusO+8jOe8tOe6syAyMDAg5YWD6L+Q6LS55ZCO5aWW5ZOB5a+E5Ye644CCIicsIGE6IDIsIGV4cDogJ+WFiOS6pOmSseaJjeiDvemihueahCLlpZYi6YO95piv6aqX5bGA44CC5Lit5aWW55+t5L+h55qE6ZO+5o6l5Lmf57ud5LiN6IO954K577yI5Y+v6IO95piv6ZKT6bG85pyo6ams77yJ44CCJyB9LAogICAgICAgIHsgdDogJ+WMu+mZouWumOaWueaMguWPtycsIGM6ICfkvaDmiZPlvIDlvZPlnLDkuInnlLLljLvpmaLnmoTlrpjmlrnlhazkvJflj7fvvIjmnInorqTor4HmoIfor4bvvInvvIzlnKgi6aKE57qm5oyC5Y+3IumHjOmAieS6huenkeWupOWSjOaXtumXtO+8jOeci+WIsOmihOe6puaIkOWKn+mAmuefpeOAgicsIGE6IDAsIGV4cDogJ+WumOaWueiupOivgeeahOWMu+mZouWFrOS8l+WPt+aMguWPt+aYr+ato+inhOa4oOmBk+OAguiusOS9j+iupOWHhuiupOivgeagh+ivhuOAgei1sOWumOaWueWFpeWPo+WNs+WPr+OAgicgfSwKICAgICAgICB7IHQ6ICflpb3lj4vlgJ/mrL4nLCBjOiAn5b6u5L+h6YeM5LiA5L2N6ICB5ZCM5a2m5Y+R5p2l5raI5oGv77yaIuaIkeaUr+S7mOWuneiiq+mZkOmineS6hu+8jOWFiOWAn+aIkSAyMDAwIOWFg+aVkeaApe+8jOaYjuWkqeWwsei/mOOAgiLkvaDlj5HnjrDku5bnmoTlpLTlg4/lkozlo7Dpn7PvvIjor63pn7Pmtojmga/vvInpg73lvojlg4/mnKzkurrjgIInLCBhOiAxLCBleHA6ICfmloflrZflkozor63pn7Ppg73lj6/og73ooqvlhpLlhYXvvIhBSSDor63pn7PlhYvpmobvvInjgILlsZ7kuo4i5Y+v55aRIu+8muWFiOaJk+eUteivneOAgeinhumikeaguOWunuacrOS6uu+8jOWGjeiwiOWAn+mSse+8m+acquaguOWunuWJjeS4jei9rOi0puOAgicgfSwKICAgICAgICB7IHQ6ICfmiavnoIHpoobpuKHom4snLCBjOiAn6I+c5biC5Zy66Zeo5Y+j5pyJ5Lq65ZaK77yaIuaJq+i/meS4quS6jOe7tOeggei/m+e+pO+8jOWFjei0uemihum4oeibi+S4gOiii++8gSLkuoznu7TnoIHljbDlnKjkuIDlvKDkvKDljZXkuIrjgIInLCBhOiAyLCBleHA6ICci5omr56CB6YCB56S8IuaYr+aLieS6uui/m+iviOmql+e+pC/oo4XmnKjpqaznmoTnu4/lhbjmiYvms5XvvIzkuoznu7TnoIHmnaXmupDkuI3mmI7vvIzkuIDlvovkuI3miavjgIInIH0sCiAgICAgICAgeyB0OiAn5p+c5Y+w5LuY5qy+56CBJywgYzogJ+S9oOWcqOi2heW4gue7k+i0pu+8jOaUtumTtuWPsOWHuuekuuS6huW6l+WutueahOaUtuasvuS6jOe7tOegge+8jOaUtumTtuWRmOivtCLmiavov5nkuKrnoIHku5jmrL4gMzUuNSDlhYMi44CCJywgYTogMCwgZXhwOiAn5b2T6Z2i56Gu6K6k6L+H55qE5p+c5Y+w5pS25qy+56CB5piv5q2j5bi45pSv5LuY5Zy65pmv44CC5Y+q6KaB56Gu6K6k5pS25qy+5pa55piv5bqX5a6244CB6YeR6aKd5q2j56Gu77yM5Y+v5Lul5pS+5b+D5LuY44CCJyB9LAogICAgICAgIHsgdDogJ+ekvuS/neWGu+e7kycsIGM6ICci56S+5L+d5bGAIuadpeeUte+8muS9oOeahOekvuS/neWNoeiiq+W8guWcsOebl+WIt++8jOW3suWGu+e7k+OAgumcgOimgeWcqOeUteivnemHjOaKpeWHuuWNoeWPt+OAgeWvhueggeWSjOmqjOivgeeggSLph43mlrDmv4DmtLsi44CCJywgYTogMiwgZXhwOiAn56S+5L+d5Y2h6Zeu6aKY5Lya6K6p5L2g5Y675p+c5Y+w5oiW5a6Y5pa5IEFwcCDlpITnkIbvvIznu53kuI3kvJrnlLXor53ntKLopoHljaHlj7flr4bnoIHpqozor4HnoIHjgIIi5r+A5rS7IiLop6Plhrsi6K+d5pyv6YO95piv6aqX5bGA44CCJyB9LAogICAgICAgIHsgdDogJ+S9juS7t+S7o+i0rScsIGM6ICfpl7LpsbzkuIrmnInkurrljZbljp/ku7cgODAwMCDlhYPnmoTmiYvmnLrvvIzlj6rljZYgMjAwMCDlhYPvvIzor7Qi5rig6YGT5Lu3Iu+8jOS9huimgeS9oOWFiOi9rCAxMDAwIOWFg+WumumHkeOAgeWGjeWKoOW+ruS/oeengeS4i+S6pOaYk+OAgicsIGE6IDIsIGV4cDogJ+aYjuaYvuS9juS6juW4guWcuuS7tyvopoHmsYLohLHnprvlubPlj7Dnp4HkuIvkuqTmmJPvvIzlj4zph43pqpflsYDnibnlvoHjgILkuozmiYvkuqTmmJPlnZrmjIHlubPlj7DlhoXmi4Xkv53kuqTmmJPjgIInIH0sCiAgICAgICAgeyB0OiAnOTYxMTAg5p2l55S1JywgYzogJ+S9oOato+WcqOaOpeS4gOS4qiLpgIDmrL7lrqLmnI0i55S16K+d5pe277yM5Y+m5LiA5Liq5p2l55S15pi+56S6IDk2MTEwIOeahOeUteivneaJk+i/m+adpeOAguS9oOaDs+i1t+Wtpui/h+eahOefpeivhuOAgicsIGE6IDAsIGV4cDogJzk2MTEwIOaYr+WPjeiviOS4k+e6v++8jOWug+S4u+WKqOaJk+adpeivtOaYjuS9oOWPr+iDveato+iiq+iviOmql++8jOWKoeW/heaOpeWQrOW5tuWQrOS7juaPkOmGkuKAlOKAlOi/meaYr+WcqOaVkeS9oOeahOmSseOAgicgfQogICAgXTsKCiAgICB2YXIgUk9VTkQgPSAxMDsKCiAgICAvKiA9PT09PT09PT09IOacrOWcsOWtmOWCqCA9PT09PT09PT09ICovCiAgICBmdW5jdGlvbiBsb2FkU3RhdHMoKSB7CiAgICAgICAgdHJ5IHsgcmV0dXJuIEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oJ3hkX2ZyYXVkX3N0YXRzX3YxJykpIHx8IHsgdG90YWw6IDAsIGJlc3Q6IDAgfTsgfSBjYXRjaCAoZSkgeyByZXR1cm4geyB0b3RhbDogMCwgYmVzdDogMCB9OyB9CiAgICB9CiAgICBmdW5jdGlvbiBzYXZlU3RhdHMocykgeyB0cnkgeyBsb2NhbFN0b3JhZ2Uuc2V0SXRlbSgneGRfZnJhdWRfc3RhdHNfdjEnLCBKU09OLnN0cmluZ2lmeShzKSk7IH0gY2F0Y2ggKGUpIHt9IH0KCiAgICAvKiA9PT09PT09PT09IOeKtuaAgSA9PT09PT09PT09ICovCiAgICB2YXIgUyA9IHsKICAgICAgICBxdWV1ZTogW10sIHBvczogMCwgc2NvcmU6IDAsIHdyb25nOiAwLCBkb25lOiAwLAogICAgICAgIHN0YXRzOiBsb2FkU3RhdHMoKQogICAgfTsKICAgIHZhciBlbCA9IGZ1bmN0aW9uIChpZCkgeyByZXR1cm4gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoaWQpOyB9OwoKICAgIGZ1bmN0aW9uIHNodWZmbGUoYSkgewogICAgICAgIHZhciByID0gYS5zbGljZSgpOwogICAgICAgIGZvciAodmFyIGkgPSByLmxlbmd0aCAtIDE7IGkgPiAwOyBpLS0pIHsKICAgICAgICAgICAgdmFyIGogPSBNYXRoLmZsb29yKE1hdGgucmFuZG9tKCkgKiAoaSArIDEpKTsKICAgICAgICAgICAgdmFyIHQgPSByW2ldOyByW2ldID0gcltqXTsgcltqXSA9IHQ7CiAgICAgICAgfQogICAgICAgIHJldHVybiByOwogICAgfQoKICAgIGZ1bmN0aW9uIHJlbmRlclN0YXQoKSB7CiAgICAgICAgZWwoJ3N0Um91bmQnKS50ZXh0Q29udGVudCA9IE1hdGgubWluKFMucG9zICsgMSwgUk9VTkQpOwogICAgICAgIGVsKCdzdFNjb3JlJykudGV4dENvbnRlbnQgPSBTLnNjb3JlOwogICAgICAgIGVsKCdzdFdyb25nJykudGV4dENvbnRlbnQgPSBTLndyb25nOwogICAgICAgIGVsKCdzdFRvdGFsJykudGV4dENvbnRlbnQgPSBTLnN0YXRzLnRvdGFsOwogICAgICAgIGVsKCdzdEJlc3QnKS50ZXh0Q29udGVudCA9IFMuc3RhdHMuYmVzdDsKICAgIH0KCiAgICBmdW5jdGlvbiBzaG93Q2FzZSgpIHsKICAgICAgICB2YXIgcSA9IFMucXVldWVbUy5wb3NdOwogICAgICAgIGVsKCdjYXNlVGFnJykudGV4dENvbnRlbnQgPSAn5oOF5pmvICcgKyAoUy5wb3MgKyAxKSArICcvJyArIFJPVU5EICsgJyDCtyAnICsgcS50OwogICAgICAgIGVsKCdjYXNlVGl0bGUnKS50ZXh0Q29udGVudCA9IHEudDsKICAgICAgICBlbCgnY2FzZUJvZHknKS50ZXh0Q29udGVudCA9IHEuYzsKICAgICAgICBlbCgnY2FzZUZiJykudGV4dENvbnRlbnQgPSAnJzsKICAgICAgICBlbCgnY2FzZUZiJykuY2xhc3NOYW1lID0gJ2Nhc2UtZmVlZGJhY2snOwogICAgICAgIGVsKCduZXh0Um93Jykuc3R5bGUuZGlzcGxheSA9ICdub25lJzsKICAgICAgICByZW5kZXJTdGF0KCk7CiAgICB9CgogICAgZnVuY3Rpb24gYW5zd2VyKGEpIHsKICAgICAgICBpZiAoUy5kb25lKSByZXR1cm47CiAgICAgICAgdmFyIHEgPSBTLnF1ZXVlW1MucG9zXTsKICAgICAgICBTLmRvbmUgPSAxOwogICAgICAgIHZhciBvayA9IGEgPT09IHEuYTsKICAgICAgICB2YXIgZmIgPSBlbCgnY2FzZUZiJyk7CiAgICAgICAgZmIuY2xhc3NOYW1lID0gJ2Nhc2UtZmVlZGJhY2sgJyArIChvayA/ICdvaycgOiAnYmFkJyk7CiAgICAgICAgZmIuaW5uZXJIVE1MID0gKG9rID8gJ+KchSDliKTlr7nkuobvvIEnIDogJ+KdjCDov5nmrKHliKTplJnkuobvvIjmraPnoa7nrZTmoYjvvJonICsgWyflronlhagnLCAn5Y+v55aRJywgJ+mql+WxgCddW3EuYV0gKyAn77yJJykgKwogICAgICAgICAgICAnPHNwYW4gY2xhc3M9ImV4cCI+JyArIHEuZXhwICsgJzwvc3Bhbj4nOwogICAgICAgIGlmIChvaykgeyBTLnNjb3JlKys7IFMuc3RhdHMudG90YWwrKzsgfQogICAgICAgIGVsc2UgUy53cm9uZysrOwogICAgICAgIHNhdmVTdGF0cyhTLnN0YXRzKTsKICAgICAgICBpZiAod2luZG93LlhEICYmIFhELnN0dWR5TG9nKSB7CiAgICAgICAgICAgIHRyeSB7IFhELnN0dWR5TG9nLmFkZCh7IHR5cGU6ICdmcmF1ZCcsIGl0ZW1JZDogcS50LCBtb2Q6ICdKJyB9KTsgfSBjYXRjaCAoZSkge30KICAgICAgICB9CiAgICAgICAgZWwoJ25leHRSb3cnKS5zdHlsZS5kaXNwbGF5ID0gJ2ZsZXgnOwogICAgICAgIHJlbmRlclN0YXQoKTsKICAgIH0KCiAgICBmdW5jdGlvbiBuZXh0KCkgewogICAgICAgIFMuZG9uZSA9IDA7CiAgICAgICAgUy5wb3MrKzsKICAgICAgICBpZiAoUy5wb3MgPj0gUk9VTkQpIHJldHVybiBmaW5pc2goKTsKICAgICAgICBzaG93Q2FzZSgpOwogICAgfQoKICAgIGZ1bmN0aW9uIGZpbmlzaCgpIHsKICAgICAgICB2YXIgZmIgPSBlbCgnY2FzZUZiJyk7CiAgICAgICAgZmIuY2xhc3NOYW1lID0gJ2Nhc2UtZmVlZGJhY2snOwogICAgICAgIGZiLnRleHRDb250ZW50ID0gJyc7CiAgICAgICAgZWwoJ2p1ZGdlUm93Jykuc3R5bGUuZGlzcGxheSA9ICdub25lJzsKICAgICAgICBlbCgnbmV4dFJvdycpLnN0eWxlLmRpc3BsYXkgPSAnbm9uZSc7CiAgICAgICAgZWwoJ2Nhc2VQYW5lbCcpLnN0eWxlLmRpc3BsYXkgPSAnbm9uZSc7CiAgICAgICAgaWYgKFMuc2NvcmUgPiBTLnN0YXRzLmJlc3QpIHsgUy5zdGF0cy5iZXN0ID0gUy5zY29yZTsgc2F2ZVN0YXRzKFMuc3RhdHMpOyB9CiAgICAgICAgdmFyIHBjdCA9IE1hdGgucm91bmQoUy5zY29yZSAvIFJPVU5EICogMTAwKTsKICAgICAgICB2YXIgYWR2aXNlID0gcGN0ID49IDkwID8gJ+Wkqueos+S6hu+8geS9oOW3sue7j+WFt+Wkh+ivhuWIq+e7neWkp+WkmuaVsOmql+WxgOeahOiDveWKm++8jOe7p+e7reS/neaMgeOAgicgOgogICAgICAgICAgICBwY3QgPj0gNjAgPyAn5LiN6ZSZ77yB5oqK562U6ZSZ55qE6Kej5p6Q5YaN55yL5LiA6YGN77yM5bCk5YW25pivIuimgei9rOi0pi/opoHpqozor4HnoIEv6KaB5L2g54K56ZO+5o6lIuS4ieadoemTgeW+i+OAgicgOgogICAgICAgICAgICAn5Yir54Gw5b+D77yB6Ziy6aqX5piv57uD5Ye65p2l55qE77yM5Zue5YiwIEoxLUo1IOivvuWkjeS5oOS4gOmBje+8jOWGjeadpeS4gOi9ruOAgic7CiAgICAgICAgZWwoJ2RvbmVCb3gnKS5zdHlsZS5kaXNwbGF5ID0gJ2Jsb2NrJzsKICAgICAgICBlbCgnZG9uZVRleHQnKS5pbm5lckhUTUwgPSAn5pys6L2u5Yik5a+5IDxiPicgKyBTLnNjb3JlICsgJzwvYj4gLyAnICsgUk9VTkQgKyAnIOmimO+8iCcgKyBwY3QgKyAnJe+8icK3ICcgKyBhZHZpc2U7CiAgICAgICAgcmVuZGVyU3RhdCgpOwogICAgfQoKICAgIGZ1bmN0aW9uIHN0YXJ0Um91bmQoKSB7CiAgICAgICAgUy5xdWV1ZSA9IHNodWZmbGUoQkFOSykuc2xpY2UoMCwgUk9VTkQpOwogICAgICAgIFMucG9zID0gMDsgUy5zY29yZSA9IDA7IFMud3JvbmcgPSAwOyBTLmRvbmUgPSAwOwogICAgICAgIGVsKCdqdWRnZVJvdycpLnN0eWxlLmRpc3BsYXkgPSAnZmxleCc7CiAgICAgICAgZWwoJ2Nhc2VQYW5lbCcpLnN0eWxlLmRpc3BsYXkgPSAnYmxvY2snOwogICAgICAgIGVsKCdkb25lQm94Jykuc3R5bGUuZGlzcGxheSA9ICdub25lJzsKICAgICAgICBzaG93Q2FzZSgpOwogICAgfQoKICAgIGVsKCdqdWRnZVJvdycpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKGUpIHsKICAgICAgICB2YXIgYnRuID0gZS50YXJnZXQuY2xvc2VzdCA/IGUudGFyZ2V0LmNsb3Nlc3QoJ2J1dHRvbltkYXRhLWFdJykgOiBudWxsOwogICAgICAgIGlmICghYnRuIHx8IFMuZG9uZSkgcmV0dXJuOwogICAgICAgIGFuc3dlcihwYXJzZUludChidG4uZ2V0QXR0cmlidXRlKCdkYXRhLWEnKSwgMTApKTsKICAgIH0pOwogICAgZWwoJ25leHRCdG4nKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIG5leHQpOwogICAgZWwoJ3Jlc3RhcnRCdG4nKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIHN0YXJ0Um91bmQpOwoKICAgIHN0YXJ0Um91bmQoKTsKfSkoKTsKCgovKiDoh6rliqjlhajlsYDmjILovb3vvIjkvpvlhoXogZTkuovku7blsZ7mgKfosIPnlKjvvIkgKi8KaWYoISgnbG9hZFN0YXRzJyBpbiB3aW5kb3cpKXdpbmRvdy5sb2FkU3RhdHM9bG9hZFN0YXRzOwppZighKCdzYXZlU3RhdHMnIGluIHdpbmRvdykpd2luZG93LnNhdmVTdGF0cz1zYXZlU3RhdHM7CmlmKCEoJ3NodWZmbGUnIGluIHdpbmRvdykpd2luZG93LnNodWZmbGU9c2h1ZmZsZTsKaWYoISgncmVuZGVyU3RhdCcgaW4gd2luZG93KSl3aW5kb3cucmVuZGVyU3RhdD1yZW5kZXJTdGF0OwppZighKCdzaG93Q2FzZScgaW4gd2luZG93KSl3aW5kb3cuc2hvd0Nhc2U9c2hvd0Nhc2U7CmlmKCEoJ2Fuc3dlcicgaW4gd2luZG93KSl3aW5kb3cuYW5zd2VyPWFuc3dlcjsKaWYoISgnbmV4dCcgaW4gd2luZG93KSl3aW5kb3cubmV4dD1uZXh0OwppZighKCdmaW5pc2gnIGluIHdpbmRvdykpd2luZG93LmZpbmlzaD1maW5pc2g7CmlmKCEoJ3N0YXJ0Um91bmQnIGluIHdpbmRvdykpd2luZG93LnN0YXJ0Um91bmQ9c3RhcnRSb3VuZDs=");
+</script>
+</body>
+</html>

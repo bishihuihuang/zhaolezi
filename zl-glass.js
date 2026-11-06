@@ -20,7 +20,7 @@
     /* ===================== 配置 ===================== */
     /* V119 精简：停靠栏已移除，CFG 只保留 isSkipPage 消费的 skipPages */
     var CFG = {
-        skipPages: ['1.html', '2.html', '3.html', '4.html', '28.html', '29.html', '30.html', '10.html', 'verify.html', 'offline.html']
+        skipPages: ['密码登录.html', '授权协议.html', '授权确认.html', '选择IP.html', '免责声明.html', '反馈渠道.html', '更新公告.html', '后台修改.html', '作业验证.html', '离线页.html']
     };
 
     /* ===================== 样式注入（全用主题变量，不动 common.css，主题断言零风险） ===================== */

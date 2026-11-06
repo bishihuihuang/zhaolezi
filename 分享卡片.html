@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+<title>分享卡片生成 - 找乐子</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--txt);
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* ========== 背景流光层（全站统一，20秒无缝循环） ========== */
+    .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .bg-flow-1 {
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 300%;
+        height: 300%;
+        background: var(--flow-grad);
+        background-size: 400% 400%;
+        animation: flowGradient 20s ease-in-out infinite;
+        will-change: background-position;
+    }
+    .bg-flow-2 {
+        position: absolute;
+        top: -60%;
+        left: -40%;
+        width: 220%;
+        height: 220%;
+        background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.35), transparent 50%),
+            radial-gradient(ellipse at 65% 35%, rgba(120,180,255,.3), transparent 45%),
+            radial-gradient(ellipse at 80% 80%, rgba(220,130,250,.25), transparent 40%);
+        animation: flowDrift 20s ease-in-out infinite alternate;
+        will-change: transform;
+    }
+    .bg-flow-3 {
+        position: absolute;
+        top: -30%;
+        left: -20%;
+        width: 180%;
+        height: 180%;
+        background: radial-gradient(circle at 50% 50%, rgba(255,200,130,.15), transparent 60%),
+            radial-gradient(circle at 20% 80%, rgba(80,220,200,.2), transparent 50%);
+        animation: flowRotate 20s linear infinite;
+        will-change: transform;
+    }
+    @keyframes flowGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes flowDrift {
+        0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+        50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+        100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+    }
+    @keyframes flowRotate {
+        0% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.08); }
+        100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* ========== 透明悬浮球 ========== */
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--card-2) 60%, transparent), color-mix(in srgb, var(--card-2) 15%, transparent) 50%, transparent 70%);
+        box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 8%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        pointer-events: none;
+        will-change: transform, opacity;
+    }
+    .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+    .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+    .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+    .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+    .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+    @keyframes orbFloatA {
+        0% { transform: translate(0,0) scale(1); opacity:.6; }
+        30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+        60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+        100% { transform: translate(0,0) scale(1); opacity:.6; }
+    }
+    @keyframes orbFloatB {
+        0% { transform: translate(0,0) scale(1); opacity:.5; }
+        35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+        70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+        100% { transform: translate(0,0) scale(1); opacity:.5; }
+    }
+    @keyframes orbSpin { to { transform: rotate(360deg); } }
+
+    /* ========== 主体布局（全站统一：白色悬浮容器） ========== */
+    main {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 60px 20px 40px;
+    }
+    .container {
+        width: 80%;
+        max-width: 1200px;
+        background: var(--card);
+        border-radius: 24px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px var(--line);
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        padding: 20px;
+        color: var(--txt);
+    }
+    .container::-webkit-scrollbar { width: 10px; }
+    .container::-webkit-scrollbar-track { background: rgba(0, 0, 0, .04); border-radius: 12px; }
+    .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 12px; border: 2px solid transparent; }
+
+    .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+    .title-area {
+        grid-column: 1 / 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 90px;
+        background: var(--title-grad);
+        background-size: 300% 300%;
+        animation: titleGradient 6s ease infinite;
+        border-radius: 20px;
+        box-shadow: 0 12px 40px color-mix(in srgb, var(--gold-2) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
+        padding: 10px;
+    }
+    .title-area h2 {
+        font-size: 34px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        color: var(--btn-txt);
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, .3);
+        text-align: center;
+    }
+    @keyframes titleGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .back-area {
+        grid-column: 5 / 7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 90px;
+        background: var(--back-grad);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px color-mix(in srgb, var(--green) 40%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
+        text-decoration: none;
+        color: var(--btn-txt);
+        font-size: 18px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform .3s, box-shadow .3s;
+    }
+    .back-area:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 50px color-mix(in srgb, var(--green) 50%, transparent);
+    }
+    .back-area:active {
+        transform: translateY(-2px) scale(.96);
+    }
+    .card {
+        grid-column: 1 / -1;
+        background: var(--card-2);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+        border: 2px solid var(--line);
+    }
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        border: none; cursor: pointer; font-size: 15px; padding: 10px 20px; border-radius: 10px;
+        background: var(--btn-grad); color: var(--btn-txt);
+        box-shadow: 0 4px 14px color-mix(in srgb, var(--glow) 40%, transparent); transition: transform .2s, box-shadow .2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px color-mix(in srgb, var(--glow) 55%, transparent); }
+    .btn:active { transform: scale(.96); }
+    .btn-secondary { background: #e8eaf6; color: var(--txt); box-shadow: none; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    input, textarea, select {
+        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+        font-size: 14px; background: var(--card-2); color: var(--txt); outline: none;
+    }
+    input:focus, textarea:focus { border-color: var(--glow); box-shadow: 0 0 0 3px color-mix(in srgb, var(--glow) 20%, transparent); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    .hint { font-size: 12px; color: var(--dim); margin-top: 8px; }
+    .stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+    .stat div { background: color-mix(in srgb, var(--glow) 8%, transparent); border-radius: 10px; padding: 10px; text-align: center; }
+    .stat b { display: block; font-size: 20px; color: var(--glow); }
+    .stat span { font-size: 12px; color: var(--dim); }
+    /* ========== 转场遮罩（全站统一样式） ========== */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(8, 10, 25, .72);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .4s ease, visibility .4s ease;
+        pointer-events: none;
+    }
+    .overlay.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+    .loader-wrap {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .loader-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, .1);
+        border-top-color: #f6d365;
+        border-right-color: #fda085;
+        animation: ringSpin .8s linear infinite;
+    }
+    .loader-ring::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-bottom-color: #a78bfa;
+        border-left-color: #667eea;
+        animation: ringSpin 1.4s linear infinite reverse;
+    }
+    .loader-ring::after {
+        content: '';
+        position: absolute;
+        top: 28px;
+        left: 28px;
+        right: 28px;
+        bottom: 28px;
+        border-radius: 50%;
+        border: 1px solid transparent;
+        border-top-color: #fb7185;
+        border-right-color: #2dd4bf;
+        animation: ringSpin 2s linear infinite;
+    }
+    .loader-text {
+        position: relative;
+        z-index: 5;
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: textShine 1.5s linear infinite;
+    }
+    @keyframes ringSpin { to { transform: rotate(360deg); } }
+    @keyframes textShine {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+    @media (max-width: 900px) {
+        .container { width: 95%; padding: 12px; }
+        .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .title-area, .back-area { grid-column: 1 / -1; min-height: 80px; }
+        .title-area h2 { font-size: 28px; }
+        .back-area { font-size: 16px; }
+        .orb { display: none; }
+    }
+    @media (max-width: 768px) {
+        main { padding: 40px 12px 30px; }
+        .container { width: 94%; max-width: 94vw; padding: 14px; }
+        .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .title-area, .back-area { grid-column: 1 / -1; min-height: 70px; }
+        .title-area h2 { font-size: 24px; }
+        .stat { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+        .container { width: 96%; padding: 10px; }
+        .grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        .title-area h2 { font-size: 20px; letter-spacing: 2px; }
+        .back-area { font-size: 15px; }
+    }
+</style>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="分享卡片生成 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:title" content="分享卡片生成 - 找乐子">
+<meta property="og:description" content="分享卡片生成 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/分享卡片.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body>
+<div class="bg-animation">
+    <div class="bg-flow-1"></div>
+    <div class="bg-flow-2"></div>
+    <div class="bg-flow-3"></div>
+</div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="orb orb-4"></div>
+<div class="orb orb-5"></div>
+<main>
+<div class="container">
+    <div class="grid">
+        <div class="title-area"><h2>分享卡片生成</h2></div>
+        <a href="工具导航.html" class="back-area" id="backHome"><span style="font-size:28px;">🏠</span>返回主页</a>
+        <div class="card">
+            <div style="font-size:16px;font-weight:bold;color:var(--glow);margin-bottom:4px;">🃏 分享卡片生成</div>
+            <div class="hint">输入昵称和一句话，生成专属分享卡片，一键下载分享！</div>
+            <div class="row">
+                <input id="nickInput" placeholder="你的昵称（如：小乐）" maxlength="12">
+            </div>
+            <div class="row">
+                <textarea id="msgInput" rows="3" placeholder="想分享的一句话（如：今天也是元气满满的一天！）" maxlength="60"></textarea>
+            </div>
+            <div class="row">
+                <span style="font-size:13px;color:var(--dim);">背景：</span>
+                <button class="btn btn-secondary bgPick" data-bg="0" style="background: var(--btn-grad);color:#fff;">紫蓝</button>
+                <button class="btn btn-secondary bgPick" data-bg="1" style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;">粉红</button>
+                <button class="btn btn-secondary bgPick" data-bg="2" style="background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;">青绿</button>
+                <button class="btn btn-secondary bgPick" data-bg="3" style="background:linear-gradient(135deg,#ff9800,#ff5722);color:#fff;">橙红</button>
+            </div>
+            <div style="margin-top:16px;text-align:center;">
+                <canvas id="cardCanvas" width="600" height="800" style="width:100%;max-width:360px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.3);"></canvas>
+            </div>
+            <div class="row" style="justify-content:center;">
+                <button id="genBtn" class="btn">✨ 生成卡片</button>
+                <button id="downloadBtn" class="btn btn-secondary">⬇️ 下载图片</button>
+                <button id="copyBtn" class="btn btn-secondary">📋 复制文案</button>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+<div class="overlay" id="overlay">
+    <div class="loader-wrap">
+        <div class="loader-ring"></div>
+        <div class="loader-text">找乐子～</div>
+    </div>
+</div>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("DQooZnVuY3Rpb24gKCkgew0KICAgICd1c2Ugc3RyaWN0JzsNCg0KICAgIHZhciBCR1MgPSBbDQogICAgICAgIFsnIzY2N2VlYScsICcjNzY0YmEyJ10sDQogICAgICAgIFsnI2YwOTNmYicsICcjZjU1NzZjJ10sDQogICAgICAgIFsnIzQzYTA0NycsICcjMmU3ZDMyJ10sDQogICAgICAgIFsnI2ZmOTgwMCcsICcjZmY1NzIyJ10NCiAgICBdOw0KICAgIHZhciBiZ0lkeCA9IDA7DQogICAgdmFyIG5pY2tJbnB1dCA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCduaWNrSW5wdXQnKTsNCiAgICB2YXIgbXNnSW5wdXQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbXNnSW5wdXQnKTsNCiAgICB2YXIgY2FudmFzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NhcmRDYW52YXMnKTsNCiAgICB2YXIgY3R4ID0gY2FudmFzLmdldENvbnRleHQoJzJkJyk7DQoNCiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcuYmdQaWNrJykuZm9yRWFjaChmdW5jdGlvbiAoYmdCdG4pIHsNCiAgICAgICAgYmdCdG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoKSB7IGJnSWR4ID0gcGFyc2VJbnQoYmdCdG4uZGF0YXNldC5iZywgMTApOyBkcmF3Q2FyZCgpOyB9KTsNCiAgICB9KTsNCg0KICAgIGZ1bmN0aW9uIHJvdW5kZWRSZWN0KHgsIHksIHdpZHRoLCBoZWlnaHQsIHJhZGl1cykgew0KICAgICAgICBjdHguYmVnaW5QYXRoKCk7DQogICAgICAgIGN0eC5tb3ZlVG8oeCArIHJhZGl1cywgeSk7DQogICAgICAgIGN0eC5hcmNUbyh4ICsgd2lkdGgsIHksIHggKyB3aWR0aCwgeSArIGhlaWdodCwgcmFkaXVzKTsNCiAgICAgICAgY3R4LmFyY1RvKHggKyB3aWR0aCwgeSArIGhlaWdodCwgeCwgeSArIGhlaWdodCwgcmFkaXVzKTsNCiAgICAgICAgY3R4LmFyY1RvKHgsIHkgKyBoZWlnaHQsIHgsIHksIHJhZGl1cyk7DQogICAgICAgIGN0eC5hcmNUbyh4LCB5LCB4ICsgd2lkdGgsIHksIHJhZGl1cyk7DQogICAgICAgIGN0eC5jbG9zZVBhdGgoKTsNCiAgICB9DQogICAgZnVuY3Rpb24gZHJhd0NhcmQoKSB7DQogICAgICAgIHZhciBncmFkaWVudCA9IGN0eC5jcmVhdGVMaW5lYXJHcmFkaWVudCgwLCAwLCA2MDAsIDgwMCk7DQogICAgICAgIGdyYWRpZW50LmFkZENvbG9yU3RvcCgwLCBCR1NbYmdJZHhdWzBdKTsNCiAgICAgICAgZ3JhZGllbnQuYWRkQ29sb3JTdG9wKDEsIEJHU1tiZ0lkeF1bMV0pOw0KICAgICAgICBjdHguZmlsbFN0eWxlID0gZ3JhZGllbnQ7DQogICAgICAgIGN0eC5maWxsUmVjdCgwLCAwLCA2MDAsIDgwMCk7DQogICAgICAgIC8vIOijhemlsOWchueCuQ0KICAgICAgICBjdHguZmlsbFN0eWxlID0gJ3JnYmEoMjU1LDI1NSwyNTUsLjEyKSc7DQogICAgICAgIGN0eC5iZWdpblBhdGgoKTsgY3R4LmFyYyg1MjAsIDEyMCwgOTAsIDAsIE1hdGguUEkgKiAyKTsgY3R4LmZpbGwoKTsNCiAgICAgICAgY3R4LmJlZ2luUGF0aCgpOyBjdHguYXJjKDgwLCA2OTAsIDYwLCAwLCBNYXRoLlBJICogMik7IGN0eC5maWxsKCk7DQogICAgICAgIGN0eC5iZWdpblBhdGgoKTsgY3R4LmFyYyg1NDAsIDY0MCwgMzYsIDAsIE1hdGguUEkgKiAyKTsgY3R4LmZpbGwoKTsNCiAgICAgICAgLy8g6aG26YOo5bCP5qCHDQogICAgICAgIGN0eC5maWxsU3R5bGUgPSAncmdiYSgyNTUsMjU1LDI1NSwuOSknOw0KICAgICAgICBjdHguZm9udCA9ICdib2xkIDI2cHggIk1pY3Jvc29mdCBZYUhlaSIsIHNhbnMtc2VyaWYnOw0KICAgICAgICBjdHgudGV4dEFsaWduID0gJ2NlbnRlcic7DQogICAgICAgIGN0eC5maWxsVGV4dCgn8J+OsiDmib7kuZDlrZAnLCAzMDAsIDkwKTsNCiAgICAgICAgLy8g5Lit6YOo6K+d6K+tDQogICAgICAgIHZhciBtc2cgPSBtc2dJbnB1dC52YWx1ZS50cmltKCkgfHwgJ+S7iuWkqeS5n+aYr+WFg+awlOa7oea7oeeahOS4gOWkqe+8gSc7DQogICAgICAgIHZhciBuaWNrID0gbmlja0lucHV0LnZhbHVlLnRyaW0oKSB8fCAn5bCP5LmQJzsNCiAgICAgICAgY3R4LmZpbGxTdHlsZSA9ICcjZmZmJzsNCiAgICAgICAgY3R4LmZvbnQgPSAnYm9sZCAzNHB4ICJNaWNyb3NvZnQgWWFIZWkiLCBzYW5zLXNlcmlmJzsNCiAgICAgICAgY3R4LnRleHRBbGlnbiA9ICdjZW50ZXInOw0KICAgICAgICB2YXIgbGluZXMgPSBbXTsNCiAgICAgICAgdmFyIGN1ciA9ICcnOw0KICAgICAgICB2YXIgbWF4VyA9IDQ2MDsNCiAgICAgICAgZm9yICh2YXIgaSA9IDA7IGkgPCBtc2cubGVuZ3RoOyBpKyspIHsNCiAgICAgICAgICAgIGN1ciArPSBtc2dbaV07DQogICAgICAgICAgICBpZiAoY3R4Lm1lYXN1cmVUZXh0KGN1cikud2lkdGggPiBtYXhXKSB7IGxpbmVzLnB1c2goY3VyLnNsaWNlKDAsIC0xKSk7IGN1ciA9IG1zZ1tpXTsgfQ0KICAgICAgICB9DQogICAgICAgIGlmIChjdXIpIGxpbmVzLnB1c2goY3VyKTsNCiAgICAgICAgdmFyIHN0YXJ0WSA9IDM0MCAtIChsaW5lcy5sZW5ndGggLSAxKSAqIDMwOw0KICAgICAgICBsaW5lcy5mb3JFYWNoKGZ1bmN0aW9uIChsaW5lLCBpZHgpIHsNCiAgICAgICAgICAgIGN0eC5maWxsVGV4dChsaW5lLCAzMDAsIHN0YXJ0WSArIGlkeCAqIDYwKTsNCiAgICAgICAgfSk7DQogICAgICAgIC8vIOaYteensA0KICAgICAgICBjdHguZm9udCA9ICcyNHB4ICJNaWNyb3NvZnQgWWFIZWkiLCBzYW5zLXNlcmlmJzsNCiAgICAgICAgY3R4LmZpbGxTdHlsZSA9ICdyZ2JhKDI1NSwyNTUsMjU1LC44NSknOw0KICAgICAgICBjdHguZmlsbFRleHQoJ+KAlOKAlCAnICsgbmljaywgMzAwLCBzdGFydFkgKyBsaW5lcy5sZW5ndGggKiA2MCArIDQwKTsNCiAgICAgICAgLy8g5bqV6YOo5pel5pyfDQogICAgICAgIHZhciBub3cgPSBuZXcgRGF0ZSgpOw0KICAgICAgICBjdHguZm9udCA9ICcxOHB4ICJNaWNyb3NvZnQgWWFIZWkiLCBzYW5zLXNlcmlmJzsNCiAgICAgICAgY3R4LmZpbGxTdHlsZSA9ICdyZ2JhKDI1NSwyNTUsMjU1LC42KSc7DQogICAgICAgIGN0eC5maWxsVGV4dChub3cuZ2V0RnVsbFllYXIoKSArICflubQnICsgKG5vdy5nZXRNb250aCgpICsgMSkgKyAn5pyIJyArIG5vdy5nZXREYXRlKCkgKyAn5pelIMK3IOadpeiHquaJvuS5kOWtkCcsIDMwMCwgNzUwKTsNCiAgICB9DQogICAgZnVuY3Rpb24gYXV0b0dlbigpIHsNCiAgICAgICAgZHJhd0NhcmQoKTsNCiAgICAgICAgaWYgKHdpbmRvdy5aTCAmJiBaTC5zaG93VG9hc3QpIFpMLnNob3dUb2FzdCgn5Y2h54mH5bey55Sf5oiQJyk7DQogICAgICAgIGlmICh3aW5kb3cuWkwgJiYgWkwuYnVtcCkgWkwuYnVtcCgnc2hhcmVfYWRkJywgMSk7DQogICAgfQ0KICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdnZW5CdG4nKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGF1dG9HZW4pOw0KICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkb3dubG9hZEJ0bicpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24gKCkgew0KICAgICAgICB2YXIgbGlua0VsID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnYScpOw0KICAgICAgICBsaW5rRWwuaHJlZiA9IGNhbnZhcy50b0RhdGFVUkwoJ2ltYWdlL3BuZycpOw0KICAgICAgICBsaW5rRWwuZG93bmxvYWQgPSAn5om+5LmQ5a2Q5YiG5Lqr5Y2h54mHXycgKyBEYXRlLm5vdygpICsgJy5wbmcnOw0KICAgICAgICBkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKGxpbmtFbCk7DQogICAgICAgIGxpbmtFbC5jbGljaygpOw0KICAgICAgICBkb2N1bWVudC5ib2R5LnJlbW92ZUNoaWxkKGxpbmtFbCk7DQogICAgICAgIGlmICh3aW5kb3cuWkwgJiYgWkwuc2hvd1RvYXN0KSBaTC5zaG93VG9hc3QoJ+WNoeeJh+W3suS4i+i9vScpOw0KICAgIH0pOw0KICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjb3B5QnRuJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBmdW5jdGlvbiAoKSB7DQogICAgICAgIHZhciB0ZXh0ID0gKG5pY2tJbnB1dC52YWx1ZS50cmltKCkgfHwgJ+Wwj+S5kCcpICsgJ++8micgKyAobXNnSW5wdXQudmFsdWUudHJpbSgpIHx8ICfku4rlpKnkuZ/mmK/lhYPmsJTmu6Hmu6HnmoTkuIDlpKnvvIEnKSArICfvvIjmnaXoh6rmib7kuZDlrZDvvIknOw0KICAgICAgICB0cnkgew0KICAgICAgICAgICAgbmF2aWdhdG9yLmNsaXBib2FyZC53cml0ZVRleHQodGV4dCkudGhlbihmdW5jdGlvbiAoKSB7IGlmICh3aW5kb3cuWkwgJiYgWkwuc2hvd1RvYXN0KSBaTC5zaG93VG9hc3QoJ+aWh+ahiOW3suWkjeWIticpOyB9KS5jYXRjaChmdW5jdGlvbiAoKSB7IC8qIOWJqui0tOadv+WGmeWFpeiiq+aLkuaXtumdmem7mO+8mueUqOaIt+WPr+aJi+WKqOWkjeWItiAqLyB9KTsNCiAgICAgICAgfSBjYXRjaCAoZSkgeyAvKiDliarotLTmnb8gQVBJIOS4jeWPr+eUqOaXtumdmem7mO+8muS7heWkjeWItuWKn+iDveWkseaViCAqLyB9DQogICAgfSk7DQogICAgZHJhd0NhcmQoKTsNCg0KICAgIC8vIOi/lOWbnuS4u+mhtei9rOWcug0KICAgIHZhciBvdmVybGF5ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ292ZXJsYXknKTsNCiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYmFja0hvbWUnKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uIChlKSB7DQogICAgICAgIGUucHJldmVudERlZmF1bHQoKTsNCiAgICAgICAgaWYgKG92ZXJsYXkuY2xhc3NMaXN0LmNvbnRhaW5zKCdhY3RpdmUnKSkgcmV0dXJuOw0KICAgICAgICBvdmVybGF5LmNsYXNzTGlzdC5hZGQoJ2FjdGl2ZScpOw0KICAgICAgICBzZXRUaW1lb3V0KGZ1bmN0aW9uICgpIHsgd2luZG93LmxvY2F0aW9uLmhyZWYgPSAn5bel5YW35a+86IiqLmh0bWwnOyB9LCAxMjAwKTsNCiAgICB9KTsNCiAgICBkb2N1bWVudC5hZGRFdmVudExpc3RlbmVyKCdrZXlkb3duJywgZnVuY3Rpb24gKGUpIHsNCiAgICAgICAgaWYgKGUua2V5ID09PSAnRXNjYXBlJyAmJiBvdmVybGF5LmNsYXNzTGlzdC5jb250YWlucygnYWN0aXZlJykpIHsNCiAgICAgICAgICAgIG92ZXJsYXkuY2xhc3NMaXN0LnJlbW92ZSgnYWN0aXZlJyk7DQogICAgICAgIH0NCiAgICB9KTsNCndpbmRvdy5yb3VuZGVkUmVjdCA9IHJvdW5kZWRSZWN0Ow0Kd2luZG93LmRyYXdDYXJkID0gZHJhd0NhcmQ7DQp3aW5kb3cuYXV0b0dlbiA9IGF1dG9HZW47DQp9KSgpOw0K");
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>毕业证书 - 现代化·知识学习站</title>
+<meta name="description" content="毕业证书：学完十四大模块后在这里领取你的毕业证书，可打印留念——看看你离毕业还差几步。">
+<link rel="icon" href="xd-favicon.svg">
+<link rel="manifest" href="xd-manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="xd-common.css">
+<script defer src="xd-common.js"></script>
+<script defer src="xd-theme.js"></script>
+<script defer src="xd-features.js"></script>
+<style>
+    .cert { background: var(--card); border: 3px double var(--gold); border-radius: 20px; padding: 34px 26px; text-align: center; margin: 18px 0; position: relative; }
+    .cert .c-crown { font-size: 46px; }
+    .cert h2 { font-size: 26px; letter-spacing: 6px; color: var(--gold); margin: 8px 0 4px; }
+    .cert .c-sub { font-size: 13px; color: var(--dim); letter-spacing: 3px; }
+    .cert .c-name { font-size: 30px; font-weight: 900; color: var(--txt); border-bottom: 2px solid var(--gold); display: inline-block; padding: 0 22px 6px; margin: 14px 0 6px; }
+    .cert p { font-size: 14.5px; color: var(--dim); line-height: 1.9; max-width: 560px; margin: 6px auto; }
+    .cert .c-meta { display: flex; justify-content: center; gap: 26px; margin-top: 16px; font-size: 13.5px; color: var(--dim); flex-wrap: wrap; }
+    .cert .c-meta b { color: var(--gold); font-size: 15px; }
+    .cert .c-stamp { position: absolute; right: 26px; bottom: 26px; width: 88px; height: 88px; border: 3px solid var(--red); color: var(--red); border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; transform: rotate(-18deg); opacity: .8; }
+    .cert-name-row { display: flex; align-items: center; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+    .cert-name-row input { padding: 9px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card-2); color: var(--txt); font-size: 14px; font-family: inherit; outline: none; }
+    .cert-name-row input:focus { border-color: var(--gold); }
+    .grad-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin: 14px 0; }
+    .grad-item { background: var(--card-2); border: 1.5px solid var(--line); border-radius: 12px; padding: 11px 13px; font-size: 13.5px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .grad-item.done { border-color: var(--green); }
+    .grad-item .g-name { color: var(--txt); font-weight: 700; }
+    .grad-item .g-p { color: var(--dim); flex: none; }
+    .grad-item.done .g-p { color: var(--green); font-weight: 800; }
+    @media print {
+        .cert { border: 3px double #000 !important; background: #fff !important; box-shadow: none !important; }
+        .cert h2, .cert .c-sub, .cert .c-name, .cert .c-meta b { color: #000 !important; }
+        .cert p { color: #000 !important; }
+        .cert .c-stamp { border-color: #000; color: #000; opacity: .75; }
+        .cert-name-row { display: none !important; }
+    }
+</style>
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("dHJ5e3ZhciBfenQ9bG9jYWxTdG9yYWdlLmdldEl0ZW0oInpsX3RoZW1lIik7dmFyIF96b2s9WyJkYXJrIiwiYmx1ZSIsImdvbGQiLCJsaWdodCIsIm1pbGsiLCJndW9mZW5nIiwic25vd3N1biIsImN5YmVyIiwiYXVyb3JhIiwiY3VzdG9tIl07aWYoX3p0JiZfem9rLmluZGV4T2YoX3p0KT49MCl7ZG9jdW1lbnQuZG9jdW1lbnRFbGVtZW50LnNldEF0dHJpYnV0ZSgiZGF0YS10aGVtZSIsX3p0KTt9fWNhdGNoKGUpe30=");
+</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——毕业证书 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:title" content="毕业证书 - 现代化·知识学习站">
+<meta property="og:description" content="找乐子——毕业证书 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/现代-毕业证书.html">
+
+<link rel="stylesheet" href="common.css">
+<script defer src="common.js"></script>
+<script defer src="theme.js"></script>
+<script defer src="zl-features.js"></script>
+</head>
+<body data-page="现代-毕业证书.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="现代-全站目录树.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">学习系统 · 证书</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">🎓 毕业证书</h1>
+        <p class="lesson-sub">学完十四大模块，领取你的毕业证书，可打印留念</p>
+
+        <div class="callout info">
+            <b>怎样才算毕业？</b>
+            把 <b>A 到 N 十四个模块</b>的内容页全部读过一遍（进度到 100%）即可领取证书。证书上可以写上你的称呼，一键打印贴在墙上、发给家人朋友——学了就值得骄傲。
+        </div>
+
+        <div id="certBox"><!-- JS 渲染毕业判断 --></div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>🎉 学无止境，毕业不是终点</span>
+            <span>成就墙：<a href="现代-成就徽章墙.html">看看徽章</a> · 仪表盘：<a href="现代-学习仪表盘.html">看进度</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+eval(function(_0x1){var _0x2=function(_0x3){return _0x3};return eval(decodeURIComponent(escape(atob(_0x2(_0x1)))))})("Ci8qID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogKiDmr5XkuJror4HkuabvvIjpobXpnaLlhoXogZTohJrmnKzvvIkKICog5Y2B5Zub5qih5Z2X5YWoIDEwMCUg5Y2z6aKB5Y+R6K+B5Lmm77ya5Y+v5YaZ56ew5ZG844CB5Y+v5omT5Y2w77yb5pyq5q+V5Lia5pe2CiAqIOWxleekuuWQhOaooeWdl+WujOaIkOa4heWNleS4juWunuaXtui/m+W6pgogKiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gKi8KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uICgpIHsKICAgIGlmICghd2luZG93LlhEKSByZXR1cm47CiAgICB2YXIgYm94ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NlcnRCb3gnKTsKICAgIHZhciBOQU1FX0tFWSA9ICd4ZF9jZXJ0X25hbWVfdjEnOwogICAgdmFyIG5hbWUgPSAnJzsKICAgIHRyeSB7IG5hbWUgPSBsb2NhbFN0b3JhZ2UuZ2V0SXRlbShOQU1FX0tFWSkgfHwgJyc7IH0gY2F0Y2ggKGUpIHsgfQoKICAgIGZ1bmN0aW9uIG1vZFN0YXR1cygpIHsKICAgICAgICB2YXIgbGlzdCA9IFtdLCBhbGwgPSB0cnVlOwogICAgICAgIGZvciAodmFyIG0gPSAwOyBtIDwgWEQubW9kSWRzLmxlbmd0aDsgbSsrKSB7CiAgICAgICAgICAgIHZhciBpZCA9IFhELm1vZElkc1ttXTsKICAgICAgICAgICAgdmFyIG5kID0gWEQubm9kZShpZCk7CiAgICAgICAgICAgIHZhciBwID0gWEQucHJvZ3Jlc3Mubm9kZVByb2dyZXNzKGlkKTsKICAgICAgICAgICAgbGlzdC5wdXNoKHsgaWQ6IGlkLCBuOiBuZCA/IG5kLm4gOiBpZCwgcDogcCwgZG9uZTogcCA9PT0gMTAwIH0pOwogICAgICAgICAgICBpZiAocCA8IDEwMCkgYWxsID0gZmFsc2U7CiAgICAgICAgfQogICAgICAgIHJldHVybiB7IGFsbDogYWxsLCBsaXN0OiBsaXN0IH07CiAgICB9CgogICAgZnVuY3Rpb24gY2VydEh0bWwobm0pIHsKICAgICAgICB2YXIgYWNoID0gWEQuYWNoaWV2ZS5saXN0KCksIGdvdCA9IDA7CiAgICAgICAgZm9yICh2YXIgaSA9IDA7IGkgPCBhY2gubGVuZ3RoOyBpKyspIGlmIChhY2hbaV0uYXQpIGdvdCsrOwogICAgICAgIHZhciBub3cgPSBuZXcgRGF0ZSgpOwogICAgICAgIHZhciBkYXRlU3RyID0gbm93LmdldEZ1bGxZZWFyKCkgKyAnIOW5tCAnICsgKG5vdy5nZXRNb250aCgpICsgMSkgKyAnIOaciCAnICsgbm93LmdldERhdGUoKSArICcg5pelJzsKICAgICAgICByZXR1cm4gJzxkaXYgY2xhc3M9ImNlcnQiPicgKwogICAgICAgICAgICAnPGRpdiBjbGFzcz0iYy1jcm93biI+8J+OkzwvZGl2PicgKwogICAgICAgICAgICAnPGgyPuavlSDkuJog6K+BIOS5pjwvaDI+JyArCiAgICAgICAgICAgICc8ZGl2IGNsYXNzPSJjLXN1YiI+546w5Luj5YyWIMK3IOefpeivhuWtpuS5oOermTwvZGl2PicgKwogICAgICAgICAgICAnPGRpdiBjbGFzcz0iY2VydC1uYW1lLXJvdyI+5Zyo6K+B5Lmm5LiK5YaZ5Liq56ew5ZG877yaJyArCiAgICAgICAgICAgICc8aW5wdXQgaWQ9ImNlcnROYW1lIiB2YWx1ZT0iJyArIFhELmVzY2FwZUh0bWwobm0pICsgJyIgcGxhY2Vob2xkZXI9IuWmgu+8mueOi+mYv+WnqCIgbWF4bGVuZ3RoPSIxMiI+JyArCiAgICAgICAgICAgICc8L2Rpdj4nICsKICAgICAgICAgICAgJzxkaXYgY2xhc3M9ImMtbmFtZSI+JyArIChubSA/IFhELmVzY2FwZUh0bWwobm0pIDogJ+S6sueIseeahOWtpuWRmCcpICsgJzwvZGl2PicgKwogICAgICAgICAgICAnPHA+5oGt5Zac5L2g5a2m5a6M5LqG5pys56uZIDxiPkEg5YiwIE4g5Y2B5Zub5Liq5qih5Z2XPC9iPueahOWFqOmDqOivvueoi++8jCcgKwogICAgICAgICAgICAn5LuO6K6k6K+G55S16ISR5Yiw572R5LiK6LSt54mp44CB5LuOIEFJIOWFpemXqOWIsOmYsumql+mYsuiviO+8jOS4gOatpeS4gOS4quiEmuWNsOi1sOS6hui/h+adpeOAgjxicj4nICsKICAgICAgICAgICAgJ+acrOivgeS5puivgeaYjuS9oOW3sue7j+aOjOaPoeS6huaVsOWtl+eUn+a0u+eahOWfuuehgOacrOmihu+8jOaEv+S9oOe7p+e7reS5kOWtpu+8jOS4juaXtuS/sei/m+OAgjwvcD4nICsKICAgICAgICAgICAgJzxkaXYgY2xhc3M9ImMtbWV0YSI+JyArCiAgICAgICAgICAgICc8c3Bhbj7wn4+FIOW+veeroCA8Yj4nICsgZ290ICsgJyDmnpo8L2I+PC9zcGFuPicgKwogICAgICAgICAgICAnPHNwYW4+8J+TliDor7vov4cgPGI+JyArIFhELnByb2dyZXNzLmNvdW50KCkgKyAnIOmhtTwvYj48L3NwYW4+JyArCiAgICAgICAgICAgICc8c3Bhbj7wn5SlIOi/nue7rSA8Yj4nICsgWEQuc3R1ZHlMb2cuc3RyZWFrRGF5cygpICsgJyDlpKk8L2I+PC9zcGFuPicgKwogICAgICAgICAgICAnPHNwYW4+8J+XkyAnICsgZGF0ZVN0ciArICc8L3NwYW4+PC9kaXY+JyArCiAgICAgICAgICAgICc8ZGl2IGNsYXNzPSJjLXN0YW1wIj7lrabkuaDnq5k8YnI+5q+V5Lia56ugPC9kaXY+JyArCiAgICAgICAgICAgICc8ZGl2IHN0eWxlPSJtYXJnaW4tdG9wOjIwcHg7Ij48YnV0dG9uIGNsYXNzPSJidG4iIGlkPSJjZXJ0UHJpbnQiPvCflqgg5omT5Y2w5pys6aG16K+B5LmmPC9idXR0b24+PC9kaXY+JyArCiAgICAgICAgICAgICc8L2Rpdj4nOwogICAgfQoKICAgIHZhciBzdCA9IG1vZFN0YXR1cygpOwogICAgaWYgKHN0LmFsbCkgewogICAgICAgIGJveC5pbm5lckhUTUwgPSBjZXJ0SHRtbChuYW1lKTsKICAgICAgICB2YXIgaW5wdXQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY2VydE5hbWUnKTsKICAgICAgICBpZiAoaW5wdXQpIHsKICAgICAgICAgICAgaW5wdXQuYWRkRXZlbnRMaXN0ZW5lcignaW5wdXQnLCBmdW5jdGlvbiAoKSB7CiAgICAgICAgICAgICAgICB2YXIgdiA9IGlucHV0LnZhbHVlLnRyaW0oKTsKICAgICAgICAgICAgICAgIHRyeSB7IGxvY2FsU3RvcmFnZS5zZXRJdGVtKE5BTUVfS0VZLCB2KTsgfSBjYXRjaCAoZSkgeyB9CiAgICAgICAgICAgICAgICB2YXIgbm0gPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcuYy1uYW1lJyk7CiAgICAgICAgICAgICAgICBpZiAobm0pIG5tLnRleHRDb250ZW50ID0gdiB8fCAn5Lqy54ix55qE5a2m5ZGYJzsKICAgICAgICAgICAgfSk7CiAgICAgICAgfQogICAgICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjZXJ0UHJpbnQnKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGZ1bmN0aW9uICgpIHsgd2luZG93LnByaW50KCk7IH0pOwogICAgICAgIHZhciBidG4gPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcuY2VydC1uYW1lLXJvdyBpbnB1dCcpOwogICAgICAgIGlmIChidG4gJiYgbmFtZSkgYnRuLmZvY3VzKCk7CiAgICB9IGVsc2UgewogICAgICAgIHZhciBoID0gJzxkaXYgY2xhc3M9ImdyYWQtbGlzdCI+JzsKICAgICAgICBmb3IgKHZhciBpID0gMDsgaSA8IHN0Lmxpc3QubGVuZ3RoOyBpKyspIHsKICAgICAgICAgICAgdmFyIGcgPSBzdC5saXN0W2ldOwogICAgICAgICAgICBoICs9ICc8ZGl2IGNsYXNzPSJncmFkLWl0ZW0nICsgKGcuZG9uZSA/ICcgZG9uZScgOiAnJykgKyAnIj4nICsKICAgICAgICAgICAgICAgICc8c3BhbiBjbGFzcz0iZy1uYW1lIj4nICsgZy5pZCArICcgwrcgJyArIFhELmVzY2FwZUh0bWwoZy5uKSArICc8L3NwYW4+JyArCiAgICAgICAgICAgICAgICAnPHNwYW4gY2xhc3M9ImctcCI+JyArIChnLmRvbmUgPyAn4pyFIOWujOaIkCcgOiBnLnAgKyAnJScpICsgJzwvc3Bhbj48L2Rpdj4nOwogICAgICAgIH0KICAgICAgICBoICs9ICc8L2Rpdj4nOwogICAgICAgIHZhciBkb25lTiA9IDA7CiAgICAgICAgZm9yICh2YXIgaiA9IDA7IGogPCBzdC5saXN0Lmxlbmd0aDsgaisrKSBpZiAoc3QubGlzdFtqXS5kb25lKSBkb25lTisrOwogICAgICAgIGJveC5pbm5lckhUTUwgPSAnPGRpdiBjbGFzcz0iY2FsbG91dCB0aXAiPjxiPui/mOW3ruS4gOatpe+8muW3suWujOaIkCAnICsgZG9uZU4gKyAnIC8gMTQg5Liq5qih5Z2XPC9iPjxicj4nICsKICAgICAgICAgICAgJ+aKiuS4i+mdoueahOaooeWdl+mDveWtpuWujO+8jOWwseiDvemihuWPluavleS4muivgeS5puWVpu+8geeCueaooeWdl+WQjeWOu+WtpuS5oO+8jOi/m+W6puS8muWunuaXtuabtOaWsOOAgjwvZGl2PicgKyBoICsKICAgICAgICAgICAgJzxhIGNsYXNzPSJidG4iIGhyZWY9IueOsOS7oy3lhajnq5nnm67lvZXmoJEuaHRtbCI+8J+TmiDnu6fnu63lrabkuaA8L2E+JzsKICAgIH0KfSk7CgoKLyog6Ieq5Yqo5YWo5bGA5oyC6L2977yI5L6b5YaF6IGU5LqL5Lu25bGe5oCn6LCD55So77yJICovCmlmKCEoJ21vZFN0YXR1cycgaW4gd2luZG93KSl3aW5kb3cubW9kU3RhdHVzPW1vZFN0YXR1czsKaWYoISgnY2VydEh0bWwnIGluIHdpbmRvdykpd2luZG93LmNlcnRIdG1sPWNlcnRIdG1sOw==");
+</script>
+</body>
+</html>
