@@ -2,7 +2,7 @@
   "name": "现代化·知识学习站",
   "short_name": "现代化学习",
   "description": "从零学习计算机、电脑使用、网络与服务器、键盘快捷键、AI、Git与GitHub、Web开发",
-  "start_url": "./index.html",
+  "start_url": "./现代-全站目录树.html",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#0a0e27",
@@ -10,7 +10,7 @@
   "lang": "zh-CN",
   "icons": [
     {
-      "src": "favicon.svg",
+      "src": "xd-favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
