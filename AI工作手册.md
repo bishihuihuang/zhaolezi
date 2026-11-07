@@ -131,3 +131,11 @@ service-worker.js / manifest.json ← PWA
 - 根因：xd-features.js 的 XD.TREE 用 id+'.html' 规则（A/A1/A2-1…），同层化后页面已改名「现代-XXX.html」→ 目录树 125 链接全 404
 - 修复：新增 XD_FILE_MAP（源 _tmp_rename_final.json，125 条全覆盖）+ nd.f 优先查映射
 - 影响面：目录树/搜索/前后页/收藏全部经 nd.f，一处修复全站生效
+
+## 2026-11-08 V2.9.3 · 全站结构分层化
+
+- 线上：190 HTML → pages/（189 页），资源 → assets/（css/js/images/audio/23data/看看作业/af/cy/xd/ai）；根只留 index.html + PWA 必需文件
+- 本地顶层极简：一键自动化发布.bat + 构建工具/ + _原始未混淆版/（自包含全部素材）+ 产物（index/pages/assets）
+- 构建工具：outDir/refPrefix/fixHomePath 恢复分层 + 资产映射重写 + JS 字符串路径 + SW currentScript 根注册
+- 旧平铺产物 227 项归档 E:\AI永久记忆\85_备份\找乐子旧平铺产物-20261108\
+- 验证：190 页本地全量扫描（除 api/log/today 预期与 4s 超时误报外零异常）；页面引用 ../assets/ 与 pages/ 全部 200
