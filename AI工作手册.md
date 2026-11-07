@@ -117,3 +117,11 @@ service-worker.js / manifest.json ← PWA
 - 根因：`MutationObserver(placeLiq)` 无限风暴——A 分支 `remove('single')` 在自身观察器监听下自触发（t6 守卫不彻底）
 - 修复：变更 class 前后 `liqMo.disconnect()/reobserve()` 断链（fix4 方案，功能保留）；9 处调试探针全清
 - 教训：页面卡死勿以 title 探针为中断证据（同步/回调/注释/HTML 四类探针行为不同）
+
+## 2026-11-07 V2.9 · 全站跳转与公共层修复（六处）
+
+- autoAttachGlobals 只扫真顶层函数 + try/catch：修复混淆后 IIFE 内函数挂载断链（nowTag/closeDlg/ensureStyle is not defined，全站每页都炸）
+- common.css 背景图 pages/images/→images/（15 处，同层化残留）
+- SW 注册 location.origin+'/service-worker.js'→'service-worker.js'（子路径站点 404）
+- index.html renderTools 对 .hero-proof 判空
+- zl-glass rfCheck：SW ready/update 全超时保护 + requestIdleCallback 延迟 + 去自动 reload（首屏卡顿真凶）
