@@ -111,3 +111,9 @@ service-worker.js / manifest.json ← PWA
 - 启动屏自动跳转（`setTimeout` 内的 `location.replace`）**不会**被拦截，属预期
 
 **回滚方式**：删除 hook 代码段（含 `__JUMP_ANIM_INIT__` 标记的整段 IIFE）即可恢复原跳转行为。
+
+## 2026-11-07 V2.7.3 · 全能文件保存卡死根因修复
+
+- 根因：`MutationObserver(placeLiq)` 无限风暴——A 分支 `remove('single')` 在自身观察器监听下自触发（t6 守卫不彻底）
+- 修复：变更 class 前后 `liqMo.disconnect()/reobserve()` 断链（fix4 方案，功能保留）；9 处调试探针全清
+- 教训：页面卡死勿以 title 探针为中断证据（同步/回调/注释/HTML 四类探针行为不同）
