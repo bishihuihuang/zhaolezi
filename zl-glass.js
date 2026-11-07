@@ -536,21 +536,30 @@
 
         if (!('serviceWorker' in navigator)) { if (!silent) rfToast('当前浏览器不支持 Service Worker'); done(); return Promise.resolve(); }
 
-        var p = navigator.serviceWorker.ready
+        /* V2.9 修复：SW 更新检查全面超时保护。
+         * 原实现 navigator.serviceWorker.ready / reg.update() 无超时，
+         * SW 首次安装（190+ 页预缓存）或更新期间会长时间挂起检查链并拖住页面加载
+         * （实测首页主线程忙数秒、evaluate 超时）。任何一步超时即降级跳过检查。 */
+        function raceTimeout(p, ms, fallback) {
+            return Promise.race([p, new Promise(function (res) { setTimeout(function () { res(fallback); }, ms); })]);
+        }
+        var p = raceTimeout(navigator.serviceWorker.ready, 5000, null)
             .then(function (reg) {
-                return reg.update().then(function () {
+                if (!reg) return false;
+                return raceTimeout(reg.update(), 8000, null).then(function () {
                     var inst = reg.installing;
                     if (inst && inst !== reg.waiting && inst !== reg.active) {
                         return new Promise(function (res) {
+                            var timer = setTimeout(function () { res(false); }, 5000);
                             inst.addEventListener('statechange', function onS() {
                                 if (inst.state === 'installed') {
+                                    clearTimeout(timer);
                                     inst.removeEventListener('statechange', onS);
                                     if (navigator.serviceWorker.controller && inst !== reg.active) {
                                         inst.addEventListener('controlling', function () { res(true); });
                                     } else { res(true); }
                                 }
                             });
-                            setTimeout(function () { res(false); }, 5000);
                         });
                     }
                     return false;
@@ -558,7 +567,7 @@
             });
 
         p.then(function (hasNewSW) {
-            if (hasNewSW) { rfToast('发现新版本，正在更新…'); setTimeout(function () { location.reload(); }, 1200); done(); return; }
+            if (hasNewSW) { rfToast('发现新版本，刷新页面即可获取'); done(); return; }
             rfCheckAssets().then(function (n) {
                 if (n > 0) { rfToast('已更新 ' + n + ' 项'); if (!silent) setTimeout(function () { location.reload(); }, 1500); }
                 else if (!silent) rfToast('已是最新');
@@ -569,11 +578,16 @@
     }
 
     function initRefresh() {
-        /* V126：按钮 UI 已移除，仅保留进页静默更新检查（节流：30 分钟内不重复） */
+        /* V126：按钮 UI 已移除，仅保留进页静默更新检查（节流：30 分钟内不重复）
+         * V2.9 修复：原 1500ms 即跑，恰逢首屏交互窗口；SW 更新/安装（大预缓存）
+         * 会拖住主线程数秒，用户点击跳转时动画/导航卡顿（表现为"跳转没做好"）。
+         * 改为 requestIdleCallback（兜底 15s）——页面空闲后才检查，不抢首屏。 */
         try {
             var last = parseInt(localStorage.getItem(RF_KEY) || '0', 10);
             if (Date.now() - last > RF_INTERVAL) {
-                setTimeout(function () { rfCheck(true); }, 1500);
+                var run = function () { rfCheck(true); };
+                if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 15000 });
+                else setTimeout(run, 15000);
             }
         } catch (e) {}
     }
@@ -589,7 +603,7 @@
                 initGlow();
                 initFocus();
                 initFilter();
-                initRefresh(); /* V126：进页静默更新检查（刷新按键已移除） */
+                initRefresh(); /* V126：进页静默更新检查（已加超时保护，V2.9） */
             } catch (e) {}
         }
     };
