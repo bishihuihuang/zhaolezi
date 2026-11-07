@@ -13,10 +13,10 @@
     var th = (bag._theme = bag._theme || {});
     th.KEY = 'cy_theme';
     th.BGB_KEY = 'cy_custom_bg';
-    th.THEMES = ['zhaolezi', 'blue', 'gold', 'light', 'snowsun', 'aurora'];
-    th.LABELS = { zhaolezi: '彩虹亮彩', blue: '经典蓝', gold: '鎏金', light: '明亮', snowsun: '雪阳', aurora: '极光' };
-    /* 旧主题名迁移表：历史版本存的 neon 等价于今天的 cyber */
-    th.LEGACY = { neon: 'zhaolezi', dark: 'zhaolezi', milk: 'zhaolezi', guofeng: 'zhaolezi', cyber: 'zhaolezi', custom: 'zhaolezi' };
+    th.THEMES = ['zhaolezi'];
+    th.LABELS = { zhaolezi: '找乐子' };
+    /* 旧主题名迁移表：V2.9.2 主题收敛后所有历史主题值统一回落找乐子（其余主题定义归档冷区） */
+    th.LEGACY = { neon: 'zhaolezi', dark: 'zhaolezi', milk: 'zhaolezi', guofeng: 'zhaolezi', cyber: 'zhaolezi', custom: 'zhaolezi', blue: 'zhaolezi', gold: 'zhaolezi', light: 'zhaolezi', snowsun: 'zhaolezi', aurora: 'zhaolezi' };
     var saved = localStorage.getItem(th.KEY) || 'zhaolezi';
     var wanted = th.LEGACY[saved] || saved;
     th.current = (th.THEMES.indexOf(wanted) >= 0) ? wanted : 'zhaolezi';
@@ -219,34 +219,7 @@
     bag.buildThemeBtn = buildThemeBtn;
 })();
 
-/* ============ 9 · 欣赏模式按钮 ============ */
-(function () {
-    var bag = (window.CY && window.CY._theme);
-    if (!bag) return;
-
-    var ADMIRE_STYLE = 'position:fixed;bottom:20px;left:20px;z-index:2147483646;width:44px;height:44px;' +
-        'border-radius:50%;background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;' +
-        'display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;' +
-        'box-shadow:0 4px 16px rgba(0,0,0,.35);user-select:none;-webkit-user-select:none;' +
-        'transition:opacity .3s;';
-
-    function buildAdmireBtn() {
-        var btn = document.createElement('div');
-        btn.id = 'cyAdmireBtn';
-        btn.title = '欣赏模式：隐藏界面只看背景';
-        btn.setAttribute('aria-label', '欣赏模式');
-        btn.innerHTML = '👁';
-        btn.style.cssText = ADMIRE_STYLE;
-        btn.onclick = function () {
-            var on = document.body.classList.toggle('cy-admire');
-            this.style.opacity = on ? '0.6' : '1';
-            this.title = on ? '退出欣赏模式' : '欣赏模式：隐藏界面只看背景';
-        };
-        document.body.appendChild(btn);
-    }
-
-    bag.buildAdmireBtn = buildAdmireBtn;
-})();
+/* ============ 9 · 欣赏模式按钮（V2.9.2 已按需求移除，原实现归档冷区） ============ */
 
 /* ============ 10 · 点击外部收起面板 + 启动 ============ */
 (function () {
@@ -282,7 +255,7 @@
         bag.apply(bag.current);
         buildNavKeys(); /* V2.9 修复：原 bag.buildNavKeys() 未挂载致 TypeError，主题/欣赏/面板初始化全中断 */
         bag.buildThemeBtn();
-        bag.buildAdmireBtn();
+        /* V2.9.2：bag.buildAdmireBtn() 已移除（欣赏模式按钮下架） */
         bag.buildPanel();
         document.addEventListener('click', function (evt) {
             var open = bag.panel && bag.panel.classList.contains('open');

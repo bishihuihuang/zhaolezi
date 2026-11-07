@@ -1,15 +1,15 @@
-/* 找乐子 V1.5 - 全局主题系统（默认「找乐子」+ 6 主题，源自 AI提示词/全能文件保存）
+/* 找乐子 V2.9.2 - 全局主题系统（收敛为单一「找乐子」主题；切换按钮与面板结构保留，便于以后新增主题）
  * 主题面板：点右下角按钮弹出色块列表，点击应用，localStorage zl_theme 记忆
- * V1.5：左下角 👁 欣赏模式按钮（与右下角主题按钮对称同大小，点击隐藏界面只看背景）
- * V2.4.9：主题体系升级——custom 上传背景下架（LEGACY 自动迁移找乐子），
- *         六主题各配专属字体/边框/交互/动效/背景增强（详见 common.css V2.4.9 体系段） */
+ * V2.9.2：主题收敛——仅保留 zhaolezi（彩虹亮彩），其余主题定义已归档冷区
+ *         （E:\AI永久记忆\80_长期档案\找乐子主题收敛归档-20261107）；
+ *         欣赏模式 👁 按钮已按需求移除。
+ * 新增主题方法：向 THEMES/LABELS 追加条目 + common.css 补对应 [data-theme] 变量块即可。 */
 (function () {
     var KEY = 'zl_theme';
-    var THEMES = ['zhaolezi', 'blue', 'gold', 'light', 'snowsun', 'aurora'];
-    var LABELS = { zhaolezi: '找乐子', blue: '经典蓝', gold: '鎏金', light: '明亮',
-        snowsun: '雪阳', aurora: '极光' };
-    // 兼容旧主题：neon → aurora，dark → zhaolezi（深色系），custom → zhaolezi（V2.4.9 上传背景下架）
-    var LEGACY = { neon: 'aurora', dark: 'zhaolezi', custom: 'zhaolezi' };
+    var THEMES = ['zhaolezi'];
+    var LABELS = { zhaolezi: '找乐子' };
+    // 兼容旧主题：所有历史主题值统一回落找乐子（其余主题已下架，定义见冷区归档）
+    var LEGACY = { neon: 'zhaolezi', dark: 'zhaolezi', custom: 'zhaolezi', blue: 'zhaolezi', gold: 'zhaolezi', light: 'zhaolezi', milk: 'zhaolezi', guofeng: 'zhaolezi', snowsun: 'zhaolezi', cyber: 'zhaolezi', aurora: 'zhaolezi' };
     var current = localStorage.getItem(KEY) || 'zhaolezi';
     if (LEGACY[current]) current = LEGACY[current];
     if (THEMES.indexOf(current) < 0) current = 'zhaolezi';
@@ -87,19 +87,7 @@
         };
         document.body.appendChild(btn);
         buildPanel();
-        // V1.5 左下角欣赏模式按钮（与主题按钮对称、同大小；隐藏界面只看背景，再点恢复）
-        var admire = document.createElement('div');
-        admire.id = 'zlAdmireBtn';
-        admire.title = '欣赏模式：隐藏界面只看背景';
-        admire.setAttribute('aria-label', '欣赏模式');
-        admire.innerHTML = '👁';
-        admire.style.cssText = 'position:fixed;bottom:20px;left:20px;z-index:2147483646;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;box-shadow:0 4px 16px rgba(0,0,0,.35);user-select:none;-webkit-user-select:none;transition:opacity .3s;';
-        admire.onclick = function () {
-            var on = document.body.classList.toggle('zl-admire');
-            this.style.opacity = on ? '0.6' : '1';
-            this.title = on ? '退出欣赏模式' : '欣赏模式：隐藏界面只看背景';
-        };
-        document.body.appendChild(admire);
+        /* V2.9.2：欣赏模式 👁 按钮已按需求移除（原 zlAdmireBtn 段归档于冷区） */
         document.addEventListener('click', function (e) {
             if (panel && panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) {
                 panel.classList.remove('open');

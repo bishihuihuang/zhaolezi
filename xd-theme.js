@@ -12,9 +12,10 @@
     /* ---- 主题盘存：当前主题 / 主题表 / 旧名映射 ---- */
     var KEY = 'xd_theme';
     var BGB_KEY = 'xd_custom_bg';
-    var THEMES = ['zhaolezi', 'blue', 'gold', 'light', 'snowsun', 'aurora'];
-    var LABELS = { zhaolezi: '彩虹亮彩', blue: '经典蓝', gold: '鎏金', light: '明亮', snowsun: '雪阳', aurora: '极光' };
-    var LEGACY = { neon: 'zhaolezi', dark: 'zhaolezi', milk: 'zhaolezi', guofeng: 'zhaolezi', cyber: 'zhaolezi', custom: 'zhaolezi' };
+    var THEMES = ['zhaolezi'];
+    var LABELS = { zhaolezi: '找乐子' };
+    /* V2.9.2 主题收敛：所有历史主题值统一回落找乐子（其余主题定义归档冷区） */
+    var LEGACY = { neon: 'zhaolezi', dark: 'zhaolezi', milk: 'zhaolezi', guofeng: 'zhaolezi', cyber: 'zhaolezi', custom: 'zhaolezi', blue: 'zhaolezi', gold: 'zhaolezi', light: 'zhaolezi', snowsun: 'zhaolezi', aurora: 'zhaolezi' };
     var current = localStorage.getItem(KEY) || 'zhaolezi';
     if (LEGACY[current]) current = LEGACY[current];
     if (THEMES.indexOf(current) < 0) current = 'zhaolezi';
@@ -188,19 +189,7 @@
         };
         document.body.appendChild(btn);
         buildPanel();
-        // 左下角欣赏模式按钮（与主题按钮对称、同大小；隐藏界面只看背景，再点恢复）
-        var admire = document.createElement('div');
-        admire.id = 'xdAdmireBtn';
-        admire.title = '欣赏模式：隐藏界面只看背景';
-        admire.setAttribute('aria-label', '欣赏模式');
-        admire.innerHTML = '👁';
-        admire.style.cssText = 'position:fixed;bottom:20px;left:20px;z-index:2147483646;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;box-shadow:0 4px 16px rgba(0,0,0,.35);user-select:none;-webkit-user-select:none;transition:opacity .3s;';
-        admire.onclick = function () {
-            var on = document.body.classList.toggle('xd-admire');
-            this.style.opacity = on ? '0.6' : '1';
-            this.title = on ? '退出欣赏模式' : '欣赏模式：隐藏界面只看背景';
-        };
-        document.body.appendChild(admire);
+        /* V2.9.2：欣赏模式 👁 按钮已按需求移除（原 xdAdmireBtn 段归档于冷区） */
         document.addEventListener('click', function (e) {
             if (panel && panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) {
                 panel.classList.remove('open');

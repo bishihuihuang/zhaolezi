@@ -172,8 +172,7 @@ button, .btn, [class*="btn"], .quiz-opt, .xd-theme-item { min-width: 44px; min-h
 @keyframes orbFloat2 { 0%, 100% { transform: translate(0, 0); opacity: .6; } 50% { transform: translate(-18px, 14px); opacity: .3; } }
 @keyframes orbRotate { to { transform: rotate(360deg); } }
 
-/* 欣赏模式（隐藏界面只看背景） */
-body.xd-admire > *:not(.bg-animation):not(#xdAdmireBtn) { opacity: 0 !important; transition: opacity .4s; pointer-events: none; }
+/* V2.9.2：欣赏模式（body.xd-admire）已按需求移除，原样式归档冷区 */
 
 /* ---------- 页面骨架 ---------- */
 main { position: relative; z-index: 10; padding: 24px 0 108px; display: flex; justify-content: center; align-items: flex-start; }
