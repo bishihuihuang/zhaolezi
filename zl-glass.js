@@ -180,9 +180,10 @@
         }, { passive: true });
     }
 
-    /* ===================== M3a. 模块就地放大（仅 44 仪表盘） ===================== */
+    /* ===================== M3a. 模块就地放大（仅 学习仪表盘） ===================== */
     function initFocus() {
-        if (curPage() !== '44.html') return;
+        /* V2.9：同层化后 44.html 已改名 现代-学习仪表盘.html，旧判断恒 false 致功能永不生效 */
+        if (curPage() !== '现代-学习仪表盘.html') return;
         var secs = document.querySelectorAll('.sec');
         if (secs.length < 2) return;
         var titles = [], i;
@@ -315,9 +316,10 @@
         try { obs.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] }); } catch (e) {}
     }
 
-    /* ===================== M3b. 水滴分裂筛选 + 指标滚动（仅 44 仪表盘） ===================== */
+    /* ===================== M3b. 水滴分裂筛选 + 指标滚动（仅 学习仪表盘） ===================== */
     function initFilter() {
-        if (curPage() !== '44.html') return;
+        /* V2.9：同层化后 44.html 已改名 现代-学习仪表盘.html，旧判断恒 false 致功能永不生效 */
+        if (curPage() !== '现代-学习仪表盘.html') return;
         var container = document.querySelector('.container');
         if (!container) return;
         var topGrid = container.querySelector('.top-grid');

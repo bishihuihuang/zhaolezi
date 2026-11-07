@@ -272,7 +272,7 @@
         home.title = '返回找乐子导航站';
         home.setAttribute('aria-label', '返回找乐子导航站');
         home.textContent = '🏠';
-        home.href = '../../index.html';
+        home.href = 'index.html'; /* V2.9 修复：并入找乐子同层化后 '../../index.html' 已 404 */
         home.style.cssText = 'width:44px;height:44px;border-radius:50%;border:1px solid rgba(110,110,180,.25);background:rgba(255,255,255,.92);color:#23263a;font-size:20px;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 6px 18px rgba(20,26,46,.22);user-select:none;-webkit-user-select:none;';
         wrap.appendChild(back);
         wrap.appendChild(home);
@@ -280,7 +280,7 @@
     }
     function init() {
         bag.apply(bag.current);
-        bag.buildNavKeys();
+        buildNavKeys(); /* V2.9 修复：原 bag.buildNavKeys() 未挂载致 TypeError，主题/欣赏/面板初始化全中断 */
         bag.buildThemeBtn();
         bag.buildAdmireBtn();
         bag.buildPanel();
