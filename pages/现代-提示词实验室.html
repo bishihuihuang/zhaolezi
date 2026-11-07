@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>提示词实验室 - 现代化·知识学习站</title>
+<meta name="description" content="提示词实验室：按场景点选组件，自动组装成一条完整的五要素提示词，一键复制去 AI 工具里用。">
+<link rel="icon" href="../assets/xd/xd-favicon.svg">
+<link rel="manifest" href="../assets/xd/xd-manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="../assets/css/xd-common.css">
+<script defer src="../assets/js/xd-common.js"></script>
+<script defer src="../assets/js/xd-theme.js"></script>
+<script defer src="../assets/js/xd-features.js"></script>
+<style>
+    #lab { width: 100%; }
+    .lab-card {
+        background: var(--card-2); border: 2px solid var(--line); border-radius: 16px;
+        padding: 18px 20px; margin-top: 16px;
+    }
+    .lab-field { margin-bottom: 14px; }
+    .lab-field label { display: block; font-size: 13px; font-weight: 800; color: var(--blue); margin-bottom: 6px; }
+    .lab-field select, .lab-field textarea, .lab-field input {
+        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+        font-size: 14px; background: var(--card); color: var(--txt); outline: none; box-sizing: border-box;
+    }
+    .lab-field select:focus, .lab-field textarea:focus, .lab-field input:focus {
+        border-color: var(--blue); box-shadow: 0 0 0 3px rgba(102, 126, 234, .2);
+    }
+    .lab-hint { font-size: 12px; color: var(--dim); margin-top: 5px; }
+    .role-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip {
+        border: 1px solid var(--line); background: var(--card); color: var(--txt);
+        padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all .2s;
+    }
+    .chip:hover { border-color: var(--blue); color: var(--blue); }
+    .chip.on { background: var(--btn-grad); color: #fff; border-color: transparent; }
+    #labOut {
+        width: 100%; min-height: 150px; border: 1px solid var(--line); border-radius: 10px;
+        padding: 12px; font-size: 14px; line-height: 1.8; background: var(--card); color: var(--txt);
+        box-sizing: border-box; outline: none;
+    }
+    .lab-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .lab-preview { margin-top: 8px; font-size: 12px; color: var(--dim); }
+</style>
+<script data-no-obf>try{var _zt=localStorage.getItem("zl_theme");var _zok=["dark","blue","gold","light","milk","guofeng","snowsun","cyber","aurora","custom"];if(_zt&&_zok.indexOf(_zt)>=0){document.documentElement.setAttribute("data-theme",_zt);}}catch(e){}</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——提示词实验室 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:title" content="提示词实验室 - 现代化·知识学习站">
+<meta property="og:description" content="找乐子——提示词实验室 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/现代-提示词实验室.html">
+
+<link rel="stylesheet" href="../assets/css/common.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/theme.js"></script>
+<script defer src="../assets/js/zl-features.js"></script>
+</head>
+<body data-page="现代-提示词实验室.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="现代-全站目录树.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块E · 如何使用 AI</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">🧪 提示词实验室</h1>
+        <p class="lesson-sub">模块E · 第 4 课 | 组装式提示词生成器</p>
+
+        <div class="callout info">
+            <b>怎么玩</b>
+            选一个场景，填好<strong>角色 / 任务 / 上下文 / 格式</strong>四块积木，点「生成提示词」，把成品复制到任何 AI 对话框使用。参考 E2 的五要素，越具体效果越好。
+        </div>
+
+        <div id="lab">
+            <div class="lab-card">
+                <div class="lab-field">
+                    <label>① 场景模板（选一个，自动填好角色）</label>
+                    <select id="sceneSel">
+                        <option value="learn">学习提问：把概念讲明白</option>
+                        <option value="write">写文章：按受众产出</option>
+                        <option value="polish">改稿：保留原意改风格</option>
+                        <option value="plan">做计划：表格化任务安排</option>
+                        <option value="debug">代码排错：报错秒懂</option>
+                        <option value="custom">自定义：从零组装</option>
+                    </select>
+                </div>
+                <div class="lab-field">
+                    <label>② 角色（AI 以什么身份回答你）</label>
+                    <input id="roleIn" type="text" placeholder="例：一位耐心的初中数学老师">
+                    <div class="role-chips" id="roleChips">
+                        <span class="chip">耐心的老师</span>
+                        <span class="chip">资深编辑</span>
+                        <span class="chip">求职辅导师</span>
+                        <span class="chip">健身教练</span>
+                        <span class="chip">Python 导师</span>
+                        <span class="chip">产品经理</span>
+                    </div>
+                </div>
+                <div class="lab-field">
+                    <label>③ 任务（要 AI 做什么？带上约束）</label>
+                    <input id="taskIn" type="text" placeholder="例：用 200 字以内的通俗语言解释「量子纠缠」，并给 1 个生活例子">
+                    <div class="lab-hint">动词开头 + 字数/条数/风格等约束，效果最好。</div>
+                </div>
+                <div class="lab-field">
+                    <label>④ 上下文（给 AI 喂背景 / 原材料）</label>
+                    <textarea id="ctxIn" rows="3" placeholder="例：我是零基础的初中生；目标读者是 55 岁阿姨；粘贴你的原稿…"></textarea>
+                </div>
+                <div class="lab-field">
+                    <label>⑤ 格式（输出长什么样）</label>
+                    <select id="fmtSel">
+                        <option value="分点列出">分点列出，每点不超过 20 字</option>
+                        <option value="表格">用 Markdown 表格输出</option>
+                        <option value="段落">连贯段落，不用编号</option>
+                        <option value="代码">只输出代码，不加解释</option>
+                        <option value="自由">自由发挥</option>
+                    </select>
+                </div>
+                <div class="lab-row">
+                    <button class="btn" id="genBtn">⚡ 生成提示词</button>
+                    <button class="btn btn-secondary" id="copyBtn">📋 复制成品</button>
+                </div>
+                <div class="lab-field" style="margin-top:14px;">
+                    <label>生成的提示词</label>
+                    <textarea id="labOut" readonly placeholder="点「生成提示词」后，成品会出现在这里…"></textarea>
+                </div>
+                <div class="lab-preview" id="labNote"></div>
+            </div>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 打开本页即已自动记录学习进度</span>
+            <span>上一课：<a href="现代-AI工具地图与工作流.html">AI 工具地图与工作流</a> · 下一课：<a href="现代-模块E测验：如何使用AI.html">测验：如何使用 AI</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/*ZL-OBF-V2*/
+(function(_0x3fcd99,_0x5fafd8){var _0x2f9ffe=_0x7f05,_0x466344=_0x3fcd99();while(!![]){try{var _0x5256f1=-parseInt(_0x2f9ffe(0x87))/(-0x1fe8+0xd18+0x12d1)*(-parseInt(_0x2f9ffe(0x8f))/(-0x224e+-0x9e1+0x2c31))+parseInt(_0x2f9ffe(0x89))/(0x94*0x25+0x203c+-0x359d)*(parseInt(_0x2f9ffe(0x78))/(-0x321+-0x24a9*-0x1+-0x1a*0x14a))+-parseInt(_0x2f9ffe(0x93))/(-0x37*0x9+-0x17e+0x372)+parseInt(_0x2f9ffe(0x85))/(-0xddf+0xfa1+-0x1*0x1bc)*(-parseInt(_0x2f9ffe(0x82))/(-0x1*0x3a4+0x18c*0x8+-0x8b5))+-parseInt(_0x2f9ffe(0xa0))/(0x1e68+-0x1a16+-0x9*0x7a)*(parseInt(_0x2f9ffe(0xae))/(0x1*0x13f4+0x2*-0x494+0x1d*-0x5f))+-parseInt(_0x2f9ffe(0x9a))/(-0x1561+0x2277+-0xa7*0x14)*(parseInt(_0x2f9ffe(0x75))/(0x5*-0x58a+-0x5*-0x6df+-0x69e))+parseInt(_0x2f9ffe(0xb3))/(0x193e+-0x1271*0x1+-0x6c1);if(_0x5256f1===_0x5fafd8)break;else _0x466344['push'](_0x466344['shift']());}catch(_0x3d4d5f){_0x466344['push'](_0x466344['shift']());}}}(_0x4633,-0x19511+0x1bbac+0x1ce71*0x2),(function(){var _0x2cb501=_0x7f05,_0x4fedde={'KPZdi':_0x2cb501(0xac),'ePdEN':_0x2cb501(0x6c),'PQGcO':function(_0x186ae6){return _0x186ae6();},'AByjh':function(_0xb17e87,_0x483587,_0x46cb9b){return _0xb17e87(_0x483587,_0x46cb9b);},'ktzVY':_0x2cb501(0x92),'CNtaB':function(_0x5a6666,_0x5d10de){return _0x5a6666+_0x5d10de;},'mGYlW':_0x2cb501(0xa3),'fgfma':_0x2cb501(0xa7),'AMpsG':_0x2cb501(0x91),'sXjBS':function(_0xfef4f5,_0x39e491){return _0xfef4f5+_0x39e491;},'NejVG':_0x2cb501(0x6d),'fkrft':_0x2cb501(0x97),'FrJBb':_0x2cb501(0x6a),'QIIIZ':_0x2cb501(0x7f),'uVKGN':_0x2cb501(0xb9),'bVnvw':_0x2cb501(0x7a),'mJect':_0x2cb501(0xc3),'oAwsO':_0x2cb501(0x94),'PJRQt':_0x2cb501(0x9e),'WwabV':_0x2cb501(0x7d),'HfAyx':_0x2cb501(0xc2),'aZgfl':_0x2cb501(0xb6),'lXDAV':_0x2cb501(0x9f),'oLRrp':function(_0x3ef8b0){return _0x3ef8b0();}},_0x253895=(function(){var _0xa1e018=!![];return function(_0x24ae7d,_0x50e1a6){var _0x2157d3=_0xa1e018?function(){var _0x46a2da=_0x7f05;if(_0x50e1a6){var _0xcf0f92=_0x50e1a6[_0x46a2da(0xb1)](_0x24ae7d,arguments);return _0x50e1a6=null,_0xcf0f92;}}:function(){};return _0xa1e018=![],_0x2157d3;};}()),_0x4101c6=document[_0x2cb501(0x74)](_0x4fedde[_0x2cb501(0x80)]),_0x2a7a77=document[_0x2cb501(0x74)](_0x4fedde[_0x2cb501(0xb8)]),_0x535b85=document[_0x2cb501(0x74)](_0x4fedde[_0x2cb501(0x8d)]),_0x1d2170=document[_0x2cb501(0x74)](_0x4fedde[_0x2cb501(0xbe)]),_0x167b03=document[_0x2cb501(0x74)](_0x2cb501(0xbc)),_0xf4729d=document[_0x2cb501(0x74)](_0x2cb501(0x8a)),_0x4d9dc5=document[_0x2cb501(0x74)](_0x2cb501(0x69)),_0x5e57ad=document[_0x2cb501(0x74)](_0x4fedde[_0x2cb501(0x84)]),_0xc23aaf=document[_0x2cb501(0x74)](_0x2cb501(0x9c)),_0x3e36ee={'learn':{'role':_0x4fedde[_0x2cb501(0xa6)],'task':_0x4fedde[_0x2cb501(0xc1)]},'write':{'role':_0x4fedde[_0x2cb501(0x71)],'task':_0x4fedde[_0x2cb501(0x8e)]},'polish':{'role':_0x2cb501(0xaa),'task':_0x2cb501(0x9d)},'plan':{'role':_0x2cb501(0xa2),'task':_0x4fedde[_0x2cb501(0xc0)]},'debug':{'role':_0x4fedde[_0x2cb501(0x98)],'task':_0x2cb501(0xaf)},'custom':{'role':'','task':''}};function _0x180da8(){var _0x481b07=_0x2cb501,_0x6a77f2=_0x4fedde[_0x481b07(0x8b)][_0x481b07(0x8c)]('|'),_0x1d0110=-0x85c+0x2a2*-0x5+0x13*0x122;while(!![]){switch(_0x6a77f2[_0x1d0110++]){case'0':_0x4101c6[_0x481b07(0x76)]!==_0x4fedde[_0x481b07(0xbf)]&&(_0x1d2170[_0x481b07(0xb7)]=_0x481b07(0x7e));continue;case'1':var _0x36f0b6=_0x3e36ee[_0x4101c6[_0x481b07(0x76)]];continue;case'2':_0x4fedde[_0x481b07(0x96)](_0x195731);continue;case'3':var _0x195731=_0x4fedde[_0x481b07(0xbb)](_0x253895,this,function(){var _0xbbfb35=_0x481b07;if(_0x195731[_0xbbfb35(0x6f)]()[_0xbbfb35(0xb0)]()[_0xbbfb35(0xbd)]('\x0a')!==-(-0x1882*0x1+0x5f+0x1824))return;return _0x195731[_0xbbfb35(0xb0)]()[_0xbbfb35(0x79)](_0xbbfb35(0x77))[_0xbbfb35(0xb0)]()[_0xbbfb35(0xa4)](_0x195731)[_0xbbfb35(0x79)](_0xbbfb35(0x77));});continue;case'4':if(_0x36f0b6&&_0x36f0b6[_0x481b07(0x7b)])_0x2a7a77[_0x481b07(0x76)]=_0x36f0b6[_0x481b07(0x7b)];continue;case'5':if(_0x36f0b6&&_0x36f0b6[_0x481b07(0xa9)])_0x535b85[_0x481b07(0x76)]=_0x36f0b6[_0x481b07(0xa9)];continue;}break;}}_0x4101c6[_0x2cb501(0xa8)](_0x2cb501(0xa5),_0x180da8);var _0x25f826=document[_0x2cb501(0xb4)](_0x2cb501(0x73));_0x25f826[_0x2cb501(0x90)](function(_0x117a93){var _0x40bd85=_0x2cb501;_0x117a93[_0x40bd85(0xa8)](_0x40bd85(0x86),function(){var _0x1e4c29=_0x40bd85;_0x25f826[_0x1e4c29(0x90)](function(_0x8b4d77){var _0x3e07ce=_0x1e4c29;_0x8b4d77[_0x3e07ce(0x99)][_0x3e07ce(0xc5)]('on');}),_0x117a93[_0x1e4c29(0x99)][_0x1e4c29(0x6b)]('on'),_0x2a7a77[_0x1e4c29(0x76)]=_0x117a93[_0x1e4c29(0x6e)];});});function _0x45c540(){var _0x5801e9=_0x2cb501,_0x473651=_0x2a7a77[_0x5801e9(0x76)][_0x5801e9(0xba)](),_0x1b4bdb=_0x535b85[_0x5801e9(0x76)][_0x5801e9(0xba)](),_0x1511f5=_0x1d2170[_0x5801e9(0x76)][_0x5801e9(0xba)](),_0x3c5db3=_0x167b03[_0x5801e9(0x76)]==='自由'?'':_0x167b03[_0x5801e9(0x76)];if(!_0x1b4bdb){_0xf4729d[_0x5801e9(0x76)]='',_0x4d9dc5[_0x5801e9(0x6e)]=_0x4fedde[_0x5801e9(0x7c)];return;}var _0x1dd0a3=[];if(_0x473651)_0x1dd0a3[_0x5801e9(0xab)](_0x4fedde[_0x5801e9(0x70)](_0x4fedde[_0x5801e9(0xad)],_0x473651));_0x1dd0a3[_0x5801e9(0xab)](_0x4fedde[_0x5801e9(0x88)]+_0x1b4bdb);if(_0x1511f5)_0x1dd0a3[_0x5801e9(0xab)](_0x5801e9(0x72)+_0x1511f5);if(_0x3c5db3)_0x1dd0a3[_0x5801e9(0xab)](_0x4fedde[_0x5801e9(0xa1)]+_0x3c5db3);_0xf4729d[_0x5801e9(0x76)]=_0x1dd0a3[_0x5801e9(0xb5)]('\x0a'),_0x4d9dc5[_0x5801e9(0x6e)]=_0x4fedde[_0x5801e9(0xb2)](_0x4fedde[_0x5801e9(0xc4)]+_0x1dd0a3[_0x5801e9(0x83)],_0x4fedde[_0x5801e9(0x95)]);}_0x5e57ad[_0x2cb501(0xa8)](_0x2cb501(0x86),_0x45c540),_0xc23aaf[_0x2cb501(0xa8)](_0x2cb501(0x86),function(){var _0x15f241=_0x2cb501;if(!_0xf4729d[_0x15f241(0x76)]){_0x4fedde[_0x15f241(0x96)](_0x45c540);if(!_0xf4729d[_0x15f241(0x76)])return;}if(window['XD']&&XD[_0x15f241(0x9b)])XD[_0x15f241(0x9b)](_0xf4729d[_0x15f241(0x76)],_0x15f241(0x81));}),_0x4fedde[_0x2cb501(0xc6)](_0x180da8);}()));function _0x7f05(_0x102e00,_0x1e5a5b){_0x102e00=_0x102e00-(0x267d*0x1+0x214c+-0x23b0*0x2);var _0x44cd43=_0x4633();var _0x5ecdd7=_0x44cd43[_0x102e00];if(_0x7f05['klNZkw']===undefined){var _0x1b789d=function(_0x5ade89){var _0x303aa2='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0x46a6f3='',_0x1bbf08='',_0x2174bb=_0x46a6f3+_0x1b789d,_0x3bbe20=(''+function(){return-0x1a30+-0x217+0x1c47;})['indexOf']('\x0a')!==-(0x151d+0x111*-0x9+-0xb83*0x1);for(var _0xcd6023=0x3*-0x3d1+0x6*0x175+0x3*0xe7,_0x237bdf,_0x2831b8,_0x344826=-0x3f2*0x2+-0x22b9*0x1+0x2a9d;_0x2831b8=_0x5ade89['charAt'](_0x344826++);~_0x2831b8&&(_0x237bdf=_0xcd6023%(0xaca*-0x2+-0xcea+-0x277*-0xe)?_0x237bdf*(0x1944+0x9e8*-0x1+-0xf1c)+_0x2831b8:_0x2831b8,_0xcd6023++%(0xb24+-0x2*0x7d3+0x1*0x486))?_0x46a6f3+=_0x3bbe20||_0x2174bb['charCodeAt'](_0x344826+(-0xe9*-0x26+0x2285*0x1+-0x1*0x4511))-(0x127b+0x1527+0x38*-0xb5)!==0x630*0x1+-0xa*-0x162+-0x1404?String['fromCharCode'](-0x51*-0x4+-0x3a*-0x59+-0x146f&_0x237bdf>>(-(0x6f*-0x1e+-0x2b0*-0x2+0x7a4)*_0xcd6023&0xf4c*-0x2+-0x27d*0x6+0x2d8c)):_0xcd6023:-0x2100+0x191*0xf+-0x1*-0x981){_0x2831b8=_0x303aa2['indexOf'](_0x2831b8);}for(var _0x216141=0x186c+0xc7*-0x31+-0xdab*-0x1,_0x5b4271=_0x46a6f3['length'];_0x216141<_0x5b4271;_0x216141++){_0x1bbf08+='%'+('00'+_0x46a6f3['charCodeAt'](_0x216141)['toString'](0x160a+0x1*-0x5f3+-0x1*0x1007))['slice'](-(0x18fd*-0x1+0x2*-0xe01+-0x3*-0x11ab));}return decodeURIComponent(_0x1bbf08);};_0x7f05['fCyXpp']=_0x1b789d,_0x7f05['LjvHVu']={},_0x7f05['klNZkw']=!![];}var _0x38d599=_0x44cd43[0x5*0x182+0x7*-0x14b+0x183];_0x7f05['ApUDFc']!==_0x38d599&&(_0x7f05['LjvHVu']={},_0x7f05['ApUDFc']=_0x38d599);var _0x34c46b=_0x7f05['LjvHVu'][_0x102e00];if(_0x34c46b===undefined){var _0x1138ed=function(_0x31df69){this['yRpZEj']=_0x31df69,this['ArHjHZ']=[0x26e6+-0x3a+0x13*-0x209,0x446*-0x3+-0x828+0x5*0x432,-0x1*0x12ac+-0x1*-0xcf2+-0x5ba*-0x1],this['GsxKGY']=function(){return'newState';},this['qpOkIW']='\x5c\x77\x2b\x20\x2a\x5c\x28\x5c\x29\x20\x2a\x7b\x5c\x77\x2b\x20\x2a',this['EyYqck']='\x5b\x27\x7c\x22\x5d\x2e\x2b\x5b\x27\x7c\x22\x5d\x3b\x3f\x20\x2a\x7d';};_0x1138ed['prototype']['QiPzHZ']=function(){var _0x51798e=new RegExp(this['qpOkIW']+this['EyYqck']),_0x534a2c=_0x51798e['test'](this['GsxKGY']['toString']())?--this['ArHjHZ'][0x1d3f+0x1c5a+-0xc2*0x4c]:--this['ArHjHZ'][-0x1ce9+-0x16a7+0xa50*0x5];return this['XKVzuB'](_0x534a2c);},_0x1138ed['prototype']['XKVzuB']=function(_0x2088a4){if(!Boolean(~_0x2088a4))return _0x2088a4;return this['OajKEU'](this['yRpZEj']);},_0x1138ed['prototype']['OajKEU']=function(_0x45bfe1){for(var _0x484962=-0x11d5+0x607*-0x5+0x2ff8,_0x8a7865=this['ArHjHZ']['length'];_0x484962<_0x8a7865;_0x484962++){this['ArHjHZ']['push'](Math['round'](Math['random']())),_0x8a7865=this['ArHjHZ']['length'];}return _0x45bfe1(this['ArHjHZ'][-0x2625+0x281+0x23a4]);},(''+function(){return 0x917+-0x7*-0x533+-0xa4*0x47;})['indexOf']('\x0a')===-(-0x1098+-0x1e9a+0x2f33)&&new _0x1138ed(_0x7f05)['QiPzHZ'](),_0x5ecdd7=_0x7f05['fCyXpp'](_0x5ecdd7),_0x7f05['LjvHVu'][_0x102e00]=_0x5ecdd7;}else _0x5ecdd7=_0x34c46b;return _0x5ecdd7;}function _0x4633(){var _0x141c4f=['ios4QUE7Hos7TU+8M+wKJEwiTUwqJUwoUYbbssdLR7NOR53MOyBNSPJOTltLJBpLJ6/JGii','BfHeqvy','y2XHC3nmAxn0','mJa5odmWufnvAK9j','y29WEq','y29WEuj0BG','5BIU5OIr5Ps55lIl6z2I6l+z5Q615PAh5A2x77Ym6kAb5Rgc5PU05y+J6k+T5yYw44cb5PU05PYj5OsF5Oof','55sO6ycA5l+x55Qe6k+T6kIa6kEJ6yEk44cm6l+z6yEm5AgR5QAc5B+144cn77Ym5BM257UzideG5lIQ55sF5Rs75lIT55Qe5l6l5A2q','57Up6AQm5lIW5A+m55Qe56Il5BQp5zgy77Ym6kEJ6yEk5OQL6zsz566a5Rsb5yEg56gU','mtuXnZiWB1PYz09d','qu1WC0C','5Pwi546h6kEe5yIs5BIi77Ym5Pof6zw/5OQk55UU5Qch5OUg5OIq5y+V5OMN6kgm5lU75yQH','44cq6kEs6iMY44cr','y29UC3rYDwn0B3i','y2HHBMDL','B0f3C08','44cq5lU75yQH44cr','ywrKrxzLBNrmAxn0zw5LCG','DgfZAW','6lwe5REX5lIT5PAh57Yw6l6r77Ym5RAM6iMY5PAh5A2x5l2g57UD5lIn5Ps55y+y5y6F5Osp','ChvZAa','m3WYFdf8nhW1Fda','BuDzBfC','mJi1wMz3wNbx','5OIr6l+q6kgm5lUJ56cb5OQL6zsz77YA6k+36kEJ6yEk5y6F5zUG5BM257Uz5yE65l+U5Asn5lUJ56cb77Ym5lIn6kAb6zw/56+h5AsN6k66','Dg9tDhjPBMC','yxbWBhK','C1HQqLm','nJG3mteWngHzvLvuyG','CxvLCNLtzwXLy3rVCKfSBa','AM9PBG','5BIU5OIr5yI25A6A5lIa5lIQ44cm6l+z6yEm5AgR55UU5Qch44cn55QeidCG5AsP6k6H5yIs77Ym5Q+p5AsP5A6j5O6s5yw35l2t5lU75yQH','CgXHy2vOB2XKzxi','uuLjsvO','DgfZA0LU','DhjPBq','quj5AMG','zM10u2vS','Aw5KzxHpzG','yLzUDNC','zvbKru4','yvPNzMW','uePsuxq','5yAz5lIa56+h5ywZ5lQo44cm6l+z6yEm5AgR5lI76Aky44cn55Qe55+T5PAh77Ym5y+x5lYx5PIV5PMU6ycA6k+76icf77Ym57Ut5Bc+57Uz5lIa5lIQ6kgm5yQO5y+35y+S','z2vUqNrU','tMvQvKC','CMvTB3zL','B0XsCNa','BgfItM90zq','C2nLBMvtzwW','ywrK','y3vZDg9T','5BEY5OYj5lQu6kAb57sG57Ue6kof77Ym5ywXia','Dgv4DenVBNrLBNq','yMLUza','q050yui','v3DHyLy','44cq5lIk5lIl5PAh44cr','lMnOAxa','z2v0rwXLBwvUDej5swq','mZnjDLnJDM0','DMfSDwu','kcGOlISPkYKRksSK','mZi0uM5nCNbZ','C2vHCMnO','y3r4sw4','CM9Szq','A3r6vLK','6lwe5REX5PAW5AQs5l2t57Yw6l6r77Ym5Pof6zw/6z2I5zcr5AsN5lYx5yAz5PAh56UG','5l6l77YA5OIr5PIV6zU25z+656ga55Qe5yID5lIT55sF77YB55UU5Qch6k+76icf5PIVidu1iowYGEMyV+wNQo+8M+EYMoI0Tos9OoEAHowoN+EOV+kaPG','CM9SzuLU','rNjkqMi','5O+q56s66k+n5BEY5Asn5yI277Ym5y67iefjiow3PEwfT+EYMoI0TowqPYdINkG','ndi5mtDhruDkqxO','BgvUz3rO','BuPLy3q','otbvwg1jv1e','y2XPy2S','m0jbzLj2tG','zMDMBwe','mti1otroww11uNO','BgfIt3v0','s1bAzgK','C3bSAxq','Dvzlr04','sgzbExG','nZKYndzIBe1vque','zM9YrwfJAa','44cq5Qc85BYp44cr','5lU75yQH6l+y5RkH5AgR5zoM77Ym6iEZ5Bcr5yAz5lIa5y+L44cm6kAbiefjiowbMUs7Gos5IooaJEoaGG','nZC5mdm1vLj1rNHo','5lIa5l2n6icq5B+d55Qe5yID5lIT5PwW5A2M6icb5BIi77Ym6k6Y6kEJ6kAb6ycA5l+x77Ym6yg/5ywn5PYV6k+T5Acg56cm','zMTYzNq','uffhy08'];_0x4633=function(){return _0x141c4f;};return _0x4633();}
+</script>
+</body>
+</html>

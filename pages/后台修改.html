@@ -1,0 +1,724 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子—后台修改办法</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            overflow-x: hidden;
+        }
+
+        /* ===== 背景流光（20秒无缝循环） ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -150%;
+            left: -100%;
+            width: 350%;
+            height: 350%;
+            background: var(--flow-grad);
+            background-size: 400% 400%;
+            animation: flowGrad 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -80%;
+            left: -60%;
+            width: 260%;
+            height: 260%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%);
+            animation: flowSpin 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGrad {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        @keyframes flowDrift {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            50% {
+                transform: translate(5%, -3%) scale(1.08) rotate(6deg);
+            }
+            100% {
+                transform: translate(-2%, 4%) scale(.94) rotate(-6deg);
+            }
+        }
+        @keyframes flowSpin {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.06);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        /* ===== 悬浮球 ===== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--card-2) 60%, transparent), color-mix(in srgb, var(--card-2) 15%, transparent) 45%, transparent 75%);
+            box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 10%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 {
+            width: 260px;
+            height: 260px;
+            top: 10%;
+            left: 5%;
+            animation: orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite;
+        }
+        .orb-2 {
+            width: 160px;
+            height: 160px;
+            top: 55%;
+            left: 78%;
+            animation: orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite;
+        }
+        .orb-3 {
+            width: 110px;
+            height: 110px;
+            top: 70%;
+            left: 18%;
+            animation: orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite;
+        }
+        .orb-4 {
+            width: 200px;
+            height: 200px;
+            top: 28%;
+            left: 62%;
+            animation: orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite;
+        }
+        .orb-5 {
+            width: 80px;
+            height: 80px;
+            top: 82%;
+            left: 45%;
+            animation: orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite;
+        }
+        @keyframes orbFloat1 {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: .5;
+            }
+            30% {
+                transform: translate(20px, -25px);
+                opacity: .8;
+            }
+            60% {
+                transform: translate(-12px, 15px);
+                opacity: .4;
+            }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: .6;
+            }
+            50% {
+                transform: translate(-18px, 14px);
+                opacity: .3;
+            }
+        }
+        @keyframes orbRotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== 主体容器 ===== */
+        main {
+            padding-top: 20px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px var(--line);
+            padding: 24px;
+            backdrop-filter: blur(4px);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* ===== 网格布局 ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 14px;
+            padding: 8px;
+        }
+
+        /* 通用格子样式 */
+        .cell {
+            border-radius: 14px;
+            background: color-mix(in srgb, var(--glow) 5%, transparent);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            transition: transform .3s, box-shadow .3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+        }
+        .cell:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
+        }
+        /* 内容区是承载容器不是卡片：禁用整体上浮，避免 3 张方法卡联动（各自独立触发） */
+        .cell.content-area:hover {
+            transform: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+        }
+
+        /* 标题区 */
+        .title-area {
+            grid-row: 1 / 3;
+            grid-column: 1 / 5;
+            background: var(--gold-3-grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+        }
+        .title-area h1 {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--btn-txt);
+            text-shadow: 0 4px 10px rgba(0, 0, 0, .4);
+            letter-spacing: 4px;
+        }
+
+        /* 返回主页 */
+        .back-area {
+            grid-row: 1 / 3;
+            grid-column: 5 / 7;
+            background: var(--back-grad);
+            text-decoration: none;
+            color: var(--btn-txt);
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform .3s, box-shadow .3s;
+        }
+        .back-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px color-mix(in srgb, var(--green) 40%, transparent);
+        }
+
+        /* 内容区 */
+        .content-area {
+            grid-row: 3 / 9;
+            grid-column: 1 / 7;
+            background: color-mix(in srgb, var(--card-2) 55%, transparent);
+            border-radius: 14px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+        .content-section {
+            background: var(--card-2);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+            display: flex;
+            flex-direction: column;
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+        /* 方法卡独立悬浮反馈：移到哪张哪张上浮（主题强调色柔光） */
+        .content-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 32px rgba(0, 0, 0, .14),
+                0 0 24px color-mix(in srgb, var(--glow) 14%, transparent);
+        }
+        .content-section h2 {
+            font-size: 20px;
+            color: var(--txt);
+            margin-bottom: 12px;
+            border-bottom: 2px solid var(--line);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .content-section p {
+            color: var(--dim);
+            line-height: 1.7;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .code-block {
+            position: relative;
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0 0;
+            overflow-x: auto;
+            flex: 1;
+        }
+        .code-block pre {
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        /* 【修复】复制按钮尺寸提升至44x44，确保触屏可点 */
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            border: none;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background .2s;
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .copy-btn:hover {
+            background: #764ba2;
+        }
+
+        /* 图标网格 */
+        .icon-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .icon-card {
+            width: 56px;
+            height: 56px;
+            background: #f0f2f5;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: background .3s, transform .2s;
+            user-select: none;
+            border: 1px solid #ddd;
+        }
+        .icon-card:hover {
+            background: #e0e4e8;
+            transform: scale(1.1);
+        }
+        .icon-card:active {
+            transform: scale(.95);
+        }
+
+        /* ===== 响应式：窄屏时方法改为单列 ===== */
+        @media (max-width: 900px) {
+            .methods-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== 跳转覆盖层（沿用指定样式） ===== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* 转圈动画 */
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg,
+                    #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes textShine {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(0,0,0,.1) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+</style>
+
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<script data-no-obf>try{var _zt=localStorage.getItem("zl_theme");var _zok=["dark","blue","gold","light","milk","guofeng","snowsun","cyber","aurora","custom"];if(_zt&&_zok.indexOf(_zt)>=0){document.documentElement.setAttribute("data-theme",_zt);}}catch(e){}</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子—后台修改办法｜趣味工具与小游戏合集">
+<meta property="og:title" content="找乐子—后台修改办法">
+<meta property="og:description" content="找乐子—后台修改办法｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/后台修改.html">
+
+<link rel="stylesheet" href="../assets/css/common.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/theme.js"></script>
+<script defer src="../assets/js/zl-features.js"></script>
+</head>
+<body>
+
+    <!-- 背景 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <main>
+        <div class="container">
+            <div class="grid">
+                <!-- 标题区域 -->
+                <div class="cell title-area">
+                    <h1>找乐子—后台修改办法</h1>
+                </div>
+                <!-- 返回主页 -->
+                <a href="../index.html" class="cell back-area" id="backHome" aria-label="返回主页">返回<br>主页</a>
+
+                <!-- 内容区 -->
+                <div class="cell content-area">
+                    <!-- 三个方法并排对齐 -->
+                    <div class="methods-grid">
+                        <!-- 方法一 -->
+                        <div class="content-section">
+                            <h2>🧩 方法一：手动修改代码</h2>
+                            <p>打开 <code>index.html</code>，找到 <code>const toolsConfig = [];</code>，在方括号内添加对象。每个对象格式如下：</p>
+                            <div class="code-block" id="code-block-1">
+                                <button class="copy-btn" data-target="code-block-1" aria-label="复制代码">复制</button>
+                                <pre><code>toolsConfig.push({
+    title: '我的工具',
+    desc: '工具简介',
+    link: 'my-tool.html',
+    icon: '🎯'
+});
+toolsConfig.push({
+    title: '另一个工具',
+    desc: '工具简介2',
+    link: 'other-tool.html',
+    icon: '📝'
+});</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- 方法二 -->
+                        <div class="content-section">
+                            <h2>⌨️ 方法二：控制台添加</h2>
+                            <p>按F12打开控制台，执行以下命令，即可立即添加工具并刷新界面：</p>
+                            <div class="code-block" id="code-block-2">
+                                <button class="copy-btn" data-target="code-block-2" aria-label="复制代码">复制</button>
+                                <pre><code>toolsConfig.push({
+    title: '控制台添加',
+    desc: '通过控制台直接添加',
+    link: 'console.html',
+    icon: '✨'
+});
+renderTools();</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- 方法三 -->
+                        <div class="content-section">
+                            <h2>🎛️ 方法三：管理面板添加</h2>
+                            <p>页面右侧有“添加工具”面板，填写名称、简介、链接后点击“添加”按钮即可。</p>
+                            <div style="flex:1;display:flex;align-items:center;justify-content:center;margin-top:12px;padding:20px;background:color-mix(in srgb, var(--card) 80%, transparent);border-radius:12px;border:1px dashed var(--line);">
+                                <span style="font-size:48px;" role="img" aria-label="工具图标">🛠️</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 图标列表（700个emoji） -->
+                    <div class="content-section" style="margin-top:20px;">
+                        <h2>🎨 常用图标列表（点击复制）</h2>
+                        <div class="icon-grid" id="icon-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 跳转覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+/*ZL-OBF-V2*/
+const _0x7aba09=_0x4548;(function(_0x5895c4,_0x115f46){const _0x25de9e=_0x4548,_0x34d1ed=_0x5895c4();while(!![]){try{const _0x51209e=-parseInt(_0x25de9e(0x176))/(-0x7a+-0x1*0x95f+-0x61*-0x1a)*(parseInt(_0x25de9e(0x205))/(0x95f+-0x9e1+0x84))+parseInt(_0x25de9e(0x1a9))/(-0x108b+-0x12d4*0x1+0x2*0x11b1)*(parseInt(_0x25de9e(0x18a))/(-0x1905*-0x1+-0x803*-0x2+0xdad*-0x3))+parseInt(_0x25de9e(0x20b))/(-0x1a2c+0x17+0x1a1a)*(parseInt(_0x25de9e(0x1e5))/(0x1d*0x10d+-0xfbb+-0xeb8))+-parseInt(_0x25de9e(0x1ea))/(-0x84f*-0x3+0x12a9+-0x2b8f)*(-parseInt(_0x25de9e(0x1c6))/(-0x4*0x856+0x1*-0x2513+0x4673))+parseInt(_0x25de9e(0x208))/(-0x4f6+0x19*0x2f+-0x4*-0x1a)+-parseInt(_0x25de9e(0x173))/(0x5*-0x6b6+-0xd99*0x1+0xfbb*0x3)*(parseInt(_0x25de9e(0x1bf))/(0x6b*0x18+0x1*-0x837+-0x1c6))+-parseInt(_0x25de9e(0x17c))/(-0x141c+-0x1509+0x2931)*(parseInt(_0x25de9e(0x186))/(-0x207c+-0x2657+-0xbd0*-0x6));if(_0x51209e===_0x115f46)break;else _0x34d1ed['push'](_0x34d1ed['shift']());}catch(_0x1ae412){_0x34d1ed['push'](_0x34d1ed['shift']());}}}(_0x1227,-0x2f31+0x7d72f*-0x1+-0xd4569*-0x1));const icons=['🔊','📱','✨','📝','🔗','🎯','🧮','📷',_0x7aba09(0x20d),'🔒','🔑','📊','⚙️',_0x7aba09(0x211),'📁','🌐','💾','⏱️','🎨','🧪','💡','🔥','⭐','✅','❌','⚠️','🔄','📌','📎','📋',_0x7aba09(0x183),'📅','📆','⏰','⌛','🕐','🕑','🕒','🕓','🕔','🕕','🕖','🕗','🕘','🕙','🕚','🕛','🌙','☀️',_0x7aba09(0x1c8),'⚡','🌈','❄️','☃️','🌀',_0x7aba09(0x1ee),'🌊','💧','🍎','🍊','🍋','🍉','🍇','🍓','🍒','🍑','🥭','🍍','🥥','🍞','🧀','🍗','🍔','🍟','🍕','🌭','🥪','🌮','🌯','🍜','🍣','🍤','🍱','🍦','🍰','🎂','🍫','🍬','🍭','🍮','🍩','🍪','🌰','🥜','🍯','🥛','🍼','☕','🍵','🧃','🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🙈','🙉','🙊','🐒','🐔','🐧','🐦','🐤','🐣','🐥','🦆','🦅','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🦗',_0x7aba09(0x1e6),_0x7aba09(0x197),'🐢','🐍','🦎','🦖','🦕','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🐊','🐅','🐆','🦓','🦍','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🐈','🐓','🦃',_0x7aba09(0x181),'🐇','🦝','🦨','🦡','🦫','🦦','🦥','🐁','🐀',_0x7aba09(0x177),'🦔','🐾','🐉','🐲','🌵','🎄','🌲','🌳','🌴','🌱','🌿','☘️','🍀','🎍','🎋','🍃','🍂','🍁','🍄','🌾','💐','🌷','🍈','🍉','🍊','🍋','🍌','🍍','🥭','🍎','🍏','🍐','🍑','🍒','🍓','🫐','🥝','🍅','🥥','🥑','🍆','🥔','🥕','🌽',_0x7aba09(0x179),'🫑','🥒','🥬','🥦','🍄','🥜','🌰','🍞','🥐','🥖','🥨','🥞','🧇','🧀','🍖','🍗','🥩','🥓','🍔','🍟','🍕','🌭','🥪','🌮','🌯','🫔','🥙','🧆','🥚','🍳','🥘','🍲','🫕','🥣','🥗','🍿','🧈','🧂','🥫','🍱','🍘','🍙','🍚','🍛','🍜','🍝','🍠','🍢','🍣','🍤','🍥','🥮','🍡','🥟','🥠','🥡','🦀','🦞','🦐','🦑','🦪','🍦','🍧','🍨','🍩','🍪','🎂','🍰','🧁','🥧','🍫','🍬','🍭','🍮','🍯','🥛','🍼','☕','🍵','🧃','🥤','🍶','🍺','🍻','🥂','🍷','🥃','🍸','🍹','🧉','🍾','🧊','🥄','🍴',_0x7aba09(0x1fd),'🥣','🧋','🚗','🚕','🚙','🚌','🚎',_0x7aba09(0x1e9),'🚓','🚑','🚒','🚐','🛻','🚚','🚛','🚜','🦯','🦽','🦼','🛴','🚲','🛵',_0x7aba09(0x19e),'🛺','🚨','🚔','🚍','🚘','🚖','🚡','🚠','🚟','🚃','🚋','🚞','🚝','🚄','🚅','🚈','🚂','🚆','🚇','🚊','🚉','✈️','🛫','🛬',_0x7aba09(0x1bc),'💺',_0x7aba09(0x192),'🚀','🛸','🚁','🛶','⛵','🚤',_0x7aba09(0x1e0),_0x7aba09(0x196),'⛴️','🚢','⚓','🛟','🚧','🚦','🚥','🚸','🚏',_0x7aba09(0x170),'🗿','🗽','🗼','🏰','🏯',_0x7aba09(0x1c4),'🎡','🎢','🎠','⛲','⛱️',_0x7aba09(0x1e8),_0x7aba09(0x1af),_0x7aba09(0x1d3),'🌋','⛰️',_0x7aba09(0x1f7),'🗻',_0x7aba09(0x1b5),'⛺','🏠','🏡',_0x7aba09(0x19b),_0x7aba09(0x19c),_0x7aba09(0x1d4),'🏭','🏢','🏬','🏣','🏤','🏥','🏦','🏨','🏪','🏫','🏩','💒',_0x7aba09(0x20a),'⛪','🕌','🕍','🛕','🕋','⛩️',_0x7aba09(0x218),_0x7aba09(0x171),'🗾','🎑',_0x7aba09(0x17f),'🌅','🌄','🌠','🎇','🎆','🌇','🌆',_0x7aba09(0x1de),'🌃','🌌','🌉','🌁','⌚','📱','📲','💻','⌨️',_0x7aba09(0x1df),_0x7aba09(0x1ed),_0x7aba09(0x1f1),_0x7aba09(0x19a),_0x7aba09(0x18c),_0x7aba09(0x1fc),'💽','💾','💿','📀','📼','📷','📸','📹','🎥',_0x7aba09(0x200),_0x7aba09(0x199),'📞','☎️','📟','📠','📺','📻',_0x7aba09(0x1b4),_0x7aba09(0x1ca),_0x7aba09(0x16b),'🧭','⏱️','⏲️','⏰',_0x7aba09(0x172),'⌛','⏳','📡','🔋','🪫','🔌','💡','🔦',_0x7aba09(0x1a7),'🧯',_0x7aba09(0x1fb),'💸','💵','💴','💶','💷','🪙','💰','💳','💎','⚖️','🪜','🧰','🪛','🔧','🔨','⚒️',_0x7aba09(0x211),'⛏️','🪚','🔩','⚙️','🪤','🧱','⛓️','🧲','🔫','💣','🧨','🪓','🔪',_0x7aba09(0x219),'⚔️',_0x7aba09(0x187),'🚬','⚰️','🪦','⚱️','🏺','🔮','📿','🧿','💈','⚗️','🔭','🔬',_0x7aba09(0x204),'🩹','🩺','💊','💉','🩸','🧬','🦠','🧫','🧪',_0x7aba09(0x1a4),'🧹','🪠','🧺','🧻','🚽','🚰','🚿','🛁','🛀','🧼','🪥','🪒','🧽','🪣','🧴',_0x7aba09(0x1c1),'🔑',_0x7aba09(0x1a3),'🚪','🪑',_0x7aba09(0x193),_0x7aba09(0x1bd),'🛌','🧸','🪆',_0x7aba09(0x20d),'🪞','🪟',_0x7aba09(0x1f3),'🛒','🎁','🎈','🎏','🎀','🪄','🪅','🎊','🎉','🎎','🏮','🎐','🧧','✉️','📩','📨','📧','💌','📥','📤','📦',_0x7aba09(0x180),'🪧','📪','📫','📬','📭','📮','📯','📜','📃','📄','📑','🧾','📊','📈','📉',_0x7aba09(0x1eb),_0x7aba09(0x1f2),'📆','📅','📇',_0x7aba09(0x1f5),_0x7aba09(0x1d8),_0x7aba09(0x1dc),'📋','📁','📂',_0x7aba09(0x183),_0x7aba09(0x194),'📰','📓','📔','📒','📕','📗','📘','📙','📚','📖','🔖','🧷','🔗','📎',_0x7aba09(0x168),'📐','📏','🧮','📌','📍','✂️',_0x7aba09(0x1b9),_0x7aba09(0x1a0),'✒️',_0x7aba09(0x1a6),_0x7aba09(0x21a),'📝','✏️','🔍','🔎','🔏','🔐','🔒','🔓','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','☮️','✝️','☪️',_0x7aba09(0x198),'☸️','✡️','🔯','🕎','☯️','☦️','🛐','⛎','♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓','🆔','⚛️','🉑','☢️','☣️','📴','📳','🈶','🈚','🈸','🈺',_0x7aba09(0x16f),'✴️','🆚','💮','🉐','㊙️','㊗️','🈴','🈵','🈹','🈲',_0x7aba09(0x207),_0x7aba09(0x213),'🆎','🆑',_0x7aba09(0x17e),'🆘','❌','⭕','🛑','⛔','📛','🚫','💯','💢','♨️','🚷','🚯','🚳','🚱','🔞','📵','🚭','❗','❕','❓','❔','‼️','⁉️','🔅','🔆','〽️','⚠️','🚸','🔱','⚜️','🔰','♻️','✅','🈯','💹','❇️','✳️','❎','🌐','💠','Ⓜ️','🌀','💤','🏧','🚾','♿',_0x7aba09(0x1ce),'🛗','🈳',_0x7aba09(0x210),'🛂','🛃','🛄','🛅','🚹','🚺','🚼','⚧','🚻','🚮','🎦','📶','🈁','🔣','ℹ️','🔤','🔡','🔠','🆖','🆗','🆙','🆒','🆕','🆓',_0x7aba09(0x1ec),_0x7aba09(0x1b6),_0x7aba09(0x178),_0x7aba09(0x1fe),_0x7aba09(0x1c7),_0x7aba09(0x1c2),_0x7aba09(0x1ae),_0x7aba09(0x1ef),_0x7aba09(0x189),_0x7aba09(0x1e1),'🔟','🔢',_0x7aba09(0x1f8),_0x7aba09(0x1d1),'⏏️','▶️','⏸️','⏯️','⏹️','⏺️','⏭️','⏮️','⏩','⏪','⏫','⏬','◀️','🔼','🔽','➡️','⬅️','⬆️','⬇️','↗️','↘️','↙️','↖️','↕️','↔️','↪️','↩️','⤴️','⤵️','🔀','🔁','🔂','🔄','🔃','🎵','🎶','➕','➖','➗','✖️','🟰','♾️','💲','💱','™️','©️','®️',_0x7aba09(0x1d7),_0x7aba09(0x1e4),'💬','💭',_0x7aba09(0x16a),'♠️','♣️','♥️','♦️','🃏','🎴','🀄','🎼','🎸','🎹','🎺','🎻','🥁','🪕','🪗','🪘','🪈','🎷','🎧','🎤','🎫',_0x7aba09(0x1cf),'🎽','🎪','🫀','🫁','🫂','🫃','🧠','🫄','🫆','🫇','🫐','🧽','🫕','🫑','🫓','🫒','🫓','🫔','🫖','🫘','🫙','🫚','🫛','🫜','🫟','🫠','🫡','🫢','🫣','🫤','🫥','🫦','🫧','🫨','🫩','🫪','🫫','🫬','🫭','🫮','🫯','🫰','🫱','🫲','🫳','🫴','🫵','🫶','🫷','🫸','🫹','🫺','🫻','🫼','🫽','🫾','🫿','🪔','🪐','🪨','🪵','🪤','🪣','🪜','🪙','🪛','🪚','🪠','🪥','🪴','🪸','🪷','🪹','🪺','🪹','🪺','🪵','🫠','🫡','🫢','🫣','🫤','🫥','🫦','🫧','🫨','🫩','🫪','🫫','🫬','🫭','🫮','🫯','🫰','🫱','🫲','🫳','🪶','🪿','🪼','🪽','🪾','🪿','🪢','🪡','🪝','🪞','🪟','🪠','🪡','🪢','🪣','🪤','🪥','🪦','🪧','🪨','🪩','🪪','🪫','🪬','🪭','🪮','🪯','🪰','🪱','🪲','🪳','🪴','🪵','🪶','🪷','🪸','🪹','🪺','🪻','🪼','🪽','🪾','🪿','🪽','🪶','🪽','🫃','🫄','🫅','🫆','🫇','🫈','🫉','🫊','🫋','🫌','🫍','🫎','🫏','🫐','🫑','🫒','🫓','🪔','🫕','🫖','🫗','🫘','🫙','🫚','🫛','🫜','🫝','🫞','🫟','🫠','🫡','🫢','🫣','🫤','🫥','🫦','🫧','🫨','🫩','🫪','🫫','🫬','🫭','🫮','🫯','🫰','🫱','🫲','🫳','🫴','🫵','🫶','🫷','🫸','🫹','🫺','🫻','🫼','🫽','🫾','🫿','🫀'];function _dedupeInPlace(_0x1275ba){const _0x12d76b=_0x7aba09,_0x5a020b={'DqEUH':_0x12d76b(0x167),'XdpGK':function(_0x1940fb){return _0x1940fb();},'nkMon':function(_0xb3985f,_0x422176){return _0xb3985f<_0x422176;}},_0x5cf2f4=(function(){let _0x149cd0=!![];return function(_0xa091b9,_0x5d624c){const _0x4de125=_0x149cd0?function(){const _0x1455ab=_0x4548;if(_0x5d624c){const _0x190781=_0x5d624c[_0x1455ab(0x1d6)](_0xa091b9,arguments);return _0x5d624c=null,_0x190781;}}:function(){};return _0x149cd0=![],_0x4de125;};}()),_0x3b5b21=_0x5cf2f4(this,function(){const _0x426cfe=_0x12d76b;if(_0x3b5b21[_0x426cfe(0x1e3)]()[_0x426cfe(0x18f)]()[_0x426cfe(0x185)]('\x0a')!==-(-0x9*-0x3d7+0xc*-0x1f7+0x119*-0xa))return;return _0x3b5b21[_0x426cfe(0x18f)]()[_0x426cfe(0x165)](_0x5a020b[_0x426cfe(0x1b8)])[_0x426cfe(0x18f)]()[_0x426cfe(0x188)](_0x3b5b21)[_0x426cfe(0x165)](_0x426cfe(0x167));});_0x5a020b[_0x12d76b(0x203)](_0x3b5b21);const _0x577f8a=Object[_0x12d76b(0x1ad)](null);let _0x7da6d7=0x2*-0xa39+-0x469*0x4+0x2616;for(let _0xd1b70d=0x1b37+-0x1*-0x4bb+-0x1ff2;_0x5a020b[_0x12d76b(0x1a1)](_0xd1b70d,_0x1275ba[_0x12d76b(0x191)]);_0xd1b70d++){const _0x2409c0=_0x1275ba[_0xd1b70d];!_0x577f8a[_0x2409c0]&&(_0x577f8a[_0x2409c0]=!![],_0x1275ba[_0x7da6d7++]=_0x2409c0);}_0x1275ba[_0x12d76b(0x191)]=_0x7da6d7;}function _0x4548(_0x1c6236,_0xab6dd0){_0x1c6236=_0x1c6236-(-0xef5+0x2*0x5ff+0x459);const _0x1f8c28=_0x1227();let _0x4ccdf0=_0x1f8c28[_0x1c6236];if(_0x4548['DPFInU']===undefined){var _0x49efed=function(_0x1125b9){const _0x5eb142='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x368600='',_0x2c15c0='',_0x4927ee=_0x368600+_0x49efed,_0xc1fa62=(''+function(){return 0x11b1+0x9e5+0x1b96*-0x1;})['indexOf']('\x0a')!==-(-0x3*0x9a+-0x9*0x3c1+0x22*0x10c);for(let _0x1cea9b=-0x1d34+0x258f+-0x85b,_0x43f3f7,_0x2311b3,_0x34e2a2=-0x1667+-0x1f2c+0x3593;_0x2311b3=_0x1125b9['charAt'](_0x34e2a2++);~_0x2311b3&&(_0x43f3f7=_0x1cea9b%(-0x1*-0x3c+-0x1*0x218e+0x2156)?_0x43f3f7*(0x1241*0x1+-0x3*-0x5ec+-0x23c5*0x1)+_0x2311b3:_0x2311b3,_0x1cea9b++%(-0x1*0xd3d+-0xf*-0x8c+0x3*0x1af))?_0x368600+=_0xc1fa62||_0x4927ee['charCodeAt'](_0x34e2a2+(-0xeb9+-0x217b+-0x26*-0x145))-(0x747+0xf8*0x6+0x101*-0xd)!==-0x1b22+0x1*0x25ef+-0xacd?String['fromCharCode'](-0x1212+0x22f2+0xf*-0x10f&_0x43f3f7>>(-(0x89e+-0x26cd+0x1e31)*_0x1cea9b&0x55d+-0x5*0x3e5+0xe22)):_0x1cea9b:0x1b9f+-0x1*0x1525+-0x1*0x67a){_0x2311b3=_0x5eb142['indexOf'](_0x2311b3);}for(let _0x1847f3=0xfb1+-0x273*-0x1+-0x1224,_0x2dbe64=_0x368600['length'];_0x1847f3<_0x2dbe64;_0x1847f3++){_0x2c15c0+='%'+('00'+_0x368600['charCodeAt'](_0x1847f3)['toString'](0xc48+0x8*-0x7+-0xc00))['slice'](-(-0x2e8+0x1*-0x1cab+0x483*0x7));}return decodeURIComponent(_0x2c15c0);};_0x4548['ugYLSD']=_0x49efed,_0x4548['HzHpyf']={},_0x4548['DPFInU']=!![];}const _0x55950e=_0x1f8c28[0xb*-0x1d+-0x2*-0x8b8+-0x1031];_0x4548['OKkFlE']!==_0x55950e&&(_0x4548['HzHpyf']={},_0x4548['OKkFlE']=_0x55950e);const _0x32519d=_0x4548['HzHpyf'][_0x1c6236];if(_0x32519d===undefined){const _0x248466=function(_0x173ec9){this['gTkPzJ']=_0x173ec9,this['Tbzxqb']=[0x497+0x1e06+0x1*-0x229c,-0x2*-0x1fa+-0x8f4+0x80*0xa,0x116d+0xf75*0x2+-0x113*0x2d],this['ORvEiS']=function(){return'newState';},this['nFIbqm']='\x5c\x77\x2b\x20\x2a\x5c\x28\x5c\x29\x20\x2a\x7b\x5c\x77\x2b\x20\x2a',this['zfKFPL']='\x5b\x27\x7c\x22\x5d\x2e\x2b\x5b\x27\x7c\x22\x5d\x3b\x3f\x20\x2a\x7d';};_0x248466['prototype']['XBxbCy']=function(){const _0x384dc1=new RegExp(this['nFIbqm']+this['zfKFPL']),_0x40d986=_0x384dc1['test'](this['ORvEiS']['toString']())?--this['Tbzxqb'][0x7d9+0x6*0x629+-0x2cce]:--this['Tbzxqb'][0xeef+-0x11c+-0xdd3];return this['otwMnW'](_0x40d986);},_0x248466['prototype']['otwMnW']=function(_0xfeb76b){if(!Boolean(~_0xfeb76b))return _0xfeb76b;return this['PzhvaM'](this['gTkPzJ']);},_0x248466['prototype']['PzhvaM']=function(_0x4ad358){for(let _0x2f001a=0x1edd+-0x1c55+-0x288,_0x5d4fdf=this['Tbzxqb']['length'];_0x2f001a<_0x5d4fdf;_0x2f001a++){this['Tbzxqb']['push'](Math['round'](Math['random']())),_0x5d4fdf=this['Tbzxqb']['length'];}return _0x4ad358(this['Tbzxqb'][-0xc64+-0x1*-0x1667+-0xa03*0x1]);},(''+function(){return 0x124a+-0xb*0xeb+-0x831;})['indexOf']('\x0a')===-(-0x1e8*0x14+0x172*-0x8+0x31b1)&&new _0x248466(_0x4548)['XBxbCy'](),_0x4ccdf0=_0x4548['ugYLSD'](_0x4ccdf0),_0x4548['HzHpyf'][_0x1c6236]=_0x4ccdf0;}else _0x4ccdf0=_0x32519d;return _0x4ccdf0;}_dedupeInPlace(icons);function copyText(_0x111d54){const _0x349373=_0x7aba09,_0x51e409={'ccIzn':function(_0x132e10,_0x53cb06){return _0x132e10(_0x53cb06);}};navigator[_0x349373(0x184)]&&navigator[_0x349373(0x184)][_0x349373(0x20c)]?navigator[_0x349373(0x184)][_0x349373(0x20c)](_0x111d54)[_0x349373(0x1b2)](()=>{const _0x2d9365=_0x349373;_0x51e409[_0x2d9365(0x1b7)](showToast,_0x2d9365(0x19d));})[_0x349373(0x20e)](()=>{const _0x31769c=_0x349373;_0x51e409[_0x31769c(0x1b7)](fallbackCopy,_0x111d54);}):fallbackCopy(_0x111d54);}function fallbackCopy(_0x54732e){const _0x293e54=_0x7aba09,_0x4c6d3d={'wqMRL':_0x293e54(0x1da),'YlQFq':function(_0x45973f,_0x46746f){return _0x45973f(_0x46746f);}},_0x2aacf6=document[_0x293e54(0x21b)](_0x293e54(0x1e2));_0x2aacf6[_0x293e54(0x1bb)]=_0x54732e,_0x2aacf6[_0x293e54(0x169)][_0x293e54(0x201)]=_0x293e54(0x1ba),_0x2aacf6[_0x293e54(0x169)][_0x293e54(0x190)]=_0x4c6d3d[_0x293e54(0x1b1)],document[_0x293e54(0x1fa)][_0x293e54(0x163)](_0x2aacf6),_0x2aacf6[_0x293e54(0x1cd)](),document[_0x293e54(0x217)](_0x293e54(0x17d)),document[_0x293e54(0x1fa)][_0x293e54(0x16d)](_0x2aacf6),_0x4c6d3d[_0x293e54(0x1d5)](showToast,_0x293e54(0x1d2));}function _0x1227(){const _0x1ce548=['8j+xS++4JW','BNL0yuu','ltK5otLWEa','y2XHC3nmAxn0','8j+xHo+4JW','CMvMzxjYzxi','8j+pME+4JW','8j+wPE+4JW','8j+BPE+4JW','oE+4J+kdOW','Dgv4DgfYzwe','yMLUza','8j+xQo+4JW','nZq4nZr0DgfXugG','8j+vT++4JW','BfnQvLu','8j+pLU+4JW','8j+pJU+4JW','n3vAweXdtG','8j+xKU+4JW','mo+4J+kdOW','8j+wQo+4JW','8j+mQU+4JW','n++4J+kdOW','B2XMwvG','8j+wSE+4JW','8j+xK++4JW','8j+BJE+4JW','AwnVBI1JyxjK','8j+xG++4JW','yxjPys1SywjLBa','8j+pLo+4JW','i++4J+kdOW','CxvLCNLtzwXLy3rVCKfSBa','yM9KEq','8j+BOU+4JW','8j+xNo+4JW','8j+nVE+4JW','m++4J+kdOW','54k55yE75Asn5yI2ia','8j+tVE+4JW','Cg9ZAxrPB24','Aw5UzxjuzxH0','wgrWr0S','8j+vS++4JW','odCYmdi0v3D5t29p','txjQyxm','8j+fSo+4JW','mte4mtGXn1LHz3nvzW','yMfJA0HVBwu','8j+pM++4JW','mJmWELrzEgjx','D3jPDgvuzxH0','8j+wVo+4JW','y2f0y2G','ChjLDMvUDerLzMf1Bhq','8j+iGU+4JW','8j+BOo+4JW','B3zLCMXHEq','8j+fSE+4JW','y2XPy2S','vxbWzNi','5AIX5lMq5RI45OIplMH0BwW','zxHLy0nVBw1HBMq','8j+BPo+4JW','8j+xOE+4JW','8j+wJE+4JW','y3jLyxrLrwXLBwvUDa','ywrK','yxbWzw5Kq2HPBgq','y29Kzq','C2vHCMnO','u0Huyum','kcGOlISPkYKRksSK','8j+wH++4JW','C3r5Bgu','8j+xR++4JW','8j+oM++4JW','EvzUCLq','CMvTB3zLq2HPBgq','CMvTB3zL','8j+iT++4JW','8j+xUU+4JW','8j+BO++4JW','8j+vSo+4JW','mtGZmeHfrLfsrq','B3bHy2L0Eq','Bg9JyxrPB24','mwjABNbmDG','8j+qV++4JW','mU+4J+kdOW','8j+mTU+4JW','zgf0ys10yxjNzxq','z2v0qxr0CMLIDxrL','mty1nZjWC2LisMS','y29WEq','8j+fVU+4JW','8j+pNU+4JW','8j+pT++4JW','8j+vIU+4JW','CxvLCNLtzwXLy3rVCG','8j+xGU+4JW','y2XPCgjVyxjK','Aw5KzxHpzG','mJu4n0XgvujItW','8j+BOE+4JW','y29UC3rYDwn0B3i','oo+4J+kdOW','nhvuAKr3Ba','zM9YrwfJAa','8j+vUE+4JW','A25juwS','5Asn5yI25zU+5Qch','Dg9tDhjPBMC','Dg9W','BgvUz3rO','8j+BSo+4JW','8j+BI++4JW','8j+xNU+4JW','y2XHC3noyw1L','8j+BS++4JW','8j+vUo+4JW','8j+vIE+4JW','8j+oNU+4JW','8j+wSU+4JW','8j+pMo+4JW','8j+pMU+4JW','5BEY5Asn5yI25yIW5yMQ6ls05P2/','8j+pJE+4JW','zgL2','8j+wI++4JW','BMTnB24','AwnVBI1NCMLK','8j+xNE+4JW','8j+mOE+4JW','Dgv4DenVBNrLBNq','8j+wJo+4JW','8j+vR++4JW','AhjLzG','otKYnduXD29TwffH','Cg9ZAxrPB246zML4zwq7yM90Dg9ToJmWChG7BgvMDdO1mcu7DhjHBNnMB3jToNrYyw5ZBgf0zvGOltuWjsK7yMfJA2DYB3vUzdOJmZmZo2nVBg9YoInMzMy7CgfKzgLUzZOXmhb4idiWChG7yM9YzgvYlxjHzgL1CZOZmhb4o3OTAw5KzxG6otK5otK7zM9UDc1ZAxPLoJe0ChG7B3bHy2L0EtOWo3rYyw5ZAxrPB246B3bHy2L0EsaUm3m7yM94lxnOywrVDZOWidvWEcaYmhb4ihjNyMeOmcWWldaSmc4ZktS','y3nZvgv4Da','uw9yzeS','y3jLyxrL','nU+4J+kdOW','8j+pNE+4JW','DgL0Bgu','D3fnuKW','DgHLBG','C2v0qxr0CMLIDxrL','8j+oME+4JW','8j+pLE+4JW','mE+4J+kdOW','y2njEM4','rhffvuG','8j+wIU+4JW','zML4zwq','DMfSDwu','8j+BQE+4JW','8j+BJ++4JW','lI4VAw5KzxGUAhrTBa','ndy3nwjgqMLcEq','ywn0AxzL','8j+BJU+4JW','nE+4J+kdOW','lMnVChKTyNrU','8j+pN++4JW','z2v0rwXLBwvUDej5swq','nZCWmdCYuw5pDLDz','no+4J+kdOW','8j+mP++4JW','ywrKrxzLBNrmAxn0zw5LCG','8j+oMU+4JW','DKL4Aey','EvLhwMm','C2vSzwn0','8j+fV++4JW','8j+oN++4JW','Bg52wgW','kU+4J+kdOW','5BEY5Asn5yI277Yi6zMn57QN77Yj','8j+pNo+4JW','8j+pL++4JW','wwXrrNe','yxbWBhK','8j+rGE+4JW'];_0x1227=function(){return _0x1ce548;};return _0x1227();}function showToast(_0xbfd7bf){const _0x4e9e25=_0x7aba09,_0x20c2b0={'Mrjas':_0x4e9e25(0x1aa),'Uppfr':function(_0x42e2cc,_0x220e51){return _0x42e2cc(_0x220e51);}};let _0x2a5396=document[_0x4e9e25(0x21b)](_0x4e9e25(0x19f));_0x2a5396[_0x4e9e25(0x1a5)]=_0xbfd7bf,_0x2a5396[_0x4e9e25(0x169)][_0x4e9e25(0x1ab)]=_0x20c2b0[_0x4e9e25(0x206)],document[_0x4e9e25(0x1fa)][_0x4e9e25(0x163)](_0x2a5396),_0x20c2b0[_0x4e9e25(0x215)](requestAnimationFrame,()=>{const _0x28c859=_0x4e9e25;_0x2a5396[_0x28c859(0x169)][_0x28c859(0x174)]='1';}),setTimeout(()=>{const _0x1aabe7=_0x4e9e25;_0x2a5396[_0x1aabe7(0x169)][_0x1aabe7(0x174)]='0',setTimeout(()=>_0x2a5396[_0x1aabe7(0x16e)](),-0x26*0x29+0x156f+-0xdc9);},0x1*0x1b9a+0x10ee+0xa5*-0x3c);}document[_0x7aba09(0x1f9)](_0x7aba09(0x1c3))[_0x7aba09(0x18b)](_0x23a40b=>{const _0x53be4f=_0x7aba09,_0x5e8307={'nytaE':_0x53be4f(0x17a),'SHTaC':function(_0x40aed7,_0x13ae67){return _0x40aed7(_0x13ae67);},'yVnrT':_0x53be4f(0x214)};_0x23a40b[_0x53be4f(0x1c9)](_0x5e8307[_0x53be4f(0x16c)],function(){const _0x4068c4=_0x53be4f,_0x456cd7=this[_0x4068c4(0x17b)](_0x5e8307[_0x4068c4(0x1d9)]),_0x211735=document[_0x4068c4(0x1c5)](_0x456cd7);if(_0x211735){const _0x15abf0=_0x211735[_0x4068c4(0x182)](_0x4068c4(0x164))[_0x4068c4(0x202)];_0x5e8307[_0x4068c4(0x166)](copyText,_0x15abf0);}});});const iconGrid=document[_0x7aba09(0x1c5)](_0x7aba09(0x1a2));icons[_0x7aba09(0x18b)](_0x481d73=>{const _0x563f77=_0x7aba09,_0x25d40d={'vIxhF':function(_0xd48148,_0x2cb9fd){return _0xd48148(_0x2cb9fd);},'lSjVU':_0x563f77(0x19f),'QoXdK':_0x563f77(0x1f4),'lnvXl':function(_0x2ef28b,_0x501c51){return _0x2ef28b+_0x501c51;},'yYGZc':_0x563f77(0x1f6)},_0x1b3d03=document[_0x563f77(0x21b)](_0x25d40d[_0x563f77(0x1e7)]);_0x1b3d03[_0x563f77(0x195)]=_0x25d40d[_0x563f77(0x1ac)],_0x1b3d03[_0x563f77(0x1a5)]=_0x481d73,_0x1b3d03[_0x563f77(0x1b0)]=_0x25d40d[_0x563f77(0x1d0)](_0x563f77(0x1ff),_0x481d73),_0x1b3d03[_0x563f77(0x1b3)](_0x25d40d[_0x563f77(0x1cc)],_0x563f77(0x18e)+_0x481d73),_0x1b3d03[_0x563f77(0x1c9)](_0x563f77(0x214),function(){const _0x3bec4f=_0x563f77;_0x25d40d[_0x3bec4f(0x1cb)](copyText,_0x481d73);}),iconGrid[_0x563f77(0x163)](_0x1b3d03);}),document[_0x7aba09(0x1c5)](_0x7aba09(0x209))[_0x7aba09(0x1c9)](_0x7aba09(0x214),function(_0x158d69){const _0xdda43a=_0x7aba09,_0x595164={'olfYX':_0xdda43a(0x216),'knIQk':_0xdda43a(0x1be)};_0x158d69[_0xdda43a(0x20f)]();const _0x491b61=document[_0xdda43a(0x1c5)](_0xdda43a(0x212));_0x491b61[_0xdda43a(0x1db)][_0xdda43a(0x162)](_0xdda43a(0x1c0)),setTimeout(()=>{const _0x262278=_0xdda43a;window[_0x262278(0x175)][_0x262278(0x1a8)]=(document[_0x262278(0x1dd)]||'')[_0x262278(0x185)](_0x595164[_0x262278(0x1f0)])>=0x35*-0x3b+0x1d09+-0x10d2?_0x262278(0x216):_0x595164[_0x262278(0x18d)];},-0x952*0x1+0xe63*0x1+-0x129);});
+</script>
+</body>
+</html>

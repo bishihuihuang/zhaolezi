@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——更新公告</title>
+    <style>
+        /* ========== 全局重置 ========== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--txt);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ========== 背景流光层（20秒无缝循环） ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: var(--flow-grad);
+            background-size: 400% 400%;
+            animation: flowGradient 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%;
+            left: -40%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(ellipse at 30% 70%,
+                    rgba(255, 140, 100, .35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%,
+                    rgba(120, 180, 255, .3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%,
+                    rgba(220, 130, 250, .25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(255, 200, 130, .15), transparent 60%),
+                radial-gradient(circle at 20% 80%,
+                    rgba(80, 220, 200, .2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes flowGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+        }
+
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* ========== 悬浮球（透明、漂浮、旋转） ========== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                    rgba(255, 255, 255, .3),
+                    color-mix(in srgb, var(--card-2) 15%, transparent) 50%,
+                    transparent 70%);
+            box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 8%, transparent),
+                inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+
+        .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+        .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+
+        @keyframes orbFloatA {
+            0% { transform: translate(0,0) scale(1); opacity:.6; }
+            30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+            60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+            100% { transform: translate(0,0) scale(1); opacity:.6; }
+        }
+
+        @keyframes orbFloatB {
+            0% { transform: translate(0,0) scale(1); opacity:.5; }
+            35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+            70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+            100% { transform: translate(0,0) scale(1); opacity:.5; }
+        }
+
+        @keyframes orbSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== 头部（固定在顶部） ========== */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            text-align: center;
+            padding: 18px 20px;
+            background: linear-gradient(180deg, rgba(8,10,30,.9), rgba(10,14,39,.5), transparent);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 4px 40px rgba(0,0,0,.3);
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 5px;
+            var(--title-grad);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 3s linear infinite;
+            display: inline-block;
+            text-shadow: 0 0 30px color-mix(in srgb, var(--gold) 30%, transparent);
+        }
+
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* ========== 主体布局 ========== */
+        main {
+            padding-top: 100px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-bottom: 50px;
+        }
+
+        /* ========== 白色容器（80%宽，可滚动） ========== */
+        .container {
+            width: 80%;
+            max-width: 1440px;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0,0,0,.35), 0 0 0 1px var(--line);
+            max-height: calc(100vh - 130px);
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .container::-webkit-scrollbar { width: 10px; }
+        .container::-webkit-scrollbar-track { background: rgba(0,0,0,.04); border-radius: 12px; }
+        .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 12px; border: 2px solid transparent; }
+
+        /* ========== 网格布局（6列） ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            padding: 6px;
+        }
+
+        /* ========== 标题区（前2行前4列） ========== */
+        .title-area {
+            grid-column: 1 / 5;
+            grid-row: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gold-3-grad);
+            background-size: 300% 300%;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px color-mix(in srgb, var(--gold-2) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
+            animation: titleGradient 6s ease infinite;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform .4s cubic-bezier(.34,1.56,.64,1), box-shadow .4s ease;
+        }
+
+        .title-area:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 18px 60px color-mix(in srgb, var(--gold-2) 50%, transparent), 0 0 50px color-mix(in srgb, var(--gold-2) 25%, transparent);
+        }
+
+        .title-area h2 {
+            font-size: 46px;
+            font-weight: 900;
+            text-align: center;
+            line-height: 1.3;
+            letter-spacing: 5px;
+            color: var(--btn-txt);
+            text-shadow: 2px 2px 10px rgba(0,0,0,.3);
+        }
+
+        @keyframes titleGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ========== 返回主页（前2行第5-6列） ========== */
+        .back-area {
+            grid-column: 5 / 7;
+            grid-row: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--back-grad);
+            color: var(--btn-txt);
+            font-size: 24px;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px color-mix(in srgb, var(--green) 40%, transparent), inset 0 1px 0 rgba(255,255,255,.2);
+            transition: transform .3s, box-shadow .3s;
+            cursor: pointer;
+        }
+
+        .back-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 50px color-mix(in srgb, var(--green) 50%, transparent);
+        }
+
+        .back-area:active {
+            transform: translateY(-2px) scale(.96);
+        }
+
+        /* ========== 公告卡片（内容区，从第3行开始，占满6列） ========== */
+        .announcement-card {
+            grid-column: 1 / 7;
+            background: var(--card-2);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,.1);
+            border: 2px solid var(--line);
+            position: relative;
+            overflow: hidden;
+            transition: transform .3s, box-shadow .3s, border-color .3s;
+            cursor: default;
+            animation: cardFadeIn .5s ease-out both;
+        }
+
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .announcement-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            var(--gold-3-grad);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .announcement-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,.15);
+            border-color: var(--gold);
+        }
+
+        .announcement-card .date {
+            display: inline-block;
+            var(--gold-3-grad);
+            color: var(--btn-txt);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px color-mix(in srgb, var(--red) 30%, transparent);
+            transition: transform .2s;
+        }
+
+        .announcement-card:hover .date {
+            transform: scale(1.05);
+        }
+
+        .announcement-card .content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--txt);
+            padding-left: 8px;
+        }
+
+        /* V2.0.0 新版本更新提醒条（读 ZL.whatsNew，主题 Token 跟随） */
+        .whatsnew-card {
+            grid-column: 1 / -1;
+            margin-bottom: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: var(--zl-card);
+            border: 1px solid var(--zl-accent);
+            box-shadow: var(--zl-shadow);
+            font-size: 14px;
+            color: var(--zl-text);
+        }
+        .wn-head { font-weight: 800; font-size: 15px; margin-bottom: 8px; color: var(--zl-accent); }
+        .wn-item b { display: block; margin-bottom: 3px; color: var(--zl-accent); }
+        .wn-desc { line-height: 1.7; margin-bottom: 8px; color: var(--zl-muted); }
+        .wn-btn {
+            border: 1px solid var(--zl-border);
+            background: var(--zl-card-2);
+            color: var(--zl-btn-text);
+            padding: 6px 18px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* ========== 跳转覆盖层 ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8,10,25,.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,.1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+
+        @keyframes ringSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== 响应式适配：平板端（4列） ========== */
+        @media (max-width: 1024px) {
+            .container { width: 92%; padding: 14px; }
+            .grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 100px; }
+            .title-area h2 { font-size: 32px; letter-spacing: 3px; }
+            .announcement-card { grid-column: 1 / -1; }
+        }
+
+        /* ========== 响应式适配：手机大屏（3列） ========== */
+        @media (max-width: 768px) {
+            header { padding: 14px 16px; }
+            header h1 { font-size: 20px; letter-spacing: 2px; }
+            main { padding-top: 80px; padding-bottom: 30px; }
+            .container { width: 94%; padding: 12px; max-height: none; border-radius: 18px; }
+            .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 80px; border-radius: 16px; }
+            .title-area h2 { font-size: 26px; letter-spacing: 2px; }
+            .back-area { font-size: 20px; }
+            .announcement-card { grid-column: 1 / -1; padding: 14px; border-radius: 14px; }
+            .announcement-card .date { font-size: 13px; padding: 3px 10px; }
+            .announcement-card .content { font-size: 15px; line-height: 1.7; }
+            /* 手机端去除hover效果，使用active */
+            .announcement-card:hover { transform: none; box-shadow: 0 6px 20px rgba(0,0,0,.1); border-color: var(--line); }
+            .announcement-card:active { transform: scale(.98); }
+            .title-area:hover { transform: none; }
+            .back-area:hover { transform: none; }
+            .back-area:active { transform: scale(.96); }
+        }
+
+        /* ========== 响应式适配：手机中屏（2列） ========== */
+        @media (max-width: 600px) {
+            header h1 { font-size: 18px; letter-spacing: 1px; }
+            .container { width: 95%; padding: 10px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 70px; }
+            .title-area h2 { font-size: 24px; letter-spacing: 1px; }
+            .back-area { font-size: 18px; }
+            .announcement-card { grid-column: 1 / -1; padding: 12px; }
+            .announcement-card .content { font-size: 14px; line-height: 1.7; }
+            /* 手机端简化背景动画，提升性能 */
+            .bg-flow-2, .bg-flow-3 { display: none; }
+            .orb-3, .orb-4, .orb-5 { display: none; }
+        }
+
+        /* ========== 响应式适配：手机小屏（1列） ========== */
+        @media (max-width: 400px) {
+            header { padding: 12px 12px; }
+            header h1 { font-size: 16px; letter-spacing: 1px; }
+            main { padding-top: 70px; }
+            .container { width: 96%; padding: 8px; border-radius: 14px; }
+            .grid { grid-template-columns: 1fr; gap: 6px; padding: 2px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 60px; border-radius: 12px; }
+            .title-area h2 { font-size: 20px; letter-spacing: 1px; }
+            .back-area { font-size: 16px; }
+            .announcement-card { grid-column: 1 / -1; padding: 10px; border-radius: 12px; }
+            .announcement-card .date { font-size: 12px; padding: 2px 8px; margin-bottom: 8px; }
+            .announcement-card .content { font-size: 13px; line-height: 1.7; padding-left: 6px; }
+            .announcement-card::before { width: 3px; }
+            .loader-wrap { width: 140px; height: 140px; }
+            .loader-text { font-size: 18px; letter-spacing: 2px; }
+        }
+
+        /* ========== 触摸设备优化 ========== */
+        @media (hover: none) and (pointer: coarse) {
+            .announcement-card:hover, .title-area:hover, .back-area:hover {
+                transform: none;
+            }
+            .announcement-card:active {
+                transform: scale(.98);
+                transition: transform .1s;
+            }
+            .back-area:active {
+                transform: scale(.96);
+                transition: transform .1s;
+            }
+        }
+
+        /* ========== 安全区域适配（刘海屏） ========== */
+        @supports (padding: max(0px)) {
+            header {
+                padding-left: max(18px, env(safe-area-inset-left));
+                padding-right: max(18px, env(safe-area-inset-right));
+                padding-top: max(18px, env(safe-area-inset-top));
+            }
+            main {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+                padding-bottom: max(50px, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<script data-no-obf>try{var _zt=localStorage.getItem("zl_theme");var _zok=["dark","blue","gold","light","milk","guofeng","snowsun","cyber","aurora","custom"];if(_zt&&_zok.indexOf(_zt)>=0){document.documentElement.setAttribute("data-theme",_zt);}}catch(e){}</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——更新公告｜趣味工具与小游戏合集">
+<meta property="og:title" content="找乐子——更新公告">
+<meta property="og:description" content="找乐子——更新公告｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/更新公告.html">
+
+<link rel="stylesheet" href="../assets/css/common.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/theme.js"></script>
+<script defer src="../assets/js/zl-features.js"></script>
+</head>
+<body>
+
+    <!-- 背景流光层 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <!-- 悬浮球 -->
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 头部 -->
+    <header>
+        <h1>找乐子——更新公告</h1>
+    </header>
+
+    <!-- 主体内容 -->
+    <main>
+        <div class="container">
+            <div class="grid" id="grid"></div>
+        </div>
+    </main>
+
+    <!-- 跳转覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+        /* ================================================================
+         * 公告数据配置（后期扩展）
+         * 每条公告包含：date（日期），content（内容）
+         * 按日期倒序排列显示
+         * ================================================================ */
+const announcementsConfig = [
+            { date: '2026-11-03 23:59', content: 'V2.7.0：四大站点并入找乐子——AI 提示词、现代化课程、灵感创意中心、全能文件保存四个站点正式并入找乐子站内，首页热门精选四张卡片点击直接站内打开（带统一转场动画），不再跳转外部网址；四站全部页面背景已换成找乐子六大主题（彩虹亮彩/经典蓝/鎏金/明亮/雪阳/极光），各站主题面板与主站同步；此前访问过旧站的浏览器缓存自动清理，无需任何操作。' },
+            { date: '2026-11-01 12:00', content: 'V2.6.0：全站六主题适配完成——全部页面（词典/游戏/工具/门禁/公告等 43 页）精细适配六大主题（找乐子/经典蓝/鎏金/明亮/雪阳/极光）：背景、卡片、按钮、输入框、弹窗、滚动条全面随主题变色，每个页面依据自身内容定制主题色（如暗号大全的金色国风、黑客模拟器的深色终端舱、词典的紫韵音标）；并优化了多处旧式背景动画，切换主题更流畅、页面更省电。' },
+            { date: '2026-11-01 08:00', content: 'V2.5.3：返回导航统一升级——39 分享卡片生成「返回主页」改跳 32 工具导航；36 双人井字棋改跳 31 娱乐游戏；1-8 体系页（密码登录/授权协议/授权确认/选择IP/媒体池/作者介绍/优质工具箱/背包）原先散落各处的「返回主程序」文字链接与旧小房子键统一替换为左下角深青色小房子圆形跳转键，点击播放转场动画后跳转 31 娱乐游戏页；旧右上角返回链接全部移除，页面更清爽统一。' },
+            { date: '2026-11-01 01:00', content: 'V2.5.2：主题背景图全面焕新——五大主题（经典蓝/鎏金/明亮/雪阳/极光）换上全新高清 AI 生成背景图：电脑自动显示横版大图、手机自动显示竖版大图，两端各按自身屏幕完整铺满；并修复了此前背景图只显示局部（约 1/4）的显示问题，现在每张图都完整呈现、不再被放大裁切。' },
+            { date: '2026-10-31 22:30', content: 'V2.5.1：首页主题适配全面完成——①顶栏快捷栏由写死深灰改为主题令牌，六主题下顶栏背景均跟随主题（不再黑色）；②底部精简：移除更新公告/反馈通道/一起来赞赏/免责声明四个底部链接，版权行收为一行「© 2026 找乐子 · 免登录使用」；③五主题（经典蓝/鎏金/明亮/雪阳/极光）首页完整适配：各主题补齐首页令牌同步，顶栏/卡片/文字/按钮/标题渐变全部跟随各自色系（经典蓝科技蓝、鎏金复古金、明亮极简蓝、雪阳暖橙白雾、极光翠绿梦幻），按钮与卡片悬停效果改用主题色派生，光斑与卡片描边按主题特色定制。' },
+            { date: '2026-10-31 15:1x', content: 'V2.5.0：「找乐子」主题全面焕新——由黑金暗色升级为自由·开放·包容·光鲜亮丽的新面貌：明亮底色+白玻璃卡片、全色相彩虹渐变标题与按钮（多元包容）、五彩柔光在背景缓缓流动（自由自在）；首页大标题呈彩虹渐变，全站跟随。六主题体系不变，默认主题存档自动获得新视觉。' },
+            { date: '2026-10-31 14:4x', content: 'V2.4.9：六主题五维体系全面升级——每个主题都是一套完整视觉体系：专属字体（鎏金衬线标题/明亮细字重/极光细体标题）、专属边框（鎏金双线框/雪阳白雾描边/极光朦胧弥散发光边框）、专属交互反馈（金晕扩散/霜雾/极光流动）、专属动态背景（找乐子金橙光斑漂浮、经典蓝星点+流光扫过、鎏金流金微粒、雪阳雪花缓落、极光色带漂移+四周渐晕营造遥远感）；「自定义」上传背景下架（存档自动迁移找乐子），主题面板现为 6 大主题。' },
+            { date: '2026-10-31 14:1x', content: 'V2.4.8：主题焕新——新增「找乐子」主题（纯黑底+深色卡片+金橙强调+白字，与首页视觉完全统一）并设为默认主题；下架旧「深色流光」主题，老用户存档自动迁移无感切换；主题面板现共 7 项：找乐子/经典蓝/鎏金/明亮/雪阳/极光/自定义。' },
+            { date: '2026-10-31 12:3x', content: 'V2.4.7：品牌焕新与导航重构——站名升级「找乐子——导航站」（标题/顶栏/首页同步），首页精简为一句介绍；分区导航更清晰（效率工具重排：优质工具箱→在线词典→网页备忘录→二维码生成器→看看作业；热门区签到徽章墙置顶；娱乐区新增虚拟消费系统/五子棋/黑客模拟器/记忆配对游戏四款直达）；文件搜索入口回归 31/32 工具箱页；31/32 工具箱页首卡保留「返回主程序」直达首页，敬请期待占位补齐视觉。' },
+            { date: '2026-10-31 10:0x', content: 'V2.4.5：体验精简——下架 6 个不成熟工具页（语音控制/知识图谱/番茄白噪音/学习仪表盘/随机乐子/错题本，源文件归档冷区），首页工具 22 款精至 16 款；作业盒子「转错题本」入口随错题本下架一并移除；离线缓存与站点地图同步瘦身，页面更聚焦更好用。' },
+            { date: '2026-10-31 09:14', content: 'V2.4.4：统一弹窗卡片化——全站 36 处浏览器原生弹窗（提示/确认/输入）全部换为居中长方形抽屉卡片：毛玻璃质感、下方上滑展开动效、支持 Esc 关闭与连续弹窗自动排队；复制提示、购物车清空、错题转入、备注名编辑等全部交互统一，不再出现浏览器顶部原生弹窗。' },
+            { date: '2026-10-31 08:47', content: 'V2.4.3：亮背景自动浅色前景——上传亮色背景图时整站自动切换浅色前景（文字变深、卡片变浅玻璃），字体不再融进背景看不清；深色背景图维持深色前景；亮度由本地智能采样判定，切换其他主题后自动还原。' },
+            { date: '2026-10-31 08:36', content: 'V2.4.2：自定义背景交互升级——「自定义」主题单击即应用背景、双击直接上传图片（去掉原来的小按键，一步到位）；画质优先策略：新上传背景按浏览器可存储的最高画质保存（支持 2560px 高清档，容量不足自动逐档降级，保存后提示实际档位）。' },
+            { date: '2026-10-31 08:21', content: 'V2.4.1：首页体验修复——修复首页工具卡片点击全部 404 的问题（路径解析错误，全站 334 项资源引用同步校验通过）；修复主题背景图被遮挡无法显示的问题；恢复「自定义」主题项，历史上传的背景图无缝找回。' },
+            { date: '2026-10-31 08:01', content: 'V2.4.0：首页焕新——首页升级为「优质工具库」导航版（学习/效率/创意/娱乐/更多 5 大分区 22 款工具 + 4 大站点直达）；页面跳转动画重制为原生三层圆环+毛玻璃质感；移除左上角奖杯与右上角刷新悬浮钮（成就逻辑与自动更新检查保留，界面更清爽）；主题精选 6 款+自定义上传；顶层 59 项重复资源/临时脚本/历史日志归档冷区；离线缓存清单同步瘦身。' },
+            { date: '2026-10-31 00:35', content: 'V2.3.9：首页导航修复——恢复导航版首页并全量修复页面链接（此前部分入口点击异常）。' },
+            { date: '2026-10-30 23:50', content: 'V2.3.8：站点完整回退复原——整站恢复至稳定版本基线，清除异常发布状态；同步完成顶层目录治理与维护文档更新。' },
+            { date: '2026-10-24 07:49', content: 'V2.3.7：作业素材更新——看看作业页面新增多张作业图片素材。' },
+            { date: '2026-10-19 21:22', content: 'V2.3.6：全站视觉迭代——公共层与首页、13 个业务页批量视觉更新，混淆构建链同步刷新。' },
+            { date: '2026-10-17 10:08', content: 'V2.3.5：作业素材新增——15 项作业图片素材上线。' },
+            { date: '2026-10-17 07:02', content: 'V2.3.4：图标体系升级——首页与后台工具图标扩至 1200+ 常用 Emoji 图标库（12 大分类去重），31 页等游戏页图标焕新。' },
+            { date: '2026-10-11 18:48', content: 'V2.3.3：悬浮入口双上线——首页成就提示横条升级为左上角悬浮奖杯入口（点击直达成就中心，角标实时显示已解锁数）；新增右上角刷新按键（自动比对缓存更新，30 分钟节流）。（后经 10-31 体验迭代移除）' },
+            { date: '2026-10-11 08:22', content: 'V2.3.2：底部玻璃停靠栏移除——界面更清爽，鼠标光效、模块放大、水滴筛选、汇总指标全部保留。' },
+            { date: '2026-10-11 07:55', content: 'V2.3.1：Service Worker 缓存策略重构——页面导航与 JS 脚本改走网络优先，根治「发版后旧缓存拦截新版本」，缓存版本号随每次发布自动递增。' },
+            { date: '2026-10-11 07:13', content: 'V2.3.0：全站统一跳转动画+目录重构——点击任意站内跳转统一显示圆环转场动画（中心显示目标页文字）；46 个业务页与专属资源迁入 pages/ 目录（首页留根）；液态玻璃鼠标光效上线。' },
+            { date: '2026-10-10', content: 'V2.2.2：将作者5大网页串联于一体' },
+            { date: '2026-10-06', content: 'V2.2.1：词典体验增强——23 页新增「📦 备份」按钮，一键导出/导入收藏与搜索历史为 JSON 文件（跨设备迁移、备份防丢失）；Service Worker 修复静态资源离线返回 undefined 的缺陷，新增 offline.html 离线兜底页（断网访问已缓存页面不再白屏）；Service Worker 缓存版本号已升级，首次访问会自动更新。' },
+            { date: '2026-10-06', content: 'V2.2.0：成就系统全量上线——新增 94 项成就（覆盖打卡/学习/专注/创作/工具/社交六大类），指标驱动自动解锁（累计使用天数、学习时长、番茄数、答题正确率、字数产量等），解锁瞬间右上角弹出卡片提示（点击直达成成中心），跨 tab 实时同步；38 页升级为完整成就中心（分类筛选、进度环、稀有度标注、未解锁线索提示）；44 学习中心嵌入成就速览卡；首页新增「成就徽章」挂件实时显示已解锁数。' },
+            { date: '2026-10-06', content: 'V2.1.1：中文反查提速——为前 2 万高频词预置快速索引（zh_top.json 约 2MB），输入常见中文词（如「猫」「计算机」「幸福」）不再等待全库 26 分片下载，秒出按词频排序的常用词结果；生僻词/长词组查询自动退回全库 30 万词扫描，覆盖不受影响。' },
+            { date: '2026-10-06', content: 'V2.1.0：23 页在线词典全面升级——词库从 30 条内置示例扩到 300,000 条（ECDICT 开放词库，按首字母拆成 26 个分片懒加载，页面打开不再卡），支持精确/前缀/包含三种检索并按词频排序（常用词优先）、中文反查（输入「猫」直接出 cat、kitten、panda）、按词频给词条打排名标签；新增发音朗读、单词收藏、最近搜索历史、随机单词、CET4/6·考研·雅思·托福·GRE·小学·初中等级筛选、加载进度条与加载更多分页；成语/歇后语分类保留；数据源 MIT 许可，分片首次访问后自动缓存可离线使用。' },
+            { date: '2026-10-06', content: 'V2.0.0：四模块升级——①主题设计 Token 层（新增 --zl-* 全站统一颜色接口，公共组件随主题联动）；②学习数据层（错题本自动记录学习动作，仪表盘新增「连续学习天数 / 今日学习 / 最近学习动态」实时联动）；③作业盒子一键转错题（41 页每条作业可一键转入错题本，自动识别科目，去 43 页补充答案即可复习）；④版本与数据迁移框架（数据自动规范化升级，新功能自动触达提醒）。' },
+            { date: '2026-10-06', content: 'V1.9.9：学习三页打通（错题本↔学习仪表盘↔知识图谱）——错题本复习改为真实作答（遮答案自评判定，答对间隔 1→2→4→7→15→30 天递进，连续答对 3 次自动掌握，答错重置进度明天再练，全程记录复习历史）；学习仪表盘新增「今日错题复习」卡，科目进度、错题掌握率、今日待复习数全部实时来自错题本真实数据，复习后跨页自动联动（事件同步，43/44/45 任意页操作其余页即时刷新）；知识图谱各科掌握状态改由错题数据反推（该科错题掌握率≥60% 标为已掌握）。' },
+            { date: '2026-10-06', content: 'V1.9.8：娱乐功能升级——五子棋困难档新增深度3搜索（α-β剪枝，候选限已有棋子2格邻域）；每日一题改为真实作答（题库扩至30题、四选一判定、答对才解锁成就）；井字棋新局轮换先手、支持键盘1-9落子；扫雷移动端长按标旗、新增秒表与剩余雷数；记忆配对数据迁移至 zl_ 前缀并打通成就；「今天玩什么」站内游戏一键直达；25页新增英文单词数统计；38页签到同步活跃日；反馈页邮箱防爬；首页/工具页移除占位空卡；主题标签对齐10套；构建工具自动生成 sitemap.xml。' },
+            { date: '2026-10-06', content: 'V1.9.7：错题本照片存储升级——照片从网页缓存（约5MB上限）迁移到浏览器照片库（IndexedDB，容量提升数十倍），单张上限提升至4MB；旧照片首次打开自动迁移（原数据备份在浏览器 zl_err_items_v1_bak，可自行清理），导出/导入功能同步适配。' },
+            { date: '2026-10-05', content: 'V1.9.6：全站安全加固——24/14/15/44页动态内容输出全面转义防注入（XSS）、44页导入数据自动清洗（科目名限长、颜色白名单）、1页跳转参数增加同源白名单校验；修复首页与31页「在线词典」入口断链（现指向23页）；公共脚本改为defer加载，页面打开更流畅；构建工具升级：45页恢复代码保护、词典数据构建时自动同步。' },
+            { date: '2026-10-02', content: 'V1.9.5：防回归机制落地——构建期自动检查（node _混淆工具.js --check 扫描硬编码灰阶色，未接入主题体系即拦截发布）+ 运行时巡检（控制台 ZL.verifyAudit() 一键审计10主题对比度，34页实测全部通过）；《主题可读性防回归规范》升级完成，此后新增主题/页面不再出现可读性适配错误；缓存升级v13。' },
+            { date: '2026-10-01', content: 'V1.9.4：全站可读性兜底修复——42页×10主题全面审计全部通过；修复深底暗字/浅底亮字、返回按钮与模式标签文字、右键菜单快捷键颜色；对比度引擎11项增强（渐变背景感知/alpha合成/具体色值防缓存/禁止过渡冻结/深色主题正文修正）；新增《主题可读性防回归规范》；缓存升级v12。' },
+            { date: '2026-09-30', content: 'V1.9.3：主题精简——22套精选为10套（深色流光/经典蓝/鎏金/明亮/牛奶/国风/雪阳/赛博/极光/自定义），风格更精炼；缓存升级v11。' },
+            { date: '2026-09-30', content: 'V1.9.2：全站文字对比度调查+三层兜底——内联灰字自动跟随主题、占位符/次要文字类统一主题色、JS动态对比度检测（深底暗字/浅底亮字自动提亮），全部主题下文字清晰；缓存升级v10。' },
+            { date: '2026-09-30', content: 'V1.9.1：34页打字测试文字对比度修复（全硬编码色改主题变量）；全站主题系统清理（移除V1.3旧冲突规则、--card-2跟随主题），明亮/深色等全部主题下文字清晰可读；缓存升级v9。' },
+            { date: '2026-09-30', content: 'V1.8.3：33页「今天玩什么」骰子与按钮间距优化（16px→28px）。' },
+            { date: '2026-09-30', content: 'V1.8.2：33页骰子尺寸再调整至80px，不再遮挡下方按键。' },
+            { date: '2026-09-30', content: 'V1.8.1：33页骰子尺寸调整（140→100px）。' },
+            { date: '2026-09-30', content: 'V1.8：33页「今天玩什么」体验重构——14类×25条=350条玩法数据、心情筛选、今日挑战卡、玩法详情卡（难度/时长/道具/步骤/贴士）、收藏夹、倒计时挑战模式。' },
+            { date: '2026-09-30', content: 'V1.7：33页「今天玩什么」全面重做——分类转盘、3D骰子、分类卡片墙、自定义玩法、趣味统计、历史记录、一次抽3个。' },
+            { date: '2026-09-30', content: 'V1.6：33~40页入口从31页移至首页，首页新增8张工具卡片。' },
+            { date: '2026-09-30', content: 'V1.5：自定义主题支持上传本地图片作背景，新增左下角👁欣赏模式（隐藏界面只看背景）。' },
+            { date: '2026-09-30', content: 'V1.4.5：Service Worker 缓存升级（v4），解锁各主题真实背景图片显示。' },
+            { date: '2026-09-30', content: 'V1.4.4：21个主题注入AI提示词同款真实背景图片（雪山/极光/森林等20张）。' },
+            { date: '2026-09-30', content: 'V1.4.3：21个主题背景加入顶部光晕+纹理层（对齐AI提示词风格）。' },
+            { date: '2026-09-30', content: 'V1.4.2：21个主题背景图片统一为默认深色流光7色渐变。' },
+            { date: '2026-09-30', content: 'V1.4.1：21个主题补充流光光晕背景。' },
+            { date: '2026-09-29', content: 'V1.4：主题系统大升级——22套主题面板（默认深色流光+21主题），右下角🎨按钮切换，全站统一。' },
+            { date: '2026-09-29', content: 'V1.3：新功能大升级——新增8个页面（随机乐子/打字速度/番茄专注/井字棋/每日一题/签到徽章/分享卡片/语音控制）、11个成就系统、站内搜索（/键呼出）、主题切换、6项优化。' },
+            { date: '2026-09-29', content: 'V1.2：混淆工具自动化（内联函数自动挂载），线上域名核实。' },
+            { date: '2026-09-29', content: 'V1.1：修复密码登录跳转bug。' },
+            { date: '2026-09-29', content: 'V1：整站提升——媒体文件统一入库、密码哈希保护、公共样式/脚本抽取、Service Worker 离线缓存、防小白保护。' },
+            { date: '2026-09-29', content: '二次简化页面，优化体验：新增找乐子娱乐游戏模块。' },
+            { date: '2026-09-28', content: '简化页面，优化体验：新增找乐子工具模块。' },
+            { date: '2026-09-27', content: 'AI提示词：海量常用AI提示词。' },
+            { date: '2026-09-27', content: '全面文件保存：保存你的文件。' },
+            { date: '2026-09-26', content: '增加AI提示词与全面文件保存功能。' },
+            { date: '2026-09-26', content: '更新网页跳转功能。' },
+            { date: '2026-09-05', content: '新增「文件搜索」工具：选择文件夹后可模糊搜索文件名和路径，支持关键词高亮、一键打开文件，快速定位海量文件。' },
+            { date: '2026-08-29', content: '找乐子——优质工具库S1上线。' },
+            { date: '2026-08-28', content: '面向大家的功能已完善。' },
+            { date: '2026-08-27', content: '本地网页已上传至云端。' },
+            { date: '永久公告', content: '欢迎来到“找乐子——更新公告”页面！这里是所有工具的最新动态。' }
+        ];
+
+        /* ================================================================
+         * 创建标题区
+         * ================================================================ */
+        function createTitleArea() {
+            const div = document.createElement('div');
+            div.className = 'title-area';
+            div.innerHTML = '<h2>找乐子——更新公告</h2>';
+            return div;
+        }
+
+        /* ================================================================
+         * 创建返回主页按钮
+         * ================================================================ */
+        function createBackArea() {
+            const linkEl = document.createElement('a');
+            linkEl.className = 'back-area';
+            linkEl.href='../index.html';
+            linkEl.textContent = '返回主页';
+            linkEl.setAttribute('aria-label', '返回主页');
+            linkEl.title = '返回主页';
+            // 点击事件：阻止默认，显示转场动画后跳转
+            linkEl.addEventListener('click', function(e) {
+                e.preventDefault();
+                showLoadingOverlay('../index.html');
+            });
+            return linkEl;
+        }
+
+        /* ================================================================
+         * 创建公告卡片
+         * ================================================================ */
+        function createAnnouncementCard(announcement, index) {
+            const card = document.createElement('div');
+            card.className = 'announcement-card';
+            // 动态设置入场动画延迟（每张卡片依次延迟0.1秒）
+            card.style.animationDelay = (0.1 + index * 0.1) + 's';
+
+            const dateSpan = document.createElement('span');
+            dateSpan.className = 'date';
+            dateSpan.textContent = announcement.date;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+            contentDiv.textContent = announcement.content;
+
+            card.appendChild(dateSpan);
+            card.appendChild(contentDiv);
+            return card;
+        }
+
+        /* ================================================================
+         * 渲染主函数
+         * ================================================================ */
+        function renderAnnouncements() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            // 添加标题区域
+            grid.appendChild(createTitleArea());
+
+            // 添加返回主页按钮
+            grid.appendChild(createBackArea());
+
+            // V2.0.0 新版本更新提醒（读 ZL.whatsNew，未读才展示，点「知道了」消失）
+            const wn = createWhatsNew();
+            if (wn) grid.appendChild(wn);
+
+            // 按日期倒序排列公告
+            const sorted = [...announcementsConfig].sort((x, y) => new Date(y.date) - new Date(x.date));
+
+            // 添加公告卡片（从第3行开始，自动占据后续行）
+            sorted.forEach((announcement, index) => {
+                grid.appendChild(createAnnouncementCard(announcement, index));
+            });
+        }
+
+/* V2.0.0 新版本更新提醒条（DOM 构建，不依赖页面转义函数） */
+        function createWhatsNew() {
+            if (!window.ZL || !ZL.whatsNew || !ZL.markVersionSeen) return null;
+            const items = ZL.whatsNew();
+            if (!items.length) return null;
+            const div = document.createElement('div');
+            div.className = 'whatsnew-card';
+            const head = document.createElement('div');
+            head.className = 'wn-head';
+            head.textContent = '🆕 新版本更新提醒';
+            div.appendChild(head);
+            items.forEach(item => {
+                const it = document.createElement('div');
+                it.className = 'wn-item';
+                const titleEl = document.createElement('b');
+                titleEl.textContent = item.title;
+                const descEl = document.createElement('div');
+                descEl.className = 'wn-desc';
+                descEl.textContent = item.desc;
+                it.appendChild(titleEl);
+                it.appendChild(descEl);
+                div.appendChild(it);
+            });
+            const ok = document.createElement('button');
+            ok.className = 'wn-btn';
+            ok.textContent = '知道了';
+            ok.addEventListener('click', function () {
+                if (window.ZL) ZL.markVersionSeen();
+                div.remove();
+            });
+            div.appendChild(ok);
+            return div;
+        }
+
+        /* ================================================================
+         * 跳转覆盖层动画
+         * ================================================================ */
+        let overlayTimer = null;
+
+        function showLoadingOverlay(url) {
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+
+            if (overlayTimer) {
+                clearTimeout(overlayTimer);
+            }
+
+            overlayTimer = setTimeout(() => {
+                overlay.classList.remove('active');
+                if (url && url !== '#') {
+                    window.location.href = url;
+                }
+            }, 1000);
+        }
+
+        /* ================================================================
+         * 初始化
+         * ================================================================ */
+        document.addEventListener('DOMContentLoaded', function() {
+            renderAnnouncements();
+
+            // 后期刷新公告的方法
+            window.refreshAnnouncements = function(newConfig) {
+                if (newConfig && Array.isArray(newConfig)) {
+                    announcementsConfig.length = 0;
+                    announcementsConfig.push(...newConfig);
+                }
+                renderAnnouncements();
+            };
+        });
+    </script>
+</body>
+</html>

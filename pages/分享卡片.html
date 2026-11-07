@@ -1,0 +1,418 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+<title>分享卡片生成 - 找乐子</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--txt);
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* ========== 背景流光层（全站统一，20秒无缝循环） ========== */
+    .bg-animation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+    .bg-flow-1 {
+        position: absolute;
+        top: -100%;
+        left: -100%;
+        width: 300%;
+        height: 300%;
+        background: var(--flow-grad);
+        background-size: 400% 400%;
+        animation: flowGradient 20s ease-in-out infinite;
+        will-change: background-position;
+    }
+    .bg-flow-2 {
+        position: absolute;
+        top: -60%;
+        left: -40%;
+        width: 220%;
+        height: 220%;
+        background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.35), transparent 50%),
+            radial-gradient(ellipse at 65% 35%, rgba(120,180,255,.3), transparent 45%),
+            radial-gradient(ellipse at 80% 80%, rgba(220,130,250,.25), transparent 40%);
+        animation: flowDrift 20s ease-in-out infinite alternate;
+        will-change: transform;
+    }
+    .bg-flow-3 {
+        position: absolute;
+        top: -30%;
+        left: -20%;
+        width: 180%;
+        height: 180%;
+        background: radial-gradient(circle at 50% 50%, rgba(255,200,130,.15), transparent 60%),
+            radial-gradient(circle at 20% 80%, rgba(80,220,200,.2), transparent 50%);
+        animation: flowRotate 20s linear infinite;
+        will-change: transform;
+    }
+    @keyframes flowGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes flowDrift {
+        0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+        50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+        100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+    }
+    @keyframes flowRotate {
+        0% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.08); }
+        100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* ========== 透明悬浮球 ========== */
+    .orb {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--card-2) 60%, transparent), color-mix(in srgb, var(--card-2) 15%, transparent) 50%, transparent 70%);
+        box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 8%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        pointer-events: none;
+        will-change: transform, opacity;
+    }
+    .orb-1 { width: 260px; height: 260px; top: 12%; left: 8%; animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite; }
+    .orb-2 { width: 160px; height: 160px; top: 55%; left: 75%; animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite; }
+    .orb-3 { width: 110px; height: 110px; top: 68%; left: 20%; animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite; }
+    .orb-4 { width: 220px; height: 220px; top: 28%; left: 60%; animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite; }
+    .orb-5 { width: 80px; height: 80px; top: 80%; left: 45%; animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite; }
+    @keyframes orbFloatA {
+        0% { transform: translate(0,0) scale(1); opacity:.6; }
+        30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+        60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+        100% { transform: translate(0,0) scale(1); opacity:.6; }
+    }
+    @keyframes orbFloatB {
+        0% { transform: translate(0,0) scale(1); opacity:.5; }
+        35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+        70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+        100% { transform: translate(0,0) scale(1); opacity:.5; }
+    }
+    @keyframes orbSpin { to { transform: rotate(360deg); } }
+
+    /* ========== 主体布局（全站统一：白色悬浮容器） ========== */
+    main {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 60px 20px 40px;
+    }
+    .container {
+        width: 80%;
+        max-width: 1200px;
+        background: var(--card);
+        border-radius: 24px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px var(--line);
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        padding: 20px;
+        color: var(--txt);
+    }
+    .container::-webkit-scrollbar { width: 10px; }
+    .container::-webkit-scrollbar-track { background: rgba(0, 0, 0, .04); border-radius: 12px; }
+    .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 12px; border: 2px solid transparent; }
+
+    .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+    .title-area {
+        grid-column: 1 / 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 90px;
+        background: var(--title-grad);
+        background-size: 300% 300%;
+        animation: titleGradient 6s ease infinite;
+        border-radius: 20px;
+        box-shadow: 0 12px 40px color-mix(in srgb, var(--gold-2) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
+        padding: 10px;
+    }
+    .title-area h2 {
+        font-size: 34px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        color: var(--btn-txt);
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, .3);
+        text-align: center;
+    }
+    @keyframes titleGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .back-area {
+        grid-column: 5 / 7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 90px;
+        background: var(--back-grad);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px color-mix(in srgb, var(--green) 40%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
+        text-decoration: none;
+        color: var(--btn-txt);
+        font-size: 18px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform .3s, box-shadow .3s;
+    }
+    .back-area:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 50px color-mix(in srgb, var(--green) 50%, transparent);
+    }
+    .back-area:active {
+        transform: translateY(-2px) scale(.96);
+    }
+    .card {
+        grid-column: 1 / -1;
+        background: var(--card-2);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+        border: 2px solid var(--line);
+    }
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        border: none; cursor: pointer; font-size: 15px; padding: 10px 20px; border-radius: 10px;
+        background: var(--btn-grad); color: var(--btn-txt);
+        box-shadow: 0 4px 14px color-mix(in srgb, var(--glow) 40%, transparent); transition: transform .2s, box-shadow .2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px color-mix(in srgb, var(--glow) 55%, transparent); }
+    .btn:active { transform: scale(.96); }
+    .btn-secondary { background: #e8eaf6; color: var(--txt); box-shadow: none; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    input, textarea, select {
+        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+        font-size: 14px; background: var(--card-2); color: var(--txt); outline: none;
+    }
+    input:focus, textarea:focus { border-color: var(--glow); box-shadow: 0 0 0 3px color-mix(in srgb, var(--glow) 20%, transparent); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    .hint { font-size: 12px; color: var(--dim); margin-top: 8px; }
+    .stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+    .stat div { background: color-mix(in srgb, var(--glow) 8%, transparent); border-radius: 10px; padding: 10px; text-align: center; }
+    .stat b { display: block; font-size: 20px; color: var(--glow); }
+    .stat span { font-size: 12px; color: var(--dim); }
+    /* ========== 转场遮罩（全站统一样式） ========== */
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(8, 10, 25, .72);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .4s ease, visibility .4s ease;
+        pointer-events: none;
+    }
+    .overlay.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+    .loader-wrap {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .loader-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, .1);
+        border-top-color: #f6d365;
+        border-right-color: #fda085;
+        animation: ringSpin .8s linear infinite;
+    }
+    .loader-ring::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-bottom-color: #a78bfa;
+        border-left-color: #667eea;
+        animation: ringSpin 1.4s linear infinite reverse;
+    }
+    .loader-ring::after {
+        content: '';
+        position: absolute;
+        top: 28px;
+        left: 28px;
+        right: 28px;
+        bottom: 28px;
+        border-radius: 50%;
+        border: 1px solid transparent;
+        border-top-color: #fb7185;
+        border-right-color: #2dd4bf;
+        animation: ringSpin 2s linear infinite;
+    }
+    .loader-text {
+        position: relative;
+        z-index: 5;
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: textShine 1.5s linear infinite;
+    }
+    @keyframes ringSpin { to { transform: rotate(360deg); } }
+    @keyframes textShine {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+    @media (max-width: 900px) {
+        .container { width: 95%; padding: 12px; }
+        .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .title-area, .back-area { grid-column: 1 / -1; min-height: 80px; }
+        .title-area h2 { font-size: 28px; }
+        .back-area { font-size: 16px; }
+        .orb { display: none; }
+    }
+    @media (max-width: 768px) {
+        main { padding: 40px 12px 30px; }
+        .container { width: 94%; max-width: 94vw; padding: 14px; }
+        .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .title-area, .back-area { grid-column: 1 / -1; min-height: 70px; }
+        .title-area h2 { font-size: 24px; }
+        .stat { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+        .container { width: 96%; padding: 10px; }
+        .grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        .title-area h2 { font-size: 20px; letter-spacing: 2px; }
+        .back-area { font-size: 15px; }
+    }
+</style>
+<script data-no-obf>try{var _zt=localStorage.getItem("zl_theme");var _zok=["dark","blue","gold","light","milk","guofeng","snowsun","cyber","aurora","custom"];if(_zt&&_zok.indexOf(_zt)>=0){document.documentElement.setAttribute("data-theme",_zt);}}catch(e){}</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="分享卡片生成 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:title" content="分享卡片生成 - 找乐子">
+<meta property="og:description" content="分享卡片生成 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/分享卡片.html">
+
+<link rel="stylesheet" href="../assets/css/common.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/theme.js"></script>
+<script defer src="../assets/js/zl-features.js"></script>
+</head>
+<body>
+<div class="bg-animation">
+    <div class="bg-flow-1"></div>
+    <div class="bg-flow-2"></div>
+    <div class="bg-flow-3"></div>
+</div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="orb orb-4"></div>
+<div class="orb orb-5"></div>
+<main>
+<div class="container">
+    <div class="grid">
+        <div class="title-area"><h2>分享卡片生成</h2></div>
+        <a href="工具导航.html" class="back-area" id="backHome"><span style="font-size:28px;">🏠</span>返回主页</a>
+        <div class="card">
+            <div style="font-size:16px;font-weight:bold;color:var(--glow);margin-bottom:4px;">🃏 分享卡片生成</div>
+            <div class="hint">输入昵称和一句话，生成专属分享卡片，一键下载分享！</div>
+            <div class="row">
+                <input id="nickInput" placeholder="你的昵称（如：小乐）" maxlength="12">
+            </div>
+            <div class="row">
+                <textarea id="msgInput" rows="3" placeholder="想分享的一句话（如：今天也是元气满满的一天！）" maxlength="60"></textarea>
+            </div>
+            <div class="row">
+                <span style="font-size:13px;color:var(--dim);">背景：</span>
+                <button class="btn btn-secondary bgPick" data-bg="0" style="background: var(--btn-grad);color:#fff;">紫蓝</button>
+                <button class="btn btn-secondary bgPick" data-bg="1" style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;">粉红</button>
+                <button class="btn btn-secondary bgPick" data-bg="2" style="background:linear-gradient(135deg,#43a047,#2e7d32);color:#fff;">青绿</button>
+                <button class="btn btn-secondary bgPick" data-bg="3" style="background:linear-gradient(135deg,#ff9800,#ff5722);color:#fff;">橙红</button>
+            </div>
+            <div style="margin-top:16px;text-align:center;">
+                <canvas id="cardCanvas" width="600" height="800" style="width:100%;max-width:360px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.3);"></canvas>
+            </div>
+            <div class="row" style="justify-content:center;">
+                <button id="genBtn" class="btn">✨ 生成卡片</button>
+                <button id="downloadBtn" class="btn btn-secondary">⬇️ 下载图片</button>
+                <button id="copyBtn" class="btn btn-secondary">📋 复制文案</button>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+<div class="overlay" id="overlay">
+    <div class="loader-wrap">
+        <div class="loader-ring"></div>
+        <div class="loader-text">找乐子～</div>
+    </div>
+</div>
+<script>
+/*ZL-OBF-V2*/
+(function(_0x21af20,_0xbf0940){var _0x51768d=_0x28a7,_0x4706c8=_0x21af20();while(!![]){try{var _0x1987c2=parseInt(_0x51768d(0x1fc))/(0x2*0xbc7+0x56d+-0x1cfa)+-parseInt(_0x51768d(0x17b))/(-0x755*0x1+-0x10*-0xa4+-0x2e9)+-parseInt(_0x51768d(0x193))/(0x193+-0x14*0x139+-0x16e4*-0x1)*(-parseInt(_0x51768d(0x1d8))/(0x2600+-0x1195+-0x3*0x6cd))+parseInt(_0x51768d(0x1b9))/(-0x7a5+0xb*-0x21a+0x1ec8)+parseInt(_0x51768d(0x191))/(-0x16f*0x17+-0x5ec+0x1*0x26eb)+-parseInt(_0x51768d(0x201))/(-0x28a+-0x1cab+-0x2*-0xf9e)+parseInt(_0x51768d(0x184))/(-0x2*-0xbab+0x1dd1*-0x1+-0x1*-0x683);if(_0x1987c2===_0xbf0940)break;else _0x4706c8['push'](_0x4706c8['shift']());}catch(_0x12fc20){_0x4706c8['push'](_0x4706c8['shift']());}}}(_0x5526,-0x4ad26+-0xa34d5+0x1aea2d*0x1),(function(){var _0x2c5f5a=_0x28a7,_0x24a3ce={'elRKM':function(_0x569eb3,_0x2cba2a,_0x3b6448){return _0x569eb3(_0x2cba2a,_0x3b6448);},'xThCP':function(_0x10f029){return _0x10f029();},'pgHBI':function(_0x4db8ca,_0x21d381){return _0x4db8ca+_0x21d381;},'VxdEL':function(_0x4f4860,_0x25e867){return _0x4f4860+_0x25e867;},'stskR':_0x2c5f5a(0x1fa),'XlMIU':function(_0xe0ab7d,_0x223efe){return _0xe0ab7d*_0x223efe;},'OyNII':function(_0x4a703b,_0x264b8d){return _0x4a703b*_0x264b8d;},'oFwFL':_0x2c5f5a(0x19f),'WaFnd':function(_0x42e5dc,_0x2fa5bb){return _0x42e5dc<_0x2fa5bb;},'uQEWe':_0x2c5f5a(0x204),'xbMhc':function(_0x5241f5,_0x2688e4){return _0x5241f5+_0x2688e4;},'jvUkP':function(_0x5b1122,_0x835038){return _0x5b1122+_0x835038;},'VIliF':_0x2c5f5a(0x1e7),'vtDDP':_0x2c5f5a(0x18b),'uWVtg':_0x2c5f5a(0x1c5),'sAarR':function(_0x29f4fc,_0x3e69b9){return _0x29f4fc+_0x3e69b9;},'GUopT':function(_0x2647d0,_0x49512e){return _0x2647d0+_0x49512e;},'bGmUc':_0x2c5f5a(0x1a7),'qsGBS':_0x2c5f5a(0x20a),'TBdmq':_0x2c5f5a(0x1b4),'AxxtF':_0x2c5f5a(0x18d),'VLdNs':_0x2c5f5a(0x203),'oMRPS':function(_0x3dafe1,_0x333ef5){return _0x3dafe1+_0x333ef5;},'aafTF':_0x2c5f5a(0x209),'JwHZg':_0x2c5f5a(0x185),'GfUeA':_0x2c5f5a(0x1f8),'RxNEJ':_0x2c5f5a(0x1db),'hFPnY':_0x2c5f5a(0x200),'Fmijn':_0x2c5f5a(0x1e5),'QOfmR':_0x2c5f5a(0x1e3),'uWcyn':_0x2c5f5a(0x20f),'IDpib':_0x2c5f5a(0x187),'NHtiT':_0x2c5f5a(0x1c4),'ckTwg':_0x2c5f5a(0x18a),'DbRxv':function(_0x4ba59f){return _0x4ba59f();},'JmdJA':_0x2c5f5a(0x1f6)},_0x12ed3a=(function(){var _0x3b1dbf=!![];return function(_0x537d24,_0x52f79e){var _0x241c8d=_0x3b1dbf?function(){var _0x51d640=_0x28a7;if(_0x52f79e){var _0xee0509=_0x52f79e[_0x51d640(0x1f3)](_0x537d24,arguments);return _0x52f79e=null,_0xee0509;}}:function(){};return _0x3b1dbf=![],_0x241c8d;};}());'use strict';var _0x57064b=[[_0x2c5f5a(0x1cc),_0x2c5f5a(0x1a3)],[_0x24a3ce[_0x2c5f5a(0x1f2)],_0x24a3ce[_0x2c5f5a(0x1e8)]],[_0x24a3ce[_0x2c5f5a(0x1a2)],_0x2c5f5a(0x17e)],[_0x24a3ce[_0x2c5f5a(0x1d5)],_0x2c5f5a(0x1eb)]],_0x2ba57d=0x1*-0xe95+0x21b*-0xc+0x1*0x27d9,_0x54a1be=document[_0x2c5f5a(0x19e)](_0x24a3ce[_0x2c5f5a(0x1b8)]),_0x27ebbb=document[_0x2c5f5a(0x19e)](_0x24a3ce[_0x2c5f5a(0x1df)]),_0x53be09=document[_0x2c5f5a(0x19e)](_0x24a3ce[_0x2c5f5a(0x1b3)]),_0x1957a3=_0x53be09[_0x2c5f5a(0x194)]('2d');document[_0x2c5f5a(0x1bd)](_0x2c5f5a(0x18e))[_0x2c5f5a(0x210)](function(_0x5677eb){var _0x32356d=_0x2c5f5a;_0x5677eb[_0x32356d(0x17f)](_0x32356d(0x18a),function(){var _0x5134ac=_0x32356d;_0x2ba57d=_0x24a3ce[_0x5134ac(0x20c)](parseInt,_0x5677eb[_0x5134ac(0x1bb)]['bg'],-0xb2e+0x2d*0x53+0x35f*-0x1),_0x24a3ce[_0x5134ac(0x192)](_0x2b77c9);});});function _0x1a6afb(_0x35c127,_0x5c0bbd,_0x3e9b2b,_0x5472e7,_0x58971c){var _0x59bca8=_0x2c5f5a;_0x1957a3[_0x59bca8(0x186)](),_0x1957a3[_0x59bca8(0x1ff)](_0x24a3ce[_0x59bca8(0x214)](_0x35c127,_0x58971c),_0x5c0bbd),_0x1957a3[_0x59bca8(0x190)](_0x24a3ce[_0x59bca8(0x214)](_0x35c127,_0x3e9b2b),_0x5c0bbd,_0x24a3ce[_0x59bca8(0x214)](_0x35c127,_0x3e9b2b),_0x5c0bbd+_0x5472e7,_0x58971c),_0x1957a3[_0x59bca8(0x190)](_0x24a3ce[_0x59bca8(0x214)](_0x35c127,_0x3e9b2b),_0x5c0bbd+_0x5472e7,_0x35c127,_0x24a3ce[_0x59bca8(0x214)](_0x5c0bbd,_0x5472e7),_0x58971c),_0x1957a3[_0x59bca8(0x190)](_0x35c127,_0x24a3ce[_0x59bca8(0x214)](_0x5c0bbd,_0x5472e7),_0x35c127,_0x5c0bbd,_0x58971c),_0x1957a3[_0x59bca8(0x190)](_0x35c127,_0x5c0bbd,_0x24a3ce[_0x59bca8(0x1b2)](_0x35c127,_0x3e9b2b),_0x5c0bbd,_0x58971c),_0x1957a3[_0x59bca8(0x1d2)]();}function _0x2b77c9(){var _0x2c8a09=_0x2c5f5a,_0x256d97=_0x24a3ce[_0x2c8a09(0x1e9)][_0x2c8a09(0x1d6)]('|'),_0x5770b5=0x18ff+-0x45e*-0x6+-0x101*0x33;while(!![]){switch(_0x256d97[_0x5770b5++]){case'0':var _0x190b67={'TNfzN':_0x2c8a09(0x207),'QfTkK':function(_0x5cee5d,_0x58d308){var _0x5249ca=_0x2c8a09;return _0x24a3ce[_0x5249ca(0x1b7)](_0x5cee5d,_0x58d308);}};continue;case'1':_0x1957a3[_0x2c8a09(0x186)]();continue;case'2':if(_0x59fd95)_0x34be4b[_0x2c8a09(0x1f1)](_0x59fd95);continue;case'3':var _0x581aa2=_0x1957a3[_0x2c8a09(0x197)](-0x2301*0x1+-0x16de*0x1+0x39df,0x1d*0xdf+-0x768*0x1+0x11db*-0x1,0xeb7+0x24b9+0xc46*-0x4,-0xb*0x329+0x1248+0x139b);continue;case'4':_0x1957a3[_0x2c8a09(0x1cf)](0x3c0+0x78b*-0x3+0x14fd,0x21d*-0xb+0x2d3*-0x3+0x2238,0xd*0xb8+0x2*0x119f+0x2c72*-0x1,-0x2c*0x49+-0x2*0x985+0x26e*0xd,_0x24a3ce[_0x2c8a09(0x1ef)](Math['PI'],0x4c+-0x40*-0x55+-0x158a));continue;case'5':_0x34be4b[_0x2c8a09(0x210)](function(_0x120e1e,_0x268d3d){var _0x54f977=_0x2c8a09;_0x1957a3[_0x54f977(0x1d9)](_0x120e1e,0x21a7+-0x1*0x9a2+-0x1*0x16d9,_0xdc8867+_0x190b67[_0x54f977(0x20e)](_0x268d3d,0x3e6*-0x1+0x2515*0x1+0x4b5*-0x7));});continue;case'6':_0x1957a3[_0x2c8a09(0x1ba)]=_0x581aa2;continue;case'7':_0x1957a3[_0x2c8a09(0x1d9)](_0x2c8a09(0x1ac),-0x94a+-0x1744+0x21ba,-0x156e+0x1*-0x158b+0x2b53);continue;case'8':_0x1957a3[_0x2c8a09(0x1ba)]=_0x24a3ce[_0x2c8a09(0x1c7)];continue;case'9':var _0x6283f0=new Date();continue;case'10':_0x1957a3[_0x2c8a09(0x1fb)]();continue;case'11':_0x1957a3[_0x2c8a09(0x186)]();continue;case'12':_0x1957a3[_0x2c8a09(0x1fb)]();continue;case'13':_0x1957a3[_0x2c8a09(0x1cf)](-0x1ceb*0x1+0x241a*0x1+-0x1*0x6df,0x2*0x1356+0xf18+0x1989*-0x2,-0x3b*-0x9e+-0x1*-0x3ab+-0x27d9,-0xfba+-0x1*-0x1deb+-0xad*0x15,Math['PI']*(0x4*-0x457+-0x8a8+0x1a06));continue;case'14':_0x1957a3[_0x2c8a09(0x1ba)]=_0x2c8a09(0x1d3);continue;case'15':_0x1957a3[_0x2c8a09(0x1f4)]=_0x2c8a09(0x1c6);continue;case'16':var _0x195283=_0x54a1be[_0x2c8a09(0x1cd)][_0x2c8a09(0x1ae)]()||'小乐';continue;case'17':_0x1957a3[_0x2c8a09(0x1be)]=_0x2c8a09(0x18b);continue;case'18':_0x581aa2[_0x2c8a09(0x1bf)](0x3a*0x3d+-0x523+-0x65*0x16,_0x57064b[_0x2ba57d][-0x57f*0x3+-0x1f95+0x3013]);continue;case'19':_0x1957a3[_0x2c8a09(0x1cf)](0x1cef+-0xc75+-0xe72,-0x105a+-0x228d+0x335f,0xa36+-0x5*0x56f+0x114f,-0x189f+-0x1086+0x2925,Math['PI']*(-0x92c+-0x215b*0x1+-0x1*-0x2a89));continue;case'20':_0x1957a3[_0x2c8a09(0x1f4)]=_0x2c8a09(0x182);continue;case'21':var _0x546da9=0xa6e+0x173c+-0x2*0xfef;continue;case'22':_0x1957a3[_0x2c8a09(0x1f4)]=_0x2c8a09(0x20b);continue;case'23':var _0x59fd95='';continue;case'24':_0x1957a3[_0x2c8a09(0x199)](0x1*0x1d98+-0xe64+-0xf34,-0x1a26*-0x1+0x2*-0xc73+0x8*-0x28,0x1*-0x1bed+-0x28*0xf1+0x43ed,0xdf9+-0x1b3b+0x1062);continue;case'25':_0x24a3ce[_0x2c8a09(0x192)](_0x417a59);continue;case'26':var _0x43be6c=_0x27ebbb[_0x2c8a09(0x1cd)][_0x2c8a09(0x1ae)]()||_0x2c8a09(0x189);continue;case'27':var _0x34be4b=[];continue;case'28':_0x1957a3[_0x2c8a09(0x1ba)]=_0x2c8a09(0x1f7);continue;case'29':var _0xdc8867=-0xb3d+0x269d+-0x1a0c-_0x24a3ce[_0x2c8a09(0x1ef)](_0x34be4b[_0x2c8a09(0x208)]-(-0x694+0xd63*0x1+0x1*-0x6ce),-0x1*0xad9+-0x245*0x1+0x134*0xb);continue;case'30':var _0x417a59=_0x12ed3a(this,function(){var _0x392154=_0x2c8a09;if(_0x417a59[_0x392154(0x1f9)]()[_0x392154(0x19b)]()[_0x392154(0x1d1)]('\x0a')!==-(0x2393+0xa57+-0x2de9))return;return _0x417a59[_0x392154(0x19b)]()[_0x392154(0x1c2)](_0x392154(0x207))[_0x392154(0x19b)]()[_0x392154(0x1e2)](_0x417a59)[_0x392154(0x1c2)](_0x190b67[_0x392154(0x19d)]);});continue;case'31':_0x581aa2[_0x2c8a09(0x1bf)](0x1e4e+-0x1c8e*0x1+-0x1c0,_0x57064b[_0x2ba57d][-0xf6b+-0x25d1+0x353c*0x1]);continue;case'32':for(var _0x365804=-0x397+-0x1a3e+0x1dd5*0x1;_0x24a3ce[_0x2c8a09(0x1ab)](_0x365804,_0x43be6c[_0x2c8a09(0x208)]);_0x365804++){_0x59fd95+=_0x43be6c[_0x365804],_0x1957a3[_0x2c8a09(0x211)](_0x59fd95)[_0x2c8a09(0x1b5)]>_0x546da9&&(_0x34be4b[_0x2c8a09(0x1f1)](_0x59fd95[_0x2c8a09(0x181)](0xe97+0x2d*0x3d+-0x1950,-(-0x1dd3+-0x2*-0xdfb+0x1de))),_0x59fd95=_0x43be6c[_0x365804]);}continue;case'33':_0x1957a3[_0x2c8a09(0x1f4)]=_0x24a3ce[_0x2c8a09(0x1c0)];continue;case'34':_0x1957a3[_0x2c8a09(0x1ba)]=_0x2c8a09(0x1ca);continue;case'35':_0x1957a3[_0x2c8a09(0x186)]();continue;case'36':_0x1957a3[_0x2c8a09(0x1d9)](_0x24a3ce[_0x2c8a09(0x1c1)](_0x6283f0[_0x2c8a09(0x17d)](),'年')+_0x24a3ce[_0x2c8a09(0x183)](_0x6283f0[_0x2c8a09(0x1a0)](),-0x1*0x1505+-0x4b*-0x31+0x6ab)+'月'+_0x6283f0[_0x2c8a09(0x1e4)]()+_0x24a3ce[_0x2c8a09(0x1aa)],0x22f0+-0x13f7+-0xdcd,0x1*0x2ab+-0x8*0x407+0x207b);continue;case'37':_0x1957a3[_0x2c8a09(0x1be)]=_0x24a3ce[_0x2c8a09(0x212)];continue;case'38':_0x1957a3[_0x2c8a09(0x1fb)]();continue;case'39':_0x1957a3[_0x2c8a09(0x1d9)](_0x24a3ce[_0x2c8a09(0x1b2)](_0x24a3ce[_0x2c8a09(0x1a9)],_0x195283),-0x427+-0x1*-0x11e5+-0xc92,_0x24a3ce[_0x2c8a09(0x1a4)](_0x24a3ce[_0x2c8a09(0x19c)](_0xdc8867,_0x24a3ce[_0x2c8a09(0x1b7)](_0x34be4b[_0x2c8a09(0x208)],0x10d3+-0x22d6+0x123f)),0xcc0+-0x900+-0x398));continue;case'40':_0x1957a3[_0x2c8a09(0x1ba)]=_0x24a3ce[_0x2c8a09(0x18f)];continue;}break;}}function _0x223685(){var _0x16d57e=_0x2c5f5a;_0x2b77c9();if(window['ZL']&&ZL[_0x16d57e(0x1a6)])ZL[_0x16d57e(0x1a6)](_0x24a3ce[_0x16d57e(0x19a)]);if(window['ZL']&&ZL[_0x16d57e(0x1dd)])ZL[_0x16d57e(0x1dd)](_0x24a3ce[_0x16d57e(0x202)],-0xf19+-0x16b1+0xc99*0x3);}document[_0x2c5f5a(0x19e)](_0x24a3ce[_0x2c5f5a(0x1ce)])[_0x2c5f5a(0x17f)](_0x2c5f5a(0x18a),_0x223685),document[_0x2c5f5a(0x19e)](_0x24a3ce[_0x2c5f5a(0x1a1)])[_0x2c5f5a(0x17f)](_0x24a3ce[_0x2c5f5a(0x1ec)],function(){var _0x76424a=_0x2c5f5a,_0x179ea6=document[_0x76424a(0x1e0)]('a');_0x179ea6[_0x76424a(0x206)]=_0x53be09[_0x76424a(0x1af)](_0x76424a(0x17c)),_0x179ea6[_0x76424a(0x188)]=_0x24a3ce[_0x76424a(0x1a4)](_0x24a3ce[_0x76424a(0x1d0)]+Date[_0x76424a(0x1ad)](),_0x24a3ce[_0x76424a(0x1cb)]),document[_0x76424a(0x1e1)][_0x76424a(0x213)](_0x179ea6),_0x179ea6[_0x76424a(0x18a)](),document[_0x76424a(0x1e1)][_0x76424a(0x1f0)](_0x179ea6);if(window['ZL']&&ZL[_0x76424a(0x1a6)])ZL[_0x76424a(0x1a6)](_0x76424a(0x1fe));}),document[_0x2c5f5a(0x19e)](_0x2c5f5a(0x1bc))[_0x2c5f5a(0x17f)](_0x2c5f5a(0x18a),function(){var _0xf6f437=_0x2c5f5a,_0x8bed44={'erhzA':_0xf6f437(0x1ed)},_0x1af0d5=_0x24a3ce[_0xf6f437(0x19c)](_0x24a3ce[_0xf6f437(0x180)](_0x54a1be[_0xf6f437(0x1cd)][_0xf6f437(0x1ae)]()||'小乐','：')+(_0x27ebbb[_0xf6f437(0x1cd)][_0xf6f437(0x1ae)]()||_0xf6f437(0x189)),_0xf6f437(0x1d7));try{navigator[_0xf6f437(0x1c9)][_0xf6f437(0x198)](_0x1af0d5)[_0xf6f437(0x1b1)](function(){var _0x261941=_0xf6f437;if(window['ZL']&&ZL[_0x261941(0x1a6)])ZL[_0x261941(0x1a6)](_0x8bed44[_0x261941(0x1f5)]);})[_0xf6f437(0x18c)](function(){});}catch(_0x15ec05){}}),_0x24a3ce[_0x2c5f5a(0x1ea)](_0x2b77c9);var _0x35c362=document[_0x2c5f5a(0x19e)](_0x2c5f5a(0x1ee));document[_0x2c5f5a(0x19e)](_0x24a3ce[_0x2c5f5a(0x20d)])[_0x2c5f5a(0x17f)](_0x24a3ce[_0x2c5f5a(0x1ec)],function(_0x471413){var _0x1e3c3d=_0x2c5f5a,_0x368eea={'fnjzV':_0x1e3c3d(0x1c8)};_0x471413[_0x1e3c3d(0x1d4)]();if(_0x35c362[_0x1e3c3d(0x1fd)][_0x1e3c3d(0x1e6)](_0x24a3ce[_0x1e3c3d(0x1b6)]))return;_0x35c362[_0x1e3c3d(0x1fd)][_0x1e3c3d(0x1a5)](_0x1e3c3d(0x209)),setTimeout(function(){var _0x161087=_0x1e3c3d;window[_0x161087(0x1a8)][_0x161087(0x206)]=_0x368eea[_0x161087(0x1c3)];},0x1*-0x19fd+-0x1*-0x1c99+0x214);}),document[_0x2c5f5a(0x17f)](_0x2c5f5a(0x1b0),function(_0x176337){var _0x1dddec=_0x2c5f5a;_0x176337[_0x1dddec(0x1da)]===_0x1dddec(0x195)&&_0x35c362[_0x1dddec(0x1fd)][_0x1dddec(0x1e6)](_0x24a3ce[_0x1dddec(0x1b6)])&&_0x35c362[_0x1dddec(0x1fd)][_0x1dddec(0x1de)](_0x24a3ce[_0x1dddec(0x1b6)]);}),window[_0x2c5f5a(0x1dc)]=_0x1a6afb,window[_0x2c5f5a(0x196)]=_0x2b77c9,window[_0x2c5f5a(0x205)]=_0x223685;}()));function _0x28a7(_0x1a0a44,_0xf79ac9){_0x1a0a44=_0x1a0a44-(-0xc17+0x7d5+0x5bd*0x1);var _0x584c3c=_0x5526();var _0x1322ef=_0x584c3c[_0x1a0a44];if(_0x28a7['YRajXl']===undefined){var _0x37e6a9=function(_0x497b96){var _0x6fff56='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0x4cfbc3='',_0x4c3bf7='',_0x43dcf9=_0x4cfbc3+_0x37e6a9,_0x22785c=(''+function(){return-0x5c3+0x2323+-0x1d60;})['indexOf']('\x0a')!==-(0x233f*-0x1+0x568*0x5+-0x1*-0x838);for(var _0x3519a2=-0x18ee+0x221e+-0x930,_0x3e807d,_0x1cd5ab,_0xb827bf=0x1eef+-0x1*-0x2513+-0x4402;_0x1cd5ab=_0x497b96['charAt'](_0xb827bf++);~_0x1cd5ab&&(_0x3e807d=_0x3519a2%(0x125c*-0x1+-0x3c3+0x1623)?_0x3e807d*(-0x1fb8+-0x1087*0x1+-0x9b3*-0x5)+_0x1cd5ab:_0x1cd5ab,_0x3519a2++%(0x46*-0x4f+0x1b03+-0x565))?_0x4cfbc3+=_0x22785c||_0x43dcf9['charCodeAt'](_0xb827bf+(-0x26a*0xb+0xb3*-0x5+0x1e17))-(0x1*-0xe27+-0x15ab+0xaa*0x36)!==-0x1fe7+-0x780+0x1*0x2767?String['fromCharCode'](0xc9b+0x316+-0xd1*0x12&_0x3e807d>>(-(0xc27*-0x1+0x1a10+-0xde7)*_0x3519a2&-0x174c+0x19b3+-0x261)):_0x3519a2:0x148f+0xc41*-0x1+-0x84e){_0x1cd5ab=_0x6fff56['indexOf'](_0x1cd5ab);}for(var _0x24afa1=0x17e7+0x20ac+0x7*-0x815,_0x3f8e13=_0x4cfbc3['length'];_0x24afa1<_0x3f8e13;_0x24afa1++){_0x4c3bf7+='%'+('00'+_0x4cfbc3['charCodeAt'](_0x24afa1)['toString'](-0x84*0x8+-0x222a+0x2*0x132d))['slice'](-(0x1a27+0x649*0x2+-0x26b7));}return decodeURIComponent(_0x4c3bf7);};_0x28a7['MHGyhd']=_0x37e6a9,_0x28a7['YOVSXh']={},_0x28a7['YRajXl']=!![];}var _0x57faa4=_0x584c3c[-0xacd+0x1*0x1d5f+0x1292*-0x1];_0x28a7['xwOOQM']!==_0x57faa4&&(_0x28a7['YOVSXh']={},_0x28a7['xwOOQM']=_0x57faa4);var _0x5c8bae=_0x28a7['YOVSXh'][_0x1a0a44];if(_0x5c8bae===undefined){var _0x752695=function(_0x42cedd){this['voElBG']=_0x42cedd,this['dDscfK']=[-0x178a+0xb8d*0x2+-0x71*-0x1,-0x111+0x1*0x1445+-0x1334,-0xa3d*-0x2+0x1f11+-0x3f7*0xd],this['LhWcKl']=function(){return'newState';},this['nBlEac']='\x5c\x77\x2b\x20\x2a\x5c\x28\x5c\x29\x20\x2a\x7b\x5c\x77\x2b\x20\x2a',this['GvEBkt']='\x5b\x27\x7c\x22\x5d\x2e\x2b\x5b\x27\x7c\x22\x5d\x3b\x3f\x20\x2a\x7d';};_0x752695['prototype']['JlfXFD']=function(){var _0x9eebe5=new RegExp(this['nBlEac']+this['GvEBkt']),_0x23b53a=_0x9eebe5['test'](this['LhWcKl']['toString']())?--this['dDscfK'][-0x1e0b*-0x1+-0x16fd+-0x70d]:--this['dDscfK'][0x1*0x1fb2+-0x3cb+0x3*-0x94d];return this['leKWgw'](_0x23b53a);},_0x752695['prototype']['leKWgw']=function(_0x2b9b17){if(!Boolean(~_0x2b9b17))return _0x2b9b17;return this['sRvfTH'](this['voElBG']);},_0x752695['prototype']['sRvfTH']=function(_0x21f839){for(var _0x228492=0x2191+-0x1c29+-0x568,_0x23ba33=this['dDscfK']['length'];_0x228492<_0x23ba33;_0x228492++){this['dDscfK']['push'](Math['round'](Math['random']())),_0x23ba33=this['dDscfK']['length'];}return _0x21f839(this['dDscfK'][0x258b+0x1b13+-0x409e]);},(''+function(){return 0x1*0x1aa3+-0x22a6+0x1*0x803;})['indexOf']('\x0a')===-(0xea4*-0x2+-0x96f+0x7*0x588)&&new _0x752695(_0x28a7)['JlfXFD'](),_0x1322ef=_0x28a7['MHGyhd'](_0x1322ef),_0x28a7['YOVSXh'][_0x1a0a44]=_0x1322ef;}else _0x1322ef=_0x5c8bae;return _0x1322ef;}function _0x5526(){var _0x58a8a8=['zM5QELy','zg93BMXVywrcDg4','4Ocu4Ocuia','yM9SzcaZnhb4icjnAwnYB3nVzNqGwwfizwKIlcbZyw5ZlxnLCMLM','B0z3rKW','5BEL5yw35A+86iIQlMH0BwW','y2XPCgjVyxjK','i2zMzG','vKXKtNm','iZy2n2vLyq','DMfSDwu','surWAwi','yxjJ','qxH4Dey','Aw5KzxHpzG','y2XVC2vqyxrO','CMDIysGYntuSmJu1ldi1nsWUnIK','ChjLDMvUDerLzMf1Bhq','AezqBLK','C3bSAxq','77Yi5P2L6iEQ5OM+5lMq5A2q77Yj','oe9ozLrlAW','zMLSBfrLEhq','A2v5','iZqZyta0nW','CM91BMrLzfjLy3q','yNvTCa','CMvTB3zL','uu9MBvi','y3jLyxrLrwXLBwvUDa','yM9KEq','y29UC3rYDwn0B3i','BxnNsw5WDxq','z2v0rgf0zq','BMLJA0LUChv0','y29UDgfPBNm','5PELimk3ioADPEIhQUAjVUs5KowTKa','r2zvzue','C3rZA1i','rgjsEhy','i2zMntCYmG','y2TuD2C','5PAh5Qgi5BEY5Asn5yI2','B3zLCMXHEq','t3LosuK','CMvTB3zLq2HPBgq','ChvZAa','sNDiwMC','yxbWBhK','zM9UDa','zxjOEKe','yMfJA0HVBwu','CMDIysGYntuSmJu1ldi1nsWUmtiP','i2y1ntC2yW','yMLUza','mhWZmhWYnxWZFdmXFde4Fdz8mJr8mJH8mxWXoxWXmNWZnxWXm3WXmhWXmxW0Fdm4FdqWFdiYFdm3FdD8mJz8mtz8mZr8mtv8mtD8mJD8mJn8mJf8mZj8mNWYoxW1FdmZFdH8mZL8oxWYmhWXnhWZnG','zMLSBa','mtqZntK3n3vmsvHVBa','y2XHC3nmAxn0','5y2H54Mh5BEY5lIl6l29','Bw92zvrV','i2zMotGWma','nta2nJK1n2nMqMz6vW','vejKBxe','lNbUzW','mJrWEcaItwLJCM9ZB2z0ifLHsgvPiIWGC2fUCY1ZzxjPzG','yxv0B0DLBG','AhjLzG','kcGOlISPkYKRksSK','BgvUz3rO','ywn0AxzL','5y2H54Mh5BEY55sF5OIq','yM9SzcaYnNb4icjnAwnYB3nVzNqGwwfizwKIlcbZyw5ZlxnLCMLM','zwXss00','sM1KsKe','uwzuA0S','y2fYzenHBNzHCW','zM9YrwfJAa','BwvHC3vYzvrLEhq','DNrerfa','yxbWzw5Kq2HPBgq','CgDiqKK','mtyYodG1mNDrwNPRra','Aw1Hz2uVCg5N','z2v0rNvSBfLLyxi','iZjLn2qZmG','ywrKrxzLBNrmAxn0zw5LCG','B01sufm','C2XPy2u','mtHWEcaItwLJCM9ZB2z0ifLHsgvPiIWGC2fUCY1ZzxjPzG','ANzvA1a','mZK4nJiXnMvpt2TfEG','i2yWotnMyG','yMvNAw5qyxrO','z2vUqNrU','zg93BMXVywq','5lUk5AsP5lMF5PIV5ywd5Rcu5RUH5RUH55Qe5lIa5AsP77Yb','y2XPy2S','y2vUDgvY','y2f0y2G','5OM+5lMq5A2q5yIg5lQR5y2H54MhxW','lMjNugLJAW','yKDTvwm','yxjJvg8','mtu2oduWogzRDK1UDG','EfrOq1a','mtyYnZiZD1Lnt1v0','z2v0q29UDgv4Da','rxnJyxbL','zhjHD0nHCMq','y3jLyxrLtgLUzwfYr3jHzgLLBNq','D3jPDgvuzxH0','zMLSBfjLy3q','CxnhqLm','Dg9tDhjPBMC','r1vVCfq','ve5MEK4','z2v0rwXLBwvUDej5swq','CMDIysGYntuSmJu1ldi1nsWUoduP','z2v0tw9UDgG','tKH0Avq','uNHoruO','iZC2ngjHmG','C0fHCLi','ywrK','C2HVD1rVyxn0','CMDIysGYntuSmJu1ldi1nsWUosK','Bg9JyxrPB24','DvDwDgC','vKLSAuy','v2fgBMq','8j+oSIdMIB7KUzdLRza','BM93','DhjPBq','Dg9eyxrHvvjm','A2v5zg93BG','DgHLBG','vNHKruW','DvDJEw4','C2HHCMvFywrK','D2LKDgG','ywfMvey','wgXnsvu','rM1PAM4','mteZmJy1sfD6zgjA','zMLSBfn0EwXL','zgf0yxnLDa','y29WEuj0BG','CxvLCNLtzwXLy3rVCKfSBa','Dgv4DefSAwDU','ywrKq29SB3jtDg9W','Dvffv2u','EgjnAgm','C2vHCMnO'];_0x5526=function(){return _0x58a8a8;};return _0x5526();}
+</script>
+</body>
+</html>

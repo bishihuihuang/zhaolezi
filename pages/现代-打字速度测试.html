@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>打字速度测试 - 现代化·知识学习站</title>
+<meta name="description" content="打字速度测试：中文/英文句子分级练习，限时与长文模式，实时显示字/分钟与准确率，历史成绩曲线，最佳成绩自动保存。">
+<link rel="icon" href="../assets/xd/xd-favicon.svg">
+<link rel="manifest" href="../assets/xd/xd-manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="stylesheet" href="../assets/css/xd-common.css">
+<script defer src="../assets/js/xd-zoom-capture.js"></script>
+<script defer src="../assets/js/xd-common.js"></script>
+<script defer src="../assets/js/xd-theme.js"></script>
+<script defer src="../assets/js/xd-features.js"></script>
+<style>
+    /* ===== D4 打字测试专用样式（跟随全站主题变量） ===== */
+    #typingApp { width: 100%; }
+    .t-card {
+        background: var(--card-2); border: 2px solid var(--line); border-radius: 16px;
+        padding: 18px 20px; margin-top: 16px; box-shadow: 0 6px 20px rgba(0, 0, 0, .08);
+    }
+    .t-card-title { font-size: 16px; font-weight: 800; color: var(--blue); margin-bottom: 10px; }
+    .mode-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .mode-tab {
+        padding: 8px 16px; border-radius: 10px; border: 2px solid var(--line);
+        background: var(--card); color: var(--txt); cursor: pointer; font-size: 14px; font-weight: 700;
+        transition: all .2s;
+    }
+    .mode-tab.active { background: var(--btn-grad); color: #fff; border-color: transparent; }
+    .opt-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+    .opt-row select { flex: 1; min-width: 140px; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font-size: 14px; background: var(--card); color: var(--txt); outline: none; }
+    .opt-row select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(102, 126, 234, .2); }
+    .opt-row label { font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 6px; flex: none; cursor: pointer; }
+    #targetText { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; font-size: 16px; line-height: 1.9; color: var(--txt); min-height: 90px; letter-spacing: 1px; margin-bottom: 12px; }
+    #targetText span { transition: color .1s, background .1s; }
+    #targetText span.next { background: rgba(102, 126, 234, .28); box-shadow: 0 0 0 2px var(--blue); border-radius: 3px; }
+    #targetText span.ok { color: var(--green); }
+    #targetText span.bad { color: var(--red); background: rgba(229, 57, 53, .14); border-radius: 3px; }
+    #typeInput {
+        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+        font-size: 15px; background: var(--card); color: var(--txt); outline: none; box-sizing: border-box;
+    }
+    #typeInput:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(102, 126, 234, .2); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+    .stat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+    .stat div { background: rgba(102, 126, 234, .08); border-radius: 10px; padding: 10px; text-align: center; }
+    .stat b { display: block; font-size: 20px; color: var(--blue); }
+    .stat span { font-size: 12px; color: var(--dim); }
+    .rank-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .rank-badge { padding: 6px 16px; border-radius: 20px; font-weight: 800; color: #fff; font-size: 14px; box-shadow: 0 4px 12px rgba(0, 0, 0, .2); }
+    .rank-progress { font-size: 13px; color: var(--dim); }
+    #resultMsg { margin-top: 10px; font-size: 14px; color: var(--red); font-weight: bold; }
+    #resultMsg.good { color: var(--green); }
+    .err-wrap { margin-top: 10px; display: none; }
+    .err-wrap.show { display: block; }
+    .err-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .err-item { background: rgba(229, 57, 53, .1); border: 1px solid rgba(229, 57, 53, .3); border-radius: 8px; padding: 4px 10px; font-size: 13px; color: var(--red); }
+    .err-item b { color: var(--green); }
+    .daily-card { border-style: dashed; }
+    .daily-tag { display: inline-block; background: var(--btn-grad); color: #fff; font-size: 12px; font-weight: 800; padding: 3px 12px; border-radius: 20px; }
+    .daily-tag.daily-done { background: var(--green); }
+    .daily-sentence { font-size: 15px; font-weight: 700; margin-top: 8px; line-height: 1.7; color: var(--txt); }
+    .daily-status { font-size: 12px; color: var(--dim); margin-top: 4px; }
+    .chart-wrap { margin-top: 12px; }
+    #histChart { width: 100%; height: 160px; background: rgba(102, 126, 234, .06); border-radius: 12px; }
+    .records-list { margin-top: 10px; font-size: 13px; color: var(--dim); line-height: 1.8; max-height: 120px; overflow-y: auto; }
+    .records-list div { border-bottom: 1px dashed var(--line); padding: 2px 0; }
+</style>
+<script data-no-obf>try{var _zt=localStorage.getItem("zl_theme");var _zok=["dark","blue","gold","light","milk","guofeng","snowsun","cyber","aurora","custom"];if(_zt&&_zok.indexOf(_zt)>=0){document.documentElement.setAttribute("data-theme",_zt);}}catch(e){}</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——打字速度测试 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:title" content="打字速度测试 - 现代化·知识学习站">
+<meta property="og:description" content="找乐子——打字速度测试 - 现代化·知识学习站，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/现代-打字速度测试.html">
+
+<link rel="stylesheet" href="../assets/css/common.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/theme.js"></script>
+<script defer src="../assets/js/zl-features.js"></script>
+</head>
+<body data-page="现代-打字速度测试.html" data-kind="tool">
+<div class="bg-animation">
+    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
+</div>
+
+<header class="site-header">
+    <a class="home-link" href="现代-全站目录树.html">🏠 首页</a>
+    <span class="site-title">现代化·知识学习站</span>
+    <span class="mod-badge">模块D · 键盘与快捷键</span>
+</header>
+
+<main>
+    <article class="lesson container">
+        <h1 class="lesson-title">⌨️ 打字速度测试</h1>
+        <p class="lesson-sub">模块D · 第 5 课 | 测手速 · 刷等级 · 晒成绩</p>
+
+        <div class="callout info">
+            <b>规则</b>
+            选好难度与来源，点「开始」后照着目标文本打字，可用输入框（回车提交）或直接连续输入。80% 以上准确率才算有效成绩。<b>最快 40 字/分钟解锁「打字入门」，80 字/分钟解锁「键盘大师」成就</b>；最佳成绩自动保存在本机（<code>xd_typing_best_v1</code>）。
+        </div>
+
+        <div id="typingApp">
+            <div class="t-card daily-card" id="dailyCard">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <span class="daily-tag" id="dailyTag">🔥 今日挑战</span>
+                    <span class="daily-status" id="dailyStatus"></span>
+                    <button class="btn btn-secondary" id="dailyUseBtn" style="margin-left:auto;">练这句</button>
+                </div>
+                <div class="daily-sentence" id="dailySentence"></div>
+            </div>
+
+            <div class="t-card">
+                <div class="t-card-title">⌨️ 打字测试</div>
+                <div class="mode-tabs" id="modeTabs">
+                    <button class="mode-tab active" data-mode="free">✍️ 自由模式</button>
+                    <button class="mode-tab" data-mode="time">⏱ 限时 60 秒</button>
+                    <button class="mode-tab" data-mode="long">📜 长文段落</button>
+                </div>
+                <div class="opt-row" id="optRow">
+                    <select id="diffSel" title="难度">
+                        <option value="easy">难度：简单</option>
+                        <option value="mid" selected>难度：中等</option>
+                        <option value="hard">难度：困难</option>
+                    </select>
+                    <select id="srcSel" title="句子来源">
+                        <option value="cn">来源：中文名句</option>
+                        <option value="en">来源：英文句子</option>
+                    </select>
+                    <label><input type="checkbox" id="soundChk" checked> 🔊 音效</label>
+                </div>
+                <div id="targetText"></div>
+                <input id="typeInput" type="text" placeholder="点击「开始」后在这里打字，完成后按回车" autocomplete="off" disabled>
+                <div class="row">
+                    <button id="startBtn" class="btn">▶ 开始</button>
+                    <button id="doneBtn" class="btn btn-secondary" disabled>🏁 完成</button>
+                    <button id="resetBtn" class="btn btn-secondary">↺ 换句</button>
+                    <button id="shareBtn" class="btn btn-secondary" disabled>📤 分享成绩</button>
+                </div>
+                <div class="stat">
+                    <div><b id="speedVal">0</b><span>字/分钟</span></div>
+                    <div><b id="accVal">0%</b><span>准确率</span></div>
+                    <div><b id="timeVal">0s</b><span>用时</span></div>
+                    <div><b id="leftVal">—</b><span>剩余</span></div>
+                </div>
+                <div class="rank-row">
+                    <span class="rank-badge" id="rankBadge" style="background:var(--dim);">青铜</span>
+                    <span class="rank-progress" id="rankProgress"></span>
+                    <span class="rank-progress" id="bestLine" style="margin-left:auto;"></span>
+                </div>
+                <div id="resultMsg"></div>
+                <div class="err-wrap" id="errWrap">
+                    <div style="font-size:13px;font-weight:700;color:var(--dim);">错字对照（前 10 个）：</div>
+                    <div class="err-list" id="errList"></div>
+                </div>
+            </div>
+
+            <div class="t-card">
+                <div class="t-card-title">📈 历史成绩 · 最近 20 次</div>
+                <div class="chart-wrap"><canvas id="histChart" width="1160" height="160"></canvas></div>
+                <div class="records-list" id="recordsList"></div>
+            </div>
+        </div>
+
+        <div class="lesson-footer" style="margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>✅ 每次有效成绩自动记录练习进度与成就</span>
+            <span>上一课：<a href="现代-快捷键练习器.html">快捷键练习器</a></span>
+        </div>
+        <nav class="lesson-nav" id="xdPrevNext" style="margin-top:14px;"><!-- JS 渲染前后页 --></nav>
+    </article>
+</main>
+
+<script>
+/*ZL-OBF-V2*/
+var _0x4eefa7=_0x4f49;(function(_0x19a6f2,_0xad207d){var _0x20e65e=_0x4f49,_0x44a1d0=_0x19a6f2();while(!![]){try{var _0x181585=parseInt(_0x20e65e(0x11f))/(-0x1250*0x2+-0x2398+0x4839)*(-parseInt(_0x20e65e(0x126))/(-0x1a9a+-0x1*-0x11cb+0x3d*0x25))+parseInt(_0x20e65e(0x120))/(-0x1b53+-0x18e4+0x343a)+-parseInt(_0x20e65e(0x118))/(-0x427*-0x2+-0x1bbb+0x1371)*(-parseInt(_0x20e65e(0x113))/(-0x13f9*-0x1+-0x8*0x2e3+0x2*0x192))+-parseInt(_0x20e65e(0x124))/(-0x22a+0x5*0x4b1+-0x3*0x717)*(parseInt(_0x20e65e(0x122))/(0x1869+-0xd6f+0xaf3*-0x1))+-parseInt(_0x20e65e(0x119))/(-0x99*0x29+0x503*0x1+0x1386)*(-parseInt(_0x20e65e(0x115))/(-0x1*0x2285+0xbc6+0x16c8))+-parseInt(_0x20e65e(0x11b))/(0x1a1+0x49*-0x65+0x1b36)+parseInt(_0x20e65e(0x125))/(-0x285+-0x620+-0x8b0*-0x1)*(-parseInt(_0x20e65e(0x11e))/(-0xf57+-0x8b*-0x3d+-0x11bc));if(_0x181585===_0xad207d)break;else _0x44a1d0['push'](_0x44a1d0['shift']());}catch(_0x3c512a){_0x44a1d0['push'](_0x44a1d0['shift']());}}}(_0xe4cd,0x6bd8d+0x1*-0xc6218+0xdf5a9));function _0xe4cd(){var _0x283b6c=['yMLUza','nZKXodqWn2XfqNr3za','y29UC3rYDwn0B3i','ywrKrxzLBNrmAxn0zw5LCG','nJe1odC2uuDUtuzP','oef2EfHzsq','re9nq29UDgvUDeXVywrLza','mJaZmZaWu0nWz3Hh','Aw5KzxHpzG','kcGOlISPkYKRksSK','mti0nZmWntjJzhnKugq','mvrPqMXpDG','mtGWode5ou9VEgLOCW','yxbWBhK','mtq0nJeXnMvmsxbKta','Aw5PDa','nLf3s1H5Aq','mtfwy0zOCu8','mte4otK1nfjUrej6yq','Dg9tDhjPBMC','C2vHCMnO','CLnhEfO','DwLJD0i','mZbbuMjlz0G'];_0xe4cd=function(){return _0x283b6c;};return _0xe4cd();}function _0x4f49(_0x64e87b,_0x4c27c2){_0x64e87b=_0x64e87b-(0x9e5+-0xde9+-0x64*-0xd);var _0x721a70=_0xe4cd();var _0x2fcee9=_0x721a70[_0x64e87b];if(_0x4f49['ioTCiH']===undefined){var _0x43ec27=function(_0x1d1b74){var _0x2cb347='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0xf391c2='',_0x456821='',_0x1f128b=_0xf391c2+_0x43ec27,_0x2fc0e4=(''+function(){return 0x679*0x4+-0x1e2+-0x1802*0x1;})['indexOf']('\x0a')!==-(-0x16ea+-0x23*0xe9+0x171*0x26);for(var _0x23f4e2=0x16b0+-0x103*0x17+0x95,_0x3c305f,_0x4af77e,_0xe56c45=0x1072+-0x7*-0xee+-0xd*0x1c4;_0x4af77e=_0x1d1b74['charAt'](_0xe56c45++);~_0x4af77e&&(_0x3c305f=_0x23f4e2%(0x18a3+-0x23c+0x1663*-0x1)?_0x3c305f*(-0x15e4+0x14*-0x4+-0x59d*-0x4)+_0x4af77e:_0x4af77e,_0x23f4e2++%(0x3*0x84f+-0xd49+0xc*-0xf8))?_0xf391c2+=_0x2fc0e4||_0x1f128b['charCodeAt'](_0xe56c45+(-0xe44+-0xd64+0x1bb2))-(0x2*0xdcd+-0x2515+0x985)!==-0x79b+-0x1a49+0x3*0xb4c?String['fromCharCode'](0x7a8+-0x208b+0x19e2&_0x3c305f>>(-(-0x19*0xf9+-0x119+0x196c)*_0x23f4e2&-0x145a+-0x1*-0x76+-0x13ea*-0x1)):_0x23f4e2:0x4*-0x1ee+0x5b0+-0x1*-0x208){_0x4af77e=_0x2cb347['indexOf'](_0x4af77e);}for(var _0x114f19=-0x1*0x1552+-0x1*-0x1599+0x1*-0x47,_0x22d29d=_0xf391c2['length'];_0x114f19<_0x22d29d;_0x114f19++){_0x456821+='%'+('00'+_0xf391c2['charCodeAt'](_0x114f19)['toString'](-0x244c+-0x1*-0x691+-0x1*-0x1dcb))['slice'](-(0xa51*-0x3+0x13e7+-0x11b*-0xa));}return decodeURIComponent(_0x456821);};_0x4f49['yahRsj']=_0x43ec27,_0x4f49['KognmV']={},_0x4f49['ioTCiH']=!![];}var _0x432a64=_0x721a70[-0x44*-0x50+0x1*-0x61e+-0xf22];_0x4f49['wKyzap']!==_0x432a64&&(_0x4f49['KognmV']={},_0x4f49['wKyzap']=_0x432a64);var _0x5cb1f6=_0x4f49['KognmV'][_0x64e87b];if(_0x5cb1f6===undefined){var _0x77d729=function(_0x108dfe){this['TvciMH']=_0x108dfe,this['elaVqr']=[-0x25c1+0x15c0+0x1002,0x12*-0x18f+-0xaa0+0x1*0x26ae,-0x19b7*0x1+-0x15a*-0x1+0xbd*0x21],this['fdvCPn']=function(){return'newState';},this['hNCgwj']='\x5c\x77\x2b\x20\x2a\x5c\x28\x5c\x29\x20\x2a\x7b\x5c\x77\x2b\x20\x2a',this['QYvccJ']='\x5b\x27\x7c\x22\x5d\x2e\x2b\x5b\x27\x7c\x22\x5d\x3b\x3f\x20\x2a\x7d';};_0x77d729['prototype']['mRbgmt']=function(){var _0x39d31f=new RegExp(this['hNCgwj']+this['QYvccJ']),_0xdd8576=_0x39d31f['test'](this['fdvCPn']['toString']())?--this['elaVqr'][-0x1*0x4d7+0x102c+-0xb54]:--this['elaVqr'][0x11d2+0xc07+0x1*-0x1dd9];return this['jITiHc'](_0xdd8576);},_0x77d729['prototype']['jITiHc']=function(_0x558b3d){if(!Boolean(~_0x558b3d))return _0x558b3d;return this['SiwIUG'](this['TvciMH']);},_0x77d729['prototype']['SiwIUG']=function(_0xf5a8b3){for(var _0xe35310=0x6f2*-0x1+-0x21*0x19+0x1*0xa2b,_0xbcbc72=this['elaVqr']['length'];_0xe35310<_0xbcbc72;_0xe35310++){this['elaVqr']['push'](Math['round'](Math['random']())),_0xbcbc72=this['elaVqr']['length'];}return _0xf5a8b3(this['elaVqr'][-0x9ce+0x1*-0x5c9+0xf97]);},(''+function(){return 0xe6e*-0x2+-0x36c+-0x812*-0x4;})['indexOf']('\x0a')===-(-0xe8c+0x158a+-0x6fd)&&new _0x77d729(_0x4f49)['mRbgmt'](),_0x2fcee9=_0x4f49['yahRsj'](_0x2fcee9),_0x4f49['KognmV'][_0x64e87b]=_0x2fcee9;}else _0x2fcee9=_0x5cb1f6;return _0x2fcee9;}var _0x5e461f=(function(){var _0x5908a4=!![];return function(_0xdc21e,_0x26441a){var _0x36a19e=_0x5908a4?function(){var _0x37d7ea=_0x4f49;if(_0x26441a){var _0x5894c2=_0x26441a[_0x37d7ea(0x121)](_0xdc21e,arguments);return _0x26441a=null,_0x5894c2;}}:function(){};return _0x5908a4=![],_0x36a19e;};}()),_0xfb8490=_0x5e461f(this,function(){var _0x3a7b7c=_0x4f49,_0x37f335={'rSGxZ':function(_0x1104c6,_0x304965){return _0x1104c6!==_0x304965;},'uicwB':_0x3a7b7c(0x11d)};if(_0x37f335[_0x3a7b7c(0x111)](_0xfb8490[_0x3a7b7c(0x114)]()[_0x3a7b7c(0x127)]()[_0x3a7b7c(0x11c)]('\x0a'),-(-0xd17+-0x1*0x1fd+-0x1*-0xf15)))return;return _0xfb8490[_0x3a7b7c(0x127)]()[_0x3a7b7c(0x110)](_0x37f335[_0x3a7b7c(0x112)])[_0x3a7b7c(0x127)]()[_0x3a7b7c(0x116)](_0xfb8490)[_0x3a7b7c(0x110)](_0x3a7b7c(0x11d));});_0xfb8490(),document[_0x4eefa7(0x117)](_0x4eefa7(0x11a),function(){var _0x7003a1=_0x4eefa7;if(window['XD']&&XD['D4'])XD['D4'][_0x7003a1(0x123)]();});
+</script>
+</body>
+</html>

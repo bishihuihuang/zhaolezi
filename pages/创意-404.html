@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面走丢了｜创意引擎</title>
+    <link rel="icon" href="../assets/cy/cy-favicon.ico" sizes="any">
+    <link rel="icon" href="../assets/cy/cy-favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../assets/cy/cy-favicon-48.png">
+    <link rel="manifest" href="../assets/cy/cy-manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="你要找的页面不存在，5 秒后返回创意引擎首页。">
+    <!-- 404 页不参与权重：不带 canonical（会误导搜索引擎），改由 noindex 排除 -->
+    <meta name="robots" content="noindex,follow">
+    <script src="../assets/js/cy-theme-init.js"></script>
+    <style>
+        html, body { height: 100%; margin: 0; }
+        body {
+            display: flex; align-items: center; justify-content: center;
+            font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, sans-serif;
+            background: #0a0e1f; color: #e7e9f4; text-align: center;
+            overflow: hidden;
+        }
+        [data-theme="light"] body { background: #f6f7fb; color: #1b1e2c; }
+        [data-theme="zhaolezi"] body { background: #f6f7fd; color: #23263a; }
+        [data-theme="light"] .wrap { box-shadow: 0 20px 60px rgba(99,102,241,.12); }
+        .wrap {
+            position: relative; z-index: 2;
+            max-width: 520px; padding: 56px 40px;
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 22px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 24px 70px rgba(0,0,0,.45);
+        }
+        [data-theme="light"] .wrap { background: #fff; border-color: #eceef6; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .5; z-index: 1; pointer-events: none; }
+        .orb.a { width: 340px; height: 340px; background: #6366f1; top: -120px; left: -100px; }
+        .orb.b { width: 300px; height: 300px; background: #a855f7; bottom: -110px; right: -80px; }
+        .orb.c { width: 240px; height: 240px; background: #22d3ee; bottom: 10%; left: 30%; opacity: .28; }
+        .emoji { font-size: 68px; line-height: 1; margin-bottom: 18px; }
+        .code {
+            font-size: 84px; font-weight: 800; letter-spacing: -3px; margin: 0 0 6px;
+            background: linear-gradient(120deg, #6366f1, #a855f7 55%, #22d3ee);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        h1 { font-size: 21px; font-weight: 700; margin: 0 0 12px; }
+        p { font-size: 14.5px; line-height: 1.9; margin: 0 0 26px; opacity: .82; }
+        a.go {
+            display: inline-block; padding: 13px 30px; border-radius: 999px; text-decoration: none;
+            font-size: 15px; font-weight: 700; color: #fff;
+            background: linear-gradient(120deg, #6366f1, #a855f7);
+            box-shadow: 0 10px 30px rgba(99,102,241,.45);
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+        a.go:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(99,102,241,.55); }
+        .tip { margin-top: 20px; font-size: 12px; opacity: .5; }
+        .tip b { color: #22d3ee; opacity: 1; }
+        .foot {
+            position: fixed; bottom: 22px; left: 0; right: 0; text-align: center;
+            font-size: 11.5px; opacity: .42; letter-spacing: .5px;
+        }
+        @media (max-width: 520px) {
+            .wrap { padding: 44px 26px; margin: 0 16px; }
+            .code { font-size: 68px; }
+        }
+    </style>
+<script data-no-obf>try{var _zt=localStorage.getItem("zl_theme");var _zok=["dark","blue","gold","light","milk","guofeng","snowsun","cyber","aurora","custom"];if(_zt&&_zok.indexOf(_zt)>=0){document.documentElement.setAttribute("data-theme",_zt);}}catch(e){}</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——页面走丢了｜创意引擎，趣味工具与小游戏合集">
+<meta property="og:title" content="页面走丢了｜创意引擎">
+<meta property="og:description" content="找乐子——页面走丢了｜创意引擎，趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/创意-404.html">
+
+<link rel="stylesheet" href="../assets/css/common.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/theme.js"></script>
+<script defer src="../assets/js/zl-features.js"></script>
+</head>
+<body>
+    <div class="orb a"></div>
+    <div class="orb b"></div>
+    <div class="orb c"></div>
+
+    <div class="wrap">
+        <div class="emoji">🔭</div>
+        <div class="code">404</div>
+        <h1>这片星际上没有你要的页面</h1>
+        <p>它可能已经改名、搬走，或者从未被创造过。<br>别担心 —— 灵感引擎的 12 件工具箱全都还在原位。</p>
+        <a class="go" href="创意-首页.html">✨ 回到首页</a>
+        <div class="tip">本页将在 <b id="cnt">5</b> 秒后自动返回首页</div>
+    </div>
+
+    <div class="foot">创意引擎 · Muse</div>
+
+    <script>
+/*ZL-OBF-V2*/
+function _0x28e3(){var _0x26692e=['mJaZodq0tu5fCxrx','Aw5KzxHpzG','odm1mtC0wKvNuhPv','nhWYFdv8mhWZFde','zgrxy2W','z2v0rwXLBwvUDej5swq','nJuZnZbvEw5QAhe','mty3ntm1mxLUv2Dnvq','C3bSAxq','mte2mwLuv0vwEa','5yIB5OsplEMMLUMHTs5ODg1S','mZy5mZKWnNfsDMXjyq','C2vHCMnO','m3PjywvOrW','y29UC3rYDwn0B3i','y1bduhK','yMLUza','Dg9tDhjPBMC','mtrrEMn0tMm','yxbWBhK','y250','kcGOlISPkYKRksSK','CMvWBgfJzq','BgvNrMG','ALrzvKq','vgTwAxG','mtyXotKYmgXysKXmta','EuPoCvK','mZi1nM1bqLnesq','ogjwrMj4uG','Dgv4DenVBNrLBNq','nJe0mdaZmKffq1zHtG'];_0x28e3=function(){return _0x26692e;};return _0x28e3();}function _0x24e7(_0x28989b,_0x1fb8e5){_0x28989b=_0x28989b-(0x11b*0x7+-0x2f6*0x1+-0x362);var _0x531e5c=_0x28e3();var _0x94f84a=_0x531e5c[_0x28989b];if(_0x24e7['CnDuuf']===undefined){var _0x1aee20=function(_0x586a13){var _0x5cfd9e='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var _0x13608b='',_0x958de8='',_0x5bec9e=_0x13608b+_0x1aee20,_0x38963a=(''+function(){return-0x70*-0x2f+-0xd97+-0x6f9;})['indexOf']('\x0a')!==-(0x1*-0x14ad+0x1*-0x1855+-0xa7*-0x45);for(var _0x29b5e4=-0x2234+0x175f+0xad5,_0x5d3bc5,_0x6ed974,_0x258760=0x1*-0x15d1+-0x1ac*-0x13+-0x11b*0x9;_0x6ed974=_0x586a13['charAt'](_0x258760++);~_0x6ed974&&(_0x5d3bc5=_0x29b5e4%(0x5f4*-0x2+0x1*0x2659+-0x1a6d)?_0x5d3bc5*(0x427*0x2+0xe2*0x11+-0x1710)+_0x6ed974:_0x6ed974,_0x29b5e4++%(-0x1d0+-0x15bf+-0x163*-0x11))?_0x13608b+=_0x38963a||_0x5bec9e['charCodeAt'](_0x258760+(0x78*-0x4f+0xad*-0x3+0x2719))-(-0xc87+-0x6e7*0x1+0x1378)!==-0x110*-0x1c+-0x1694+-0x22*0x36?String['fromCharCode'](-0xfd*0x1+-0x83+-0x27f*-0x1&_0x5d3bc5>>(-(0x1*-0x15da+-0x56*-0x6a+-0xdc0)*_0x29b5e4&-0x1846+-0x92f*0x3+0x33d9)):_0x29b5e4:-0xda*0x20+-0x18*-0x54+0x1360){_0x6ed974=_0x5cfd9e['indexOf'](_0x6ed974);}for(var _0x1fec7c=-0x33b*-0x8+0x3*0x455+-0x26d7,_0x20b5c3=_0x13608b['length'];_0x1fec7c<_0x20b5c3;_0x1fec7c++){_0x958de8+='%'+('00'+_0x13608b['charCodeAt'](_0x1fec7c)['toString'](0x1*-0x1c9a+-0x1*0xe35+0x2adf))['slice'](-(-0x2*0xe71+-0x3*-0x4bd+-0x121*-0xd));}return decodeURIComponent(_0x958de8);};_0x24e7['GEbUMt']=_0x1aee20,_0x24e7['HLTGlJ']={},_0x24e7['CnDuuf']=!![];}var _0xf8246d=_0x531e5c[-0x2479*0x1+-0x24*0xb+0x2605*0x1];_0x24e7['lxqvge']!==_0xf8246d&&(_0x24e7['HLTGlJ']={},_0x24e7['lxqvge']=_0xf8246d);var _0x1b1bfe=_0x24e7['HLTGlJ'][_0x28989b];if(_0x1b1bfe===undefined){var _0xa57b2f=function(_0x443471){this['UOIVmT']=_0x443471,this['xAakjl']=[0x1*0x1fd4+0x5f5+-0xc98*0x3,-0x1*-0x1794+0x1*0x382+-0x1b16,0x101*0x11+-0x21f+0x2*-0x779],this['XdlzBx']=function(){return'newState';},this['xHIGbg']='\x5c\x77\x2b\x20\x2a\x5c\x28\x5c\x29\x20\x2a\x7b\x5c\x77\x2b\x20\x2a',this['zZlJYu']='\x5b\x27\x7c\x22\x5d\x2e\x2b\x5b\x27\x7c\x22\x5d\x3b\x3f\x20\x2a\x7d';};_0xa57b2f['prototype']['eOEDDX']=function(){var _0xf87a87=new RegExp(this['xHIGbg']+this['zZlJYu']),_0x39dbf3=_0xf87a87['test'](this['XdlzBx']['toString']())?--this['xAakjl'][0x5f0+0x9a3+-0xf92]:--this['xAakjl'][0x577+0x3d6*0x4+-0x14cf];return this['PveRjA'](_0x39dbf3);},_0xa57b2f['prototype']['PveRjA']=function(_0x5e77e8){if(!Boolean(~_0x5e77e8))return _0x5e77e8;return this['fyljxL'](this['UOIVmT']);},_0xa57b2f['prototype']['fyljxL']=function(_0x5a5b47){for(var _0x29982d=0x1025+-0x1d06+-0x1d7*-0x7,_0xa942f4=this['xAakjl']['length'];_0x29982d<_0xa942f4;_0x29982d++){this['xAakjl']['push'](Math['round'](Math['random']())),_0xa942f4=this['xAakjl']['length'];}return _0x5a5b47(this['xAakjl'][-0x238c+0x1*-0x11f7+-0x7a5*-0x7]);},(''+function(){return-0xe*0x9a+0x1760+-0xef4;})['indexOf']('\x0a')===-(0x602+-0x1*0xc44+0xe5*0x7)&&new _0xa57b2f(_0x24e7)['eOEDDX'](),_0x94f84a=_0x24e7['GEbUMt'](_0x94f84a),_0x24e7['HLTGlJ'][_0x28989b]=_0x94f84a;}else _0x94f84a=_0x1b1bfe;return _0x94f84a;}(function(_0x5ecf2b,_0x16b584){var _0xa2c9b8=_0x24e7,_0x475e6f=_0x5ecf2b();while(!![]){try{var _0x2a9c8d=-parseInt(_0xa2c9b8(0x172))/(-0x1fdf+-0x11b7*0x2+0x6bb*0xa)+parseInt(_0xa2c9b8(0x16d))/(0xfe8+-0x3*-0x577+-0x204b)*(-parseInt(_0xa2c9b8(0x178))/(0x251c+0x1*0x1523+-0x3a3c))+-parseInt(_0xa2c9b8(0x168))/(0x9d7+0x123*-0x1+-0x8b0)*(parseInt(_0xa2c9b8(0x165))/(0x1031*0x1+0x1339+-0x2365))+-parseInt(_0xa2c9b8(0x176))/(-0x7*0x46d+0x1*-0x162d+-0x352e*-0x1)+parseInt(_0xa2c9b8(0x17d))/(-0x2*-0x4e+-0x1c83+0x1bee)*(-parseInt(_0xa2c9b8(0x16a))/(-0x26eb+0x21fa+0x4f9))+-parseInt(_0xa2c9b8(0x174))/(0x20a0+-0x1c00+-0x19*0x2f)*(-parseInt(_0xa2c9b8(0x171))/(-0xb*0x2dd+-0x1*-0x40+0x1f49))+parseInt(_0xa2c9b8(0x167))/(0x221*-0x7+-0x7fe+-0x2*-0xb78)*(parseInt(_0xa2c9b8(0x16b))/(0xc95+0x1cf2+-0x1*0x297b));if(_0x2a9c8d===_0x16b584)break;else _0x475e6f['push'](_0x475e6f['shift']());}catch(_0x45e33){_0x475e6f['push'](_0x475e6f['shift']());}}}(_0x28e3,0xb*-0x8f2b+0x53a93+-0xf92*-0x105),(function(){var _0x1e4bee=_0x24e7,_0x37052e={'jTYVD':_0x1e4bee(0x17f),'cPCPy':_0x1e4bee(0x180),'yJNqY':function(_0x531e5c,_0x94f84a,_0x1aee20){return _0x531e5c(_0x94f84a,_0x1aee20);}},_0x20b7fb=_0x1e4bee(0x16e)[_0x1e4bee(0x173)]('|'),_0x15c737=-0x6d*-0x21+0x5f0+-0x13fd;while(!![]){switch(_0x20b7fb[_0x15c737++]){case'0':_0x1fb8e5();continue;case'1':var _0x599b32=setInterval(function(){var _0x5cc281=_0x1e4bee;_0x34a9d3--;if(_0x4d30f9)_0x4d30f9[_0x5cc281(0x169)]=_0x34a9d3;_0x28989b[_0x5cc281(0x16f)](_0x34a9d3,0x577+0x3d6*0x4+-0x14cf)&&(clearInterval(_0x599b32),location[_0x5cc281(0x181)](_0x5cc281(0x175)));},0x1025+-0x1d06+-0x10c9*-0x1);continue;case'2':var _0x2c381f=(function(){var _0xf8246d=!![];return function(_0x1b1bfe,_0x586a13){var _0x5cfd9e=_0xf8246d?function(){var _0x9e05fa=_0x24e7;if(_0x586a13){var _0x13608b=_0x586a13[_0x9e05fa(0x17e)](_0x1b1bfe,arguments);return _0x586a13=null,_0x13608b;}}:function(){};return _0xf8246d=![],_0x5cfd9e;};}());continue;case'3':var _0x34a9d3=-0x238c+0x1*-0x11f7+-0x11d8*-0x3,_0x4d30f9=document[_0x1e4bee(0x170)](_0x37052e[_0x1e4bee(0x183)]);continue;case'4':var _0x28989b={'legFh':function(_0x958de8,_0x5bec9e){return _0x958de8!==_0x5bec9e;},'TkVix':_0x37052e[_0x1e4bee(0x17a)],'ddWcl':function(_0x38963a,_0x29b5e4){return _0x38963a<=_0x29b5e4;}};continue;case'5':var _0x1fb8e5=_0x37052e[_0x1e4bee(0x166)](_0x2c381f,this,function(){var _0x5b9c9b=_0x1e4bee;if(_0x28989b[_0x5b9c9b(0x182)](_0x1fb8e5[_0x5b9c9b(0x17b)]()[_0x5b9c9b(0x17c)]()[_0x5b9c9b(0x16c)]('\x0a'),-(-0xe*0x9a+0x1760+-0xef3)))return;return _0x1fb8e5[_0x5b9c9b(0x17c)]()[_0x5b9c9b(0x177)](_0x5b9c9b(0x180))[_0x5b9c9b(0x17c)]()[_0x5b9c9b(0x179)](_0x1fb8e5)[_0x5b9c9b(0x177)](_0x28989b[_0x5b9c9b(0x184)]);});continue;}break;}}()));
+</script>
+</body>
+</html>

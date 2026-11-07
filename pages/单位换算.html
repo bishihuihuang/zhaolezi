@@ -1,0 +1,653 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找乐子——单位换算</title>
+    <style>
+        /* ========== 全局重置 ========== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--txt);
+            overflow-x: hidden;
+        }
+
+        /* ========== 背景流光层 ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: var(--flow-grad);
+            background-size: 400% 400%;
+            animation: flowDriftLarge 20s ease-in-out infinite;
+            will-change: transform;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -60%;
+            left: -40%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(ellipse at 30% 70%,
+                    rgba(255, 140, 100, .35), transparent 50%),
+                radial-gradient(ellipse at 65% 35%,
+                    rgba(120, 180, 255, .3), transparent 45%),
+                radial-gradient(ellipse at 80% 80%,
+                    rgba(220, 130, 250, .25), transparent 40%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(255, 200, 130, .15), transparent 60%),
+                radial-gradient(circle at 20% 80%,
+                    rgba(80, 220, 200, .2), transparent 50%);
+            animation: flowRotate 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowDriftLarge {
+            0% { transform: translate(0%, 0%) scale(1); }
+            50% { transform: translate(-2%, -2%) scale(1.05); }
+            100% { transform: translate(0%, 0%) scale(1); }
+        }
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(3%, -4%) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-2%, 3%) scale(.97) rotate(-5deg); }
+        }
+        @keyframes flowRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* 悬浮球 */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%,
+                    color-mix(in srgb, var(--card-2) 60%, transparent),
+                    color-mix(in srgb, var(--card-2) 15%, transparent) 50%,
+                    transparent 70%);
+            box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 8%, transparent),
+                inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 {
+            width: 260px;
+            height: 260px;
+            top: 12%;
+            left: 8%;
+            animation: orbFloatA 18s ease-in-out infinite, orbSpin 40s linear infinite;
+        }
+        .orb-2 {
+            width: 160px;
+            height: 160px;
+            top: 55%;
+            left: 75%;
+            animation: orbFloatB 22s ease-in-out infinite, orbSpin 55s linear infinite;
+        }
+        .orb-3 {
+            width: 110px;
+            height: 110px;
+            top: 68%;
+            left: 20%;
+            animation: orbFloatA 16s ease-in-out infinite reverse, orbSpin 35s linear infinite;
+        }
+        .orb-4 {
+            width: 220px;
+            height: 220px;
+            top: 28%;
+            left: 60%;
+            animation: orbFloatB 20s ease-in-out infinite reverse, orbSpin 50s linear infinite;
+        }
+        .orb-5 {
+            width: 80px;
+            height: 80px;
+            top: 80%;
+            left: 45%;
+            animation: orbFloatA 14s ease-in-out infinite, orbSpin 30s linear infinite;
+        }
+        @keyframes orbFloatA {
+            0% { transform: translate(0,0) scale(1); opacity:.6; }
+            30% { transform: translate(18px,-22px) scale(1.04); opacity:.8; }
+            60% { transform: translate(-12px,10px) scale(.96); opacity:.5; }
+            100% { transform: translate(0,0) scale(1); opacity:.6; }
+        }
+        @keyframes orbFloatB {
+            0% { transform: translate(0,0) scale(1); opacity:.5; }
+            35% { transform: translate(-20px,12px) scale(1.06); opacity:.7; }
+            70% { transform: translate(14px,-15px) scale(.94); opacity:.4; }
+            100% { transform: translate(0,0) scale(1); opacity:.5; }
+        }
+        @keyframes orbSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== 白色容器 ========== */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 80%;
+            max-width: 1440px;
+            margin: 60px auto;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35),
+                0 0 0 1px var(--line),
+                
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            padding: 20px;
+            color: var(--txt);
+        }
+
+        .container::-webkit-scrollbar {
+            width: 10px;
+        }
+        .container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, .04);
+            border-radius: 12px;
+        }
+        .container::-webkit-scrollbar-thumb {
+            background: var(--scroll-thumb);
+            border-radius: 12px;
+            border: 2px solid transparent;
+        }
+
+        /* ========== 网格布局 ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 12px;
+        }
+
+        /* 标题区 */
+        .title-area {
+            grid-column: 1 / 5;
+            grid-row: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card);
+            border: 1px solid var(--line);
+            background-size: 300% 300%;
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .25),
+                inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), box-shadow .4s ease;
+        }
+        .title-area:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 18px 60px rgba(0, 0, 0, .3), 0 0 50px color-mix(in srgb, var(--glow) 25%, transparent);
+        }
+        .title-area h2 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: var(--title-grad);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+        @keyframes titleShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 返回主页 */
+        .back-area {
+            grid-column: 5 / 7;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--back-grad);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px color-mix(in srgb, var(--green) 40%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
+            text-decoration: none;
+            color: var(--btn-txt);
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), box-shadow .35s ease;
+            min-height: 44px;
+            min-width: 44px;
+        }
+        .back-area:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 18px 50px color-mix(in srgb, var(--green) 50%, transparent);
+        }
+        .back-area:active {
+            transform: translateY(-2px) scale(.96);
+        }
+        .back-area .back-icon {
+            font-size: 32px;
+            margin-bottom: 6px;
+        }
+
+        /* 输入区（3-8行1-3列） */
+        .input-panel {
+            grid-column: 1 / 4;
+            grid-row: 3 / 9;
+            background: var(--card-2);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
+            border: 2px solid var(--line);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            justify-content: center;
+        }
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .field-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dim);
+        }
+        .field-group select,
+        .field-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--line);
+            border-radius: 10px;
+            font-size: 15px;
+            background: var(--card);
+            transition: all .3s;
+            outline: none;
+        }
+        .field-group select:focus,
+        .field-group input:focus {
+            border-color: var(--glow);
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--glow) 15%, transparent);
+        }
+
+        /* 输出区（3-8行4-6列） */
+        .output-panel {
+            grid-column: 4 / 7;
+            grid-row: 3 / 9;
+            background: linear-gradient(160deg, color-mix(in srgb, var(--blue) 4%, var(--card-2)), color-mix(in srgb, var(--blue) 7%, var(--card-2)), color-mix(in srgb, var(--blue) 5%, var(--card-2)));
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid color-mix(in srgb, var(--blue) 15%, transparent);
+            box-shadow: 0 6px 20px rgba(0,0,0,.05);
+        }
+        .output-content {
+            text-align: center;
+            width: 100%;
+        }
+        .output-label {
+            font-size: 14px;
+            color: var(--dim);
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+        .output-value {
+            font-size: 46px;
+            font-weight: 900;
+            color: var(--txt);
+            line-height: 1.3;
+            word-break: break-all;
+        }
+        .output-value.small-text {
+            font-size: 28px;
+        }
+        .output-unit {
+            font-size: 16px;
+            color: var(--blue);
+            margin-top: 8px;
+        }
+
+        /* 转圈覆盖层 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,.1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 12px; }
+            .grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+            .title-area { grid-column: 1/3; grid-row: auto; min-height: 100px; }
+            .back-area { grid-column: 1/3; grid-row: auto; min-height: 80px; }
+            .input-panel { grid-column: 1/3; grid-row: auto; min-height: 200px; }
+            .output-panel { grid-column: 1/3; grid-row: auto; min-height: 200px; }
+        }
+        @media (max-width: 480px) {
+            .container { padding: 10px; }
+            .title-area h2 { font-size: 28px; }
+            .back-area { font-size: 16px; }
+            .field-group { gap: 4px; }
+            .field-group label { font-size: 12px; }
+            .field-group select,
+            .field-group input { padding: 8px 10px; font-size: 14px; }
+            .output-panel { padding: 16px; }
+            .output-value { font-size: 32px; }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid var(--line) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+</style>
+
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<script data-no-obf>try{var _zt=localStorage.getItem("zl_theme");var _zok=["dark","blue","gold","light","milk","guofeng","snowsun","cyber","aurora","custom"];if(_zt&&_zok.indexOf(_zt)>=0){document.documentElement.setAttribute("data-theme",_zt);}}catch(e){}</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="找乐子——单位换算｜趣味工具与小游戏合集">
+<meta property="og:title" content="找乐子——单位换算">
+<meta property="og:description" content="找乐子——单位换算｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/单位换算.html">
+
+<link rel="stylesheet" href="../assets/css/common.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/theme.js"></script>
+<script defer src="../assets/js/zl-features.js"></script>
+</head>
+<body>
+    <!-- 背景 -->
+    <div class="bg-animation" aria-hidden="true">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 白色容器 -->
+    <div class="container">
+        <div class="grid">
+            <!-- 标题区 -->
+            <div class="title-area">
+                <h2>单位换算</h2>
+            </div>
+            <!-- 返回主页 -->
+            <a href="工具导航.html" class="back-area" id="backHome" aria-label="返回主页">
+                <span class="back-icon">🏠</span>
+                返回主页
+            </a>
+            <!-- 输入区 -->
+            <div class="input-panel">
+                <div class="field-group">
+                    <label for="categorySelect">类别</label>
+                    <select id="categorySelect">
+                        <option value="length">长度</option>
+                        <option value="weight">重量</option>
+                        <option value="temperature">温度</option>
+                        <option value="area">面积</option>
+                        <option value="speed">速度</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="fromUnitSelect">从单位</label>
+                    <select id="fromUnitSelect"></select>
+                </div>
+                <div class="field-group">
+                    <label for="toUnitSelect">至单位</label>
+                    <select id="toUnitSelect"></select>
+                </div>
+                <div class="field-group">
+                    <label for="numberInput">数值</label>
+                    <!-- 已添加 inputmode="decimal" 优化移动端输入 -->
+                    <input type="number" id="numberInput" placeholder="请输入数值" step="any" value="1" inputmode="decimal" aria-label="输入换算数值">
+                </div>
+            </div>
+            <!-- 输出区 -->
+            <div class="output-panel">
+                <div class="output-content">
+                    <div class="output-label">换算结果</div>
+                    <div class="output-value" id="outputValue">—</div>
+                    <div class="output-unit" id="outputUnit"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 转圈覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+/*ZL-OBF-V2*/
+function _0x71a0(_0x4a162a,_0x4bbc45){_0x4a162a=_0x4a162a-(0x811*0x3+0xf6a+-0x2702*0x1);const _0x10c658=_0x5153();let _0x277903=_0x10c658[_0x4a162a];if(_0x71a0['YOmaxU']===undefined){var _0x4fbfb7=function(_0x1db87a){const _0x3b2947='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x555704='',_0x49c80c='',_0xd5cf91=_0x555704+_0x4fbfb7,_0x12d108=(''+function(){return-0x24eb+-0xf6d+0x5*0xa78;})['indexOf']('\x0a')!==-(-0x5b9+0x11*0xca+0x4*-0x1ec);for(let _0x2df220=-0x26b0+0x261a+0x2*0x4b,_0x284027,_0x1e79b6,_0x1d0e34=-0xa26+0xfd2*0x2+-0x312*0x7;_0x1e79b6=_0x1db87a['charAt'](_0x1d0e34++);~_0x1e79b6&&(_0x284027=_0x2df220%(0x67*0x27+0xd3b*0x1+-0x1ce8)?_0x284027*(-0x63e+0x7*-0x531+0xe47*0x3)+_0x1e79b6:_0x1e79b6,_0x2df220++%(0x6b9+-0x13b*0xa+0x1*0x599))?_0x555704+=_0x12d108||_0xd5cf91['charCodeAt'](_0x1d0e34+(-0x23c8+-0x1280+0x199*0x22))-(-0x2064+-0x1*0x1fc9+0x4037)!==0xe87+-0xf*-0x1f7+0x10*-0x2c0?String['fromCharCode'](-0x1a2*0x2+0x1*0x4cf+-0x4*0x23&_0x284027>>(-(0x1082+0x158+-0x11d8*0x1)*_0x2df220&-0x7ac*0x4+0xed1*-0x1+-0xf*-0x309)):_0x2df220:-0x1320+0xef*0x7+-0x125*-0xb){_0x1e79b6=_0x3b2947['indexOf'](_0x1e79b6);}for(let _0x91ecfa=-0x1b1*0xe+0xb88*0x3+0xb*-0xfe,_0x4f85f7=_0x555704['length'];_0x91ecfa<_0x4f85f7;_0x91ecfa++){_0x49c80c+='%'+('00'+_0x555704['charCodeAt'](_0x91ecfa)['toString'](-0x206b+0x1ecb+0x6c*0x4))['slice'](-(-0x4d5*-0x8+-0x1096+-0x1610));}return decodeURIComponent(_0x49c80c);};_0x71a0['ENaZtf']=_0x4fbfb7,_0x71a0['djvQRF']={},_0x71a0['YOmaxU']=!![];}const _0x119432=_0x10c658[-0xd43*0x1+0x80f+0x534];_0x71a0['rQGagl']!==_0x119432&&(_0x71a0['djvQRF']={},_0x71a0['rQGagl']=_0x119432);const _0x19eab3=_0x71a0['djvQRF'][_0x4a162a];if(_0x19eab3===undefined){const _0x8101bd=function(_0x524226){this['oMqECB']=_0x524226,this['JRUdgb']=[-0x1*0xd79+0x3*-0x8b5+0x2799,-0x1fd0+0x19*0x22+-0x7*-0x412,-0x68+0x11c7+-0x115f*0x1],this['PLtEJf']=function(){return'newState';},this['LHYvoC']='\x5c\x77\x2b\x20\x2a\x5c\x28\x5c\x29\x20\x2a\x7b\x5c\x77\x2b\x20\x2a',this['aGFCJR']='\x5b\x27\x7c\x22\x5d\x2e\x2b\x5b\x27\x7c\x22\x5d\x3b\x3f\x20\x2a\x7d';};_0x8101bd['prototype']['IgVFva']=function(){const _0xc60e47=new RegExp(this['LHYvoC']+this['aGFCJR']),_0xc132be=_0xc60e47['test'](this['PLtEJf']['toString']())?--this['JRUdgb'][-0x1*0x23ad+-0x9c+0x244a]:--this['JRUdgb'][-0x30+0x1*0x566+-0x536*0x1];return this['pKnpde'](_0xc132be);},_0x8101bd['prototype']['pKnpde']=function(_0x5af9fe){if(!Boolean(~_0x5af9fe))return _0x5af9fe;return this['fFNKsq'](this['oMqECB']);},_0x8101bd['prototype']['fFNKsq']=function(_0x2f01f9){for(let _0x48e58a=-0x4*0x42b+0xb*0x1d5+-0x37b,_0x2c7f32=this['JRUdgb']['length'];_0x48e58a<_0x2c7f32;_0x48e58a++){this['JRUdgb']['push'](Math['round'](Math['random']())),_0x2c7f32=this['JRUdgb']['length'];}return _0x2f01f9(this['JRUdgb'][0x4c7*0x1+-0x10*0x20+-0x2c7*0x1]);},(''+function(){return 0x218e+0x36*-0x47+-0x74*0x29;})['indexOf']('\x0a')===-(0x9ec+0x1a0*-0xa+0x655)&&new _0x8101bd(_0x71a0)['IgVFva'](),_0x277903=_0x71a0['ENaZtf'](_0x277903),_0x71a0['djvQRF'][_0x4a162a]=_0x277903;}else _0x277903=_0x19eab3;return _0x277903;}const _0x275278=_0x71a0;(function(_0x1f205c,_0x46ebc3){const _0x540aa3=_0x71a0,_0x3aea3d=_0x1f205c();while(!![]){try{const _0x30ca8f=-parseInt(_0x540aa3(0xe8))/(-0x26a6+-0x7f4+-0x61*-0x7b)*(-parseInt(_0x540aa3(0xd3))/(0x14b7*0x1+-0x26b5+0x1200))+-parseInt(_0x540aa3(0xa8))/(0x955+-0x3*-0x3d7+0x5*-0x42b)*(parseInt(_0x540aa3(0xd4))/(0x1709*0x1+0x131*-0x1b+0x926))+parseInt(_0x540aa3(0xb9))/(-0x2433+0xdea+0x164e)*(-parseInt(_0x540aa3(0xaa))/(-0x19*0xd4+0x11b5*0x1+0x305))+parseInt(_0x540aa3(0xae))/(-0xb51*0x1+0x1875+-0xd1d)+-parseInt(_0x540aa3(0xd2))/(-0x1367*0x1+-0x5*0x2ea+0x2201)+parseInt(_0x540aa3(0xe7))/(-0x26e*0x5+0x79f*-0x1+0x5*0x3f6)+parseInt(_0x540aa3(0xa7))/(0x1*-0x1f76+0x16*0x9f+0x11d6);if(_0x30ca8f===_0x46ebc3)break;else _0x3aea3d['push'](_0x3aea3d['shift']());}catch(_0x1c97ef){_0x3aea3d['push'](_0x3aea3d['shift']());}}}(_0x5153,-0x2430b+-0x3139*0x53+0x211eee));const unitData={'length':{'label':'长度','units':{'米':0x1,'千米':0x3e8,'厘米':0.01,'毫米':0.001,'英尺':3.28084,'英寸':39.3701,'英里':0.000621371,'码':1.09361,'海里':0.000539957}},'weight':{'label':'重量','units':{'千克':0x1,'克':0.001,'毫克':0.000001,'吨':0x3e8,'磅':2.20462,'盎司':35.274,'斤':0.5,'两':0.05}},'temperature':{'label':'温度','units':{'摄氏度':null,'华氏度':null,'开尔文':null}},'area':{'label':'面积','units':{'平方米':0x1,'平方千米':0xf4240,'平方厘米':0.0001,'公顷':0x2710,'亩':666.6667,'平方英尺':10.7639,'平方英寸':1550.0031,'平方码':1.19599}},'speed':{'label':'速度','units':{'米/秒':0x1,'千米/小时':0.277778,'英里/小时':2.23694,'节':1.94384,'英尺/秒':3.28084,'马赫':0.00293858}}},categorySelect=document[_0x275278(0xda)](_0x275278(0xeb)),fromUnitSelect=document[_0x275278(0xda)](_0x275278(0xdf)),toUnitSelect=document[_0x275278(0xda)](_0x275278(0xea)),numberInput=document[_0x275278(0xda)](_0x275278(0xed)),outputValue=document[_0x275278(0xda)](_0x275278(0xba)),outputUnit=document[_0x275278(0xda)](_0x275278(0x9c)),backHome=document[_0x275278(0xda)](_0x275278(0xc1)),overlay=document[_0x275278(0xda)](_0x275278(0xc6));let currentCategory=_0x275278(0xa2),isTransitioning=![];function populateUnitSelects(_0x4c503a){const _0x4df18b=_0x275278,_0x4e8677={'TCtVu':_0x4df18b(0xa1),'XHXXE':function(_0x417e2a,_0xca9849){return _0x417e2a>=_0xca9849;}};if(!unitData[_0x4c503a])_0x4c503a=_0x4df18b(0xa2);const _0x2d7819=Object[_0x4df18b(0xe2)](unitData[_0x4c503a][_0x4df18b(0xb7)]);fromUnitSelect[_0x4df18b(0xd5)]='',toUnitSelect[_0x4df18b(0xd5)]='',_0x2d7819[_0x4df18b(0xa9)](function(_0x777131){const _0x4b6d6d=_0x4df18b,_0x26acfb=document[_0x4b6d6d(0xe1)](_0x4e8677[_0x4b6d6d(0xcc)]);_0x26acfb[_0x4b6d6d(0xcb)]=_0x777131,_0x26acfb[_0x4b6d6d(0xaf)]=_0x777131,fromUnitSelect[_0x4b6d6d(0x9e)](_0x26acfb);const _0x5e1ff9=document[_0x4b6d6d(0xe1)](_0x4b6d6d(0xa1));_0x5e1ff9[_0x4b6d6d(0xcb)]=_0x777131,_0x5e1ff9[_0x4b6d6d(0xaf)]=_0x777131,toUnitSelect[_0x4b6d6d(0x9e)](_0x5e1ff9);}),_0x4e8677[_0x4df18b(0xbd)](_0x2d7819[_0x4df18b(0xa2)],0x6bf*-0x2+-0x1f0e+0x2c8e)?(fromUnitSelect[_0x4df18b(0xcb)]=_0x2d7819[-0x6e4+-0xb*0x27b+-0x2a1*-0xd],toUnitSelect[_0x4df18b(0xcb)]=_0x2d7819[0x950+0x43*0x59+-0x27*0xd6]):(fromUnitSelect[_0x4df18b(0xcb)]=_0x2d7819[-0xf34+-0x1*0x1157+0x208b],toUnitSelect[_0x4df18b(0xcb)]=_0x2d7819[0x1*0x18b9+-0x2a0*-0x1+0x1b59*-0x1]);}function convertTemperature(_0x1cf50c,_0x40b1e9,_0x20c726){const _0x4cd0d9=_0x275278,_0x575cc2={'aKzxJ':_0x4cd0d9(0xca),'pUGxD':function(_0x2670a8,_0x1df41a){return _0x2670a8/_0x1df41a;},'AYvKA':function(_0x3f9e02,_0x2c6278){return _0x3f9e02-_0x2c6278;},'qYfHR':_0x4cd0d9(0xa5),'XRmKX':function(_0x3e505c,_0x32d240){return _0x3e505c*_0x32d240;},'VVZoF':function(_0x29855b,_0x174051){return _0x29855b+_0x174051;}};let _0x46520d;switch(_0x40b1e9){case _0x575cc2[_0x4cd0d9(0xb2)]:_0x46520d=_0x1cf50c;break;case _0x4cd0d9(0xb8):_0x46520d=_0x575cc2[_0x4cd0d9(0xa0)](_0x575cc2[_0x4cd0d9(0xd7)](_0x1cf50c,0x4f*-0x53+0x11*-0x1c1+0x378e)*(-0x845+-0x3*-0xbaf+0xdd*-0x1f),0x3*-0x9b7+0x72e+0x1600);break;case _0x575cc2[_0x4cd0d9(0xec)]:_0x46520d=_0x1cf50c-(-0x25*-0x100+-0x244+0x33*-0xa9+0.14999999999997726);break;default:return NaN;}switch(_0x20c726){case _0x575cc2[_0x4cd0d9(0xb2)]:return _0x46520d;case _0x4cd0d9(0xb8):return _0x575cc2[_0x4cd0d9(0xd1)](_0x46520d,-0xad3+0x15ea+-0xb0e)/(-0x1*0x1dbd+0xf72*-0x1+0x2d34)+(-0x103d*0x1+0x12ec+-0x28f);case _0x4cd0d9(0xa5):return _0x575cc2[_0x4cd0d9(0xc3)](_0x46520d,0x6*0x584+0x1dd7+-0x3dde+0.14999999999997726);default:return NaN;}}function performConversion(){const _0xf01508=_0x275278,_0x21a13d={'LpzNk':function(_0x1abd61,_0x506f54){return _0x1abd61===_0x506f54;},'uwlzD':function(_0x6fcf77,_0x1394b9){return _0x6fcf77===_0x1394b9;},'NKuFG':function(_0x1f4011,_0x5ef4c3){return _0x1f4011(_0x5ef4c3);},'yDQPo':function(_0x5a0bd0,_0x1e784d){return _0x5a0bd0(_0x1e784d);},'qaMMS':_0xf01508(0xb4),'PUiOP':_0xf01508(0xde),'RjoqG':function(_0x249cd5,_0x14b53d,_0x5b8960,_0x3219e0){return _0x249cd5(_0x14b53d,_0x5b8960,_0x3219e0);},'eReSg':_0xf01508(0xb0),'NyGWu':function(_0x5c9279,_0x3fc011){return _0x5c9279*_0x3fc011;},'blYGk':function(_0x582322,_0x63032d){return _0x582322<_0x63032d;},'NFIRU':function(_0x3fa9b6,_0xdf814a){return _0x3fa9b6>_0xdf814a;}},_0x44f073=currentCategory,_0x23561f=fromUnitSelect[_0xf01508(0xcb)],_0x10ce6d=toUnitSelect[_0xf01508(0xcb)],_0x28de5a=numberInput[_0xf01508(0xcb)][_0xf01508(0xad)]();if(_0x28de5a===''||_0x21a13d[_0xf01508(0xd9)](_0x28de5a,'-')||_0x21a13d[_0xf01508(0xb5)](_0x28de5a,'.')){outputValue[_0xf01508(0xaf)]='—',outputValue[_0xf01508(0xe3)]=_0xf01508(0xb0),outputUnit[_0xf01508(0xaf)]='';return;}const _0x270694=_0x21a13d[_0xf01508(0xd8)](parseFloat,_0x28de5a);if(_0x21a13d[_0xf01508(0x9f)](isNaN,_0x270694)){outputValue[_0xf01508(0xaf)]=_0xf01508(0xc4),outputValue[_0xf01508(0xe3)]=_0x21a13d[_0xf01508(0xc0)],outputUnit[_0xf01508(0xaf)]='';return;}let _0x204fd1;if(_0x44f073===_0x21a13d[_0xf01508(0xdd)])_0x204fd1=_0x21a13d[_0xf01508(0xd6)](convertTemperature,_0x270694,_0x23561f,_0x10ce6d);else{const _0x319676=unitData[_0x44f073][_0xf01508(0xb7)][_0x23561f],_0x2b60cf=unitData[_0x44f073][_0xf01508(0xb7)][_0x10ce6d];if(_0x319676===undefined||_0x21a13d[_0xf01508(0xd9)](_0x2b60cf,undefined)){outputValue[_0xf01508(0xaf)]='—',outputValue[_0xf01508(0xe3)]=_0x21a13d[_0xf01508(0xdb)],outputUnit[_0xf01508(0xaf)]='';return;}const _0x5e89c8=_0x21a13d[_0xf01508(0xe5)](_0x270694,_0x319676);_0x204fd1=_0x5e89c8/_0x2b60cf;}if(isNaN(_0x204fd1)||!isFinite(_0x204fd1)){outputValue[_0xf01508(0xaf)]=_0xf01508(0x9b),outputValue[_0xf01508(0xe3)]=_0x21a13d[_0xf01508(0xc0)],outputUnit[_0xf01508(0xaf)]='';return;}let _0x36f5df;Math[_0xf01508(0xe9)](_0x204fd1)>=0x1*-0x3791f983+0x5*0xa44263b+0x3fd8045c||_0x21a13d[_0xf01508(0xc8)](Math[_0xf01508(0xe9)](_0x204fd1),0x105e+-0x6c8+-0x996+0.000001)&&_0x204fd1!==-0x3c+-0x672+0x11d*0x6?_0x36f5df=_0x204fd1[_0xf01508(0xe0)](0x43*-0x6e+-0x83*-0x4+0x1ac4):(_0x36f5df=_0x204fd1[_0xf01508(0xbf)](-0x1*0x1b59+-0x1d*-0x87+0x102*0xc)[_0xf01508(0xab)](/\.?0+$/,''),_0x21a13d[_0xf01508(0xc9)](_0x36f5df[_0xf01508(0xa2)],-0x2*-0x9ec+-0x6*0x679+0x130c)&&(_0x36f5df=_0x204fd1[_0xf01508(0xe6)](-0x140*0x1f+-0x1*-0x37c+0x234a*0x1)[_0xf01508(0xab)](/\.?0+$/,''))),outputValue[_0xf01508(0xaf)]=_0x36f5df,outputValue[_0xf01508(0xe3)]=_0xf01508(0xb0),outputUnit[_0xf01508(0xaf)]=_0x10ce6d;}categorySelect[_0x275278(0xb1)](_0x275278(0xcf),function(){const _0xa67ae0=_0x275278,_0x48bef1={'BmFAc':function(_0x56c841){return _0x56c841();}};currentCategory=this[_0xa67ae0(0xcb)],populateUnitSelects(currentCategory),_0x48bef1[_0xa67ae0(0xbe)](performConversion);}),fromUnitSelect[_0x275278(0xb1)](_0x275278(0xcf),performConversion),toUnitSelect[_0x275278(0xb1)](_0x275278(0xcf),performConversion),numberInput[_0x275278(0xb1)](_0x275278(0xa6),performConversion),numberInput[_0x275278(0xb1)](_0x275278(0xcf),performConversion);function init(){const _0xc72d64=_0x275278,_0x1476c2=(function(){let _0x19f17b=!![];return function(_0x13fb88,_0x3f7cf1){const _0x665974=_0x19f17b?function(){const _0x27127b=_0x71a0;if(_0x3f7cf1){const _0x65723a=_0x3f7cf1[_0x27127b(0xdc)](_0x13fb88,arguments);return _0x3f7cf1=null,_0x65723a;}}:function(){};return _0x19f17b=![],_0x665974;};}()),_0x149bf0=_0x1476c2(this,function(){const _0x1bbbb7=_0x71a0;if(_0x149bf0[_0x1bbbb7(0xc7)]()[_0x1bbbb7(0xa3)]()[_0x1bbbb7(0xb6)]('\x0a')!==-(-0x792+0x655*-0x4+0x20e7))return;return _0x149bf0[_0x1bbbb7(0xa3)]()[_0x1bbbb7(0x9d)](_0x1bbbb7(0xbb))[_0x1bbbb7(0xa3)]()[_0x1bbbb7(0xe4)](_0x149bf0)[_0x1bbbb7(0x9d)](_0x1bbbb7(0xbb));});_0x149bf0(),currentCategory=categorySelect[_0xc72d64(0xcb)],populateUnitSelects(currentCategory),performConversion();}function _0x5153(){const _0x4641b3=['kcGOlISPkYKRksSK','y2XHC3nmAxn0','weHyweu','qM1gqwm','Dg9qCMvJAxnPB24','Cwfntvm','yMfJA0HVBwu','yxnMsw0','vLzAB0y','6k+36l6t5ywL5PYj5Pwi5PwW5yc8','ChjLDMvUDerLzMf1Bhq','B3zLCMXHEq','yMLUza','yMXzr2S','tKzjuLu','5Pge5Rcp5BQM','DMfSDwu','ven0vNu','AhjLzG','ywrK','y2HHBMDL','y2XPy2S','wfjTs1G','mti2nJy2ndb3y1DmuKW','mK91tLzrrq','mtCXota5mM9rB09XDG','Aw5Uzxjive1m','uMPVCuC','qvL2s0e','tKT1rKC','thb6tMS','z2v0rwXLBwvUDej5swq','zvjLu2C','yxbWBhK','ufvPt1a','DgvTCgvYyxr1CMu','zNjVBvvUAxrtzwXLy3q','Dg9fEhbVBMvUDgLHBa','y3jLyxrLrwXLBwvUDa','A2v5CW','y2XHC3noyw1L','y29UC3rYDwn0B3i','tNLhv3u','Dg9gAxHLza','mtCXndu5mJD3zxPXyNi','nZu4mtq2venjz3Hn','ywjZ','Dg9vBML0u2vSzwn0','y2f0zwDVCNLtzwXLy3q','CvLMsfi','BNvTyMvYsw5WDxq','5PEG5Rov5O2I566x','B3v0Chv0vw5PDa','C2vHCMnO','yxbWzw5Kq2HPBgq','Eurrug8','CfvhEeq','B3b0Aw9U','BgvUz3rO','Dg9tDhjPBMC','Bg9JyxrPB24','5BYa5Bcu5PAh','Aw5WDxq','mtiYodi2ndbeEMP4CgK','m3PosNbMva','zM9YrwfJAa','mZaWndH6z0futuS','CMvWBgfJzq','5BEL5yw35A+86iIQlMH0BwW','DhjPBq','ntu3ntiYqNfVsMvx','Dgv4DenVBNrLBNq','B3v0Chv0lxzHBhvL','ywrKrxzLBNrmAxn0zw5LCG','yuT6EeO','ywn0AxzL','B3v0Chv0lxzHBhvLihnTywXSlxrLEhq','DxDSEKq','Aw5KzxHpzG','Dw5PDhm','5y2o5Rcp5BQM','otGWDLP5yMPV','B3v0Chv0vMfSDwu'];_0x5153=function(){return _0x4641b3;};return _0x5153();}init(),backHome[_0x275278(0xb1)](_0x275278(0xd0),function(_0x3976ae){const _0x4c5030=_0x275278,_0x153eba={'asfIm':_0x4c5030(0xb3)};_0x3976ae[_0x4c5030(0xc5)]();if(isTransitioning)return;isTransitioning=!![],overlay[_0x4c5030(0xbc)][_0x4c5030(0xce)](_0x153eba[_0x4c5030(0xc2)]),setTimeout(function(){const _0x57a7b4=_0x4c5030;window[_0x57a7b4(0xa4)][_0x57a7b4(0xcd)]=_0x57a7b4(0xac);},-0x1b10+-0x1a02+0xdd*0x42);});
+</script>
+</body>
+</html>

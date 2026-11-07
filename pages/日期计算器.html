@@ -1,0 +1,633 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日期计算器 - 找乐子</title>
+    <style>
+        /* ========== 全局重置（采用index.html风格） ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            overflow-x: hidden;
+        }
+
+        /* ========== 背景流光（20秒无缝循环，与index.html完全一致） ========== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-flow-1 {
+            position: absolute;
+            top: -150%;
+            left: -100%;
+            width: 350%;
+            height: 350%;
+            background: var(--flow-grad);
+            background-size: 400% 400%;
+            animation: flowGrad 20s ease-in-out infinite;
+            will-change: background-position;
+        }
+        .bg-flow-2 {
+            position: absolute;
+            top: -80%;
+            left: -60%;
+            width: 260%;
+            height: 260%;
+            background: radial-gradient(ellipse at 30% 70%, rgba(255,140,100,.4), transparent 60%), 
+                        radial-gradient(ellipse at 70% 30%, rgba(90,180,255,.35), transparent 50%);
+            animation: flowDrift 20s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        .bg-flow-3 {
+            position: absolute;
+            top: -40%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(220,140,255,.25), transparent 55%);
+            animation: flowSpin 20s linear infinite;
+            will-change: transform;
+        }
+        @keyframes flowGrad {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes flowDrift {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(5%, -3%) scale(1.08) rotate(6deg); }
+            100% { transform: translate(-2%, 4%) scale(.94) rotate(-6deg); }
+        }
+        @keyframes flowSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.06); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* ========== 悬浮球（与index.html完全一致） ========== */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--card-2) 60%, transparent), color-mix(in srgb, var(--card-2) 15%, transparent) 45%, transparent 75%);
+            box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 10%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
+        .orb-1 { width: 260px; height: 260px; top: 10%; left: 5%; animation: orbFloat1 18s ease-in-out infinite, orbRotate 40s linear infinite; }
+        .orb-2 { width: 160px; height: 160px; top: 55%; left: 78%; animation: orbFloat2 22s ease-in-out infinite, orbRotate 55s linear infinite; }
+        .orb-3 { width: 110px; height: 110px; top: 70%; left: 18%; animation: orbFloat1 16s ease-in-out infinite reverse, orbRotate 35s linear infinite; }
+        .orb-4 { width: 200px; height: 200px; top: 28%; left: 62%; animation: orbFloat2 20s ease-in-out infinite, orbRotate 45s linear infinite; }
+        .orb-5 { width: 80px; height: 80px; top: 82%; left: 45%; animation: orbFloat1 14s ease-in-out infinite, orbRotate 30s linear infinite; }
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0,0); opacity:.5; }
+            30% { transform: translate(20px,-25px); opacity:.8; }
+            60% { transform: translate(-12px,15px); opacity:.4; }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0,0); opacity:.6; }
+            50% { transform: translate(-18px,14px); opacity:.3; }
+        }
+        @keyframes orbRotate { to { transform: rotate(360deg); } }
+
+        /* ========== 主体容器（采用index.html的大长方形样式） ========== */
+        main {
+            padding-top: 20px;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px var(--line);
+            padding: 24px;
+            backdrop-filter: blur(4px);
+            margin-top: 30px;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        /* ========== 网格布局（6列8行） ========== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, minmax(80px, auto));
+            gap: 14px;
+            padding: 8px;
+        }
+
+        /* 通用格子样式 */
+        .cell {
+            border-radius: 14px;
+            background: color-mix(in srgb, var(--glow) 5%, transparent);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            transition: transform .3s, box-shadow .3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+            border: 3px solid transparent;
+        }
+        .cell:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 0 20px color-mix(in srgb, var(--glow) 15%, transparent);
+        }
+
+        /* ===== 标题区（1-2行，1-4列） ===== */
+        .title-area {
+            grid-row: 1 / 3;
+            grid-column: 1 / 5;
+            background: var(--btn-grad);
+            border-color: var(--gold);
+            cursor: default;
+        }
+        .title-area h1 {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            background: linear-gradient(90deg, var(--btn-txt), color-mix(in srgb, var(--btn-txt) 55%, transparent), var(--btn-txt));
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 4s ease-in-out infinite;
+        }
+        @keyframes titleShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ===== 返回主页（1-2行，5-6列） ===== */
+        .back-area {
+            grid-row: 1 / 3;
+            grid-column: 5 / 7;
+            background: var(--btn-grad);
+            color: var(--btn-txt);
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 3px;
+            text-decoration: none;
+            border-color: var(--purple);
+            cursor: pointer;
+        }
+        .back-area:hover {
+            filter: brightness(1.12);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+        }
+
+        /* ===== 计算器主体区（第3-8行，全部6列） ===== */
+        .calculator-body {
+            grid-row: 3 / 9;
+            grid-column: 1 / 7;
+            background: var(--card-2);
+            border-radius: 14px;
+            border: 3px solid var(--green);
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+        /* 左侧输入区 */
+        .input-panel {
+            flex: 1 1 45%;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+        }
+        .input-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dim);
+            letter-spacing: 0.5px;
+        }
+        .date-input,
+        .number-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--line);
+            background: var(--card);
+            font-size: 15px;
+            color: var(--txt);
+            outline: none;
+            transition: all .3s ease;
+        }
+        .date-input:focus,
+        .number-input:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--purple) 12%, transparent);
+        }
+        .date-input::-webkit-calendar-picker-indicator { cursor: pointer; }
+        .number-input::-webkit-inner-spin-button,
+        .number-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .capsule-btn {
+            padding: 10px 16px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--btn-txt);
+            transition: all .28s ease;
+            flex: 1 1 auto;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            min-height: 44px; /* 修复：确保触摸目标 ≥44px */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .capsule-btn:hover { transform: translateY(-2px); }
+        .capsule-btn:active { transform: scale(0.96); }
+        .btn-blue { background: var(--glow); }
+        .btn-green { background: var(--green); }
+        .btn-purple { background: var(--purple); }
+
+        /* 右侧输出区 */
+        .output-panel {
+            flex: 1 1 45%;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(160deg, color-mix(in srgb, var(--purple) 5%, var(--card-2)), color-mix(in srgb, var(--purple) 9%, var(--card-2)));
+            border-radius: 18px;
+            padding: 20px;
+            border: 2px solid color-mix(in srgb, var(--purple) 10%, transparent);
+        }
+        .output-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dim);
+            letter-spacing: 1.5px;
+        }
+        .result-display {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--txt);
+            word-break: break-all;
+            text-align: center;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: var(--card-2);
+            border: 2px solid var(--line);
+            min-height: 60px;
+            line-height: 1.6;
+            user-select: text;
+        }
+        .result-display.placeholder {
+            color: var(--dim);
+            font-weight: 500;
+        }
+        .result-display.highlight {
+            border-color: color-mix(in srgb, var(--purple) 45%, transparent);
+            box-shadow: 0 0 20px color-mix(in srgb, var(--purple) 12%, transparent);
+        }
+
+        /* ========== 转场覆盖层（index.html通用样式） ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 10, 25, .72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s ease, visibility .4s ease;
+            pointer-events: none;
+        }
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .loader-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .1);
+            border-top-color: #f6d365;
+            border-right-color: #fda085;
+            animation: ringSpin .8s linear infinite;
+            box-sizing: border-box;
+        }
+        .loader-ring::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: #a78bfa;
+            border-left-color: #667eea;
+            animation: ringSpin 1.4s linear infinite reverse;
+        }
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: #fb7185;
+            border-right-color: #2dd4bf;
+            animation: ringSpin 2s linear infinite;
+        }
+        .loader-text {
+            position: relative;
+            z-index: 5;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 1.5s linear infinite;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .container { width: 95%; padding: 16px; }
+            .calculator-body { flex-direction: column; }
+            .title-area h1 { font-size: 28px; }
+            .back-area { font-size: 18px; }
+        }
+    
+        /* ========== 手机端响应式适配（通用） ========== */
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+            main {
+                padding: 70px 0 30px !important;
+            }
+            .container, .card-container, .wrapper, .box, .panel, .form-box {
+                width: 94% !important;
+                max-width: 94vw !important;
+                padding: 14px !important;
+                margin: 0 auto !important;
+            }
+            /* 6列/多列网格改3列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 4px !important;
+            }
+            /* 大区域占满整行 */
+            .title-area, .back-area, .display-area, .game-main,
+            .calculator-area, .main-area, .content-area, .result-area,
+            .input-area, .output-area, .board-area, .info-area, .settings-area {
+                grid-column: 1 / -1 !important;
+                grid-row: auto !important;
+            }
+            /* 左右分栏改上下堆叠 */
+            .left-panel, .right-panel, .side-panel, .sidebar {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid var(--line) !important;
+            }
+            .display-area, .game-main, .calculator-area {
+                flex-direction: column !important;
+                padding: 12px !important;
+            }
+            .cell, .tool-cell, .grid-cell {
+                padding: 10px 6px !important;
+                min-height: 70px !important;
+            }
+            h1, h2, h3, .title-text, .author-name, .main-title {
+                font-size: 22px !important;
+                letter-spacing: 1px !important;
+            }
+            .btn, button, input, select, textarea {
+                font-size: 14px !important;
+                padding: 10px 14px !important;
+            }
+            .ghost-btn, .back-btn, .return-btn {
+                padding: 8px 16px !important;
+                font-size: 13px !important;
+            }
+            /* 隐藏非必要装饰元素 */
+            .orb, .decoration, .deco-element, .floating-shape {
+                display: none !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .container, .card-container, .wrapper, .box {
+                width: 96% !important;
+                padding: 10px !important;
+            }
+            /* 小屏手机改2列 */
+            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            h1, h2, h3, .title-text, .author-name {
+                font-size: 18px !important;
+            }
+            .cell, .tool-cell {
+                min-height: 80px !important;
+                padding: 8px 4px !important;
+            }
+            .btn, button {
+                font-size: 13px !important;
+                padding: 8px 12px !important;
+            }
+        }
+
+        /* ========== 手机端针对性修复：日期计算器按钮对称 ========== */
+        @media (max-width: 768px) {
+            .button-row {
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                gap: 10px !important;
+                justify-content: center !important;
+            }
+            .capsule-btn {
+                flex: 1 1 calc(50% - 10px) !important;
+                min-width: 0 !important;
+                margin: 0 !important;
+                font-size: 14px !important;
+                padding: 12px 16px !important;
+            }
+            .calculator-body {
+                padding: 16px 12px !important;
+                gap: 12px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .capsule-btn {
+                flex: 1 1 100% !important;
+            }
+        }
+</style>
+
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<script data-no-obf>try{var _zt=localStorage.getItem("zl_theme");var _zok=["dark","blue","gold","light","milk","guofeng","snowsun","cyber","aurora","custom"];if(_zt&&_zok.indexOf(_zt)>=0){document.documentElement.setAttribute("data-theme",_zt);}}catch(e){}</script>
+
+<!-- PWA支持 -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="找乐子">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- 横屏模式优化 -->
+<style>
+/* 横屏模式：游戏页面优化 */
+@media (max-height: 500px) and (orientation: landscape) {
+    .game-container, .board, .grid-board, canvas {
+        max-height: 90vh !important;
+        width: auto !important;
+    }
+    .toolbar, .nav, .header {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+}
+</style>
+
+
+<!-- SEO/分享元信息 -->
+<meta name="description" content="日期计算器 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:title" content="日期计算器 - 找乐子">
+<meta property="og:description" content="日期计算器 - 找乐子｜趣味工具与小游戏合集">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="找乐子">
+<meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/日期计算器.html">
+
+<link rel="stylesheet" href="../assets/css/common.css">
+<script defer src="../assets/js/common.js"></script>
+<script defer src="../assets/js/theme.js"></script>
+<script defer src="../assets/js/zl-features.js"></script>
+</head>
+<body>
+
+    <!-- 背景流光层 -->
+    <div class="bg-animation">
+        <div class="bg-flow-1"></div>
+        <div class="bg-flow-2"></div>
+        <div class="bg-flow-3"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <!-- 主体 -->
+    <main>
+        <div class="container">
+            <div class="grid">
+                <!-- 标题区 -->
+                <div class="cell title-area">
+                    <h1>日期计算器</h1>
+                </div>
+                <!-- 返回主页 -->
+                <a href="工具导航.html" class="cell back-area" id="backHome">返回<br>主页</a>
+                
+                <!-- 计算器主体 -->
+                <div class="calculator-body">
+                    <!-- 左侧输入面板 -->
+                    <div class="input-panel">
+                        <label class="input-label" for="dateStart">起始日期</label>
+                        <input type="date" id="dateStart" class="date-input" aria-label="起始日期">
+                        <label class="input-label" for="dateEnd">结束日期</label>
+                        <input type="date" id="dateEnd" class="date-input" aria-label="结束日期">
+                        <label class="input-label" for="daysInput">推算天数（可正负）</label>
+                        <input type="number" id="daysInput" class="number-input" placeholder="输入天数" step="1" aria-label="推算天数">
+                        <div class="button-row">
+                            <button class="capsule-btn btn-blue" id="diffBtn">📅 相差天数</button>
+                            <button class="capsule-btn btn-green" id="targetBtn">🎯 目标日期</button>
+                            <button class="capsule-btn btn-purple" id="timestampBtn">⏰ 时间戳</button>
+                        </div>
+                    </div>
+                    <!-- 右侧输出面板 -->
+                    <div class="output-panel">
+                        <div class="output-label">计算结果</div>
+                        <div class="result-display placeholder" id="resultDisplay">请选择日期后点击按钮</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 转场遮罩 -->
+    <div class="overlay" id="overlay">
+        <div class="loader-wrap">
+            <div class="loader-ring"></div>
+            <div class="loader-text">找乐子～</div>
+        </div>
+    </div>
+
+    <script>
+/*ZL-OBF-V2*/
+(function(_0x4096f7,_0x1ec210){const _0xb39da6=_0x5dc9,_0x59cae6=_0x4096f7();while(!![]){try{const _0xc495a7=parseInt(_0xb39da6(0x23b))/(0x9d*0x9+0x2232*0x1+-0x2*0x13db)*(parseInt(_0xb39da6(0x1eb))/(-0x170+0x1bb0+-0x1a3e))+parseInt(_0xb39da6(0x207))/(0xfde+0x269*0x1+-0x1244)+-parseInt(_0xb39da6(0x1f2))/(-0x83b+-0x1111+-0xd8*-0x1e)+parseInt(_0xb39da6(0x204))/(-0x443*-0x1+0x1bd*0x11+0x21cb*-0x1)*(-parseInt(_0xb39da6(0x1f6))/(-0x961+-0x1*0x55e+0xc7*0x13))+-parseInt(_0xb39da6(0x222))/(0x656+0x1a*-0xe+-0x4e3)+-parseInt(_0xb39da6(0x21c))/(-0x18c7*0x1+0xe1e+0xab1)*(parseInt(_0xb39da6(0x1f7))/(0x11ca*-0x1+-0x1a9d+0x2c70))+-parseInt(_0xb39da6(0x1f0))/(0x1206+-0x1*-0x13f3+0x2eb*-0xd)*(-parseInt(_0xb39da6(0x1e8))/(0x1*-0x1973+0x4*-0x7fa+0xed*0x3e));if(_0xc495a7===_0x1ec210)break;else _0x59cae6['push'](_0x59cae6['shift']());}catch(_0x2598ac){_0x59cae6['push'](_0x59cae6['shift']());}}}(_0x2c14,0x3*0x17c93+0xc9*-0x657+0x36725),(function(){const _0x4a5574=_0x5dc9,_0x237e80={'WXpRg':function(_0x39d187,_0x4e441d){return _0x39d187(_0x4e441d);},'nXXhW':function(_0xc6deee,_0x23252c){return _0xc6deee!==_0x23252c;},'fnLDC':_0x4a5574(0x216),'XwqqS':function(_0x3ba4be){return _0x3ba4be();},'wFmRO':function(_0x57ab59,_0x2cbc97){return _0x57ab59+_0x2cbc97;},'WaqPh':_0x4a5574(0x23d),'imcdv':_0x4a5574(0x235),'VzYCS':function(_0x5e4418,_0x50f99c){return _0x5e4418(_0x50f99c);},'hFiTO':function(_0x489466,_0x5ec848){return _0x489466/_0x5ec848;},'pbFEK':function(_0x3365fb,_0x2183ae){return _0x3365fb-_0x2183ae;},'deKNK':function(_0x4e0e5e,_0x4a9de3){return _0x4e0e5e>=_0x4a9de3;},'YPVlT':function(_0x2be3bd,_0x5a530f,_0x2d2415){return _0x2be3bd(_0x5a530f,_0x2d2415);},'MlKDv':_0x4a5574(0x22f),'XAVey':function(_0xe24590,_0x19b697,_0xb4c19){return _0xe24590(_0x19b697,_0xb4c19);},'HPGnf':_0x4a5574(0x210),'DOQeZ':function(_0x505e0d,_0x5192c1){return _0x505e0d+_0x5192c1;},'rYnyo':function(_0x48a9c0,_0x4bb3c0){return _0x48a9c0+_0x4bb3c0;},'oVhOw':_0x4a5574(0x219),'KoBVy':function(_0x491ac2,_0x453ab8){return _0x491ac2(_0x453ab8);},'ygaFl':_0x4a5574(0x238),'Fveoa':_0x4a5574(0x1f9),'ybpss':_0x4a5574(0x1e0),'PcxxR':_0x4a5574(0x1e1),'CnTiU':_0x4a5574(0x208),'uyrID':function(_0x50a7bd,_0x5a5394){return _0x50a7bd===_0x5a5394;},'UKNNp':_0x4a5574(0x225),'KwvfW':_0x4a5574(0x22e),'JznbW':_0x4a5574(0x1f8),'wmpHM':_0x4a5574(0x218),'DaKpe':_0x4a5574(0x20e)},_0x10f396=(function(){let _0x5c0603=!![];return function(_0x40bcbb,_0x1e0e8f){const _0x25f9dd=_0x5c0603?function(){const _0x2861fb=_0x5dc9;if(_0x1e0e8f){const _0x2f06ab=_0x1e0e8f[_0x2861fb(0x1fb)](_0x40bcbb,arguments);return _0x1e0e8f=null,_0x2f06ab;}}:function(){};return _0x5c0603=![],_0x25f9dd;};}());'use strict';const _0x5d79f9=document[_0x4a5574(0x234)](_0x4a5574(0x21f)),_0x50ec5e=document[_0x4a5574(0x234)](_0x237e80[_0x4a5574(0x1f3)]),_0x27121e=document[_0x4a5574(0x234)](_0x4a5574(0x1fc)),_0x11eeec=document[_0x4a5574(0x234)](_0x4a5574(0x223)),_0x59b5c4=document[_0x4a5574(0x234)](_0x4a5574(0x226)),_0x289113=document[_0x4a5574(0x234)](_0x4a5574(0x206)),_0x393d77=document[_0x4a5574(0x234)](_0x237e80[_0x4a5574(0x20b)]),_0x1d8ecf=document[_0x4a5574(0x234)](_0x237e80[_0x4a5574(0x23e)]),_0x5b507c=document[_0x4a5574(0x234)](_0x237e80[_0x4a5574(0x236)]);function _0x295874(_0x5798cf){const _0x3828ca=_0x4a5574;if(!_0x5798cf)return null;const _0x5ba6f5=_0x5798cf[_0x3828ca(0x22b)]('-');if(_0x5ba6f5[_0x3828ca(0x203)]!==-0x20b2+-0x13*-0x143+0x8bc)return null;return new Date(parseInt(_0x5ba6f5[0x3bf+0x1f73+-0x11*0x212]),_0x237e80[_0x3828ca(0x1e5)](parseInt,_0x5ba6f5[-0x5b9*-0x2+-0x1358+0x1*0x7e7])-(0x14f*0x3+-0xb51*-0x1+0x2f*-0x53),parseInt(_0x5ba6f5[0x10b1+0x38*-0x37+-0x4a7]));}function _0x4685be(_0x30c21d){const _0x4404aa=_0x4a5574,_0x2e504a=_0x10f396(this,function(){const _0x32ac85=_0x5dc9;if(_0x237e80[_0x32ac85(0x220)](_0x2e504a[_0x32ac85(0x214)]()[_0x32ac85(0x209)]()[_0x32ac85(0x1ed)]('\x0a'),-(0x443*-0x3+-0x2b*0x3d+0x1709)))return;return _0x2e504a[_0x32ac85(0x209)]()[_0x32ac85(0x202)](_0x237e80[_0x32ac85(0x1ec)])[_0x32ac85(0x209)]()[_0x32ac85(0x23f)](_0x2e504a)[_0x32ac85(0x202)](_0x237e80[_0x32ac85(0x1ec)]);});_0x237e80[_0x4404aa(0x1e9)](_0x2e504a);const _0x470740=_0x30c21d[_0x4404aa(0x224)](),_0x154cce=String(_0x237e80[_0x4404aa(0x229)](_0x30c21d[_0x4404aa(0x1ff)](),-0xbf9*0x2+0x1fdf*-0x1+0x37d2*0x1))[_0x4404aa(0x21d)](-0x1*-0x1971+0x17*0x1a1+0x61*-0xa6,'0'),_0x1b51e5=String(_0x30c21d[_0x4404aa(0x201)]())[_0x4404aa(0x21d)](0x9d*0x28+-0x1ca3+0x41d,'0');return _0x237e80[_0x4404aa(0x229)](_0x237e80[_0x4404aa(0x229)](_0x237e80[_0x4404aa(0x229)](_0x470740+'-',_0x154cce),'-'),_0x1b51e5);}function _0x4df70c(_0x423311,_0x382a33=![]){const _0x533707=_0x4a5574;_0x393d77[_0x533707(0x23a)]=_0x423311,_0x393d77[_0x533707(0x1e4)][_0x533707(0x22c)](_0x237e80[_0x533707(0x20d)],_0x382a33),!_0x382a33?_0x393d77[_0x533707(0x1e4)][_0x533707(0x1ee)](_0x237e80[_0x533707(0x231)]):_0x393d77[_0x533707(0x1e4)][_0x533707(0x228)](_0x533707(0x235));}function _0x21517c(){const _0x3bff11=_0x4a5574,_0x126693=_0x237e80[_0x3bff11(0x22a)](_0x295874,_0x5d79f9[_0x3bff11(0x1f1)]),_0x360a05=_0x237e80[_0x3bff11(0x1e5)](_0x295874,_0x50ec5e[_0x3bff11(0x1f1)]);if(!_0x126693||!_0x360a05){_0x4df70c(_0x3bff11(0x221),!![]);return;}const _0x3fb21c=Math[_0x3bff11(0x23c)](_0x237e80[_0x3bff11(0x213)](_0x237e80[_0x3bff11(0x200)](_0x360a05[_0x3bff11(0x237)](),_0x126693[_0x3bff11(0x237)]()),0x102bed7+-0x7fcbf9e+0xc205cc7)),_0xf7538f=Math[_0x3bff11(0x1e7)](_0x3fb21c),_0x314d2e=_0x237e80[_0x3bff11(0x1fd)](_0x3fb21c,0x4b*-0x3c+0x1*-0x20fd+0xa1d*0x5)?'之后':'之前';_0x4df70c(_0x3bff11(0x21b)+_0xf7538f+_0x3bff11(0x1de)+_0x314d2e+'）');}function _0x319dd2(){const _0x4b0a6a=_0x4a5574,_0x1e9972=_0x237e80[_0x4b0a6a(0x22a)](_0x295874,_0x5d79f9[_0x4b0a6a(0x1f1)]),_0x360124=parseInt(_0x27121e[_0x4b0a6a(0x1f1)],0x813+-0x129c+0xa93);if(!_0x1e9972){_0x237e80[_0x4b0a6a(0x22d)](_0x4df70c,_0x237e80[_0x4b0a6a(0x230)],!![]);return;}if(isNaN(_0x360124)){_0x237e80[_0x4b0a6a(0x1f5)](_0x4df70c,_0x237e80[_0x4b0a6a(0x20f)],!![]);return;}const _0x59a098=new Date(_0x237e80[_0x4b0a6a(0x21e)](_0x1e9972[_0x4b0a6a(0x237)](),_0x360124*(-0x125*0x3e9fb+0x1*0x15b503b+0x845d80c)));_0x4df70c(_0x4b0a6a(0x20a)+_0x4685be(_0x59a098)+'\x0a（'+_0x1e9972[_0x4b0a6a(0x224)]()+'年'+_0x237e80[_0x4b0a6a(0x215)](_0x1e9972[_0x4b0a6a(0x1ff)](),0x1f6e+-0x2*0x703+-0x1167)+'月'+_0x1e9972[_0x4b0a6a(0x201)]()+'日\x20'+(_0x360124>=0x1ff6+-0x1e97+-0x15f?'+':'')+_0x360124+_0x4b0a6a(0x1df));}function _0x385537(){const _0x365e1e=_0x4a5574,_0x50a48e=_0x27121e[_0x365e1e(0x1f1)][_0x365e1e(0x1dd)]();if(!_0x50a48e){_0x4df70c(_0x237e80[_0x365e1e(0x1e3)],!![]);return;}const _0x466888=_0x237e80[_0x365e1e(0x1ea)](Number,_0x50a48e);if(isNaN(_0x466888)){_0x4df70c(_0x365e1e(0x205),!![]);return;}const _0x16020b=new Date(_0x466888);if(_0x237e80[_0x365e1e(0x22a)](isNaN,_0x16020b[_0x365e1e(0x237)]())){_0x237e80[_0x365e1e(0x22d)](_0x4df70c,_0x237e80[_0x365e1e(0x1e2)],!![]);return;}_0x4df70c(_0x16020b[_0x365e1e(0x1dc)](_0x237e80[_0x365e1e(0x239)],{'year':_0x237e80[_0x365e1e(0x232)],'month':_0x237e80[_0x365e1e(0x1fa)],'day':_0x365e1e(0x1e1),'hour':_0x365e1e(0x1e1),'minute':_0x365e1e(0x1e1),'second':_0x237e80[_0x365e1e(0x1fa)],'hour12':![]}));}function _0x4ed021(){const _0x103161=_0x4a5574;if(_0x5b507c[_0x103161(0x1e4)][_0x103161(0x233)](_0x237e80[_0x103161(0x1fe)]))return;_0x5b507c[_0x103161(0x1e4)][_0x103161(0x1ee)](_0x103161(0x208)),setTimeout(()=>{const _0x38ef86=_0x103161;window[_0x38ef86(0x20c)][_0x38ef86(0x227)]=_0x38ef86(0x212);},-0xa39+0xb59+0xb2*0x4);}_0x11eeec[_0x4a5574(0x211)](_0x4a5574(0x1f4),_0x21517c),_0x59b5c4[_0x4a5574(0x211)](_0x4a5574(0x1f4),_0x319dd2),_0x289113[_0x4a5574(0x211)](_0x4a5574(0x1f4),_0x385537),_0x1d8ecf[_0x4a5574(0x211)](_0x4a5574(0x1f4),function(_0x4d9b97){const _0x5ec857=_0x4a5574;_0x4d9b97[_0x5ec857(0x21a)](),_0x4ed021();});const _0x29e4ef=new Date(),_0x36bc2e=_0x4685be(_0x29e4ef);_0x5d79f9[_0x4a5574(0x1f1)]=_0x36bc2e,_0x50ec5e[_0x4a5574(0x1f1)]=_0x36bc2e,_0x27121e[_0x4a5574(0x1f1)]='',document[_0x4a5574(0x211)](_0x237e80[_0x4a5574(0x1ef)],function(_0x14dffb){const _0x5af123=_0x4a5574;_0x237e80[_0x5af123(0x1db)](_0x14dffb[_0x5af123(0x217)],_0x5af123(0x1e6))&&_0x237e80[_0x5af123(0x1e9)](_0x4ed021);});}()));function _0x5dc9(_0x4d2a8c,_0xe2439a){_0x4d2a8c=_0x4d2a8c-(-0x779+0x1aba*0x1+-0x1166);const _0x39c438=_0x2c14();let _0x105a6a=_0x39c438[_0x4d2a8c];if(_0x5dc9['RSAwPa']===undefined){var _0x52f2be=function(_0x7fa1ed){const _0x1c22d2='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x34dc6f='',_0x396746='',_0x37f405=_0x34dc6f+_0x52f2be,_0x42b425=(''+function(){return-0xc97*-0x3+0x2367+0x2496*-0x2;})['indexOf']('\x0a')!==-(0x186+-0x40*-0x86+-0x2305);for(let _0x1511ca=0x1472+0x153c+-0x29ae,_0x56a7b0,_0x39940c,_0x23b1e5=-0x138f+0x585+0xe0a;_0x39940c=_0x7fa1ed['charAt'](_0x23b1e5++);~_0x39940c&&(_0x56a7b0=_0x1511ca%(0x97*-0x3+-0x1e25+-0x2*-0xff7)?_0x56a7b0*(0x43f*0x2+-0x6*0x254+0x5ba)+_0x39940c:_0x39940c,_0x1511ca++%(0x7f8*-0x3+0x61e+0x11ce))?_0x34dc6f+=_0x42b425||_0x37f405['charCodeAt'](_0x23b1e5+(0x13c+-0x67*-0x4d+-0x1*0x202d))-(-0xf*-0x259+-0x1b3*-0x14+-0x4529)!==-0x18e*0x13+0x13*0x1c9+-0x461?String['fromCharCode'](0x7c5*0x4+-0x1231+0x4*-0x2f9&_0x56a7b0>>(-(-0x148f+-0x43*-0x2b+0x950)*_0x1511ca&-0x1a0a+-0x5d7+0x1fe7)):_0x1511ca:0x1*-0x1e91+-0x653*0x3+0x318a){_0x39940c=_0x1c22d2['indexOf'](_0x39940c);}for(let _0x21392d=0x212+-0xaa*0x10+0x447*0x2,_0x50ef52=_0x34dc6f['length'];_0x21392d<_0x50ef52;_0x21392d++){_0x396746+='%'+('00'+_0x34dc6f['charCodeAt'](_0x21392d)['toString'](-0x4a1+0x29*-0x57+0x12a0))['slice'](-(-0x1*-0x5bf+-0x83*0x2e+0x5d*0x31));}return decodeURIComponent(_0x396746);};_0x5dc9['lvJhPV']=_0x52f2be,_0x5dc9['cvKMvw']={},_0x5dc9['RSAwPa']=!![];}const _0x49a31c=_0x39c438[-0x281*0x2+0x254*0xc+0x496*-0x5];_0x5dc9['rlTqQn']!==_0x49a31c&&(_0x5dc9['cvKMvw']={},_0x5dc9['rlTqQn']=_0x49a31c);const _0x9cd30=_0x5dc9['cvKMvw'][_0x4d2a8c];if(_0x9cd30===undefined){const _0x5940b3=function(_0x8bae11){this['tXJRlt']=_0x8bae11,this['NVjWkx']=[-0xbb8+-0x18e2+0x249b,-0x18fd+0x17de+0x11f,0x21*0x7d+0x509+-0x1526],this['jaTvzi']=function(){return'newState';},this['JuhkBW']='\x5c\x77\x2b\x20\x2a\x5c\x28\x5c\x29\x20\x2a\x7b\x5c\x77\x2b\x20\x2a',this['vuITng']='\x5b\x27\x7c\x22\x5d\x2e\x2b\x5b\x27\x7c\x22\x5d\x3b\x3f\x20\x2a\x7d';};_0x5940b3['prototype']['WsFHVx']=function(){const _0x43754f=new RegExp(this['JuhkBW']+this['vuITng']),_0x49354f=_0x43754f['test'](this['jaTvzi']['toString']())?--this['NVjWkx'][-0xf0d+0xa16*0x1+0x4f8]:--this['NVjWkx'][-0xe3f+-0x1f*-0xbc+-0x2d7*0x3];return this['SpZNdM'](_0x49354f);},_0x5940b3['prototype']['SpZNdM']=function(_0x43d961){if(!Boolean(~_0x43d961))return _0x43d961;return this['DsnwFL'](this['tXJRlt']);},_0x5940b3['prototype']['DsnwFL']=function(_0x2163a8){for(let _0x1dad6d=-0x14d4+-0x2309+0xe3*0x3f,_0x1a8c3c=this['NVjWkx']['length'];_0x1dad6d<_0x1a8c3c;_0x1dad6d++){this['NVjWkx']['push'](Math['round'](Math['random']())),_0x1a8c3c=this['NVjWkx']['length'];}return _0x2163a8(this['NVjWkx'][-0xbda*0x1+0x14ae*-0x1+0x2088]);},(''+function(){return-0x74f*-0x5+0x392+-0x281d;})['indexOf']('\x0a')===-(-0x1cdd*0x1+0x26d5+-0x9f7)&&new _0x5940b3(_0x5dc9)['WsFHVx'](),_0x105a6a=_0x5dc9['lvJhPV'](_0x105a6a),_0x5dc9['cvKMvw'][_0x4d2a8c]=_0x105a6a;}else _0x105a6a=_0x9cd30;return _0x105a6a;}function _0x2c14(){const _0x5ac1a0=['zgf5C0LUChv0','zgvltKS','q25uAvu','z2v0tw9UDgG','CgjgruS','z2v0rgf0zq','C2vHCMnO','BgvUz3rO','nu5vsurIEq','6k+36l6t5ywL5PYj5Pwi55Qe5PwW5A2x5PE26zE05OIZ','DgLTzxn0yw1WqNrU','nZaWntq4A2Xfte9W','ywn0AxzL','Dg9tDhjPBMC','55UU5Qch5PEL5PYF77YA','s3D2zLC','Bg9JyxrPB24','v2fXugG','A2v5zg93BG','sfbhBMy','6k+36l6t5ywL5O6O566x5AsP5PwW77Yi5y+V5Q2J5y+V6lsF77Yj','ywrKrxzLBNrmAxn0zw5LCG','5BEL5yw35A+86iIQlMH0BwW','AezPve8','yMLUza','CLLUEw8','kcGOlISPkYKRksSK','A2v5','B3zLCMXHEq','6k+35zYO5O6O566x5AsP5PwW6l6t5ywL5Qgg5lIT6l6t5ywL5PE26zE05OIZ77Yi5Q+R56Es77Yj','ChjLDMvUDerLzMf1Bhq','55U45BEUia','odi2nZjIAhvMuue','CgfKu3rHCNq','re9rzvO','zgf0zvn0yxj0','BLHyAfC','6k+35ywi6ycj5OUP6lw35AEl5zkm57Ut5P2F5PEL5PYF','mtqZmJeYm1rXAuX0Ba','zgLMzKj0BG','z2v0rNvSBfLLyxi','zgf0zuvUza','DgfYz2v0qNrU','AhjLzG','CMvTB3zL','D0zTuK8','vNPzq1m','C3bSAxq','Dg9Nz2XL','wvbwBfq','CMvZDwX0rgLZCgXHEq','6k+35ywi6ycj5OUP6lw35AEl5PEL5PYF','twXlrhy','Aw1Jzhy','EwjWC3m','y29UDgfPBNm','z2v0rwXLBwvUDej5swq','AgLNAgXPz2H0','D21Wse0','z2v0vgLTzq','5PEG5Pwi55Qe5PE26zE05OIZ','rNzLB2e','Dgv4DenVBNrLBNq','mtC5rMvhwK9x','zMXVB3i','CgXHy2vOB2XKzxi','sNPUyLC','y29UC3rYDwn0B3i','DxLYsuq','Dg9mB2nHBgvtDhjPBMC','DhjPBq','iowKQqRVViJNU5pMNz/ML6xMNj/LNkJOTBFLP4VML6xMNj8','iowKQE+8Iq','BNvTzxjPyW','mI1KAwDPDa','EwDHrMW','B1zOt3C','y2XHC3nmAxn0','v1HWuMC','rxnJyxbL','ywjZ','mZy0nZe3mwniANHhAG','whDXCvm','s29cvNK','mZCZneLyq3HuyG','zM5mrem','Aw5KzxHpzG','ywrK','rgflCgu','mtb2y2HwBfC','DMfSDwu','mJKXntmYBeTLB2Xm','vuTotNa','y2XPy2S','wefwzxK','mtm1nJi4mK9QwvDHEa','mtGWs1DgCw5Q','yMfJA0HVBwu','EMGTq04','ugn4Efi','yxbWBhK'];_0x2c14=function(){return _0x5ac1a0;};return _0x2c14();}
+</script>
+</body>
+</html>
