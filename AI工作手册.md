@@ -125,3 +125,9 @@ service-worker.js / manifest.json ← PWA
 - SW 注册 location.origin+'/service-worker.js'→'service-worker.js'（子路径站点 404）
 - index.html renderTools 对 .hero-proof 判空
 - zl-glass rfCheck：SW ready/update 全超时保护 + requestIdleCallback 延迟 + 去自动 reload（首屏卡顿真凶）
+
+## 2026-11-07 V2.9.1 · 现代化站跳转 404 根治
+
+- 根因：xd-features.js 的 XD.TREE 用 id+'.html' 规则（A/A1/A2-1…），同层化后页面已改名「现代-XXX.html」→ 目录树 125 链接全 404
+- 修复：新增 XD_FILE_MAP（源 _tmp_rename_final.json，125 条全覆盖）+ nd.f 优先查映射
+- 影响面：目录树/搜索/前后页/收藏全部经 nd.f，一处修复全站生效
