@@ -116,15 +116,15 @@ if (exists(SW)) {
   else pass('SW message 监听在位（SKIP_WAITING）');
 }
 
-/* ---------- 6.5 分站 manifest 的 start_url 可解析性（警告级，不阻塞） ---------- */
+/* ---------- 6.5 分站 manifest 的 start_url 可解析性（V2.9.8 修复A：升级为 fail，锁死回退） ---------- */
 for (const rel of ['assets/af/af-manifest.json', 'assets/cy/cy-manifest.json', 'assets/xd/xd-manifest.json', 'assets/ai/ai-manifest.json']) {
   const p = path.join(ROOT, rel);
-  if (!exists(p)) continue;
+  if (!exists(p)) { fail(`${rel} 缺失（分站 PWA 清单必须存在）`); continue; }
   let j;
-  try { j = JSON.parse(readUtf8(p)); } catch { warn(`${rel} JSON 解析失败`); continue; }
+  try { j = JSON.parse(readUtf8(p)); } catch { fail(`${rel} JSON 解析失败`); continue; }
   const su = j.start_url || './';
   const resolved = path.resolve(path.dirname(p), su);
-  if (!exists(resolved)) warn(`${rel} start_url=${su} 解析为不存在：${path.relative(ROOT, resolved)}（PWA 安装入口会 404，属历史遗留）`);
+  if (!exists(resolved)) fail(`${rel} start_url=${su} 解析为不存在：${path.relative(ROOT, resolved)}（PWA 安装入口会 404）`);
   else pass(`${rel} start_url 可解析`);
 }
 

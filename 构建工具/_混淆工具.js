@@ -645,7 +645,7 @@ function preCheck(fileName, content) {
         issues.push({ level: 'FAIL', msg: '页面未引用任何主题变量(var(--xx))且未加载 zl-features.js，新增内容将无法跟随主题，深底暗字/浅底亮字风险高' });
     }
     // ② 硬编码灰阶文字色扫描（color:#rgb 或 color:rgb(a)），按亮度分级
-    const colorRe = /color\s*:\s*(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6}|rgba?\([^)]*\))/g;
+    const colorRe = /color\s*:\s*(#[0-9a-fA-F]{3}(?![0-9a-fA-F])|#[0-9a-fA-F]{6}(?![0-9a-fA-F])|rgba?\([^)]*\))/g;
     let m;
     const seen = {};
     while ((m = colorRe.exec(content)) !== null) {
@@ -932,7 +932,8 @@ function ensurePwaBlock(html, fileName) {
     const COMMON_JS = '<script defer src="' + P + 'assets/js/common.js"></script>';
     const THEME_JS = '<script defer src="' + P + 'assets/js/theme.js"></script>';
     const ZL_JS = '<script defer src="' + P + 'assets/js/zl-features.js"></script>';
-    const PWA = PWA_BLOCK.split('@@PREFIX@@').join(P);
+    /* V2.9.8（修复A）：页面自带 rel="manifest"（如全能页的 af-manifest）时不再注入根 manifest */
+    const PWA = (/rel=["']manifest["']/i.test(html) ? PWA_BLOCK.replace(/<link rel="manifest"[^>]*>\n?/, '') : PWA_BLOCK).split('@@PREFIX@@').join(P);
 
     // V2.3.3：先剥除历史注入块。部分源文件残留早期裸相对引用的注入块
     // （30.html、45.html 及 11 个业务页），页面迁入 pages/ 后这些裸引用会直接 404。
@@ -980,6 +981,8 @@ function ensurePwaBlock(html, fileName) {
     // 不再注入通用 theme.js —— 否则 #zlThemeBtn 与站内 #xdThemeBtn/#cyThemeBtn 同位置
     // 44×44 完全重叠（实测 130+ 页双按钮叠加，DOM 冗余且无障碍重复朗读）。
     // 主题变量由 THEME_EARLY 预执行 + :root 默认值兜底，不受影响。
+    /* V2.9.8（修复A）：页面自带 rel="manifest"（如全能页的 af-manifest）时不再注入根 manifest，
+       避免"装成 PWA 后打开哪个入口"取决于文档顺序的历史混乱。 */
     const hasOwnTheme = /(?:xd|cy)-theme\.js/i.test(html) || /id=["'](?:themeSwitcher|themeOpen)["']/i.test(html);
     // V2.9.4：无 h1 的页面补一个仅供屏幕阅读器/搜索引擎识别的 h1（视觉零影响），
     // 修复 33 页缺失主标题的语义问题。先剥除历史注入以保证幂等。
