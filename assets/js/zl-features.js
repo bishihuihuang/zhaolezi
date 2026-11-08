@@ -296,10 +296,10 @@
      * 判定模型：指标制（bump 累计/取最大）+ 条件制（cond 实时读各页真实数据）
      * ================================================================ */
     ZL.TIER_CFG = {
-        1: { nm: '基础', ic: '🥉', col: '#cd7f32' },
-        2: { nm: '中级', ic: '🥈', col: '#8fa3b8' },
-        3: { nm: '高级', ic: '🥇', col: '#f5b301' },
-        h: { nm: '隐藏', ic: '🎁', col: '#9b59b6' }
+        1: { nm: '基础', ic: '🥉', col: '#cd7f32', dk: '#8a5215' },
+        2: { nm: '中级', ic: '🥈', col: '#8fa3b8', dk: '#5d7186' },
+        3: { nm: '高级', ic: '🥇', col: '#f5b301', dk: '#8a6a00' },
+        h: { nm: '隐藏', ic: '🎁', col: '#9b59b6', dk: '#7d3f9e' }
     };
     ZL.CATS = [
         { id: 'explore', nm: '探索启程', ic: '🧭' },
@@ -623,7 +623,7 @@
             card.setAttribute('role', 'button');
             card.setAttribute('tabindex', '0');
             card.title = '点击打开成就中心';
-            card.innerHTML = '<div style="font-size:30px;flex:none;">' + a.icon + '</div><div style="flex:1;"><div style="font-weight:bold;font-size:15px;">🏆 ' + a.t + ' <span style="font-size:11px;color:' + cfg.col + ';border:1px solid ' + cfg.col + ';border-radius:8px;padding:0 5px;margin-left:4px;">' + cfg.ic + cfg.nm + '</span></div><div style="color:var(--dim,#888);font-size:12px;margin-top:3px;">' + a.d + '</div></div>';
+            card.innerHTML = '<div style="font-size:30px;flex:none;">' + a.icon + '</div><div style="flex:1;"><div style="font-weight:bold;font-size:15px;">🏆 ' + a.t + ' <span style="font-size:12px;font-weight:700;color:' + (cfg.dk || cfg.col) + ';border:1px solid ' + cfg.col + ';border-radius:8px;padding:0 5px;margin-left:4px;">' + cfg.ic + cfg.nm + '</span></div><div style="color:var(--dim,#888);font-size:12px;margin-top:3px;">' + a.d + '</div></div>';
             document.body.appendChild(card);
             /* 点击卡片 → 跳转成就中心（并立即关闭本卡） */
             function closeAndGo() { try { card.remove(); window.location.href = ZL.resolve('成就中心.html'); } catch (e) {} }

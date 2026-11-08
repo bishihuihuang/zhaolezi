@@ -73,6 +73,14 @@
 
     function init() {
         apply(current);
+        /* V2.9.4：站内已有主题入口时不重复注入按钮与面板
+           （现代化 #xdThemeBtn / 创意 #cyThemeBtn / 提示词与全能 #themeOpen），
+           否则两个主题按钮在同一角落完全重叠。 */
+        if (document.getElementById('xdThemeBtn') || document.getElementById('cyThemeBtn')
+            || document.getElementById('themeSwitcher') || document.getElementById('themeOpen')
+            || document.querySelector('.theme-btns')) {
+            return;
+        }
         var btn = document.createElement('div');
         btn.id = 'zlThemeBtn';
         btn.title = '切换主题';

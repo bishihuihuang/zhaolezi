@@ -66,6 +66,7 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --dim: #6b7086;
         --line: rgba(110, 110, 180, .20);
         --gold: #7c5cff;
+        --gold-ink: #5b3fd6;   /* 金色文字可读版 */
         --gold-2: #ff6b9d;
         --gold-grad: linear-gradient(135deg, #ff6b6b, #f6d365, #38ef7d, #7c5cff);
         --blue: #667eea;
@@ -209,7 +210,7 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
  * 语义：bg=页面底 card=卡片面 text=主文字 muted=次要文字 border=分割线
  *       accent=品牌强调色 ok=成功/正确 danger=危险/错误 link=链接
  * 新增主题只需维护上方 --bg/--gold/... 原始块，别名层自动继承，无需改动。 */
-:root[data-theme] {
+:root, :root[data-theme] {
     --zl-bg: var(--bg);
     --zl-bg-dim: var(--bg-dim);
     --zl-card: var(--card);
@@ -222,7 +223,7 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
     --zl-accent-grad: var(--title-grad);
     --zl-ok: var(--green);
     --zl-danger: var(--red);
-    --zl-link: var(--blue);
+    --zl-link: var(--link, var(--blue));
     --zl-glow: var(--glow);
     --zl-radius: var(--radius);
     --zl-shadow: var(--shadow);
@@ -302,4 +303,39 @@ input::placeholder, textarea::placeholder { color: var(--dim) !important; }
     inset: 0;
     background: var(--bg-image) center / cover no-repeat;
     pointer-events: none;
+}
+
+/* ==================================================================
+   V2.9.4 设计系统统一层（全站，依据 landing-page-design B1/B7/B9）
+   - 键盘焦点可见（原 159 页无 :focus 样式）
+   - 尊重 prefers-reduced-motion（原 185 页未声明）
+   - 标题断行平衡 / 正文断行优化，避免孤字
+   ================================================================== */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365));
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+h1, h2, h3, h4, .hero-title, .section-title, .zl-theme-title { text-wrap: balance; }
+p, li, dd, dt, td, th, figcaption, blockquote { text-wrap: pretty; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 屏幕阅读器专用文本（无 h1 页面的语义兜底，视觉不可见） */
+.sr-only {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
 }
