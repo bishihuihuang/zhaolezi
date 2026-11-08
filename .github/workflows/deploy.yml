@@ -1,0 +1,42 @@
+# V2.9.7（修正版 · 下一棒）：CI 改为「产物完整性校验」
+#
+# 为什么不再在 CI 构建：
+#   构建脚本的输入是 `_原始未混淆版/`（未混淆源码），而该目录被 .gitignore 排除
+#   （防止未混淆代码公开，这是产品红线）。因此 ubuntu runner 上既没有源码，
+#   也无法执行冒烟自检（_冒烟自检.js 同样读源区）。原「push→构建→回推」流程
+#   必然失败，这里改为校验**已提交产物**是否自洽，避免 CI 假红/假绿。
+#
+# 现在的发布流程（本地）：
+#   cd 构建工具 && node _混淆工具.js     # 构建 + 沙箱冒烟 + 风格闸门
+#   cd .. && echo | cmd //c "一键自动化发布.bat"   # 提交并 push
+#   → GitHub Pages 由分支直接发布；本 Action 只做产物体检（失败即提醒，不阻塞 Pages）
+name: verify-artifacts
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: verify-main
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 零依赖脚本：不 npm install，避免 esbuild/sharp/javascript-obfuscator
+      # 在 ubuntu + 中文目录下的安装不确定性。
+      - name: 产物完整性校验（页面结构 / SEO / 搜索索引 / sitemap / 预缓存 / 断链）
+        run: node 构建工具/_产物校验.js

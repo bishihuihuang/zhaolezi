@@ -185,13 +185,17 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="找乐子">
 <meta property="og:url" content="https://bishihuihuang.github.io/zhaolezi/pages/文件搜索.html">
+<link rel="canonical" href="https://bishihuihuang.github.io/zhaolezi/pages/文件搜索.html">
+<meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
+<script defer src="../assets/js/zl-search-index.js"></script>
 </head>
 <body>
+<a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">找乐子——文件搜索</span></nav>
 <h1 class="sr-only" data-auto>找乐子——文件搜索</h1>
 
 <div class="bg-animation">
@@ -205,7 +209,7 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
     <div class="orb orb-5"></div>
 </div>
 
-<main>
+<main id="zl-main">
 <div class="container">
 <div class="grid">
     <div class="title-area"><h2>找乐子——文件搜索</h2></div>
@@ -218,7 +222,7 @@ button, .btn, .tool-box, a[href], input, select, .clickable {
     </div>
 
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="输入关键词，如：钟、阿Q（模糊搜索文件名和路径）..." disabled>
+        <input type="text" id="searchInput" placeholder="输入关键词，如：钟、阿Q（模糊搜索文件名和路径）..." disabled aria-label="输入关键词，如：钟、阿Q（模糊搜索文件名和路径）...">
         <span class="count" id="resultCount">0 个</span>
         <button class="clear-btn" id="clearBtn">清空</button>
     </div>

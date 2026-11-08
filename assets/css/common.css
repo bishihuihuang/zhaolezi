@@ -341,3 +341,68 @@ p, li, dd, dt, td, th, figcaption, blockquote { text-wrap: pretty; }
     white-space: nowrap;
     border: 0;
 }
+
+/* ==================================================================
+   V2.9.7 治理层（7A 面包屑 / 8A skip / 3A·3B 骨架与预留 / 9A 外壳统一）
+   ================================================================== */
+
+/* 8A：跳到主要内容（仅键盘焦点出现，平时位于视口外） */
+.zl-skip-link {
+    position: fixed !important;
+    top: -48px; left: 12px;
+    z-index: 2147483647;
+    padding: 10px 16px;
+    border-radius: 0 0 12px 12px;
+    background: #181818; color: #fff;
+    font-size: 14px; font-weight: 700; text-decoration: none;
+    transition: top .15s cubic-bezier(.22, 1, .36, 1);
+}
+.zl-skip-link:focus-visible { top: 0; outline: 3px solid #f6d365; }
+
+/* 3B：骨架屏（加载占位；JS 在动态渲染前插入 .zl-skel 元素即生效） */
+.zl-skel {
+    position: relative; overflow: hidden;
+    background: var(--card, rgba(127, 127, 127, .14));
+    border-radius: 10px; min-height: 14px;
+}
+.zl-skel::after {
+    content: ""; position: absolute; inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .30), transparent);
+    animation: zl-shimmer 1.4s infinite;
+}
+@keyframes zl-shimmer { 100% { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .zl-skel::after { animation: none; } }
+
+/* 3A：动态渲染容器预留高度（JS 渲染前不再塌陷跳动） */
+.stats, #statsBar, .entry-list, #list, #toolGrid, .tool-grid,
+#searchResults, .mod-pills, .cy-stat-grid, .card-list, .grid-list {
+    min-height: 72px;
+}
+
+/* 9A：四站外壳统一 —— 主题按钮同一位置/尺寸（!important 压过各站自身定位） */
+#zlThemeBtn, #xdThemeBtn, #cyThemeBtn {
+    right: 20px !important;
+    bottom: 20px !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    cursor: pointer;
+}
+@media (max-width: 768px) {
+    #zlThemeBtn, #xdThemeBtn, #cyThemeBtn { bottom: 96px !important; }
+}
+/* 9A：Toast 观感基线统一（各站自己的 toast 类共用同一圆角/字号/阴影） */
+#toast, .cy-toast, .xd-toast, .ai-toast, .zl-toast {
+    border-radius: 12px;
+    font-size: 14px;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, .35);
+}
+/* 9A：搜索球位置（主题按钮上方；与各站左下 home 错开） */
+#zl-search-fab { bottom: 132px !important; }
+@media (max-width: 768px) {
+    #zl-search-fab { bottom: 208px !important; }
+}
+/* 6B：首页静态页面链接（sr-only，仅供爬虫/无 JS 场景） */
+.zl-static-links a { display: block; }
