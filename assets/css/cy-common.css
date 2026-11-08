@@ -42,6 +42,7 @@ button, .cy-btn, [class*="btn"] { min-width: 44px; min-height: 44px; }
     --gold: #7c5cff;
     --gold-ink: #5b3fd6;   /* 金色文字可读版 */
     --gold-2: #ff6b9d;
+    --gold-2-ink: #c2185b;
     --blue: #667eea;
     --link: #4b5fd7;     /* 正文链接色：白底 5.0:1 */
     --green: #11998e;

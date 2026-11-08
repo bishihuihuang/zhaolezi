@@ -68,6 +68,8 @@ button, .btn, .game-btn, .cell, .key, [class*="button"], [class*="btn"] {
         --gold: #7c5cff;
         --gold-ink: #5b3fd6;   /* 金色文字可读版 */
         --gold-2: #ff6b9d;
+        --gold-2-ink: #c2185b;
+        --red-ink: #b02a37;      /* 红色作为文字时可读版（白底 5.9:1） */   /* 粉色作为文字时的可读版（白底 5.3:1） */
         --gold-grad: linear-gradient(135deg, #ff6b6b, #f6d365, #38ef7d, #7c5cff);
         --blue: #667eea;
         --green: #11998e;
