@@ -619,7 +619,7 @@
             if (!a || typeof document === 'undefined' || !document.body) return;
             var cfg = ZL.TIER_CFG[a.tier] || ZL.TIER_CFG[1];
             var card = document.createElement('div');
-            card.style.cssText = 'position:fixed;top:16px;right:16px;z-index:2147483647;min-width:240px;max-width:320px;padding:12px 14px;border-radius:14px;background:var(--card,#fff);color:var(--txt,#333);box-shadow:0 14px 44px rgba(0,0,0,.4);border-left:4px solid ' + cfg.col + ';display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.4;opacity:0;transform:translateX(30px);transition:all .35s ease;cursor:pointer;';
+            card.style.cssText = 'position:fixed;top:70px;right:16px;z-index:2147483647;min-width:240px;max-width:320px;padding:12px 14px;border-radius:14px;background:var(--card,#fff);color:var(--txt,#333);box-shadow:0 14px 44px rgba(0,0,0,.4);border-left:4px solid ' + cfg.col + ';display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.4;opacity:0;transform:translateX(30px);transition:all .35s ease;cursor:pointer;';
             card.setAttribute('role', 'button');
             card.setAttribute('tabindex', '0');
             card.title = '点击打开成就中心';
@@ -958,7 +958,7 @@
         var cur = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
         if (cur === 'index.html' || cur === '') return;
         /* V2.3.3：业务页在 pages/ 内，页面内回首页链接是 ../index.html（或注入器写的 .back-home），一并识别避免重复按钮 */
-        if (document.querySelector('a[href="index.html"], a[href="./index.html"], a[href="../index.html"], a[href$="/index.html"], a[href="./"], a.back-home, a.home-fab, a[href$="/zhaolezi/"]')) return;
+        if (document.querySelector('a[href="index.html"], a[href="./index.html"], a[href="../index.html"], a[href$="/index.html"], a[href="./"], a.back-home, a.home-fab, a[href$="/zhaolezi/"], #goMainBtn, .go-main-btn')) return;
         var b = document.createElement('a');
         b.id = 'zlHomeBtn';
         b.setAttribute('aria-label', '返回首页');
