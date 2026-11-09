@@ -48,6 +48,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -94,7 +164,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-function _0x1ddd(){var _0x5e6909=['img\x20用\x20src\x20指定图片地址，alt\x20是备选文字；href\x20是链接用的属性。','HTML\x20文档中，保证中文不乱码的关键标签是？','font-size:\x200','<image\x20src=\x22a.png\x22>','.card','<title>网页标题</title>','#card','img\x20的\x20src\x20路径错误或文件不存在','CSS\x20选择器写错','Flex（display:\x20flex）配合\x20justify-content\x20/\x20gap\x20等，是现代网页排布局的主流方案。','骨架/皮肤/肌肉：HTML\x20摆结构，CSS\x20做样式，JS\x20管交互。','让按钮点击后弹出提示框，正确的\x20JS\x20写法是？','quiz','盒模型从外到内的顺序是？','git\x20config\x20--global','display:\x20flex','getElementById(myBox)\x20=\x20\x22新内容\x22','用\x20addEventListener\x20绑定\x20click\x20事件，回调里执行\x20alert。','display:\x20block','把本地写好的网页发布到\x20GitHub\x20Pages，最后一步是？','card','<meta\x20charset=\x22UTF-8\x22>','浏览器版本太旧','网页图片显示\x22裂图\x22，最可能的原因是？'];_0x1ddd=function(){return _0x5e6909;};return _0x1ddd();}function _0x5cef(_0x49a631,_0x1ddd78){_0x49a631=_0x49a631-0x10b;var _0x5cef56=_0x1ddd();var _0x7a0ff6=_0x5cef56[_0x49a631];return _0x7a0ff6;}document['addEventListener']('DOMContentLoaded',function(){var _0x555f5d=_0x5cef;if(!window['XD']||!XD[_0x555f5d(0x117)])return;XD[_0x555f5d(0x117)]['run']('quiz',{'id':'G','title':'模块G测验：怎么开发网页','questions':[{'q':'HTML、CSS、JavaScript\x20三件套的分工是？','opts':['HTML\x20样式、CSS\x20结构、JS\x20内容','HTML\x20结构、CSS\x20样式、JS\x20行为','HTML\x20行为、CSS\x20内容、JS\x20结构','三者都可以互相替代'],'a':0x1,'exp':_0x555f5d(0x115)},{'q':_0x555f5d(0x10c),'opts':[_0x555f5d(0x110),_0x555f5d(0x120),'<h1>标题</h1>','<br>'],'a':0x1,'exp':'charset=\x22UTF-8\x22\x20声明字符编码，中文显示不乱码（A4\x20编码课也讲过）。'},{'q':'要在页面显示一张图片，正确的写法是？','opts':['<img\x20src=\x22a.png\x22\x20alt=\x22说明\x22\x20loading=\x22lazy\x22\x20decoding=\x22async\x22>',_0x555f5d(0x10e),'<pic>a.png</pic>','<img\x20href=\x22a.png\x22\x20loading=\x22lazy\x22\x20decoding=\x22async\x22>'],'a':0x0,'exp':_0x555f5d(0x10b)},{'q':'CSS\x20中，class=\x22card\x22\x20的元素该用什么选择器？','opts':[_0x555f5d(0x111),_0x555f5d(0x11f),_0x555f5d(0x10f),'*card*'],'a':0x2,'exp':'类选择器用\x20.\x20开头（.card）；id\x20选择器用\x20#\x20开头。'},{'q':_0x555f5d(0x118),'opts':['内容\x20→\x20padding\x20→\x20border\x20→\x20margin','margin\x20→\x20border\x20→\x20padding\x20→\x20内容','border\x20→\x20margin\x20→\x20内容\x20→\x20padding','padding\x20→\x20margin\x20→\x20border\x20→\x20内容'],'a':0x1,'exp':'外到内：margin（外边距）→\x20border（边框）→\x20padding（内边距）→\x20内容。'},{'q':'把几个元素水平排成一行，最常用的\x20CSS\x20方案是？','opts':[_0x555f5d(0x11a),_0x555f5d(0x11d),_0x555f5d(0x10d),'float:\x20center'],'a':0x0,'exp':_0x555f5d(0x114)},{'q':_0x555f5d(0x116),'opts':['btn.onClick\x20=\x20alert()','btn.addEventListener(\x22click\x22,\x20function(){\x20alert(\x22你好\x22);\x20})','btn.click(alert)','<button\x20event=\x22alert()\x22>'],'a':0x1,'exp':_0x555f5d(0x11c)},{'q':'用\x20JS\x20修改\x20id\x20为\x20myBox\x20的元素文字，正确的是？','opts':['getElementById(\x22myBox\x22).textContent\x20=\x20\x22新内容\x22',_0x555f5d(0x11b),'document.write(myBox)\x20=\x20\x22新内容\x22','myBox.innerHTML\x20=\x20新内容'],'a':0x0,'exp':'document.getElementById(\x22myBox\x22)\x20取到元素，再用\x20textContent\x20改文字。'},{'q':_0x555f5d(0x122),'opts':[_0x555f5d(0x113),_0x555f5d(0x112),'JS\x20代码有语法错误',_0x555f5d(0x121)],'a':0x1,'exp':'裂图=图片没加载到。打开\x20F12\x20→\x20Network，红色\x20404\x20条目就是原因。'},{'q':_0x555f5d(0x11e),'opts':['git\x20init','仓库\x20Settings\x20→\x20Pages\x20选择分支\x20main\x20并保存',_0x555f5d(0x119),'重装浏览器'],'a':0x1,'exp':'推送完成后，去\x20Settings\x20→\x20Pages\x20开启部署（branch:\x20main,\x20/(root)），等\x201-2\x20分钟就上线。'}]});});
+var _0x2bbc0e=_0x5839;document[_0x2bbc0e(0xe8)]('DOMContentLoaded',function(){var _0x29700e=_0x2bbc0e;if(!window['XD']||!XD[_0x29700e(0xf0)])return;XD[_0x29700e(0xf0)][_0x29700e(0xe9)](_0x29700e(0xf0),{'id':'G','title':'模块G测验：怎么开发网页','questions':[{'q':_0x29700e(0xdf),'opts':['HTML\x20样式、CSS\x20结构、JS\x20内容',_0x29700e(0xe0),'HTML\x20行为、CSS\x20内容、JS\x20结构','三者都可以互相替代'],'a':0x1,'exp':'骨架/皮肤/肌肉：HTML\x20摆结构，CSS\x20做样式，JS\x20管交互。'},{'q':'HTML\x20文档中，保证中文不乱码的关键标签是？','opts':['<title>网页标题</title>','<meta\x20charset=\x22UTF-8\x22>',_0x29700e(0xea),'<br>'],'a':0x1,'exp':'charset=\x22UTF-8\x22\x20声明字符编码，中文显示不乱码（A4\x20编码课也讲过）。'},{'q':_0x29700e(0xe7),'opts':['<img\x20src=\x22a.png\x22\x20alt=\x22说明\x22\x20loading=\x22lazy\x22\x20decoding=\x22async\x22>','<image\x20src=\x22a.png\x22>','<pic>a.png</pic>',_0x29700e(0xef)],'a':0x0,'exp':_0x29700e(0xd9)},{'q':_0x29700e(0xeb),'opts':[_0x29700e(0xe4),_0x29700e(0xf1),_0x29700e(0xdc),'*card*'],'a':0x2,'exp':'类选择器用\x20.\x20开头（.card）；id\x20选择器用\x20#\x20开头。'},{'q':'盒模型从外到内的顺序是？','opts':['内容\x20→\x20padding\x20→\x20border\x20→\x20margin',_0x29700e(0xde),_0x29700e(0xe6),'padding\x20→\x20margin\x20→\x20border\x20→\x20内容'],'a':0x1,'exp':'外到内：margin（外边距）→\x20border（边框）→\x20padding（内边距）→\x20内容。'},{'q':_0x29700e(0xe5),'opts':['display:\x20flex',_0x29700e(0xd8),_0x29700e(0xda),'float:\x20center'],'a':0x0,'exp':_0x29700e(0xe1)},{'q':'让按钮点击后弹出提示框，正确的\x20JS\x20写法是？','opts':['btn.onClick\x20=\x20alert()','btn.addEventListener(\x22click\x22,\x20function(){\x20alert(\x22你好\x22);\x20})','btn.click(alert)','<button\x20event=\x22alert()\x22>'],'a':0x1,'exp':_0x29700e(0xee)},{'q':'用\x20JS\x20修改\x20id\x20为\x20myBox\x20的元素文字，正确的是？','opts':[_0x29700e(0xe3),_0x29700e(0xed),'document.write(myBox)\x20=\x20\x22新内容\x22',_0x29700e(0xf2)],'a':0x0,'exp':_0x29700e(0xdb)},{'q':_0x29700e(0xe2),'opts':['CSS\x20选择器写错','img\x20的\x20src\x20路径错误或文件不存在','JS\x20代码有语法错误','浏览器版本太旧'],'a':0x1,'exp':'裂图=图片没加载到。打开\x20F12\x20→\x20Network，红色\x20404\x20条目就是原因。'},{'q':_0x29700e(0xec),'opts':['git\x20init','仓库\x20Settings\x20→\x20Pages\x20选择分支\x20main\x20并保存','git\x20config\x20--global',_0x29700e(0xdd)],'a':0x1,'exp':'推送完成后，去\x20Settings\x20→\x20Pages\x20开启部署（branch:\x20main,\x20/(root)），等\x201-2\x20分钟就上线。'}]});});function _0x5839(_0x475717,_0x24b5d1){_0x475717=_0x475717-0xd8;var _0x583938=_0x24b5();var _0x320a64=_0x583938[_0x475717];return _0x320a64;}function _0x24b5(){var _0x23f142=['display:\x20block','img\x20用\x20src\x20指定图片地址，alt\x20是备选文字；href\x20是链接用的属性。','font-size:\x200','document.getElementById(\x22myBox\x22)\x20取到元素，再用\x20textContent\x20改文字。','.card','重装浏览器','margin\x20→\x20border\x20→\x20padding\x20→\x20内容','HTML、CSS、JavaScript\x20三件套的分工是？','HTML\x20结构、CSS\x20样式、JS\x20行为','Flex（display:\x20flex）配合\x20justify-content\x20/\x20gap\x20等，是现代网页排布局的主流方案。','网页图片显示\x22裂图\x22，最可能的原因是？','getElementById(\x22myBox\x22).textContent\x20=\x20\x22新内容\x22','#card','把几个元素水平排成一行，最常用的\x20CSS\x20方案是？','border\x20→\x20margin\x20→\x20内容\x20→\x20padding','要在页面显示一张图片，正确的写法是？','addEventListener','run','<h1>标题</h1>','CSS\x20中，class=\x22card\x22\x20的元素该用什么选择器？','把本地写好的网页发布到\x20GitHub\x20Pages，最后一步是？','getElementById(myBox)\x20=\x20\x22新内容\x22','用\x20addEventListener\x20绑定\x20click\x20事件，回调里执行\x20alert。','<img\x20href=\x22a.png\x22\x20loading=\x22lazy\x22\x20decoding=\x22async\x22>','quiz','card','myBox.innerHTML\x20=\x20新内容'];_0x24b5=function(){return _0x23f142;};return _0x24b5();}
 </script>
 </body>
 </html>

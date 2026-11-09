@@ -573,6 +573,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -653,7 +723,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-const _0x4070fa=_0x53b7,unitData={'length':{'label':'长度','units':{'米':0x1,'千米':0x3e8,'厘米':0.01,'毫米':0.001,'英尺':3.28084,'英寸':39.3701,'英里':0.000621371,'码':1.09361,'海里':0.000539957}},'weight':{'label':'重量','units':{'千克':0x1,'克':0.001,'毫克':0.000001,'吨':0x3e8,'磅':2.20462,'盎司':35.274,'斤':0.5,'两':0.05}},'temperature':{'label':'温度','units':{'摄氏度':null,'华氏度':null,'开尔文':null}},'area':{'label':'面积','units':{'平方米':0x1,'平方千米':0xf4240,'平方厘米':0.0001,'公顷':0x2710,'亩':666.6667,'平方英尺':10.7639,'平方英寸':1550.0031,'平方码':1.19599}},'speed':{'label':'速度','units':{'米/秒':0x1,'千米/小时':0.277778,'英里/小时':2.23694,'节':1.94384,'英尺/秒':3.28084,'马赫':0.00293858}}},categorySelect=document['getElementById'](_0x4070fa(0x148)),fromUnitSelect=document['getElementById']('fromUnitSelect'),toUnitSelect=document[_0x4070fa(0x136)]('toUnitSelect'),numberInput=document['getElementById']('numberInput'),outputValue=document[_0x4070fa(0x136)]('outputValue'),outputUnit=document['getElementById']('outputUnit'),backHome=document['getElementById'](_0x4070fa(0x144)),overlay=document[_0x4070fa(0x136)](_0x4070fa(0x138));let currentCategory=_0x4070fa(0x13d),isTransitioning=![];function populateUnitSelects(_0x5c9bfb){const _0x476577=_0x4070fa;if(!unitData[_0x5c9bfb])_0x5c9bfb=_0x476577(0x13d);const _0x1170c1=Object['keys'](unitData[_0x5c9bfb][_0x476577(0x142)]);fromUnitSelect['innerHTML']='',toUnitSelect['innerHTML']='',_0x1170c1['forEach'](function(_0x3563ec){const _0x9bbedf=_0x476577,_0x124aca=document['createElement'](_0x9bbedf(0x147));_0x124aca[_0x9bbedf(0x14a)]=_0x3563ec,_0x124aca[_0x9bbedf(0x141)]=_0x3563ec,fromUnitSelect['appendChild'](_0x124aca);const _0x588023=document['createElement']('option');_0x588023['value']=_0x3563ec,_0x588023[_0x9bbedf(0x141)]=_0x3563ec,toUnitSelect[_0x9bbedf(0x135)](_0x588023);}),_0x1170c1[_0x476577(0x13d)]>=0x2?(fromUnitSelect['value']=_0x1170c1[0x0],toUnitSelect['value']=_0x1170c1[0x1]):(fromUnitSelect['value']=_0x1170c1[0x0],toUnitSelect['value']=_0x1170c1[0x0]);}function convertTemperature(_0x45b826,_0x3e4070,_0x40176a){const _0x1f4b0b=_0x4070fa;let _0x495382;switch(_0x3e4070){case'摄氏度':_0x495382=_0x45b826;break;case _0x1f4b0b(0x13c):_0x495382=(_0x45b826-0x20)*0x5/0x9;break;case _0x1f4b0b(0x13f):_0x495382=_0x45b826-273.15;break;default:return NaN;}switch(_0x40176a){case _0x1f4b0b(0x146):return _0x495382;case _0x1f4b0b(0x13c):return _0x495382*0x9/0x5+0x20;case'开尔文':return _0x495382+273.15;default:return NaN;}}function _0xa7bc(){const _0x4cd4d4=['appendChild','getElementById','className','overlay','无法换算','replace','output-value','华氏度','length','change','开尔文','preventDefault','textContent','units','addEventListener','backHome','trim','摄氏度','option','categorySelect','toExponential','value'];_0xa7bc=function(){return _0x4cd4d4;};return _0xa7bc();}function _0x53b7(_0x2312f0,_0xa7bcc5){_0x2312f0=_0x2312f0-0x135;const _0x53b744=_0xa7bc();let _0x3fa574=_0x53b744[_0x2312f0];return _0x3fa574;}function performConversion(){const _0x5d30ce=_0x4070fa,_0x522823=currentCategory,_0x3fabd6=fromUnitSelect[_0x5d30ce(0x14a)],_0x2d9755=toUnitSelect[_0x5d30ce(0x14a)],_0x408d06=numberInput['value'][_0x5d30ce(0x145)]();if(_0x408d06===''||_0x408d06==='-'||_0x408d06==='.'){outputValue['textContent']='—',outputValue['className']='output-value',outputUnit['textContent']='';return;}const _0x4cfe04=parseFloat(_0x408d06);if(isNaN(_0x4cfe04)){outputValue['textContent']='请输入有效数值',outputValue[_0x5d30ce(0x137)]='output-value\x20small-text',outputUnit['textContent']='';return;}let _0x16557f;if(_0x522823==='temperature')_0x16557f=convertTemperature(_0x4cfe04,_0x3fabd6,_0x2d9755);else{const _0x395103=unitData[_0x522823]['units'][_0x3fabd6],_0x4f40fd=unitData[_0x522823]['units'][_0x2d9755];if(_0x395103===undefined||_0x4f40fd===undefined){outputValue['textContent']='—',outputValue['className']='output-value',outputUnit[_0x5d30ce(0x141)]='';return;}const _0x2f7156=_0x4cfe04*_0x395103;_0x16557f=_0x2f7156/_0x4f40fd;}if(isNaN(_0x16557f)||!isFinite(_0x16557f)){outputValue['textContent']=_0x5d30ce(0x139),outputValue['className']='output-value\x20small-text',outputUnit['textContent']='';return;}let _0xe7ad66;Math['abs'](_0x16557f)>=0x3b9aca00||Math['abs'](_0x16557f)<0.000001&&_0x16557f!==0x0?_0xe7ad66=_0x16557f[_0x5d30ce(0x149)](0x6):(_0xe7ad66=_0x16557f['toPrecision'](0xa)[_0x5d30ce(0x13a)](/\.?0+$/,''),_0xe7ad66[_0x5d30ce(0x13d)]>0xe&&(_0xe7ad66=_0x16557f['toFixed'](0x6)[_0x5d30ce(0x13a)](/\.?0+$/,''))),outputValue['textContent']=_0xe7ad66,outputValue[_0x5d30ce(0x137)]=_0x5d30ce(0x13b),outputUnit['textContent']=_0x2d9755;}categorySelect[_0x4070fa(0x143)]('change',function(){currentCategory=this['value'],populateUnitSelects(currentCategory),performConversion();}),fromUnitSelect[_0x4070fa(0x143)]('change',performConversion),toUnitSelect[_0x4070fa(0x143)]('change',performConversion),numberInput['addEventListener']('input',performConversion),numberInput[_0x4070fa(0x143)](_0x4070fa(0x13e),performConversion);function init(){currentCategory=categorySelect['value'],populateUnitSelects(currentCategory),performConversion();}init(),backHome['addEventListener']('click',function(_0x2847e0){const _0x30f0ef=_0x4070fa;_0x2847e0[_0x30f0ef(0x140)]();if(isTransitioning)return;isTransitioning=!![],overlay['classList']['add']('active'),setTimeout(function(){window['location']['href']='工具导航.html';},0x3e8);});
+const _0x4c993b=_0x160f,unitData={'length':{'label':'长度','units':{'米':0x1,'千米':0x3e8,'厘米':0.01,'毫米':0.001,'英尺':3.28084,'英寸':39.3701,'英里':0.000621371,'码':1.09361,'海里':0.000539957}},'weight':{'label':'重量','units':{'千克':0x1,'克':0.001,'毫克':0.000001,'吨':0x3e8,'磅':2.20462,'盎司':35.274,'斤':0.5,'两':0.05}},'temperature':{'label':'温度','units':{'摄氏度':null,'华氏度':null,'开尔文':null}},'area':{'label':'面积','units':{'平方米':0x1,'平方千米':0xf4240,'平方厘米':0.0001,'公顷':0x2710,'亩':666.6667,'平方英尺':10.7639,'平方英寸':1550.0031,'平方码':1.19599}},'speed':{'label':'速度','units':{'米/秒':0x1,'千米/小时':0.277778,'英里/小时':2.23694,'节':1.94384,'英尺/秒':3.28084,'马赫':0.00293858}}},categorySelect=document['getElementById'](_0x4c993b(0x18f)),fromUnitSelect=document['getElementById'](_0x4c993b(0x191)),toUnitSelect=document[_0x4c993b(0x18c)]('toUnitSelect'),numberInput=document[_0x4c993b(0x18c)](_0x4c993b(0x189)),outputValue=document['getElementById'](_0x4c993b(0x18b)),outputUnit=document[_0x4c993b(0x18c)]('outputUnit'),backHome=document['getElementById']('backHome'),overlay=document[_0x4c993b(0x18c)](_0x4c993b(0x181));let currentCategory=_0x4c993b(0x18a),isTransitioning=![];function populateUnitSelects(_0x54ee68){const _0x5d8955=_0x4c993b;if(!unitData[_0x54ee68])_0x54ee68='length';const _0x540d89=Object['keys'](unitData[_0x54ee68][_0x5d8955(0x183)]);fromUnitSelect[_0x5d8955(0x182)]='',toUnitSelect['innerHTML']='',_0x540d89['forEach'](function(_0xf08195){const _0x4f31c9=_0x5d8955,_0xb56db4=document['createElement'](_0x4f31c9(0x199));_0xb56db4['value']=_0xf08195,_0xb56db4[_0x4f31c9(0x186)]=_0xf08195,fromUnitSelect['appendChild'](_0xb56db4);const _0x159084=document['createElement'](_0x4f31c9(0x199));_0x159084['value']=_0xf08195,_0x159084[_0x4f31c9(0x186)]=_0xf08195,toUnitSelect['appendChild'](_0x159084);}),_0x540d89['length']>=0x2?(fromUnitSelect['value']=_0x540d89[0x0],toUnitSelect['value']=_0x540d89[0x1]):(fromUnitSelect['value']=_0x540d89[0x0],toUnitSelect['value']=_0x540d89[0x0]);}function convertTemperature(_0x3e5442,_0x3c7439,_0x1b80af){const _0x203c22=_0x4c993b;let _0x2ac6df;switch(_0x3c7439){case'摄氏度':_0x2ac6df=_0x3e5442;break;case _0x203c22(0x187):_0x2ac6df=(_0x3e5442-0x20)*0x5/0x9;break;case _0x203c22(0x193):_0x2ac6df=_0x3e5442-273.15;break;default:return NaN;}switch(_0x1b80af){case'摄氏度':return _0x2ac6df;case'华氏度':return _0x2ac6df*0x9/0x5+0x20;case'开尔文':return _0x2ac6df+273.15;default:return NaN;}}function performConversion(){const _0x21a79d=_0x4c993b,_0x562e5b=currentCategory,_0x2dd353=fromUnitSelect[_0x21a79d(0x18e)],_0x2f61e9=toUnitSelect[_0x21a79d(0x18e)],_0x5b1004=numberInput['value']['trim']();if(_0x5b1004===''||_0x5b1004==='-'||_0x5b1004==='.'){outputValue['textContent']='—',outputValue['className']='output-value',outputUnit[_0x21a79d(0x186)]='';return;}const _0x233361=parseFloat(_0x5b1004);if(isNaN(_0x233361)){outputValue['textContent']=_0x21a79d(0x194),outputValue[_0x21a79d(0x196)]=_0x21a79d(0x188),outputUnit['textContent']='';return;}let _0x2e3b54;if(_0x562e5b==='temperature')_0x2e3b54=convertTemperature(_0x233361,_0x2dd353,_0x2f61e9);else{const _0x214cfd=unitData[_0x562e5b]['units'][_0x2dd353],_0x341c75=unitData[_0x562e5b]['units'][_0x2f61e9];if(_0x214cfd===undefined||_0x341c75===undefined){outputValue['textContent']='—',outputValue['className']='output-value',outputUnit['textContent']='';return;}const _0x54bbb1=_0x233361*_0x214cfd;_0x2e3b54=_0x54bbb1/_0x341c75;}if(isNaN(_0x2e3b54)||!isFinite(_0x2e3b54)){outputValue['textContent']=_0x21a79d(0x197),outputValue[_0x21a79d(0x196)]=_0x21a79d(0x188),outputUnit['textContent']='';return;}let _0x55ce8b;Math['abs'](_0x2e3b54)>=0x3b9aca00||Math[_0x21a79d(0x195)](_0x2e3b54)<0.000001&&_0x2e3b54!==0x0?_0x55ce8b=_0x2e3b54[_0x21a79d(0x185)](0x6):(_0x55ce8b=_0x2e3b54['toPrecision'](0xa)['replace'](/\.?0+$/,''),_0x55ce8b['length']>0xe&&(_0x55ce8b=_0x2e3b54['toFixed'](0x6)['replace'](/\.?0+$/,''))),outputValue['textContent']=_0x55ce8b,outputValue['className']='output-value',outputUnit['textContent']=_0x2f61e9;}categorySelect['addEventListener']('change',function(){const _0xca177=_0x4c993b;currentCategory=this[_0xca177(0x18e)],populateUnitSelects(currentCategory),performConversion();}),fromUnitSelect['addEventListener'](_0x4c993b(0x198),performConversion),toUnitSelect['addEventListener']('change',performConversion),numberInput[_0x4c993b(0x19a)]('input',performConversion),numberInput['addEventListener']('change',performConversion);function init(){currentCategory=categorySelect['value'],populateUnitSelects(currentCategory),performConversion();}function _0x25ed(){const _0x1a529b=['overlay','innerHTML','units','click','toExponential','textContent','华氏度','output-value\x20small-text','numberInput','length','outputValue','getElementById','active','value','categorySelect','location','fromUnitSelect','工具导航.html','开尔文','请输入有效数值','abs','className','无法换算','change','option','addEventListener'];_0x25ed=function(){return _0x1a529b;};return _0x25ed();}function _0x160f(_0xfa4c42,_0x25ed1b){_0xfa4c42=_0xfa4c42-0x181;const _0x160fba=_0x25ed();let _0x4551b5=_0x160fba[_0xfa4c42];return _0x4551b5;}init(),backHome['addEventListener'](_0x4c993b(0x184),function(_0x400374){const _0x5a90e0=_0x4c993b;_0x400374['preventDefault']();if(isTransitioning)return;isTransitioning=!![],overlay['classList']['add'](_0x5a90e0(0x18d)),setTimeout(function(){const _0x5b8ba4=_0x5a90e0;window[_0x5b8ba4(0x190)]['href']=_0x5b8ba4(0x192);},0x3e8);});
 </script>
 </body>
 </html>

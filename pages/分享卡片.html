@@ -358,6 +358,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -418,7 +488,7 @@
 </div>
 <script>
 /*ZL-OBF-V2*/
-(function(){'use strict';var _0x191b3f=_0x2cbc;var _0x43e7fb=[['#667eea','#764ba2'],[_0x191b3f(0xce),'#f5576c'],['#43a047','#2e7d32'],[_0x191b3f(0xea),'#ff5722']],_0x2bbf2e=0x0,_0x5a7009=document[_0x191b3f(0xe1)](_0x191b3f(0xc4)),_0x342d67=document[_0x191b3f(0xe1)]('msgInput'),_0x55f37a=document['getElementById'](_0x191b3f(0xcf)),_0x3f48b4=_0x55f37a[_0x191b3f(0xcd)]('2d');document[_0x191b3f(0xca)]('.bgPick')['forEach'](function(_0x4551d3){var _0x5dbbd8=_0x191b3f;_0x4551d3['addEventListener'](_0x5dbbd8(0xdd),function(){_0x2bbf2e=parseInt(_0x4551d3['dataset']['bg'],0xa),_0x3609a1();});});function _0x1f3f86(_0x55cc3a,_0x4a46e4,_0x383e9d,_0x4c6aa5,_0x5805f1){var _0x4f16e5=_0x191b3f;_0x3f48b4['beginPath'](),_0x3f48b4['moveTo'](_0x55cc3a+_0x5805f1,_0x4a46e4),_0x3f48b4[_0x4f16e5(0xc3)](_0x55cc3a+_0x383e9d,_0x4a46e4,_0x55cc3a+_0x383e9d,_0x4a46e4+_0x4c6aa5,_0x5805f1),_0x3f48b4[_0x4f16e5(0xc3)](_0x55cc3a+_0x383e9d,_0x4a46e4+_0x4c6aa5,_0x55cc3a,_0x4a46e4+_0x4c6aa5,_0x5805f1),_0x3f48b4[_0x4f16e5(0xc3)](_0x55cc3a,_0x4a46e4+_0x4c6aa5,_0x55cc3a,_0x4a46e4,_0x5805f1),_0x3f48b4['arcTo'](_0x55cc3a,_0x4a46e4,_0x55cc3a+_0x383e9d,_0x4a46e4,_0x5805f1),_0x3f48b4['closePath']();}function _0x3609a1(){var _0x4e83e8=_0x191b3f,_0x3d5949=_0x3f48b4['createLinearGradient'](0x0,0x0,0x258,0x320);_0x3d5949['addColorStop'](0x0,_0x43e7fb[_0x2bbf2e][0x0]),_0x3d5949[_0x4e83e8(0xcb)](0x1,_0x43e7fb[_0x2bbf2e][0x1]),_0x3f48b4['fillStyle']=_0x3d5949,_0x3f48b4['fillRect'](0x0,0x0,0x258,0x320),_0x3f48b4['fillStyle']=_0x4e83e8(0xd1),_0x3f48b4['beginPath'](),_0x3f48b4['arc'](0x208,0x78,0x5a,0x0,Math['PI']*0x2),_0x3f48b4[_0x4e83e8(0xe9)](),_0x3f48b4['beginPath'](),_0x3f48b4[_0x4e83e8(0xcc)](0x50,0x2b2,0x3c,0x0,Math['PI']*0x2),_0x3f48b4[_0x4e83e8(0xe9)](),_0x3f48b4[_0x4e83e8(0xe6)](),_0x3f48b4['arc'](0x21c,0x280,0x24,0x0,Math['PI']*0x2),_0x3f48b4['fill'](),_0x3f48b4['fillStyle']=_0x4e83e8(0xda),_0x3f48b4['font']='bold\x2026px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x3f48b4[_0x4e83e8(0xc9)]='center',_0x3f48b4['fillText'](_0x4e83e8(0xd3),0x12c,0x5a);var _0x426651=_0x342d67['value']['trim']()||_0x4e83e8(0xd9),_0x424192=_0x5a7009['value']['trim']()||'小乐';_0x3f48b4[_0x4e83e8(0xe7)]='#fff',_0x3f48b4['font']='bold\x2034px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x3f48b4[_0x4e83e8(0xc9)]='center';var _0x1fe05d=[],_0x503dbb='',_0x4d3e5c=0x1cc;for(var _0xe905b1=0x0;_0xe905b1<_0x426651[_0x4e83e8(0xef)];_0xe905b1++){_0x503dbb+=_0x426651[_0xe905b1],_0x3f48b4['measureText'](_0x503dbb)[_0x4e83e8(0xec)]>_0x4d3e5c&&(_0x1fe05d['push'](_0x503dbb[_0x4e83e8(0xc6)](0x0,-0x1)),_0x503dbb=_0x426651[_0xe905b1]);}if(_0x503dbb)_0x1fe05d[_0x4e83e8(0xd2)](_0x503dbb);var _0x2104eb=0x154-(_0x1fe05d['length']-0x1)*0x1e;_0x1fe05d['forEach'](function(_0x4f40e6,_0x9f9f50){var _0x974d5=_0x4e83e8;_0x3f48b4[_0x974d5(0xe0)](_0x4f40e6,0x12c,_0x2104eb+_0x9f9f50*0x3c);}),_0x3f48b4[_0x4e83e8(0xdf)]='24px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x3f48b4[_0x4e83e8(0xe7)]='rgba(255,255,255,.85)',_0x3f48b4['fillText']('——\x20'+_0x424192,0x12c,_0x2104eb+_0x1fe05d['length']*0x3c+0x28);var _0x2a8197=new Date();_0x3f48b4['font']='18px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x3f48b4['fillStyle']='rgba(255,255,255,.6)',_0x3f48b4['fillText'](_0x2a8197['getFullYear']()+'年'+(_0x2a8197['getMonth']()+0x1)+'月'+_0x2a8197[_0x4e83e8(0xe3)]()+_0x4e83e8(0xee),0x12c,0x2ee);}function _0x4ca63a(){var _0x3798d3=_0x191b3f;_0x3609a1();if(window['ZL']&&ZL['showToast'])ZL['showToast'](_0x3798d3(0xde));if(window['ZL']&&ZL['bump'])ZL[_0x3798d3(0xd6)]('share_add',0x1);}document[_0x191b3f(0xe1)]('genBtn')['addEventListener']('click',_0x4ca63a),document['getElementById'](_0x191b3f(0xc2))['addEventListener']('click',function(){var _0x3b934a=_0x191b3f,_0x53cd7e=document['createElement']('a');_0x53cd7e[_0x3b934a(0xc7)]=_0x55f37a['toDataURL']('image/png'),_0x53cd7e['download']='找乐子分享卡片_'+Date['now']()+_0x3b934a(0xd5),document['body']['appendChild'](_0x53cd7e),_0x53cd7e['click'](),document['body']['removeChild'](_0x53cd7e);if(window['ZL']&&ZL[_0x3b934a(0xe5)])ZL['showToast']('卡片已下载');}),document[_0x191b3f(0xe1)]('copyBtn')[_0x191b3f(0xed)](_0x191b3f(0xdd),function(){var _0x23d386=_0x191b3f,_0x26ad3e=(_0x5a7009['value']['trim']()||'小乐')+'：'+(_0x342d67['value']['trim']()||'今天也是元气满满的一天！')+'（来自找乐子）';try{navigator['clipboard']['writeText'](_0x26ad3e)[_0x23d386(0xd0)](function(){if(window['ZL']&&ZL['showToast'])ZL['showToast']('文案已复制');})[_0x23d386(0xd7)](function(){});}catch(_0xae5df4){}}),_0x3609a1();var _0x1aec25=document[_0x191b3f(0xe1)](_0x191b3f(0xdc));document['getElementById']('backHome')[_0x191b3f(0xed)]('click',function(_0x39abbd){var _0x5d9271=_0x191b3f;_0x39abbd[_0x5d9271(0xeb)]();if(_0x1aec25[_0x5d9271(0xe2)]['contains'](_0x5d9271(0xd8)))return;_0x1aec25['classList'][_0x5d9271(0xc5)]('active'),setTimeout(function(){var _0x2ceeaa=_0x5d9271;window['location']['href']=_0x2ceeaa(0xc8);},0x4b0);}),document['addEventListener']('keydown',function(_0x126aae){var _0x4be558=_0x191b3f;_0x126aae['key']==='Escape'&&_0x1aec25[_0x4be558(0xe2)][_0x4be558(0xe8)]('active')&&_0x1aec25['classList']['remove']('active');}),window[_0x191b3f(0xe4)]=_0x1f3f86,window[_0x191b3f(0xd4)]=_0x3609a1,window[_0x191b3f(0xdb)]=_0x4ca63a;}());function _0x2cbc(_0x40e2b9,_0x59dfbf){_0x40e2b9=_0x40e2b9-0xc2;var _0x2cbc3a=_0x59df();var _0xa7c320=_0x2cbc3a[_0x40e2b9];return _0xa7c320;}function _0x59df(){var _0x1d7f34=['downloadBtn','arcTo','nickInput','add','slice','href','工具导航.html','textAlign','querySelectorAll','addColorStop','arc','getContext','#f093fb','cardCanvas','then','rgba(255,255,255,.12)','push','🎲\x20找乐子','drawCard','.png','bump','catch','active','今天也是元气满满的一天！','rgba(255,255,255,.9)','autoGen','overlay','click','卡片已生成','font','fillText','getElementById','classList','getDate','roundedRect','showToast','beginPath','fillStyle','contains','fill','#ff9800','preventDefault','width','addEventListener','日\x20·\x20来自找乐子','length'];_0x59df=function(){return _0x1d7f34;};return _0x59df();}
+function _0x9b4f(){var _0x280fc7=['toDataURL','showToast','push','width','arcTo','createElement','href','fillText','#764ba2','#f5576c','18px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif','clipboard','download','keydown','image/png','#ff9800','then','contains','catch','active','getElementById','length','arc','#fff','classList','dataset','now','bump','querySelectorAll','trim','preventDefault','center','卡片已下载','#f093fb','value','textAlign','addEventListener','body','24px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif','click','genBtn','fillStyle','#2e7d32','backHome','removeChild','createLinearGradient'];_0x9b4f=function(){return _0x280fc7;};return _0x9b4f();}function _0x5597(_0x2faf6f,_0x5597b7){_0x2faf6f=_0x2faf6f-0x184;var _0x26ea3f=_0x9b4f();var _0x4ccb61=_0x26ea3f[_0x2faf6f];return _0x4ccb61;}(function(){'use strict';var _0x4872ea=_0x5597;var _0x5bcf32=[['#667eea',_0x4872ea(0x18c)],[_0x4872ea(0x1a5),_0x4872ea(0x18d)],['#43a047',_0x4872ea(0x1ae)],[_0x4872ea(0x193),'#ff5722']],_0x4cda10=0x0,_0x2034da=document['getElementById']('nickInput'),_0x5e74ce=document[_0x4872ea(0x198)]('msgInput'),_0x58534f=document['getElementById']('cardCanvas'),_0x42dc1d=_0x58534f['getContext']('2d');document[_0x4872ea(0x1a0)]('.bgPick')['forEach'](function(_0x3e6c51){_0x3e6c51['addEventListener']('click',function(){var _0x39aace=_0x5597;_0x4cda10=parseInt(_0x3e6c51[_0x39aace(0x19d)]['bg'],0xa),_0x2d287d();});});function _0x1b5b29(_0x567693,_0x1dfb3a,_0x3410eb,_0x2a7321,_0x3e4e65){var _0x5e6ace=_0x4872ea;_0x42dc1d['beginPath'](),_0x42dc1d['moveTo'](_0x567693+_0x3e4e65,_0x1dfb3a),_0x42dc1d['arcTo'](_0x567693+_0x3410eb,_0x1dfb3a,_0x567693+_0x3410eb,_0x1dfb3a+_0x2a7321,_0x3e4e65),_0x42dc1d['arcTo'](_0x567693+_0x3410eb,_0x1dfb3a+_0x2a7321,_0x567693,_0x1dfb3a+_0x2a7321,_0x3e4e65),_0x42dc1d[_0x5e6ace(0x188)](_0x567693,_0x1dfb3a+_0x2a7321,_0x567693,_0x1dfb3a,_0x3e4e65),_0x42dc1d['arcTo'](_0x567693,_0x1dfb3a,_0x567693+_0x3410eb,_0x1dfb3a,_0x3e4e65),_0x42dc1d['closePath']();}function _0x2d287d(){var _0x151aed=_0x4872ea,_0x6667a2=_0x42dc1d[_0x151aed(0x1b1)](0x0,0x0,0x258,0x320);_0x6667a2['addColorStop'](0x0,_0x5bcf32[_0x4cda10][0x0]),_0x6667a2['addColorStop'](0x1,_0x5bcf32[_0x4cda10][0x1]),_0x42dc1d['fillStyle']=_0x6667a2,_0x42dc1d['fillRect'](0x0,0x0,0x258,0x320),_0x42dc1d['fillStyle']='rgba(255,255,255,.12)',_0x42dc1d['beginPath'](),_0x42dc1d['arc'](0x208,0x78,0x5a,0x0,Math['PI']*0x2),_0x42dc1d['fill'](),_0x42dc1d['beginPath'](),_0x42dc1d[_0x151aed(0x19a)](0x50,0x2b2,0x3c,0x0,Math['PI']*0x2),_0x42dc1d['fill'](),_0x42dc1d['beginPath'](),_0x42dc1d[_0x151aed(0x19a)](0x21c,0x280,0x24,0x0,Math['PI']*0x2),_0x42dc1d['fill'](),_0x42dc1d['fillStyle']='rgba(255,255,255,.9)',_0x42dc1d['font']='bold\x2026px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x42dc1d[_0x151aed(0x1a7)]=_0x151aed(0x1a3),_0x42dc1d['fillText']('🎲\x20找乐子',0x12c,0x5a);var _0x189b2b=_0x5e74ce['value']['trim']()||'今天也是元气满满的一天！',_0x34984c=_0x2034da[_0x151aed(0x1a6)]['trim']()||'小乐';_0x42dc1d['fillStyle']=_0x151aed(0x19b),_0x42dc1d['font']='bold\x2034px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x42dc1d[_0x151aed(0x1a7)]='center';var _0x3bc79d=[],_0x1351dc='',_0x1dea62=0x1cc;for(var _0x261e37=0x0;_0x261e37<_0x189b2b[_0x151aed(0x199)];_0x261e37++){_0x1351dc+=_0x189b2b[_0x261e37],_0x42dc1d['measureText'](_0x1351dc)[_0x151aed(0x187)]>_0x1dea62&&(_0x3bc79d['push'](_0x1351dc['slice'](0x0,-0x1)),_0x1351dc=_0x189b2b[_0x261e37]);}if(_0x1351dc)_0x3bc79d[_0x151aed(0x186)](_0x1351dc);var _0x2b5075=0x154-(_0x3bc79d['length']-0x1)*0x1e;_0x3bc79d['forEach'](function(_0x2019c6,_0x6e64ea){var _0x179460=_0x151aed;_0x42dc1d[_0x179460(0x18b)](_0x2019c6,0x12c,_0x2b5075+_0x6e64ea*0x3c);}),_0x42dc1d['font']=_0x151aed(0x1aa),_0x42dc1d[_0x151aed(0x1ad)]='rgba(255,255,255,.85)',_0x42dc1d['fillText']('——\x20'+_0x34984c,0x12c,_0x2b5075+_0x3bc79d[_0x151aed(0x199)]*0x3c+0x28);var _0x118c35=new Date();_0x42dc1d['font']=_0x151aed(0x18e),_0x42dc1d['fillStyle']='rgba(255,255,255,.6)',_0x42dc1d[_0x151aed(0x18b)](_0x118c35['getFullYear']()+'年'+(_0x118c35['getMonth']()+0x1)+'月'+_0x118c35['getDate']()+'日\x20·\x20来自找乐子',0x12c,0x2ee);}function _0x2ac332(){var _0x26867e=_0x4872ea;_0x2d287d();if(window['ZL']&&ZL['showToast'])ZL[_0x26867e(0x185)]('卡片已生成');if(window['ZL']&&ZL[_0x26867e(0x19f)])ZL['bump']('share_add',0x1);}document[_0x4872ea(0x198)](_0x4872ea(0x1ac))['addEventListener'](_0x4872ea(0x1ab),_0x2ac332),document[_0x4872ea(0x198)]('downloadBtn')['addEventListener']('click',function(){var _0x431a40=_0x4872ea,_0x155966=document[_0x431a40(0x189)]('a');_0x155966[_0x431a40(0x18a)]=_0x58534f[_0x431a40(0x184)](_0x431a40(0x192)),_0x155966[_0x431a40(0x190)]='找乐子分享卡片_'+Date[_0x431a40(0x19e)]()+'.png',document[_0x431a40(0x1a9)]['appendChild'](_0x155966),_0x155966['click'](),document['body'][_0x431a40(0x1b0)](_0x155966);if(window['ZL']&&ZL['showToast'])ZL[_0x431a40(0x185)](_0x431a40(0x1a4));}),document['getElementById']('copyBtn')['addEventListener']('click',function(){var _0x38e33f=_0x4872ea,_0x12c1b8=(_0x2034da['value'][_0x38e33f(0x1a1)]()||'小乐')+'：'+(_0x5e74ce[_0x38e33f(0x1a6)][_0x38e33f(0x1a1)]()||'今天也是元气满满的一天！')+'（来自找乐子）';try{navigator[_0x38e33f(0x18f)]['writeText'](_0x12c1b8)[_0x38e33f(0x194)](function(){var _0x1fae0e=_0x38e33f;if(window['ZL']&&ZL[_0x1fae0e(0x185)])ZL[_0x1fae0e(0x185)]('文案已复制');})[_0x38e33f(0x196)](function(){});}catch(_0x436f06){}}),_0x2d287d();var _0x483e15=document['getElementById']('overlay');document['getElementById'](_0x4872ea(0x1af))['addEventListener']('click',function(_0x8a7dbf){var _0x24ed2d=_0x4872ea;_0x8a7dbf[_0x24ed2d(0x1a2)]();if(_0x483e15['classList']['contains'](_0x24ed2d(0x197)))return;_0x483e15[_0x24ed2d(0x19c)]['add']('active'),setTimeout(function(){var _0x50f570=_0x24ed2d;window['location'][_0x50f570(0x18a)]='工具导航.html';},0x4b0);}),document[_0x4872ea(0x1a8)](_0x4872ea(0x191),function(_0x50d0ca){var _0x11f44d=_0x4872ea;_0x50d0ca['key']==='Escape'&&_0x483e15[_0x11f44d(0x19c)][_0x11f44d(0x195)](_0x11f44d(0x197))&&_0x483e15['classList']['remove']('active');}),window['roundedRect']=_0x1b5b29,window['drawCard']=_0x2d287d,window['autoGen']=_0x2ac332;}());
 </script>
 </body>
 </html>

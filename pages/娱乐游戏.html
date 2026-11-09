@@ -832,6 +832,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -875,7 +945,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-function _0x16b0(_0x20b101,_0x39704f){_0x20b101=_0x20b101-0x1eb;const _0x16b064=_0x3970();let _0x241432=_0x16b064[_0x20b101];return _0x241432;}const _0x45f98=_0x16b0,toolsConfig=[{'title':'————找乐子\x20————返回主程序','desc':'返回找乐子主程序','link':'../index.html','icon':'🏠'},{'title':'————找乐子\x20————古今中外暗号大全','desc':_0x45f98(0x203),'link':'古今中外暗号大全.html','icon':'🗝️'},{'title':_0x45f98(0x1ed),'desc':'经典扫雷游戏','link':'扫雷.html','icon':'💣'},{'title':'————找乐子\x20————每日一题','desc':'每天一道趣味题，答完打卡','link':'每日一题.html','icon':'🧠'},{'title':'—找乐子（开发中）—（影音娱乐）','desc':_0x45f98(0x1ec),'link':'密码登录.html?go=授权协议.html','icon':'🎬'},{'title':'————找乐子\x20————打字速度测试','desc':'测测你的打字手速，挑战历史最佳','link':_0x45f98(0x1fb),'icon':'⌨️'},{'title':'————找乐子\x20————双人井字棋','desc':'和朋友面对面来一局井字棋','link':'双人井字棋.html','icon':'✖️'}];function normalizeLink(_0x397ad5){if(!_0x397ad5)return'#';if(/^www\./i['test'](_0x397ad5))return'https://'+_0x397ad5;return _0x397ad5;}function createToolBox(_0x5bf83d){const _0x36c1e3=_0x45f98,_0x5d932a=document[_0x36c1e3(0x1f8)]('a');_0x5d932a[_0x36c1e3(0x200)]=_0x36c1e3(0x1ee)+_0x5bf83d%0x5,_0x5d932a['dataset']['index']=_0x5bf83d;const _0x1363f0=toolsConfig[_0x5bf83d],_0x3d740f=document[_0x36c1e3(0x1f8)](_0x36c1e3(0x1fc));_0x3d740f['className']=_0x36c1e3(0x1f9);const _0x30e505=document['createElement']('span');_0x30e505[_0x36c1e3(0x200)]='tool-title';const _0x3ec803=document['createElement']('span');_0x3ec803['className']='tooltip';if(_0x1363f0&&_0x1363f0['title']){_0x3d740f[_0x36c1e3(0x1ff)]=_0x1363f0[_0x36c1e3(0x1ef)]||'';var _0x6ff666=_0x1363f0['title'],_0x569260=_0x6ff666['lastIndexOf']('——');_0x569260!==-0x1&&_0x569260+0x2<_0x6ff666[_0x36c1e3(0x1f1)]?_0x30e505[_0x36c1e3(0x202)]=_0x6ff666['substring'](0x0,_0x569260+0x2)+'<br\x20class=\x22mobile-break\x22>'+_0x6ff666['substring'](_0x569260+0x2):_0x30e505['textContent']=_0x6ff666,_0x3ec803['textContent']=_0x1363f0['desc']||_0x36c1e3(0x1f0),_0x5d932a['href']=normalizeLink(_0x1363f0[_0x36c1e3(0x1fd)]),_0x5d932a[_0x36c1e3(0x1f3)](_0x36c1e3(0x1eb),_0x1363f0[_0x36c1e3(0x201)]+(_0x1363f0[_0x36c1e3(0x1f6)]?_0x36c1e3(0x1fa)+_0x1363f0[_0x36c1e3(0x1f6)]:'')),_0x5d932a['setAttribute']('title',_0x1363f0[_0x36c1e3(0x1f6)]||_0x1363f0['title']);}else _0x3d740f['textContent']='',_0x30e505['textContent']=_0x36c1e3(0x1f0),_0x3ec803[_0x36c1e3(0x1ff)]=_0x36c1e3(0x1f0),_0x5d932a['href']='#',_0x5d932a['setAttribute'](_0x36c1e3(0x1eb),'敬请期待～'),_0x5d932a[_0x36c1e3(0x1f3)](_0x36c1e3(0x201),_0x36c1e3(0x1f0));return _0x5d932a['appendChild'](_0x3d740f),_0x5d932a['appendChild'](_0x30e505),_0x5d932a['appendChild'](_0x3ec803),_0x5d932a[_0x36c1e3(0x1f2)]('click',function(_0x446b89){const _0xb21c22=_0x36c1e3;_0x446b89['preventDefault']();const _0x70d6da=_0x1363f0&&_0x1363f0[_0xb21c22(0x1fd)]?_0x1363f0['link']:'';showLoadingOverlay(_0x70d6da);}),_0x5d932a;}function renderTools(){const _0x4450e6=_0x45f98,_0x37ff97=document['getElementById']('grid');_0x37ff97[_0x4450e6(0x202)]='';const _0x52b778=document['createElement']('div');_0x52b778[_0x4450e6(0x200)]='title-area',_0x52b778[_0x4450e6(0x202)]='<h2>找乐子——优质工具库</h2>',_0x37ff97['appendChild'](_0x52b778);for(let _0x5324fa=0x0;_0x5324fa<0x4;_0x5324fa++){_0x37ff97[_0x4450e6(0x1f5)](createToolBox(_0x5324fa));}for(let _0x19394c=0x4;_0x19394c<0x4+0x3e*0x6;_0x19394c++){_0x37ff97['appendChild'](createToolBox(_0x19394c));}}let overlayTimer=null;function _0x3970(){const _0x4e15d2=['aria-label','影音娱乐，目前由作者亲自测试中','————找乐子\x20————经典扫雷游戏','tool-box\x20color-','icon','敬请期待～','length','addEventListener','setAttribute','href','appendChild','desc','add','createElement','tool-icon','\x20-\x20','打字测试.html','span','link','isArray','textContent','className','title','innerHTML','极大扩宽您的知识面，对暗号，上下句，'];_0x3970=function(){return _0x4e15d2;};return _0x3970();}function showLoadingOverlay(_0x4f7f15){const _0x3a49d5=_0x45f98,_0xba3339=document['getElementById']('overlay');_0xba3339['classList'][_0x3a49d5(0x1f7)]('active'),overlayTimer&&clearTimeout(overlayTimer),overlayTimer=setTimeout(()=>{const _0x5d071c=_0x3a49d5;_0xba3339['classList']['remove']('active');if(!_0x4f7f15||_0x4f7f15==='#')return;const _0x30f017=normalizeLink(_0x4f7f15);/^https?:\/\//i['test'](_0x30f017)?window['location'][_0x5d071c(0x1f4)]=_0x30f017:window['location'][_0x5d071c(0x1f4)]=_0x30f017;},0x3e8);}document[_0x45f98(0x1f2)]('DOMContentLoaded',function(){renderTools(),window['refreshTools']=function(_0x50f427){const _0x1133d1=_0x16b0;_0x50f427&&Array[_0x1133d1(0x1fe)](_0x50f427)&&(toolsConfig['length']=0x0,toolsConfig['push'](..._0x50f427)),renderTools();};});
+const _0x421014=_0x1041,toolsConfig=[{'title':'————找乐子\x20————返回主程序','desc':'返回找乐子主程序','link':_0x421014(0x70),'icon':'🏠'},{'title':'————找乐子\x20————古今中外暗号大全','desc':'极大扩宽您的知识面，对暗号，上下句，','link':_0x421014(0x86),'icon':_0x421014(0x7e)},{'title':'————找乐子\x20————经典扫雷游戏','desc':'经典扫雷游戏','link':'扫雷.html','icon':'💣'},{'title':'————找乐子\x20————每日一题','desc':'每天一道趣味题，答完打卡','link':'每日一题.html','icon':'🧠'},{'title':'—找乐子（开发中）—（影音娱乐）','desc':'影音娱乐，目前由作者亲自测试中','link':_0x421014(0x80),'icon':'🎬'},{'title':'————找乐子\x20————打字速度测试','desc':_0x421014(0x7d),'link':_0x421014(0x76),'icon':'⌨️'},{'title':'————找乐子\x20————双人井字棋','desc':_0x421014(0x85),'link':'双人井字棋.html','icon':'✖️'}];function normalizeLink(_0x3090d6){if(!_0x3090d6)return'#';if(/^www\./i['test'](_0x3090d6))return'https://'+_0x3090d6;return _0x3090d6;}function _0x17fb(){const _0x16c4e7=['../index.html','aria-label','span','remove','appendChild','textContent','打字测试.html','DOMContentLoaded','grid','setAttribute','敬请期待～','title','createElement','测测你的打字手速，挑战历史最佳','🗝️','desc','密码登录.html?go=授权协议.html','substring','classList','test','lastIndexOf','和朋友面对面来一局井字棋','古今中外暗号大全.html','className','link'];_0x17fb=function(){return _0x16c4e7;};return _0x17fb();}function createToolBox(_0x210934){const _0x51633a=_0x421014,_0x22f663=document[_0x51633a(0x7c)]('a');_0x22f663['className']='tool-box\x20color-'+_0x210934%0x5,_0x22f663['dataset']['index']=_0x210934;const _0x2a529e=toolsConfig[_0x210934],_0x4bae04=document['createElement']('span');_0x4bae04[_0x51633a(0x87)]='tool-icon';const _0x5d122c=document['createElement'](_0x51633a(0x72));_0x5d122c['className']='tool-title';const _0x48c2ca=document['createElement']('span');_0x48c2ca['className']='tooltip';if(_0x2a529e&&_0x2a529e[_0x51633a(0x7b)]){_0x4bae04[_0x51633a(0x75)]=_0x2a529e['icon']||'';var _0x37d008=_0x2a529e['title'],_0x143815=_0x37d008[_0x51633a(0x84)]('——');_0x143815!==-0x1&&_0x143815+0x2<_0x37d008['length']?_0x5d122c['innerHTML']=_0x37d008['substring'](0x0,_0x143815+0x2)+'<br\x20class=\x22mobile-break\x22>'+_0x37d008[_0x51633a(0x81)](_0x143815+0x2):_0x5d122c[_0x51633a(0x75)]=_0x37d008,_0x48c2ca[_0x51633a(0x75)]=_0x2a529e['desc']||'敬请期待～',_0x22f663['href']=normalizeLink(_0x2a529e[_0x51633a(0x88)]),_0x22f663[_0x51633a(0x79)]('aria-label',_0x2a529e['title']+(_0x2a529e[_0x51633a(0x7f)]?'\x20-\x20'+_0x2a529e['desc']:'')),_0x22f663['setAttribute']('title',_0x2a529e['desc']||_0x2a529e['title']);}else _0x4bae04['textContent']='',_0x5d122c[_0x51633a(0x75)]=_0x51633a(0x7a),_0x48c2ca[_0x51633a(0x75)]='敬请期待～',_0x22f663['href']='#',_0x22f663['setAttribute'](_0x51633a(0x71),'敬请期待～'),_0x22f663['setAttribute']('title','敬请期待～');return _0x22f663[_0x51633a(0x74)](_0x4bae04),_0x22f663['appendChild'](_0x5d122c),_0x22f663['appendChild'](_0x48c2ca),_0x22f663['addEventListener']('click',function(_0x441a97){_0x441a97['preventDefault']();const _0x13287c=_0x2a529e&&_0x2a529e['link']?_0x2a529e['link']:'';showLoadingOverlay(_0x13287c);}),_0x22f663;}function renderTools(){const _0x17ad49=_0x421014,_0x592e34=document['getElementById'](_0x17ad49(0x78));_0x592e34['innerHTML']='';const _0x5cb8e6=document[_0x17ad49(0x7c)]('div');_0x5cb8e6['className']='title-area',_0x5cb8e6['innerHTML']='<h2>找乐子——优质工具库</h2>',_0x592e34['appendChild'](_0x5cb8e6);for(let _0x548cd8=0x0;_0x548cd8<0x4;_0x548cd8++){_0x592e34['appendChild'](createToolBox(_0x548cd8));}for(let _0x25acf3=0x4;_0x25acf3<0x4+0x3e*0x6;_0x25acf3++){_0x592e34['appendChild'](createToolBox(_0x25acf3));}}let overlayTimer=null;function showLoadingOverlay(_0x5ce364){const _0x230dfb=document['getElementById']('overlay');_0x230dfb['classList']['add']('active'),overlayTimer&&clearTimeout(overlayTimer),overlayTimer=setTimeout(()=>{const _0x353638=_0x1041;_0x230dfb[_0x353638(0x82)][_0x353638(0x73)]('active');if(!_0x5ce364||_0x5ce364==='#')return;const _0x5dfc1a=normalizeLink(_0x5ce364);/^https?:\/\//i[_0x353638(0x83)](_0x5dfc1a)?window['location']['href']=_0x5dfc1a:window['location']['href']=_0x5dfc1a;},0x3e8);}function _0x1041(_0x2fbaab,_0x17fb63){_0x2fbaab=_0x2fbaab-0x70;const _0x104116=_0x17fb();let _0x27a761=_0x104116[_0x2fbaab];return _0x27a761;}document['addEventListener'](_0x421014(0x77),function(){renderTools(),window['refreshTools']=function(_0x5278c3){_0x5278c3&&Array['isArray'](_0x5278c3)&&(toolsConfig['length']=0x0,toolsConfig['push'](..._0x5278c3)),renderTools();};});
 </script>
 </body>
 </html>

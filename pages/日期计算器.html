@@ -564,6 +564,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -631,7 +701,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-function _0x201d(_0x2d30fe,_0x579fb2){_0x2d30fe=_0x2d30fe-0xee;const _0x201d7d=_0x579f();let _0x324f33=_0x201d7d[_0x2d30fe];return _0x324f33;}function _0x579f(){const _0x3f250f=['highlight','addEventListener','\x20天）','Escape','padStart','classList','toggle','value','2-digit','resultDisplay','相差\x20','getElementById','keydown','getDate','getMonth','无效的时间戳','zh-CN','getFullYear','工具导航.html','active','click'];_0x579f=function(){return _0x3f250f;};return _0x579f();}(function(){'use strict';const _0x492f15=_0x201d;const _0x1ba35c=document['getElementById']('dateStart'),_0x188d5e=document['getElementById']('dateEnd'),_0x45fe7f=document['getElementById']('daysInput'),_0x38d356=document[_0x492f15(0xf9)]('diffBtn'),_0x4d0d86=document['getElementById']('targetBtn'),_0x23f8b2=document['getElementById']('timestampBtn'),_0x26b9f7=document[_0x492f15(0xf9)](_0x492f15(0xf7)),_0x3ca39e=document[_0x492f15(0xf9)]('backHome'),_0xe990bf=document['getElementById']('overlay');function _0x1da03e(_0x3324f9){if(!_0x3324f9)return null;const _0x540fff=_0x3324f9['split']('-');if(_0x540fff['length']!==0x3)return null;return new Date(parseInt(_0x540fff[0x0]),parseInt(_0x540fff[0x1])-0x1,parseInt(_0x540fff[0x2]));}function _0x5bb1f8(_0x37ff56){const _0x1f357b=_0x492f15,_0xa98f1b=_0x37ff56[_0x1f357b(0xff)](),_0x7081c7=String(_0x37ff56[_0x1f357b(0xfc)]()+0x1)['padStart'](0x2,'0'),_0x3e46ec=String(_0x37ff56[_0x1f357b(0xfb)]())[_0x1f357b(0xf2)](0x2,'0');return _0xa98f1b+'-'+_0x7081c7+'-'+_0x3e46ec;}function _0x5f37b7(_0x216b21,_0x25c3c5=![]){const _0xf4cc48=_0x492f15;_0x26b9f7['textContent']=_0x216b21,_0x26b9f7['classList'][_0xf4cc48(0xf4)]('placeholder',_0x25c3c5),!_0x25c3c5?_0x26b9f7[_0xf4cc48(0xf3)]['add']('highlight'):_0x26b9f7['classList']['remove'](_0xf4cc48(0xee));}function _0x556ab0(){const _0x25a7e1=_0x492f15,_0x3d61b0=_0x1da03e(_0x1ba35c[_0x25a7e1(0xf5)]),_0x50f97c=_0x1da03e(_0x188d5e['value']);if(!_0x3d61b0||!_0x50f97c){_0x5f37b7('请先选择起始和结束日期',!![]);return;}const _0x14bab2=Math['floor']((_0x50f97c['getTime']()-_0x3d61b0['getTime']())/0x5265c00),_0x4e1992=Math['abs'](_0x14bab2),_0x55b426=_0x14bab2>=0x0?'之后':'之前';_0x5f37b7(_0x25a7e1(0xf8)+_0x4e1992+'\x20天\x0a（结束日期在起始日期'+_0x55b426+'）');}function _0x55299c(){const _0x291062=_0x492f15,_0x425e3c=_0x1da03e(_0x1ba35c[_0x291062(0xf5)]),_0x1dd20e=parseInt(_0x45fe7f['value'],0xa);if(!_0x425e3c){_0x5f37b7('请先选择起始日期',!![]);return;}if(isNaN(_0x1dd20e)){_0x5f37b7('请输入推算天数（可正可负）',!![]);return;}const _0x274d69=new Date(_0x425e3c['getTime']()+_0x1dd20e*0x5265c00);_0x5f37b7('目标日期：'+_0x5bb1f8(_0x274d69)+'\x0a（'+_0x425e3c['getFullYear']()+'年'+(_0x425e3c['getMonth']()+0x1)+'月'+_0x425e3c['getDate']()+'日\x20'+(_0x1dd20e>=0x0?'+':'')+_0x1dd20e+_0x291062(0xf0));}function _0x38b6f8(){const _0x589228=_0x492f15,_0x594ef4=_0x45fe7f['value']['trim']();if(!_0x594ef4){_0x5f37b7('请在推算天数输入框中输入时间戳（毫秒）',!![]);return;}const _0x2a0137=Number(_0x594ef4);if(isNaN(_0x2a0137)){_0x5f37b7('请输入有效的数字时间戳',!![]);return;}const _0xfe94d2=new Date(_0x2a0137);if(isNaN(_0xfe94d2['getTime']())){_0x5f37b7(_0x589228(0xfd),!![]);return;}_0x5f37b7(_0xfe94d2['toLocaleString'](_0x589228(0xfe),{'year':'numeric','month':_0x589228(0xf6),'day':_0x589228(0xf6),'hour':'2-digit','minute':'2-digit','second':_0x589228(0xf6),'hour12':![]}));}function _0x3dbe73(){const _0x192879=_0x492f15;if(_0xe990bf['classList']['contains']('active'))return;_0xe990bf['classList']['add'](_0x192879(0x101)),setTimeout(()=>{const _0x253914=_0x192879;window['location']['href']=_0x253914(0x100);},0x3e8);}_0x38d356['addEventListener']('click',_0x556ab0),_0x4d0d86[_0x492f15(0xef)]('click',_0x55299c),_0x23f8b2['addEventListener'](_0x492f15(0x102),_0x38b6f8),_0x3ca39e[_0x492f15(0xef)]('click',function(_0x277233){_0x277233['preventDefault'](),_0x3dbe73();});const _0x1ef4a1=new Date(),_0x522755=_0x5bb1f8(_0x1ef4a1);_0x1ba35c['value']=_0x522755,_0x188d5e['value']=_0x522755,_0x45fe7f['value']='',document['addEventListener'](_0x492f15(0xfa),function(_0x212fa9){const _0x7b73d2=_0x492f15;_0x212fa9['key']===_0x7b73d2(0xf1)&&_0x3dbe73();});}());
+function _0x444e(_0x44c4ec,_0x4967ba){_0x44c4ec=_0x44c4ec-0x6f;const _0x444e3d=_0x4967();let _0x1a5304=_0x444e3d[_0x44c4ec];return _0x1a5304;}function _0x4967(){const _0x188a84=['addEventListener','highlight','overlay','2-digit','remove','getElementById','value','getDate','dateStart','getFullYear','abs','dateEnd','daysInput','getMonth','getTime','请输入推算天数（可正可负）','click','classList','zh-CN','location'];_0x4967=function(){return _0x188a84;};return _0x4967();}(function(){'use strict';const _0x329695=_0x444e;const _0x3798e5=document[_0x329695(0x74)](_0x329695(0x77)),_0x58e92b=document['getElementById'](_0x329695(0x7a)),_0x476381=document['getElementById'](_0x329695(0x7b)),_0x462cfd=document[_0x329695(0x74)]('diffBtn'),_0x23d6af=document[_0x329695(0x74)]('targetBtn'),_0x49d6e2=document['getElementById']('timestampBtn'),_0x2ba884=document['getElementById']('resultDisplay'),_0x793e79=document['getElementById']('backHome'),_0x265095=document['getElementById'](_0x329695(0x71));function _0x5bc7f4(_0x729c3e){if(!_0x729c3e)return null;const _0x594d50=_0x729c3e['split']('-');if(_0x594d50['length']!==0x3)return null;return new Date(parseInt(_0x594d50[0x0]),parseInt(_0x594d50[0x1])-0x1,parseInt(_0x594d50[0x2]));}function _0x3e7a7c(_0x4e9327){const _0x48791f=_0x329695,_0x4811a4=_0x4e9327[_0x48791f(0x78)](),_0x254039=String(_0x4e9327[_0x48791f(0x7c)]()+0x1)['padStart'](0x2,'0'),_0x3603e3=String(_0x4e9327[_0x48791f(0x76)]())['padStart'](0x2,'0');return _0x4811a4+'-'+_0x254039+'-'+_0x3603e3;}function _0x5ef679(_0x264b75,_0x45bfa3=![]){const _0x114cd7=_0x329695;_0x2ba884['textContent']=_0x264b75,_0x2ba884['classList']['toggle']('placeholder',_0x45bfa3),!_0x45bfa3?_0x2ba884['classList']['add'](_0x114cd7(0x70)):_0x2ba884['classList'][_0x114cd7(0x73)]('highlight');}function _0x5ac4c8(){const _0x32f0f8=_0x329695,_0x5e269d=_0x5bc7f4(_0x3798e5['value']),_0x193d82=_0x5bc7f4(_0x58e92b[_0x32f0f8(0x75)]);if(!_0x5e269d||!_0x193d82){_0x5ef679('请先选择起始和结束日期',!![]);return;}const _0x23aed4=Math['floor']((_0x193d82[_0x32f0f8(0x7d)]()-_0x5e269d['getTime']())/0x5265c00),_0xcc676d=Math[_0x32f0f8(0x79)](_0x23aed4),_0x2f55f8=_0x23aed4>=0x0?'之后':'之前';_0x5ef679('相差\x20'+_0xcc676d+'\x20天\x0a（结束日期在起始日期'+_0x2f55f8+'）');}function _0x1f28b0(){const _0x382b89=_0x329695,_0x3c4f4c=_0x5bc7f4(_0x3798e5['value']),_0x56db3c=parseInt(_0x476381[_0x382b89(0x75)],0xa);if(!_0x3c4f4c){_0x5ef679('请先选择起始日期',!![]);return;}if(isNaN(_0x56db3c)){_0x5ef679(_0x382b89(0x7e),!![]);return;}const _0x290ec4=new Date(_0x3c4f4c['getTime']()+_0x56db3c*0x5265c00);_0x5ef679('目标日期：'+_0x3e7a7c(_0x290ec4)+'\x0a（'+_0x3c4f4c['getFullYear']()+'年'+(_0x3c4f4c['getMonth']()+0x1)+'月'+_0x3c4f4c['getDate']()+'日\x20'+(_0x56db3c>=0x0?'+':'')+_0x56db3c+'\x20天）');}function _0x8cf9d8(){const _0x54460e=_0x329695,_0x554529=_0x476381['value']['trim']();if(!_0x554529){_0x5ef679('请在推算天数输入框中输入时间戳（毫秒）',!![]);return;}const _0x1b1733=Number(_0x554529);if(isNaN(_0x1b1733)){_0x5ef679('请输入有效的数字时间戳',!![]);return;}const _0x9749a6=new Date(_0x1b1733);if(isNaN(_0x9749a6['getTime']())){_0x5ef679('无效的时间戳',!![]);return;}_0x5ef679(_0x9749a6['toLocaleString'](_0x54460e(0x81),{'year':'numeric','month':'2-digit','day':_0x54460e(0x72),'hour':'2-digit','minute':_0x54460e(0x72),'second':'2-digit','hour12':![]}));}function _0xf26ce8(){const _0x211ba9=_0x329695;if(_0x265095['classList']['contains']('active'))return;_0x265095[_0x211ba9(0x80)]['add']('active'),setTimeout(()=>{const _0x34e7fd=_0x211ba9;window[_0x34e7fd(0x82)]['href']='工具导航.html';},0x3e8);}_0x462cfd['addEventListener']('click',_0x5ac4c8),_0x23d6af[_0x329695(0x6f)](_0x329695(0x7f),_0x1f28b0),_0x49d6e2['addEventListener'](_0x329695(0x7f),_0x8cf9d8),_0x793e79['addEventListener'](_0x329695(0x7f),function(_0x3f9ff3){_0x3f9ff3['preventDefault'](),_0xf26ce8();});const _0x113349=new Date(),_0x1530af=_0x3e7a7c(_0x113349);_0x3798e5['value']=_0x1530af,_0x58e92b[_0x329695(0x75)]=_0x1530af,_0x476381['value']='',document['addEventListener']('keydown',function(_0x1d8622){_0x1d8622['key']==='Escape'&&_0xf26ce8();});}());
 </script>
 </body>
 </html>

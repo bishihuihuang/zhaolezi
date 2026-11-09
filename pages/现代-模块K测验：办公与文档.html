@@ -48,6 +48,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -94,7 +164,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-var _0x38c42f=_0x292a;function _0x25b5(){var _0x83e3dc=['F5\x20从头放映，Esc\x20退出放映；翻页点鼠标或按空格/方向键。','把照片删了重新插入','按住照片四角的小白点缩放','把字复制两遍','一次写完再保存','Esc','DOMContentLoaded','缩小字号到看不见','用计算器一个一个加再填进去','Excel\x20表格排序前，最重要的一步是？','标题三板斧：加粗、居中、大字号，选中文字后操作（工具栏\x20B、居中按钮、字号框）。','不点链接、不输密码——可疑邮件直接删除，拿不准电话核实','转发给朋友问问','只点一列排序会让其他列不跟着动、表格错位；要先选中全部数据（表头+所有行）再排序。','点\x20Σ\x20自动求和，Excel\x20自动算；数字改了总和还会自动更新。','彩色打印','打印\x2010\x20份','PPT\x20里\x22放映幻灯片\x22的快捷键是？','addEventListener','键盘漏电','只能用手机','没保存的内容会在关机/死机时全部丢失，边写边\x20Ctrl+S（保存）是\x20Word\x20第一好习惯。','先打印再排序','模块K测验：办公与文档','把数字复制粘贴到\x20Word','双面打印','Word\x20里想让文字变成\x22标题\x22样子，应该？','Backspace\x20删光标前面的字，Delete\x20删光标后面的字；按错键就换一个键。'];_0x25b5=function(){return _0x83e3dc;};return _0x25b5();}function _0x292a(_0x380930,_0x25b5ed){_0x380930=_0x380930-0xfd;var _0x292acd=_0x25b5();var _0x59a76e=_0x292acd[_0x380930];return _0x59a76e;}document[_0x38c42f(0x10f)](_0x38c42f(0x103),function(){var _0x426c79=_0x38c42f;if(!window['XD']||!XD['quiz'])return;XD['quiz']['run']('quiz',{'id':'K','title':_0x426c79(0x114),'questions':[{'q':'用\x20Word\x20写文档，最重要的一个好习惯是？','opts':[_0x426c79(0x101),'边写边按\x20Ctrl+S\x20保存','写完不保存直接关机','让\x20Word\x20自动保存就够了'],'a':0x1,'exp':_0x426c79(0x112)},{'q':_0x426c79(0x117),'opts':['选中文字\x20→\x20加粗\x20+\x20居中\x20+\x20调大字号','用鼠标狂点文字','换一台电脑',_0x426c79(0x100)],'a':0x0,'exp':_0x426c79(0x107)},{'q':'打字发现光标后面的字被删了（每按一下删一个字），最可能是？','opts':['电脑坏了','按的是\x20Delete\x20键（删光标后面）而不是\x20Backspace\x20退格键',_0x426c79(0x110),'Word\x20版本太旧'],'a':0x1,'exp':_0x426c79(0x118)},{'q':'Excel\x20里想算一列数字的总和，最简单的方法是？','opts':[_0x426c79(0x105),'点「Σ\x20自动求和」',_0x426c79(0x115),'重新输入一遍'],'a':0x1,'exp':_0x426c79(0x10b)},{'q':_0x426c79(0x106),'opts':['选中整个数据区域再排序','只点一列排序',_0x426c79(0x113),'先把字体调大'],'a':0x0,'exp':_0x426c79(0x10a)},{'q':_0x426c79(0x10e),'opts':['F5','Ctrl+C','Delete',_0x426c79(0x102)],'a':0x0,'exp':_0x426c79(0xfd)},{'q':'想把\x20PPT\x20里的照片放大一点，正确的做法是？','opts':['按住照片拖动',_0x426c79(0xff),'双击照片',_0x426c79(0xfe)],'a':0x1,'exp':'按住四角小白点缩放，长宽一起变不会变形；只拖侧边会把照片拉扁。'},{'q':'WPS\x20相比微软\x20Office\x20的最大特点是？','opts':[_0x426c79(0x111),'免费，且文字/表格/演示三合一、文件互相兼容','不能打开\x20.docx\x20文件','需要联网才能用'],'a':0x1,'exp':'WPS\x20免费三合一（文字/表格/演示），和\x20Office\x20文件互通，家里装它就够。'},{'q':'打印一份\x2010\x20页的文档，想省纸，应该设置？','opts':[_0x426c79(0x10c),_0x426c79(0x116),_0x426c79(0x10d),_0x426c79(0x104)],'a':0x1,'exp':'双面打印一页纸打两面，省纸一半；打印前先在预览里看排版。'},{'q':'收到一封\x22您的账户异常，点击链接验证否则冻结\x22的邮件，应该？','opts':['马上点链接验证',_0x426c79(0x109),_0x426c79(0x108),'回复邮件解释'],'a':0x2,'exp':'钓鱼邮件铁律：点链接要账号密码的一律当骗子，不回复不转发直接删除。'}]});});
+function _0x4556(){var _0x2110b6=['quiz','WPS\x20免费三合一（文字/表格/演示），和\x20Office\x20文件互通，家里装它就够。','用\x20Word\x20写文档，最重要的一个好习惯是？','点\x20Σ\x20自动求和，Excel\x20自动算；数字改了总和还会自动更新。','标题三板斧：加粗、居中、大字号，选中文字后操作（工具栏\x20B、居中按钮、字号框）。','只点一列排序','把数字复制粘贴到\x20Word','先打印再排序','Excel\x20里想算一列数字的总和，最简单的方法是？','边写边按\x20Ctrl+S\x20保存','缩小字号到看不见','彩色打印','选中文字\x20→\x20加粗\x20+\x20居中\x20+\x20调大字号','重新输入一遍','按的是\x20Delete\x20键（删光标后面）而不是\x20Backspace\x20退格键','钓鱼邮件铁律：点链接要账号密码的一律当骗子，不回复不转发直接删除。','双面打印','只能用手机','按住四角小白点缩放，长宽一起变不会变形；只拖侧边会把照片拉扁。','转发给朋友问问','把照片删了重新插入','用鼠标狂点文字','打印\x2010\x20份','Ctrl+C','不能打开\x20.docx\x20文件','Word\x20版本太旧','按住照片拖动','Esc'];_0x4556=function(){return _0x2110b6;};return _0x4556();}function _0xc2f2(_0x40fef1,_0x4556bd){_0x40fef1=_0x40fef1-0x110;var _0xc2f220=_0x4556();var _0xd9fb0a=_0xc2f220[_0x40fef1];return _0xd9fb0a;}document['addEventListener']('DOMContentLoaded',function(){var _0x538679=_0xc2f2;if(!window['XD']||!XD['quiz'])return;XD['quiz']['run'](_0x538679(0x110),{'id':'K','title':'模块K测验：办公与文档','questions':[{'q':_0x538679(0x112),'opts':['一次写完再保存',_0x538679(0x119),'写完不保存直接关机','让\x20Word\x20自动保存就够了'],'a':0x1,'exp':'没保存的内容会在关机/死机时全部丢失，边写边\x20Ctrl+S（保存）是\x20Word\x20第一好习惯。'},{'q':'Word\x20里想让文字变成\x22标题\x22样子，应该？','opts':[_0x538679(0x11c),_0x538679(0x125),'换一台电脑','把字复制两遍'],'a':0x0,'exp':_0x538679(0x114)},{'q':'打字发现光标后面的字被删了（每按一下删一个字），最可能是？','opts':['电脑坏了',_0x538679(0x11e),'键盘漏电',_0x538679(0x129)],'a':0x1,'exp':'Backspace\x20删光标前面的字，Delete\x20删光标后面的字；按错键就换一个键。'},{'q':_0x538679(0x118),'opts':['用计算器一个一个加再填进去','点「Σ\x20自动求和」',_0x538679(0x116),_0x538679(0x11d)],'a':0x1,'exp':_0x538679(0x113)},{'q':'Excel\x20表格排序前，最重要的一步是？','opts':['选中整个数据区域再排序',_0x538679(0x115),_0x538679(0x117),'先把字体调大'],'a':0x0,'exp':'只点一列排序会让其他列不跟着动、表格错位；要先选中全部数据（表头+所有行）再排序。'},{'q':'PPT\x20里\x22放映幻灯片\x22的快捷键是？','opts':['F5',_0x538679(0x127),'Delete',_0x538679(0x12b)],'a':0x0,'exp':'F5\x20从头放映，Esc\x20退出放映；翻页点鼠标或按空格/方向键。'},{'q':'想把\x20PPT\x20里的照片放大一点，正确的做法是？','opts':[_0x538679(0x12a),'按住照片四角的小白点缩放','双击照片',_0x538679(0x124)],'a':0x1,'exp':_0x538679(0x122)},{'q':'WPS\x20相比微软\x20Office\x20的最大特点是？','opts':[_0x538679(0x121),'免费，且文字/表格/演示三合一、文件互相兼容',_0x538679(0x128),'需要联网才能用'],'a':0x1,'exp':_0x538679(0x111)},{'q':'打印一份\x2010\x20页的文档，想省纸，应该设置？','opts':[_0x538679(0x11b),_0x538679(0x120),_0x538679(0x126),_0x538679(0x11a)],'a':0x1,'exp':'双面打印一页纸打两面，省纸一半；打印前先在预览里看排版。'},{'q':'收到一封\x22您的账户异常，点击链接验证否则冻结\x22的邮件，应该？','opts':['马上点链接验证',_0x538679(0x123),'不点链接、不输密码——可疑邮件直接删除，拿不准电话核实','回复邮件解释'],'a':0x2,'exp':_0x538679(0x11f)}]});});
 </script>
 </body>
 </html>

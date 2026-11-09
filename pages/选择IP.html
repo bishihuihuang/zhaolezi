@@ -540,6 +540,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -584,7 +654,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-const _0x51e789=_0x195c,ipPool=['玩围棋的阿尔法狗','门外的扫地僧',_0x51e789(0xb1),'西毒（欧阳锋）','南帝（射雕英雄传）',_0x51e789(0xbc),'独孤求败',_0x51e789(0xb8),'杨过','小龙女','灭绝师太','火云邪神（电影：功夫）',_0x51e789(0xc3),'呆傻的光之子','云巢','晨岛','云野','雨林','霞谷','暮土','禁阁',_0x51e789(0xbe),_0x51e789(0xaa),'邪恶的贝拉特里克斯','优雅的马尔福','邋遢的阿布思.邓布利多',_0x51e789(0xa6),_0x51e789(0xa7),'百岁的麦格教授',_0x51e789(0xc1),_0x51e789(0xab)],usedIps=[];let nameInput=document[_0x51e789(0xc0)](_0x51e789(0xad)),ipInput=document['getElementById']('ipInput'),refreshBtn=document[_0x51e789(0xc0)]('refreshBtn'),confirmBtn=document['getElementById']('confirmBtn');refreshBtn['addEventListener'](_0x51e789(0xbd),function(){const _0x550847=_0x51e789,_0x2f79e2=ipPool[_0x550847(0xb4)](function(_0x268041){const _0x2d3586=_0x550847;return usedIps[_0x2d3586(0xb6)](_0x268041)===-0x1;});if(_0x2f79e2['length']===0x0){alert('提示：IP池已耗尽，暂无可用的虚拟IP！'),ipInput['value']='',confirmBtn[_0x550847(0xb3)]=!![];return;}const _0x26455b=Math['floor'](Math['random']()*_0x2f79e2['length']),_0x307b97=_0x2f79e2[_0x26455b];usedIps[_0x550847(0xac)](_0x307b97),ipInput[_0x550847(0xc2)]=_0x307b97,confirmBtn[_0x550847(0xb3)]=![];});function _0x195c(_0x2e56a8,_0x3cbfa6){_0x2e56a8=_0x2e56a8-0xa1;const _0x195cd8=_0x3cbf();let _0x54d15f=_0x195cd8[_0x2e56a8];return _0x54d15f;}let isTransitioning=![];function _0x3cbf(){const _0x246116=['show','classList','location','appendChild','未填写','白人斯内普','搞事的哈利波特','key','add','没鼻子的汤姆.里德尔','天才威','push','nameInput','授权确认.html','getSeconds','getFullYear','东邪（黄老邪）','revokeObjectURL','disabled','filter','getMinutes','indexOf','remove','张无忌','createObjectURL','backLink','虚拟IP：','北丐（洪七公）','click','郭靖（射雕英雄传）','trim','getElementById','港潮奶奶','value','善良的冥龙','href'];_0x3cbf=function(){return _0x246116;};return _0x3cbf();}function showTransition(_0x243116){const _0xa3cd59=_0x51e789;if(isTransitioning)return;isTransitioning=!![],document[_0xa3cd59(0xc0)]('transitionMask')['classList'][_0xa3cd59(0xa9)]('show'),setTimeout(function(){const _0x343c7f=_0xa3cd59;window[_0x343c7f(0xa3)]['href']=_0x243116;},0x3e8);}document[_0x51e789(0xc0)](_0x51e789(0xba))['addEventListener'](_0x51e789(0xbd),function(_0x152cd6){const _0x44681a=_0x51e789;_0x152cd6['preventDefault'](),showTransition(_0x44681a(0xae));}),confirmBtn['addEventListener']('click',function(){const _0x464760=_0x51e789,_0x510c0b=nameInput[_0x464760(0xc2)][_0x464760(0xbf)]()||_0x464760(0xa5),_0x54b460=ipInput['value'],_0xd1c1b8=new Date(),_0x57e9df=function(_0x51c283){return _0x51c283<0xa?'0'+_0x51c283:''+_0x51c283;},_0x4963ed=_0xd1c1b8[_0x464760(0xb0)]()+'-'+_0x57e9df(_0xd1c1b8['getMonth']()+0x1)+'-'+_0x57e9df(_0xd1c1b8['getDate']())+'\x20'+_0x57e9df(_0xd1c1b8['getHours']())+':'+_0x57e9df(_0xd1c1b8[_0x464760(0xb5)]())+':'+_0x57e9df(_0xd1c1b8[_0x464760(0xaf)]()),_0x2c29b5='真实姓名：'+_0x510c0b+'\x0d\x0a'+_0x464760(0xbb)+_0x54b460+'\x0d\x0a'+'时间：'+_0x4963ed,_0x34608c=new Blob([_0x2c29b5],{'type':'text/plain;charset=utf-8'}),_0x23bdf4=URL[_0x464760(0xb9)](_0x34608c),_0x303031=document['createElement']('a');_0x303031[_0x464760(0xc4)]=_0x23bdf4,_0x303031['download']='IP登录信息_'+_0x4963ed['replace'](/[: ]/g,'-')+'.txt',document['body'][_0x464760(0xa4)](_0x303031),_0x303031[_0x464760(0xbd)](),document['body']['removeChild'](_0x303031),URL[_0x464760(0xb2)](_0x23bdf4),showTransition('媒体池.html');}),document['addEventListener']('keydown',function(_0x2647f5){const _0xf333d1=_0x51e789;if(_0x2647f5[_0xf333d1(0xa8)]==='Escape'){let _0x1a8dee=document[_0xf333d1(0xc0)]('transitionMask');_0x1a8dee[_0xf333d1(0xa2)]['contains']('show')&&(_0x1a8dee[_0xf333d1(0xa2)][_0xf333d1(0xb7)](_0xf333d1(0xa1)),isTransitioning=![]);}});
+const _0x5904e8=_0x3040,ipPool=['玩围棋的阿尔法狗','门外的扫地僧','东邪（黄老邪）','西毒（欧阳锋）','南帝（射雕英雄传）',_0x5904e8(0x11d),'独孤求败','张无忌','杨过',_0x5904e8(0x131),'灭绝师太','火云邪神（电影：功夫）',_0x5904e8(0x11f),_0x5904e8(0x133),'云巢','晨岛','云野','雨林','霞谷','暮土','禁阁',_0x5904e8(0x129),_0x5904e8(0x123),'邪恶的贝拉特里克斯','优雅的马尔福',_0x5904e8(0x128),'白人斯内普','搞事的哈利波特','百岁的麦格教授','港潮奶奶','天才威'],usedIps=[];let nameInput=document['getElementById']('nameInput'),ipInput=document['getElementById']('ipInput'),refreshBtn=document['getElementById']('refreshBtn'),confirmBtn=document['getElementById']('confirmBtn');refreshBtn[_0x5904e8(0x11a)]('click',function(){const _0x4d7c30=_0x5904e8,_0x12d24d=ipPool['filter'](function(_0xe68fb9){const _0x1435f2=_0x3040;return usedIps[_0x1435f2(0x124)](_0xe68fb9)===-0x1;});if(_0x12d24d[_0x4d7c30(0x12b)]===0x0){alert('提示：IP池已耗尽，暂无可用的虚拟IP！'),ipInput[_0x4d7c30(0x12a)]='',confirmBtn[_0x4d7c30(0x127)]=!![];return;}const _0x344da6=Math['floor'](Math['random']()*_0x12d24d[_0x4d7c30(0x12b)]),_0x37de12=_0x12d24d[_0x344da6];usedIps[_0x4d7c30(0x132)](_0x37de12),ipInput[_0x4d7c30(0x12a)]=_0x37de12,confirmBtn['disabled']=![];});function _0x3040(_0xe5eab1,_0x15b578){_0xe5eab1=_0xe5eab1-0x11a;const _0x30402c=_0x15b5();let _0x41bfc8=_0x30402c[_0xe5eab1];return _0x41bfc8;}function _0x15b5(){const _0x46fd4b=['addEventListener','backLink','getSeconds','北丐（洪七公）','getMinutes','善良的冥龙','getHours','keydown','媒体池.html','没鼻子的汤姆.里德尔','indexOf','click','.txt','disabled','邋遢的阿布思.邓布利多','郭靖（射雕英雄传）','value','length','revokeObjectURL','classList','replace','授权确认.html','transitionMask','小龙女','push','呆傻的光之子','text/plain;charset=utf-8','remove','getElementById','body'];_0x15b5=function(){return _0x46fd4b;};return _0x15b5();}let isTransitioning=![];function showTransition(_0x4b30ae){const _0x588c8b=_0x5904e8;if(isTransitioning)return;isTransitioning=!![],document[_0x588c8b(0x136)]('transitionMask')[_0x588c8b(0x12d)]['add']('show'),setTimeout(function(){window['location']['href']=_0x4b30ae;},0x3e8);}document['getElementById'](_0x5904e8(0x11b))['addEventListener']('click',function(_0xfbe59b){const _0x1424a7=_0x5904e8;_0xfbe59b['preventDefault'](),showTransition(_0x1424a7(0x12f));}),confirmBtn[_0x5904e8(0x11a)](_0x5904e8(0x125),function(){const _0x58a429=_0x5904e8,_0x4663a6=nameInput[_0x58a429(0x12a)]['trim']()||'未填写',_0x10b589=ipInput['value'],_0x58ce8d=new Date(),_0x2a9f90=function(_0x367852){return _0x367852<0xa?'0'+_0x367852:''+_0x367852;},_0x40fc16=_0x58ce8d['getFullYear']()+'-'+_0x2a9f90(_0x58ce8d['getMonth']()+0x1)+'-'+_0x2a9f90(_0x58ce8d['getDate']())+'\x20'+_0x2a9f90(_0x58ce8d[_0x58a429(0x120)]())+':'+_0x2a9f90(_0x58ce8d[_0x58a429(0x11e)]())+':'+_0x2a9f90(_0x58ce8d[_0x58a429(0x11c)]()),_0x7823c4='真实姓名：'+_0x4663a6+'\x0d\x0a'+'虚拟IP：'+_0x10b589+'\x0d\x0a'+'时间：'+_0x40fc16,_0x360501=new Blob([_0x7823c4],{'type':_0x58a429(0x134)}),_0x34d8ce=URL['createObjectURL'](_0x360501),_0xda6f72=document['createElement']('a');_0xda6f72['href']=_0x34d8ce,_0xda6f72['download']='IP登录信息_'+_0x40fc16[_0x58a429(0x12e)](/[: ]/g,'-')+_0x58a429(0x126),document[_0x58a429(0x137)]['appendChild'](_0xda6f72),_0xda6f72['click'](),document[_0x58a429(0x137)]['removeChild'](_0xda6f72),URL[_0x58a429(0x12c)](_0x34d8ce),showTransition(_0x58a429(0x122));}),document['addEventListener'](_0x5904e8(0x121),function(_0x23dd37){const _0x263e98=_0x5904e8;if(_0x23dd37['key']==='Escape'){let _0x2bd92a=document[_0x263e98(0x136)](_0x263e98(0x130));_0x2bd92a['classList']['contains']('show')&&(_0x2bd92a['classList'][_0x263e98(0x135)]('show'),isTransitioning=![]);}});
 </script>
 
 <a class="home-fab" id="homeFab" href="娱乐游戏.html" aria-label="返回主程序" title="返回主程序">🏠</a>
@@ -593,7 +663,7 @@ const _0x51e789=_0x195c,ipPool=['玩围棋的阿尔法狗','门外的扫地僧',
 </div>
 <script>
 /*ZL-OBF-V2*/
-function _0x3362(_0x419e43,_0x4865b6){_0x419e43=_0x419e43-0x16c;var _0x336259=_0x4865();var _0x426c70=_0x336259[_0x419e43];return _0x426c70;}function _0x4865(){var _0x33b885=['location','getElementById','Escape','addEventListener','href','key','getAttribute'];_0x4865=function(){return _0x33b885;};return _0x4865();}(function(){var _0x2aa09a=_0x3362,_0x3cff5f=document['getElementById']('homeFab'),_0x5ad3c2=document[_0x2aa09a(0x16d)]('homeOverlay');if(!_0x3cff5f||!_0x5ad3c2)return;var _0x19b6d6=![];_0x3cff5f[_0x2aa09a(0x16f)]('click',function(_0x453ffc){_0x453ffc['preventDefault']();if(_0x19b6d6)return;_0x19b6d6=!![],_0x5ad3c2['classList']['add']('show'),setTimeout(function(){var _0x260dde=_0x3362;window[_0x260dde(0x16c)][_0x260dde(0x170)]=_0x3cff5f[_0x260dde(0x172)]('href');},0x4b0);}),document['addEventListener']('keydown',function(_0x361791){var _0x3cef9c=_0x2aa09a;_0x361791[_0x3cef9c(0x171)]===_0x3cef9c(0x16e)&&_0x5ad3c2['classList']['contains']('show')&&(_0x5ad3c2['classList']['remove']('show'),_0x19b6d6=![]);});}());
+(function(){var _0xc60c91=_0x22c6,_0x4ed6f8=document[_0xc60c91(0x15c)](_0xc60c91(0x15e)),_0x4b7aae=document[_0xc60c91(0x15c)](_0xc60c91(0x15b));if(!_0x4ed6f8||!_0x4b7aae)return;var _0x5b2d4b=![];_0x4ed6f8['addEventListener']('click',function(_0x46b69c){var _0x426d4a=_0xc60c91;_0x46b69c[_0x426d4a(0x15a)]();if(_0x5b2d4b)return;_0x5b2d4b=!![],_0x4b7aae['classList'][_0x426d4a(0x160)]('show'),setTimeout(function(){var _0x3c49ab=_0x426d4a;window['location']['href']=_0x4ed6f8[_0x3c49ab(0x15d)]('href');},0x4b0);}),document['addEventListener']('keydown',function(_0x3ce23e){var _0x5315f8=_0xc60c91;_0x3ce23e['key']==='Escape'&&_0x4b7aae['classList'][_0x5315f8(0x15f)]('show')&&(_0x4b7aae['classList']['remove']('show'),_0x5b2d4b=![]);});}());function _0x22c6(_0x35c9cd,_0x34df10){_0x35c9cd=_0x35c9cd-0x15a;var _0x22c67e=_0x34df();var _0x57dcd6=_0x22c67e[_0x35c9cd];return _0x57dcd6;}function _0x34df(){var _0x56af09=['preventDefault','homeOverlay','getElementById','getAttribute','homeFab','contains','add'];_0x34df=function(){return _0x56af09;};return _0x34df();}
 </script>
 </body>
 </html>

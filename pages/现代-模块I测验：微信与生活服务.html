@@ -48,6 +48,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -94,7 +164,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-var _0x478c9c=_0x518e;function _0x518e(_0x34bde8,_0x23eb1d){_0x34bde8=_0x34bde8-0x1c5;var _0x518eb3=_0x23eb();var _0x35ed9d=_0x518eb3[_0x34bde8];return _0x35ed9d;}document[_0x478c9c(0x1cb)](_0x478c9c(0x1c5),function(){var _0xa4d161=_0x478c9c;if(!window['XD']||!XD['quiz'])return;XD['quiz'][_0xa4d161(0x1d8)]('quiz',{'id':'I','title':'模块I测验：微信与生活服务','questions':[{'q':_0xa4d161(0x1d4),'opts':['告诉客服帮忙操作',_0xa4d161(0x1dc),'发到朋友圈',_0xa4d161(0x1d2)],'a':0x1,'exp':'验证码是账号的钥匙，包括自称\x22客服\x22\x22警察\x22的人在内，任何人都不能给。'},{'q':'想和远方儿女\x22见面\x22聊天，最方便的方式是？','opts':['发短信','打微信视频电话',_0xa4d161(0x1d6),'发朋友圈'],'a':0x1,'exp':'微信视频通话免费（用流量/WiFi），就像面对面一样，还能切换前后摄像头。'},{'q':'路边有人要加你微信好友，你根本不认识他，应该？','opts':[_0xa4d161(0x1d5),'不通过——只加认识的人',_0xa4d161(0x1d9),'把手机号告诉他'],'a':0x1,'exp':_0xa4d161(0x1ca)},{'q':'下面哪一条是朋友圈的正确使用习惯？','opts':['晒身份证照片','晒银行卡','把家庭住址、孩子学校发上去',_0xa4d161(0x1cd)],'a':0x3,'exp':_0xa4d161(0x1d7)},{'q':'关注公众号时，怎么判断是不是官方的？','opts':['看名字像就行',_0xa4d161(0x1d3),_0xa4d161(0x1db),'随便关注，反正能取关'],'a':0x1,'exp':'认准认证标识（蓝色✓或机构全称）；山寨号常发\x22领补贴\x22\x22退款\x22链接骗人。'},{'q':'在超市结账时，收银员说\x22出示付款码\x22，你应该？','opts':['把付款码截图发给他','打开微信「我→服务→收付款」展示二维码让他扫','告诉他支付密码','给他银行卡号'],'a':0x1,'exp':'付款码是给收银机扫的，扫完输支付密码扣款；付款码绝不截图、不乱发。'},{'q':_0xa4d161(0x1da),'opts':[_0xa4d161(0x1c8),'挂断——银行绝不会电话索要支付密码','先给一半密码试探','加他微信聊'],'a':0x1,'exp':_0xa4d161(0x1cf)},{'q':_0xa4d161(0x1c7),'opts':['生活缴费','花呗','余额宝','我的快递'],'a':0x0,'exp':'支付宝首页「生活缴费」输入户号即可交水、电、燃气费，不用跑营业厅。'},{'q':'坐公交地铁用手机，正确姿势是？','opts':['到车站现场买票',_0xa4d161(0x1d1),'把银行卡放闸机上',_0xa4d161(0x1cc)],'a':0x1,'exp':_0xa4d161(0x1d0)},{'q':_0xa4d161(0x1ce),'opts':['微信搜\x22代挂号\x22让人代办',_0xa4d161(0x1c6),_0xa4d161(0x1c9),'到网上随意填身份证办卡'],'a':0x1,'exp':'只在医院官方渠道挂号；\x22代挂号\x22\x22黄牛号\x22多是骗子，要求提前转账的更是诈骗。'}]});});function _0x23eb(){var _0x39cfb2=['DOMContentLoaded','医院官方公众号/小程序的预约挂号，认准官方认证','支付宝里想给家里交电费，应该用哪个功能？','照做，帮他解冻','网上搜\x22专家号\x22转账购买','陌生人加好友往往是推销或诈骗的开端，一律不通过，拿不准问家人。','addEventListener','上车后用手机打电话','不发布身份证、银行卡、住址等隐私信息','网上挂号看病，最稳妥的渠道是？','支付密码、验证码任何人都不给，自称客服/警察索要的\x20100%\x20是骗子。','乘车码一刷就过，费用自动从微信/支付宝扣，省去购票找零。','打开支付宝「出行」的乘车码对准扫码口，费用自动扣','告诉微信好友群里的人','看有没有官方认证标识和机构名称','注册微信、登录时收到的短信验证码，正确的处理是？','先加上再说','写电子邮件','朋友圈是半公开场合，身份证、银行卡、家庭住址、孩子学校都别发，防止信息泄露。','run','让他扫付款码','有人打电话自称\x22银行客服\x22，要你提供支付密码\x22解冻账户\x22，正确的做法是？','看粉丝多不多','任何人都不给，验证码等于账号钥匙'];_0x23eb=function(){return _0x39cfb2;};return _0x23eb();}
+var _0x5455ea=_0x4e95;document['addEventListener'](_0x5455ea(0xab),function(){var _0x586044=_0x5455ea;if(!window['XD']||!XD[_0x586044(0xb3)])return;XD['quiz']['run']('quiz',{'id':'I','title':_0x586044(0xbe),'questions':[{'q':'注册微信、登录时收到的短信验证码，正确的处理是？','opts':[_0x586044(0xaa),_0x586044(0xaf),'发到朋友圈',_0x586044(0xb0)],'a':0x1,'exp':'验证码是账号的钥匙，包括自称\x22客服\x22\x22警察\x22的人在内，任何人都不能给。'},{'q':_0x586044(0xad),'opts':['发短信',_0x586044(0xac),'写电子邮件','发朋友圈'],'a':0x1,'exp':_0x586044(0xb7)},{'q':'路边有人要加你微信好友，你根本不认识他，应该？','opts':['先加上再说','不通过——只加认识的人','让他扫付款码',_0x586044(0xb6)],'a':0x1,'exp':'陌生人加好友往往是推销或诈骗的开端，一律不通过，拿不准问家人。'},{'q':'下面哪一条是朋友圈的正确使用习惯？','opts':[_0x586044(0xb4),_0x586044(0xba),_0x586044(0xb5),'不发布身份证、银行卡、住址等隐私信息'],'a':0x3,'exp':'朋友圈是半公开场合，身份证、银行卡、家庭住址、孩子学校都别发，防止信息泄露。'},{'q':_0x586044(0xb8),'opts':[_0x586044(0xbb),'看有没有官方认证标识和机构名称','看粉丝多不多','随便关注，反正能取关'],'a':0x1,'exp':'认准认证标识（蓝色✓或机构全称）；山寨号常发\x22领补贴\x22\x22退款\x22链接骗人。'},{'q':'在超市结账时，收银员说\x22出示付款码\x22，你应该？','opts':[_0x586044(0xbc),_0x586044(0xb2),'告诉他支付密码','给他银行卡号'],'a':0x1,'exp':_0x586044(0xbf)},{'q':'有人打电话自称\x22银行客服\x22，要你提供支付密码\x22解冻账户\x22，正确的做法是？','opts':['照做，帮他解冻','挂断——银行绝不会电话索要支付密码','先给一半密码试探','加他微信聊'],'a':0x1,'exp':_0x586044(0xb1)},{'q':_0x586044(0xbd),'opts':['生活缴费','花呗','余额宝',_0x586044(0xae)],'a':0x0,'exp':'支付宝首页「生活缴费」输入户号即可交水、电、燃气费，不用跑营业厅。'},{'q':'坐公交地铁用手机，正确姿势是？','opts':[_0x586044(0xc0),'打开支付宝「出行」的乘车码对准扫码口，费用自动扣','把银行卡放闸机上','上车后用手机打电话'],'a':0x1,'exp':'乘车码一刷就过，费用自动从微信/支付宝扣，省去购票找零。'},{'q':_0x586044(0xb9),'opts':['微信搜\x22代挂号\x22让人代办','医院官方公众号/小程序的预约挂号，认准官方认证','网上搜\x22专家号\x22转账购买',_0x586044(0xa9)],'a':0x1,'exp':'只在医院官方渠道挂号；\x22代挂号\x22\x22黄牛号\x22多是骗子，要求提前转账的更是诈骗。'}]});});function _0x4e95(_0x4cb461,_0x2cb3d8){_0x4cb461=_0x4cb461-0xa9;var _0x4e95e5=_0x2cb3();var _0x54babf=_0x4e95e5[_0x4cb461];return _0x54babf;}function _0x2cb3(){var _0xb57506=['到网上随意填身份证办卡','告诉客服帮忙操作','DOMContentLoaded','打微信视频电话','想和远方儿女\x22见面\x22聊天，最方便的方式是？','我的快递','任何人都不给，验证码等于账号钥匙','告诉微信好友群里的人','支付密码、验证码任何人都不给，自称客服/警察索要的\x20100%\x20是骗子。','打开微信「我→服务→收付款」展示二维码让他扫','quiz','晒身份证照片','把家庭住址、孩子学校发上去','把手机号告诉他','微信视频通话免费（用流量/WiFi），就像面对面一样，还能切换前后摄像头。','关注公众号时，怎么判断是不是官方的？','网上挂号看病，最稳妥的渠道是？','晒银行卡','看名字像就行','把付款码截图发给他','支付宝里想给家里交电费，应该用哪个功能？','模块I测验：微信与生活服务','付款码是给收银机扫的，扫完输支付密码扣款；付款码绝不截图、不乱发。','到车站现场买票'];_0x2cb3=function(){return _0xb57506;};return _0x2cb3();}
 </script>
 </body>
 </html>

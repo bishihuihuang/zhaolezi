@@ -563,6 +563,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -606,7 +676,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-function _0x32b3(){const _0x568e94=['更新国庆多科作业','appendChild','<h2>看看作业——更新公告</h2>','style','看看作业.html','animationDelay','grid','isArray','div','createElement','2026-10-01','更新第5周作业','看看作业网页启动','location','innerHTML','2026-10-02','date','remove','2026-10-03','优化手机版体验','textContent'];_0x32b3=function(){return _0x568e94;};return _0x32b3();}const _0x53b287=_0x1af3,announcementsConfig=[{'date':'2026-10-10','content':_0x53b287(0xe0)},{'date':'2026-10-03','content':'更新了以实玛利的作文'},{'date':_0x53b287(0xe7),'content':_0x53b287(0xe8)},{'date':_0x53b287(0xe4),'content':'更新了碧世辉煌的征文《官逼民反的另一种真相》'},{'date':'2026-10-02','content':_0x53b287(0xd5)},{'date':_0x53b287(0xe4),'content':'反馈渠道更新'},{'date':_0x53b287(0xdf),'content':_0x53b287(0xe1)}];function createTitleArea(){const _0x9755da=_0x53b287,_0x65ae34=document[_0x9755da(0xde)](_0x9755da(0xdd));return _0x65ae34['className']='title-area',_0x65ae34[_0x9755da(0xe3)]=_0x9755da(0xd7),_0x65ae34;}function createBackArea(){const _0xac4510=_0x53b287,_0x359415=document['createElement']('a');return _0x359415['className']='back-area',_0x359415['href']=_0xac4510(0xd9),_0x359415['textContent']='返回主页',_0x359415['setAttribute']('aria-label','返回主页'),_0x359415['title']='返回主页',_0x359415['addEventListener']('click',function(_0xe12bac){const _0x301bfb=_0xac4510;_0xe12bac['preventDefault'](),showLoadingOverlay(_0x301bfb(0xd9));}),_0x359415;}function createAnnouncementCard(_0xabacda,_0x21158a){const _0x1f31bc=_0x53b287,_0x395b43=document['createElement'](_0x1f31bc(0xdd));_0x395b43['className']='announcement-card',_0x395b43[_0x1f31bc(0xd8)][_0x1f31bc(0xda)]=0.1+_0x21158a*0.1+'s';const _0x4c5029=document['createElement']('span');_0x4c5029['className']=_0x1f31bc(0xe5),_0x4c5029[_0x1f31bc(0xe9)]=_0xabacda[_0x1f31bc(0xe5)];const _0x321270=document['createElement']('div');return _0x321270['className']='content',_0x321270['textContent']=_0xabacda['content'],_0x395b43['appendChild'](_0x4c5029),_0x395b43['appendChild'](_0x321270),_0x395b43;}function _0x1af3(_0x280fcb,_0x32b316){_0x280fcb=_0x280fcb-0xd5;const _0x1af3fb=_0x32b3();let _0x518480=_0x1af3fb[_0x280fcb];return _0x518480;}function renderAnnouncements(){const _0x200bad=_0x53b287,_0x3184ea=document['getElementById'](_0x200bad(0xdb));_0x3184ea[_0x200bad(0xe3)]='',_0x3184ea['appendChild'](createTitleArea()),_0x3184ea['appendChild'](createBackArea());const _0x1eec22=[...announcementsConfig]['sort']((_0x1cdf55,_0x2773a1)=>new Date(_0x2773a1['date'])-new Date(_0x1cdf55['date']));_0x1eec22['forEach']((_0x769db9,_0x5d0ae7)=>{const _0x20afe7=_0x200bad;_0x3184ea[_0x20afe7(0xd6)](createAnnouncementCard(_0x769db9,_0x5d0ae7));});}let overlayTimer=null;function showLoadingOverlay(_0x127e3e){const _0x92f59e=document['getElementById']('overlay');_0x92f59e['classList']['add']('active'),overlayTimer&&clearTimeout(overlayTimer),overlayTimer=setTimeout(()=>{const _0x281b9b=_0x1af3;_0x92f59e['classList'][_0x281b9b(0xe6)]('active'),_0x127e3e&&_0x127e3e!=='#'&&(window[_0x281b9b(0xe2)]['href']=_0x127e3e);},0x3e8);}document['addEventListener']('DOMContentLoaded',function(){renderAnnouncements(),window['refreshAnnouncements']=function(_0x3cb304){const _0x1546a2=_0x1af3;_0x3cb304&&Array[_0x1546a2(0xdc)](_0x3cb304)&&(announcementsConfig['length']=0x0,announcementsConfig['push'](..._0x3cb304)),renderAnnouncements();};});
+function _0x3ff2(_0x39be55,_0x3d129f){_0x39be55=_0x39be55-0xf3;const _0x3ff215=_0x3d12();let _0x18609f=_0x3ff215[_0x39be55];return _0x18609f;}const _0x28b048=_0x3ff2,announcementsConfig=[{'date':'2026-10-10','content':'更新第5周作业'},{'date':_0x28b048(0xf4),'content':'更新了以实玛利的作文'},{'date':'2026-10-03','content':'优化手机版体验'},{'date':_0x28b048(0x103),'content':'更新了碧世辉煌的征文《官逼民反的另一种真相》'},{'date':_0x28b048(0x103),'content':_0x28b048(0x102)},{'date':_0x28b048(0x103),'content':'反馈渠道更新'},{'date':'2026-10-01','content':'看看作业网页启动'}];function createTitleArea(){const _0x49285e=_0x28b048,_0x48b768=document['createElement']('div');return _0x48b768[_0x49285e(0xff)]='title-area',_0x48b768[_0x49285e(0xf7)]='<h2>看看作业——更新公告</h2>',_0x48b768;}function createBackArea(){const _0x10a900=_0x28b048,_0x275a9f=document[_0x10a900(0x107)]('a');return _0x275a9f[_0x10a900(0xff)]='back-area',_0x275a9f['href']='看看作业.html',_0x275a9f[_0x10a900(0xfc)]=_0x10a900(0x100),_0x275a9f['setAttribute'](_0x10a900(0x10a),_0x10a900(0x100)),_0x275a9f['title']='返回主页',_0x275a9f['addEventListener']('click',function(_0x542f50){const _0x430393=_0x10a900;_0x542f50[_0x430393(0x105)](),showLoadingOverlay('看看作业.html');}),_0x275a9f;}function createAnnouncementCard(_0x4038fb,_0x376ba3){const _0x56a618=_0x28b048,_0x4b4e7c=document['createElement'](_0x56a618(0x109));_0x4b4e7c[_0x56a618(0xff)]='announcement-card',_0x4b4e7c[_0x56a618(0x104)]['animationDelay']=0.1+_0x376ba3*0.1+'s';const _0x48f63d=document[_0x56a618(0x107)]('span');_0x48f63d['className']='date',_0x48f63d['textContent']=_0x4038fb[_0x56a618(0xf3)];const _0x38b34d=document['createElement']('div');return _0x38b34d[_0x56a618(0xff)]='content',_0x38b34d[_0x56a618(0xfc)]=_0x4038fb['content'],_0x4b4e7c['appendChild'](_0x48f63d),_0x4b4e7c[_0x56a618(0xf8)](_0x38b34d),_0x4b4e7c;}function renderAnnouncements(){const _0x4f766e=_0x28b048,_0x38ab7e=document[_0x4f766e(0xfd)]('grid');_0x38ab7e['innerHTML']='',_0x38ab7e['appendChild'](createTitleArea()),_0x38ab7e[_0x4f766e(0xf8)](createBackArea());const _0x54825c=[...announcementsConfig]['sort']((_0x4aca29,_0x4f4127)=>new Date(_0x4f4127[_0x4f766e(0xf3)])-new Date(_0x4aca29['date']));_0x54825c[_0x4f766e(0xf6)]((_0x3724ed,_0x2ba8c5)=>{_0x38ab7e['appendChild'](createAnnouncementCard(_0x3724ed,_0x2ba8c5));});}let overlayTimer=null;function showLoadingOverlay(_0x525d68){const _0x541a54=_0x28b048,_0x50aa95=document['getElementById'](_0x541a54(0x108));_0x50aa95['classList'][_0x541a54(0x106)](_0x541a54(0xfb)),overlayTimer&&clearTimeout(overlayTimer),overlayTimer=setTimeout(()=>{const _0xd7ddd5=_0x541a54;_0x50aa95['classList']['remove']('active'),_0x525d68&&_0x525d68!=='#'&&(window['location'][_0xd7ddd5(0xf9)]=_0x525d68);},0x3e8);}document[_0x28b048(0xf5)](_0x28b048(0xfe),function(){const _0xc0eca0=_0x28b048;renderAnnouncements(),window[_0xc0eca0(0x101)]=function(_0x567fc8){const _0x429451=_0xc0eca0;_0x567fc8&&Array['isArray'](_0x567fc8)&&(announcementsConfig['length']=0x0,announcementsConfig[_0x429451(0xfa)](..._0x567fc8)),renderAnnouncements();};});function _0x3d12(){const _0x51a67a=['date','2026-10-03','addEventListener','forEach','innerHTML','appendChild','href','push','active','textContent','getElementById','DOMContentLoaded','className','返回主页','refreshAnnouncements','更新国庆多科作业','2026-10-02','style','preventDefault','add','createElement','overlay','div','aria-label'];_0x3d12=function(){return _0x51a67a;};return _0x3d12();}
 </script>
 </body>
 </html>

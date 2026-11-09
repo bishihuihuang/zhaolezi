@@ -492,6 +492,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -537,7 +607,7 @@
     <script src="../assets/js/17-data.js"></script>
     <script>
 /*ZL-OBF-V2*/
-const _0x4ef027=_0x29a4;function createSnowflakes(){const _0x7289c0=_0x29a4,_0x39299e=0x28;for(let _0x4b72d9=0x0;_0x4b72d9<_0x39299e;_0x4b72d9++){const _0x581f06=document['createElement']('div');_0x581f06['classList'][_0x7289c0(0x175)]('snowflake');const _0x49045e=Math['random']()*0x5+0x3;_0x581f06['style']['width']=_0x49045e+'px',_0x581f06['style']['height']=_0x49045e+'px',_0x581f06['style']['left']=Math['random']()*0x64+'vw',_0x581f06[_0x7289c0(0x177)][_0x7289c0(0x151)]=0x5+Math['random']()*0x7+'s',_0x581f06['style'][_0x7289c0(0x169)]=Math['random']()*0x7+'s',document['body']['appendChild'](_0x581f06);}}createSnowflakes();const triggerMap=window[_0x4ef027(0x17c)],secretInput=document['getElementById']('secretInput'),outputZone=document['getElementById']('outputZone'),refreshBtn=document['getElementById']('refreshBtn');function showToast(_0x4267a0){const _0x62f169=_0x4ef027,_0x5cf063=document[_0x62f169(0x171)](_0x62f169(0x16c));if(_0x5cf063)_0x5cf063[_0x62f169(0x17d)]();const _0x3cd715=document['createElement'](_0x62f169(0x16f));_0x3cd715[_0x62f169(0x16a)]='toast-msg',_0x3cd715['textContent']=_0x4267a0,document['body']['appendChild'](_0x3cd715),setTimeout(()=>{const _0x1bc491=_0x62f169;_0x3cd715['style']['opacity']='0',_0x3cd715[_0x1bc491(0x177)][_0x1bc491(0x172)]='translateX(-50%)\x20translateY(10px)',setTimeout(()=>_0x3cd715[_0x1bc491(0x17d)](),0x12c);},0x7d0);}function _0x578b(){const _0x4d582f=['audio','Enter','娱乐游戏.html','animationDuration','<div\x20style=\x22color:var(--red);\x22>音频文件未找到：','</div>','onerror','pos','file','trigger','<div\x20style=\x22color:var(--red);\x22>图片文件未找到：','sort','preload','display-file-label','map','文本来源：','location','image','addEventListener','preventDefault','src','transitionOverlay','floor','<div\x20style=\x22color:var(--red);\x22>视频文件未找到：','display-image','video','random','animationDelay','className','key','.toast-msg','href','classList','div','auto','querySelector','transform','appendChild','createElement','add','saveRecent','style','innerHTML','textContent','controls','active','ZL17','remove','value','已随机显示一条暗号'];_0x578b=function(){return _0x4d582f;};return _0x578b();}refreshBtn['addEventListener']('click',function(){const _0x2eb5f9=_0x4ef027,_0x1568d8=triggerMap['filter'](_0x50e49f=>_0x50e49f['type']==='text');if(_0x1568d8['length']===0x0)return;const _0x239c1d=Math[_0x2eb5f9(0x164)](Math['random']()*_0x1568d8['length']),_0x912173=_0x1568d8[_0x239c1d];displayMatch(_0x912173),showToast(_0x2eb5f9(0x17f));}),secretInput['addEventListener']('keydown',function(_0x30a527){const _0x402cee=_0x4ef027;if(_0x30a527[_0x402cee(0x16b)]===_0x402cee(0x14f)){const _0x291c13=secretInput[_0x402cee(0x17e)]['trim']();if(_0x291c13==='')return;const _0x483de4=triggerMap[_0x402cee(0x15c)](_0x3f8ef7=>{const _0x498f0f=_0x291c13['indexOf'](_0x3f8ef7['trigger']);return{'item':_0x3f8ef7,'pos':_0x498f0f};})['filter'](_0x5904d5=>_0x5904d5[_0x402cee(0x155)]!==-0x1);if(_0x483de4['length']>0x0)_0x483de4[_0x402cee(0x159)]((_0x472b7a,_0x2d22c7)=>_0x472b7a['pos']-_0x2d22c7['pos']),displayMatch(_0x483de4[0x0]['item']);else{const _0x6cb324=triggerMap[Math['floor'](Math[_0x402cee(0x168)]()*triggerMap['length'])];outputZone[_0x402cee(0x178)]='<div\x20style=\x22color:var(--gold);\x22>输入'+_0x6cb324[_0x402cee(0x157)]+'试试吧~~</div>';}secretInput[_0x402cee(0x17e)]='';}});function displayMatch(_0x5b8f87){const _0x360da2=_0x4ef027;try{if(window['ZL']&&ZL['saveRecent'])ZL[_0x360da2(0x176)]('zl_recent_cipher',_0x5b8f87['textContent']||_0x5b8f87[_0x360da2(0x156)]||'');}catch(_0x577c46){}outputZone[_0x360da2(0x178)]='';if(_0x5b8f87['type']==='text'){const _0x13e782=document[_0x360da2(0x174)]('div');_0x13e782['className']='output-content',_0x13e782['textContent']=_0x5b8f87[_0x360da2(0x179)],outputZone[_0x360da2(0x173)](_0x13e782);if(_0x5b8f87[_0x360da2(0x156)]){const _0x9e1132=document[_0x360da2(0x174)]('div');_0x9e1132['className']=_0x360da2(0x15b),_0x9e1132['textContent']=_0x360da2(0x15d)+removeExtension(_0x5b8f87['file']),outputZone['appendChild'](_0x9e1132);}}else{if(_0x5b8f87['type']===_0x360da2(0x14e)){const _0x4373f8=document['createElement']('audio');_0x4373f8[_0x360da2(0x17a)]=!![],_0x4373f8['className']='display-audio',_0x4373f8[_0x360da2(0x15a)]=_0x360da2(0x170),_0x4373f8['src']=_0x5b8f87['file'],_0x4373f8['onerror']=function(){const _0x408410=_0x360da2;_0x4373f8['outerHTML']=_0x408410(0x152)+_0x5b8f87[_0x408410(0x156)]+'</div>';},_0x4373f8[_0x360da2(0x160)]('canplay',function(){_0x4373f8['play']()['catch'](()=>{});}),outputZone['appendChild'](_0x4373f8),addFileLabel(_0x5b8f87[_0x360da2(0x156)]);}else{if(_0x5b8f87['type']===_0x360da2(0x167)){const _0x567caf=document[_0x360da2(0x174)]('video');_0x567caf['controls']=!![],_0x567caf[_0x360da2(0x16a)]='display-video',_0x567caf[_0x360da2(0x162)]=_0x5b8f87['file'],_0x567caf['playsInline']=!![],_0x567caf['preload']='auto',_0x567caf['onerror']=function(){const _0x249a84=_0x360da2;_0x567caf['outerHTML']=_0x249a84(0x165)+_0x5b8f87['file']+_0x249a84(0x153);},outputZone['appendChild'](_0x567caf),addFileLabel(_0x5b8f87[_0x360da2(0x156)]);}else{if(_0x5b8f87['type']===_0x360da2(0x15f)){const _0x407659=document['createElement']('img');_0x407659[_0x360da2(0x16a)]=_0x360da2(0x166),_0x407659['src']=_0x5b8f87['file'],_0x407659['alt']=_0x5b8f87['trigger'],_0x407659[_0x360da2(0x154)]=function(){const _0x2d4b50=_0x360da2;_0x407659['outerHTML']=_0x2d4b50(0x158)+_0x5b8f87['file']+'</div>';},outputZone[_0x360da2(0x173)](_0x407659),addFileLabel(_0x5b8f87['file']);}}}}}function addFileLabel(_0x54b55a){const _0xbc30b7=_0x4ef027,_0x26385f=document['createElement']('div');_0x26385f['className']='display-file-label',_0x26385f[_0xbc30b7(0x179)]='文件：'+removeExtension(_0x54b55a),outputZone[_0xbc30b7(0x173)](_0x26385f);}function removeExtension(_0x2ef450){const _0x147df2=_0x2ef450['split']('/')['pop'](),_0x3743a6=_0x147df2['lastIndexOf']('.');if(_0x3743a6>0x0)return _0x147df2['substring'](0x0,_0x3743a6);return _0x147df2;}const transitionOverlay=document['getElementById'](_0x4ef027(0x163)),backHome=document['getElementById']('backHome');function _0x29a4(_0x21f4d7,_0x578bb5){_0x21f4d7=_0x21f4d7-0x14e;const _0x29a468=_0x578b();let _0x4d1009=_0x29a468[_0x21f4d7];return _0x4d1009;}backHome['addEventListener']('click',function(_0x33fdb4){const _0x2bd941=_0x4ef027;_0x33fdb4[_0x2bd941(0x161)](),transitionOverlay[_0x2bd941(0x16e)]['add']('active'),void transitionOverlay['offsetWidth'],setTimeout(()=>{const _0x37a772=_0x2bd941;window[_0x37a772(0x15e)][_0x37a772(0x16d)]=_0x37a772(0x150);},0x5dc);}),document['addEventListener']('keydown',function(_0xb889dc){const _0x1be8df=_0x4ef027;_0xb889dc['key']==='Escape'&&(transitionOverlay['classList']['contains']('active')&&transitionOverlay[_0x1be8df(0x16e)][_0x1be8df(0x17d)](_0x1be8df(0x17b)));});
+const _0x60fc32=_0x52c5;function createSnowflakes(){const _0x3917da=_0x52c5,_0x27611e=0x28;for(let _0x845426=0x0;_0x845426<_0x27611e;_0x845426++){const _0x1adab2=document[_0x3917da(0x108)](_0x3917da(0x105));_0x1adab2[_0x3917da(0x106)]['add'](_0x3917da(0x116));const _0x242dc2=Math['random']()*0x5+0x3;_0x1adab2[_0x3917da(0x136)][_0x3917da(0x121)]=_0x242dc2+'px',_0x1adab2['style']['height']=_0x242dc2+'px',_0x1adab2[_0x3917da(0x136)][_0x3917da(0x12e)]=Math['random']()*0x64+'vw',_0x1adab2['style']['animationDuration']=0x5+Math['random']()*0x7+'s',_0x1adab2['style']['animationDelay']=Math[_0x3917da(0x10f)]()*0x7+'s',document['body']['appendChild'](_0x1adab2);}}createSnowflakes();const triggerMap=window['ZL17'],secretInput=document['getElementById'](_0x60fc32(0x103)),outputZone=document[_0x60fc32(0x125)]('outputZone'),refreshBtn=document[_0x60fc32(0x125)]('refreshBtn');function showToast(_0x55bdef){const _0x86a4be=_0x60fc32,_0x1846ed=document[_0x86a4be(0x115)](_0x86a4be(0x135));if(_0x1846ed)_0x1846ed[_0x86a4be(0x102)]();const _0x25fb1b=document[_0x86a4be(0x108)]('div');_0x25fb1b['className']='toast-msg',_0x25fb1b[_0x86a4be(0x10d)]=_0x55bdef,document['body'][_0x86a4be(0x109)](_0x25fb1b),setTimeout(()=>{const _0x4a75c4=_0x86a4be;_0x25fb1b[_0x4a75c4(0x136)]['opacity']='0',_0x25fb1b[_0x4a75c4(0x136)][_0x4a75c4(0x126)]='translateX(-50%)\x20translateY(10px)',setTimeout(()=>_0x25fb1b['remove'](),0x12c);},0x7d0);}refreshBtn['addEventListener']('click',function(){const _0x5116d3=_0x60fc32,_0x340260=triggerMap['filter'](_0x57a222=>_0x57a222['type']==='text');if(_0x340260['length']===0x0)return;const _0xff6bea=Math['floor'](Math[_0x5116d3(0x10f)]()*_0x340260['length']),_0x23951e=_0x340260[_0xff6bea];displayMatch(_0x23951e),showToast('已随机显示一条暗号');}),secretInput['addEventListener']('keydown',function(_0x2061f4){const _0x5d657e=_0x60fc32;if(_0x2061f4[_0x5d657e(0x131)]===_0x5d657e(0x11f)){const _0xf7822a=secretInput[_0x5d657e(0x107)]['trim']();if(_0xf7822a==='')return;const _0x34ba8e=triggerMap['map'](_0x3f3432=>{const _0x206b1a=_0xf7822a['indexOf'](_0x3f3432['trigger']);return{'item':_0x3f3432,'pos':_0x206b1a};})['filter'](_0x5ad2f3=>_0x5ad2f3[_0x5d657e(0x122)]!==-0x1);if(_0x34ba8e['length']>0x0)_0x34ba8e['sort']((_0x2cdba9,_0x3d8955)=>_0x2cdba9[_0x5d657e(0x122)]-_0x3d8955['pos']),displayMatch(_0x34ba8e[0x0]['item']);else{const _0x7c4aa2=triggerMap[Math['floor'](Math[_0x5d657e(0x10f)]()*triggerMap[_0x5d657e(0x129)])];outputZone[_0x5d657e(0x11b)]=_0x5d657e(0x120)+_0x7c4aa2['trigger']+'试试吧~~</div>';}secretInput[_0x5d657e(0x107)]='';}});function displayMatch(_0x33166b){const _0x30513b=_0x60fc32;try{if(window['ZL']&&ZL['saveRecent'])ZL['saveRecent'](_0x30513b(0x11a),_0x33166b[_0x30513b(0x10d)]||_0x33166b[_0x30513b(0x130)]||'');}catch(_0x388221){}outputZone['innerHTML']='';if(_0x33166b['type']===_0x30513b(0x11d)){const _0x4b4d44=document[_0x30513b(0x108)](_0x30513b(0x105));_0x4b4d44['className']=_0x30513b(0x133),_0x4b4d44['textContent']=_0x33166b['textContent'],outputZone['appendChild'](_0x4b4d44);if(_0x33166b['file']){const _0x2a350e=document[_0x30513b(0x108)]('div');_0x2a350e['className']='display-file-label',_0x2a350e[_0x30513b(0x10d)]='文本来源：'+removeExtension(_0x33166b['file']),outputZone['appendChild'](_0x2a350e);}}else{if(_0x33166b[_0x30513b(0x118)]===_0x30513b(0x11c)){const _0x34b437=document['createElement']('audio');_0x34b437['controls']=!![],_0x34b437[_0x30513b(0x123)]='display-audio',_0x34b437[_0x30513b(0x124)]='auto',_0x34b437[_0x30513b(0x112)]=_0x33166b[_0x30513b(0x130)],_0x34b437['onerror']=function(){const _0x2783cb=_0x30513b;_0x34b437['outerHTML']='<div\x20style=\x22color:var(--red);\x22>音频文件未找到：'+_0x33166b[_0x2783cb(0x130)]+'</div>';},_0x34b437['addEventListener'](_0x30513b(0x104),function(){const _0x2f5910=_0x30513b;_0x34b437[_0x2f5910(0x12a)]()['catch'](()=>{});}),outputZone['appendChild'](_0x34b437),addFileLabel(_0x33166b['file']);}else{if(_0x33166b['type']==='video'){const _0x5904cb=document['createElement'](_0x30513b(0x111));_0x5904cb['controls']=!![],_0x5904cb[_0x30513b(0x123)]='display-video',_0x5904cb['src']=_0x33166b['file'],_0x5904cb[_0x30513b(0x134)]=!![],_0x5904cb['preload']='auto',_0x5904cb['onerror']=function(){const _0x4052cc=_0x30513b;_0x5904cb[_0x4052cc(0x119)]=_0x4052cc(0x128)+_0x33166b[_0x4052cc(0x130)]+'</div>';},outputZone['appendChild'](_0x5904cb),addFileLabel(_0x33166b['file']);}else{if(_0x33166b[_0x30513b(0x118)]==='image'){const _0x1ae079=document['createElement'](_0x30513b(0x10b));_0x1ae079['className']='display-image',_0x1ae079[_0x30513b(0x112)]=_0x33166b['file'],_0x1ae079['alt']=_0x33166b[_0x30513b(0x117)],_0x1ae079[_0x30513b(0x12b)]=function(){const _0x43efce=_0x30513b;_0x1ae079['outerHTML']='<div\x20style=\x22color:var(--red);\x22>图片文件未找到：'+_0x33166b['file']+_0x43efce(0x10a);},outputZone[_0x30513b(0x109)](_0x1ae079),addFileLabel(_0x33166b[_0x30513b(0x130)]);}}}}}function addFileLabel(_0x34c1cf){const _0x4b19b5=_0x60fc32,_0x5cc6b6=document['createElement'](_0x4b19b5(0x105));_0x5cc6b6['className']=_0x4b19b5(0x110),_0x5cc6b6[_0x4b19b5(0x10d)]=_0x4b19b5(0x113)+removeExtension(_0x34c1cf),outputZone[_0x4b19b5(0x109)](_0x5cc6b6);}function _0x52c5(_0x3970a4,_0x4b5b7f){_0x3970a4=_0x3970a4-0x101;const _0x52c506=_0x4b5b();let _0x2ec772=_0x52c506[_0x3970a4];return _0x2ec772;}function removeExtension(_0x523cd6){const _0x540402=_0x60fc32,_0x222b19=_0x523cd6['split']('/')[_0x540402(0x127)](),_0x4f881e=_0x222b19['lastIndexOf']('.');if(_0x4f881e>0x0)return _0x222b19[_0x540402(0x12c)](0x0,_0x4f881e);return _0x222b19;}const transitionOverlay=document['getElementById'](_0x60fc32(0x10c)),backHome=document['getElementById']('backHome');backHome['addEventListener'](_0x60fc32(0x132),function(_0x1eedd6){const _0x473382=_0x60fc32;_0x1eedd6[_0x473382(0x12f)](),transitionOverlay[_0x473382(0x106)][_0x473382(0x101)]('active'),void transitionOverlay['offsetWidth'],setTimeout(()=>{const _0x28a0d8=_0x473382;window[_0x28a0d8(0x11e)]['href']=_0x28a0d8(0x12d);},0x5dc);}),document[_0x60fc32(0x114)]('keydown',function(_0x8e2e00){const _0x3bb503=_0x60fc32;_0x8e2e00[_0x3bb503(0x131)]==='Escape'&&(transitionOverlay[_0x3bb503(0x106)]['contains'](_0x3bb503(0x10e))&&transitionOverlay[_0x3bb503(0x106)]['remove'](_0x3bb503(0x10e)));});function _0x4b5b(){const _0x38c0fe=['add','remove','secretInput','canplay','div','classList','value','createElement','appendChild','</div>','img','transitionOverlay','textContent','active','random','display-file-label','video','src','文件：','addEventListener','querySelector','snowflake','trigger','type','outerHTML','zl_recent_cipher','innerHTML','audio','text','location','Enter','<div\x20style=\x22color:var(--gold);\x22>输入','width','pos','className','preload','getElementById','transform','pop','<div\x20style=\x22color:var(--red);\x22>视频文件未找到：','length','play','onerror','substring','娱乐游戏.html','left','preventDefault','file','key','click','output-content','playsInline','.toast-msg','style'];_0x4b5b=function(){return _0x38c0fe;};return _0x4b5b();}
 </script>
 </body>
 </html>

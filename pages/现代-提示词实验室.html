@@ -79,6 +79,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -172,7 +242,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-function _0x4e73(_0xe8d5f,_0x5c383c){_0xe8d5f=_0xe8d5f-0x188;var _0x4e73ec=_0x5c38();var _0x9e3027=_0x4e73ec[_0xe8d5f];return _0x9e3027;}(function(){var _0x25c4d6=_0x4e73,_0x504bc4=document[_0x25c4d6(0x18c)](_0x25c4d6(0x188)),_0x170288=document['getElementById'](_0x25c4d6(0x18a)),_0x1aaa8f=document[_0x25c4d6(0x18c)](_0x25c4d6(0x189)),_0x50a766=document[_0x25c4d6(0x18c)](_0x25c4d6(0x19b)),_0xb9e1b8=document['getElementById']('fmtSel'),_0x2b285e=document['getElementById']('labOut'),_0x599d74=document[_0x25c4d6(0x18c)]('labNote'),_0x2403d0=document['getElementById']('genBtn'),_0x3767ca=document['getElementById'](_0x25c4d6(0x197)),_0x16b88f={'learn':{'role':'一位耐心的初中数学老师，讲解要通俗，避免术语堆砌','task':'用通俗的语言解释「这里填概念」，并给\x201\x20个生活中的例子'},'write':{'role':_0x25c4d6(0x195),'task':'写一篇关于「这里填主题」的短文，受众是普通读者，结尾给一个行动号召'},'polish':{'role':_0x25c4d6(0x192),'task':_0x25c4d6(0x18b)},'plan':{'role':_0x25c4d6(0x196),'task':'帮我制定一个「这里填目标」的\x207\x20天计划，每天安排具体任务'},'debug':{'role':'经验丰富的程序员，解释报错简洁准确','task':'我运行代码报错：请解释原因并给出修复代码，不要长篇大论'},'custom':{'role':'','task':''}};function _0x13dd45(){var _0x365498=_0x25c4d6,_0x2b6a8d=_0x16b88f[_0x504bc4['value']];if(_0x2b6a8d&&_0x2b6a8d['role'])_0x170288['value']=_0x2b6a8d['role'];if(_0x2b6a8d&&_0x2b6a8d[_0x365498(0x198)])_0x1aaa8f[_0x365498(0x190)]=_0x2b6a8d['task'];_0x504bc4['value']!=='custom'&&(_0x50a766[_0x365498(0x194)]=_0x365498(0x18e));}_0x504bc4[_0x25c4d6(0x19d)](_0x25c4d6(0x18d),_0x13dd45);var _0x279cf7=document['querySelectorAll']('.chip');_0x279cf7[_0x25c4d6(0x19a)](function(_0x328fa6){_0x328fa6['addEventListener']('click',function(){var _0x4c9eda=_0x4e73;_0x279cf7['forEach'](function(_0x401469){var _0x502052=_0x4e73;_0x401469[_0x502052(0x19c)]['remove']('on');}),_0x328fa6['classList']['add']('on'),_0x170288['value']=_0x328fa6[_0x4c9eda(0x19f)];});});function _0x388b2c(){var _0x3fbfe2=_0x25c4d6,_0x303f78=_0x170288[_0x3fbfe2(0x190)][_0x3fbfe2(0x199)](),_0x572da4=_0x1aaa8f[_0x3fbfe2(0x190)]['trim'](),_0xf5fc99=_0x50a766['value']['trim'](),_0x35e688=_0xb9e1b8['value']==='自由'?'':_0xb9e1b8[_0x3fbfe2(0x190)];if(!_0x572da4){_0x2b285e['value']='',_0x599d74['textContent']='任务还没填哦，至少写一句「要\x20AI\x20做什么」。';return;}var _0x1899ec=[];if(_0x303f78)_0x1899ec['push']('【角色】'+_0x303f78);_0x1899ec['push'](_0x3fbfe2(0x19e)+_0x572da4);if(_0xf5fc99)_0x1899ec['push'](_0x3fbfe2(0x18f)+_0xf5fc99);if(_0x35e688)_0x1899ec['push']('【格式】'+_0x35e688);_0x2b285e['value']=_0x1899ec[_0x3fbfe2(0x191)]('\x0a'),_0x599d74[_0x3fbfe2(0x19f)]='已按五要素组装，共\x20'+_0x1899ec['length']+'\x20个组件；复制后去\x20AI\x20对话框粘贴即可。';}_0x2403d0['addEventListener'](_0x25c4d6(0x193),_0x388b2c),_0x3767ca['addEventListener']('click',function(){var _0x3a1819=_0x25c4d6;if(!_0x2b285e[_0x3a1819(0x190)]){_0x388b2c();if(!_0x2b285e['value'])return;}if(window['XD']&&XD['copy'])XD['copy'](_0x2b285e['value'],'提示词已复制，去\x20AI\x20工具粘贴吧\x20✨');}),_0x13dd45();}());function _0x5c38(){var _0x19e329=['sceneSel','taskIn','roleIn','帮我改下面这段文字，要求更口语化、更有感情','getElementById','change','例：我是零基础的初中生；目标读者是\x2055\x20岁阿姨；粘贴你的原稿…','【上下文】','value','join','资深中文编辑，润色文字但绝不改变原意','click','placeholder','资深新媒体编辑，擅长面向大众写文章','效率规划师，擅长把目标拆成可执行任务','copyBtn','task','trim','forEach','ctxIn','classList','addEventListener','【任务】','textContent'];_0x5c38=function(){return _0x19e329;};return _0x5c38();}
+function _0x37e0(){var _0x1dce88=['value','【格式】','【角色】','labOut','classList','task','例：我是零基础的初中生；目标读者是\x2055\x20岁阿姨；粘贴你的原稿…','提示词已复制，去\x20AI\x20工具粘贴吧\x20✨','addEventListener','getElementById','资深新媒体编辑，擅长面向大众写文章','帮我制定一个「这里填目标」的\x207\x20天计划，每天安排具体任务','用通俗的语言解释「这里填概念」，并给\x201\x20个生活中的例子'];_0x37e0=function(){return _0x1dce88;};return _0x37e0();}function _0x509f(_0x2060f3,_0x37e07a){_0x2060f3=_0x2060f3-0x15f;var _0x509fae=_0x37e0();var _0x1550eb=_0x509fae[_0x2060f3];return _0x1550eb;}(function(){var _0x3c8ebd=_0x509f,_0x1d8cc2=document['getElementById']('sceneSel'),_0x3bcb93=document[_0x3c8ebd(0x168)]('roleIn'),_0x4ded4d=document['getElementById']('taskIn'),_0x1bf5bf=document['getElementById']('ctxIn'),_0x1de910=document['getElementById']('fmtSel'),_0x87ddb=document['getElementById'](_0x3c8ebd(0x162)),_0x4ec7b1=document['getElementById']('labNote'),_0x2056e3=document['getElementById']('genBtn'),_0x5879fe=document[_0x3c8ebd(0x168)]('copyBtn'),_0x40747b={'learn':{'role':'一位耐心的初中数学老师，讲解要通俗，避免术语堆砌','task':_0x3c8ebd(0x16b)},'write':{'role':_0x3c8ebd(0x169),'task':'写一篇关于「这里填主题」的短文，受众是普通读者，结尾给一个行动号召'},'polish':{'role':'资深中文编辑，润色文字但绝不改变原意','task':'帮我改下面这段文字，要求更口语化、更有感情'},'plan':{'role':'效率规划师，擅长把目标拆成可执行任务','task':_0x3c8ebd(0x16a)},'debug':{'role':'经验丰富的程序员，解释报错简洁准确','task':'我运行代码报错：请解释原因并给出修复代码，不要长篇大论'},'custom':{'role':'','task':''}};function _0x27127f(){var _0x12182a=_0x3c8ebd,_0x53eee2=_0x40747b[_0x1d8cc2['value']];if(_0x53eee2&&_0x53eee2['role'])_0x3bcb93['value']=_0x53eee2['role'];if(_0x53eee2&&_0x53eee2[_0x12182a(0x164)])_0x4ded4d[_0x12182a(0x15f)]=_0x53eee2['task'];_0x1d8cc2[_0x12182a(0x15f)]!=='custom'&&(_0x1bf5bf['placeholder']=_0x12182a(0x165));}_0x1d8cc2['addEventListener']('change',_0x27127f);var _0x52a33e=document['querySelectorAll']('.chip');_0x52a33e['forEach'](function(_0x3380a2){_0x3380a2['addEventListener']('click',function(){var _0x508feb=_0x509f;_0x52a33e['forEach'](function(_0x4cf8cd){_0x4cf8cd['classList']['remove']('on');}),_0x3380a2[_0x508feb(0x163)]['add']('on'),_0x3bcb93['value']=_0x3380a2['textContent'];});});function _0x57e2ce(){var _0x360060=_0x3c8ebd,_0x54fa50=_0x3bcb93['value']['trim'](),_0x268706=_0x4ded4d['value']['trim'](),_0x501016=_0x1bf5bf[_0x360060(0x15f)]['trim'](),_0x47a1fa=_0x1de910['value']==='自由'?'':_0x1de910['value'];if(!_0x268706){_0x87ddb[_0x360060(0x15f)]='',_0x4ec7b1['textContent']='任务还没填哦，至少写一句「要\x20AI\x20做什么」。';return;}var _0x46ac8e=[];if(_0x54fa50)_0x46ac8e['push'](_0x360060(0x161)+_0x54fa50);_0x46ac8e['push']('【任务】'+_0x268706);if(_0x501016)_0x46ac8e['push']('【上下文】'+_0x501016);if(_0x47a1fa)_0x46ac8e['push'](_0x360060(0x160)+_0x47a1fa);_0x87ddb[_0x360060(0x15f)]=_0x46ac8e['join']('\x0a'),_0x4ec7b1['textContent']='已按五要素组装，共\x20'+_0x46ac8e['length']+'\x20个组件；复制后去\x20AI\x20对话框粘贴即可。';}_0x2056e3[_0x3c8ebd(0x167)]('click',_0x57e2ce),_0x5879fe['addEventListener']('click',function(){var _0xbb22d=_0x3c8ebd;if(!_0x87ddb['value']){_0x57e2ce();if(!_0x87ddb[_0xbb22d(0x15f)])return;}if(window['XD']&&XD['copy'])XD['copy'](_0x87ddb['value'],_0xbb22d(0x166));}),_0x27127f();}());
 </script>
 </body>
 </html>

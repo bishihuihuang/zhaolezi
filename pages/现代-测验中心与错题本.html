@@ -72,6 +72,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -121,7 +191,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-function _0x5e95(_0x5e0853,_0x527537){_0x5e0853=_0x5e0853-0x158;var _0x5e95e2=_0x5275();var _0xdf3e87=_0x5e95e2[_0x5e0853];return _0xdf3e87;}function _0x5275(){var _0x795993=['计算机基础','现代-模块I测验：微信与生活服务.html','</div>','forEach','现代-模块A测验：计算机基础.html','innerHTML','10\x20题\x20·\x20模块G','10\x20题\x20·\x20模块F','right\x20yours','\x22><b>','网络安全与防诈骗','\x20道错题','removeErr','errCount','<span\x20class=\x22score\x20best\x22>✅\x20','score','</span>','确定清空全部错题吗？此操作不可恢复。','<span\x20class=\x22score\x22>未开始</span>','click','textContent','qid','网上购物与现代消费','8\x20题\x20·\x20模块E','exp','10\x20题\x20·\x20模块H','</a>','现代-模块E测验：如何使用AI.html','旅游与出行','现代-模块C测验：网络与服务器.html','电脑使用','escapeHtml','现代-模块N测验：旅游与出行.html','10\x20题\x20·\x20模块N','</b><span\x20class=\x22sub\x22>','12\x20题\x20·\x20模块A','网络与服务器','<button\x20class=\x22btn\x20btn-danger\x22\x20id=\x22errClear\x22>🗑️\x20清空全部错题</button>','getAttribute','Git\x20与\x20GitHub'];_0x5275=function(){return _0x795993;};return _0x5275();}document['addEventListener']('DOMContentLoaded',function(){var _0x60c472=_0x5e95;if(!window['XD']||!XD['quiz'])return;var _0x94b812=[{'id':'A','f':_0x60c472(0x15c),'n':_0x60c472(0x158),'sub':_0x60c472(0x17b)},{'id':'B','f':'现代-模块B测验：电脑使用.html','n':_0x60c472(0x176),'sub':'12\x20题\x20·\x20模块B'},{'id':'C','f':_0x60c472(0x175),'n':_0x60c472(0x17c),'sub':'10\x20题\x20·\x20模块C'},{'id':'E','f':_0x60c472(0x173),'n':'如何使用\x20AI','sub':_0x60c472(0x16f)},{'id':'F','f':'现代-模块F测验：Git与GitHub.html','n':_0x60c472(0x17f),'sub':_0x60c472(0x15f)},{'id':'G','f':'现代-模块G测验：怎么开发网页.html','n':'怎么开发网页','sub':_0x60c472(0x15e)},{'id':'H','f':'现代-模块H测验：手机与平板.html','n':'手机与平板','sub':_0x60c472(0x171)},{'id':'I','f':_0x60c472(0x159),'n':'微信与生活服务','sub':'10\x20题\x20·\x20模块I'},{'id':'J','f':'现代-模块J测验：网络安全与防诈骗.html','n':_0x60c472(0x162),'sub':'10\x20题\x20·\x20模块J'},{'id':'K','f':'现代-模块K测验：办公与文档.html','n':'办公与文档','sub':'10\x20题\x20·\x20模块K'},{'id':'L','f':'现代-模块L测验：网上购物与现代消费.html','n':_0x60c472(0x16e),'sub':'10\x20题\x20·\x20模块L'},{'id':'M','f':'现代-模块M测验：数字生活进阶.html','n':'数字生活进阶','sub':'10\x20题\x20·\x20模块M'},{'id':'N','f':_0x60c472(0x178),'n':_0x60c472(0x174),'sub':_0x60c472(0x179)}],_0x396208=XD['quiz']['results'](),_0x479cf3=document['getElementById']('quizCenters'),_0x3f0dc2='';for(var _0x49f5b6=0x0;_0x49f5b6<_0x94b812['length'];_0x49f5b6++){var _0x522083=_0x94b812[_0x49f5b6],_0x323452=_0x396208[_0x522083['id']]||null,_0x4a7629;if(!_0x323452)_0x4a7629=_0x60c472(0x16a);else{if(_0x323452['score']>=0x3c)_0x4a7629=_0x60c472(0x166)+_0x323452[_0x60c472(0x167)]+'\x20分\x20·\x20'+_0x323452['right']+'/'+_0x323452['total']+_0x60c472(0x168);else _0x4a7629='<span\x20class=\x22score\x20fail\x22>'+_0x323452['score']+'\x20分\x20·\x20未通过</span>';}_0x3f0dc2+='<a\x20class=\x22qc-card\x22\x20href=\x22'+_0x522083['f']+_0x60c472(0x161)+_0x522083['n']+_0x60c472(0x17a)+_0x522083['sub']+'</span>'+_0x4a7629+_0x60c472(0x172);}_0x479cf3['innerHTML']=_0x3f0dc2;function _0x7f0b01(){var _0x2738c9=_0x60c472,_0x109b8a=XD['quiz']['errItems'](),_0x16a10c=document['getElementById'](_0x2738c9(0x165));_0x16a10c[_0x2738c9(0x16c)]='共\x20'+_0x109b8a['length']+_0x2738c9(0x163);var _0x1c7afa=document['getElementById']('errList'),_0x28ef39=document['getElementById']('errActions');if(!_0x109b8a['length']){_0x1c7afa['innerHTML']='<div\x20class=\x22callout\x20tip\x22\x20style=\x22margin-top:12px;\x22><b>🎉\x20错题本是空的</b>做测验时答错的题会自动出现在这里。没有错题，说明你掌握得很扎实。</div>',_0x28ef39['innerHTML']='';return;}var _0x17d719='';for(var _0x66874a=0x0;_0x66874a<_0x109b8a['length'];_0x66874a++){var _0x341a36=_0x109b8a[_0x66874a];_0x17d719+='<div\x20class=\x22err-item\x22\x20data-qid=\x22'+XD[_0x2738c9(0x177)](_0x341a36['qid'])+'\x22>'+'<div\x20class=\x22err-q\x22><span\x20class=\x22q-tag\x22>'+XD[_0x2738c9(0x177)](_0x341a36['quizTitle']||_0x341a36['qid'])+_0x2738c9(0x168)+XD['escapeHtml'](_0x341a36['q'])+_0x2738c9(0x15a)+'<ul\x20class=\x22err-opts\x22>';for(var _0x491dcf=0x0;_0x491dcf<_0x341a36['opts']['length'];_0x491dcf++){var _0xf4a6d7=_0x491dcf===_0x341a36['a']?'right':'';if(_0x491dcf===_0x341a36['a']&&_0x341a36['yourPick']!=null&&_0x491dcf===_0x341a36['yourPick'])_0xf4a6d7=_0x2738c9(0x160);_0x17d719+='<li\x20class=\x22'+_0xf4a6d7+'\x22>'+String['fromCharCode'](0x41+_0x491dcf)+'.\x20'+XD['escapeHtml'](_0x341a36['opts'][_0x491dcf])+(_0x491dcf===_0x341a36['a']?'\x20✅':'')+'</li>';}_0x17d719+='</ul>';if(_0x341a36['exp'])_0x17d719+='<div\x20class=\x22err-exp\x22>💡\x20'+XD[_0x2738c9(0x177)](_0x341a36[_0x2738c9(0x170)])+'</div>';_0x17d719+='<div\x20class=\x22err-ops\x22><button\x20class=\x22btn\x20btn-danger\x20err-del\x22\x20data-qid=\x22'+XD['escapeHtml'](_0x341a36[_0x2738c9(0x16d)])+'\x22>🗑️\x20删掉这道</button></div></div>';}_0x1c7afa['innerHTML']=_0x17d719,_0x28ef39[_0x2738c9(0x15d)]=_0x2738c9(0x17d),_0x1c7afa['querySelectorAll']('.err-del')[_0x2738c9(0x15b)](function(_0x5d5594){var _0x224c09=_0x2738c9;_0x5d5594['addEventListener'](_0x224c09(0x16b),function(){var _0x1b9c9f=_0x224c09;XD['quiz'][_0x1b9c9f(0x164)](_0x5d5594[_0x1b9c9f(0x17e)]('data-qid')),_0x7f0b01();});});var _0x57fe41=document['getElementById']('errClear');if(_0x57fe41)_0x57fe41['addEventListener']('click',function(){var _0x1e41da=_0x2738c9;window['confirm'](_0x1e41da(0x169))&&(XD['quiz']['clearErr'](),_0x7f0b01());});}_0x7f0b01();if(XD['on'])XD['on']('errbook.changed',_0x7f0b01);});
+function _0x353d(_0x244ca1,_0x44bb3e){_0x244ca1=_0x244ca1-0x84;var _0x353dfd=_0x44bb();var _0x51e3a5=_0x353dfd[_0x244ca1];return _0x51e3a5;}document['addEventListener']('DOMContentLoaded',function(){var _0x1d2e65=_0x353d;if(!window['XD']||!XD['quiz'])return;var _0x29088d=[{'id':'A','f':'现代-模块A测验：计算机基础.html','n':_0x1d2e65(0x90),'sub':_0x1d2e65(0x9a)},{'id':'B','f':_0x1d2e65(0x91),'n':_0x1d2e65(0xa9),'sub':'12\x20题\x20·\x20模块B'},{'id':'C','f':'现代-模块C测验：网络与服务器.html','n':'网络与服务器','sub':_0x1d2e65(0x8d)},{'id':'E','f':'现代-模块E测验：如何使用AI.html','n':_0x1d2e65(0x85),'sub':'8\x20题\x20·\x20模块E'},{'id':'F','f':'现代-模块F测验：Git与GitHub.html','n':'Git\x20与\x20GitHub','sub':_0x1d2e65(0x86)},{'id':'G','f':'现代-模块G测验：怎么开发网页.html','n':'怎么开发网页','sub':'10\x20题\x20·\x20模块G'},{'id':'H','f':'现代-模块H测验：手机与平板.html','n':_0x1d2e65(0x8f),'sub':'10\x20题\x20·\x20模块H'},{'id':'I','f':_0x1d2e65(0xac),'n':'微信与生活服务','sub':_0x1d2e65(0xa0)},{'id':'J','f':'现代-模块J测验：网络安全与防诈骗.html','n':'网络安全与防诈骗','sub':_0x1d2e65(0xa7)},{'id':'K','f':'现代-模块K测验：办公与文档.html','n':'办公与文档','sub':'10\x20题\x20·\x20模块K'},{'id':'L','f':'现代-模块L测验：网上购物与现代消费.html','n':'网上购物与现代消费','sub':'10\x20题\x20·\x20模块L'},{'id':'M','f':'现代-模块M测验：数字生活进阶.html','n':_0x1d2e65(0x9e),'sub':'10\x20题\x20·\x20模块M'},{'id':'N','f':'现代-模块N测验：旅游与出行.html','n':'旅游与出行','sub':_0x1d2e65(0x96)}],_0x29d15a=XD[_0x1d2e65(0x8b)]['results'](),_0x5b0363=document[_0x1d2e65(0x99)](_0x1d2e65(0x9b)),_0x417b1='';for(var _0x1588c9=0x0;_0x1588c9<_0x29088d[_0x1d2e65(0x8e)];_0x1588c9++){var _0x2be7ce=_0x29088d[_0x1588c9],_0x1d4284=_0x29d15a[_0x2be7ce['id']]||null,_0x3333e9;if(!_0x1d4284)_0x3333e9=_0x1d2e65(0x97);else{if(_0x1d4284['score']>=0x3c)_0x3333e9='<span\x20class=\x22score\x20best\x22>✅\x20'+_0x1d4284[_0x1d2e65(0x93)]+'\x20分\x20·\x20'+_0x1d4284['right']+'/'+_0x1d4284['total']+_0x1d2e65(0x9d);else _0x3333e9='<span\x20class=\x22score\x20fail\x22>'+_0x1d4284['score']+_0x1d2e65(0xab);}_0x417b1+=_0x1d2e65(0xa1)+_0x2be7ce['f']+'\x22><b>'+_0x2be7ce['n']+'</b><span\x20class=\x22sub\x22>'+_0x2be7ce['sub']+'</span>'+_0x3333e9+_0x1d2e65(0x8c);}_0x5b0363['innerHTML']=_0x417b1;function _0xa4f638(){var _0x592674=_0x1d2e65,_0x4399c2=XD['quiz'][_0x592674(0x95)](),_0x66e993=document[_0x592674(0x99)](_0x592674(0xa6));_0x66e993['textContent']='共\x20'+_0x4399c2[_0x592674(0x8e)]+'\x20道错题';var _0x150d4d=document['getElementById']('errList'),_0x35ad1e=document[_0x592674(0x99)]('errActions');if(!_0x4399c2[_0x592674(0x8e)]){_0x150d4d[_0x592674(0xa8)]=_0x592674(0xa2),_0x35ad1e['innerHTML']='';return;}var _0x4294c1='';for(var _0x255369=0x0;_0x255369<_0x4399c2[_0x592674(0x8e)];_0x255369++){var _0x5259ea=_0x4399c2[_0x255369];_0x4294c1+='<div\x20class=\x22err-item\x22\x20data-qid=\x22'+XD[_0x592674(0x84)](_0x5259ea['qid'])+'\x22>'+'<div\x20class=\x22err-q\x22><span\x20class=\x22q-tag\x22>'+XD['escapeHtml'](_0x5259ea[_0x592674(0x9f)]||_0x5259ea['qid'])+'</span>'+XD[_0x592674(0x84)](_0x5259ea['q'])+'</div>'+_0x592674(0xa3);for(var _0x13b5f0=0x0;_0x13b5f0<_0x5259ea['opts']['length'];_0x13b5f0++){var _0x5a63fa=_0x13b5f0===_0x5259ea['a']?'right':'';if(_0x13b5f0===_0x5259ea['a']&&_0x5259ea['yourPick']!=null&&_0x13b5f0===_0x5259ea[_0x592674(0x88)])_0x5a63fa='right\x20yours';_0x4294c1+='<li\x20class=\x22'+_0x5a63fa+'\x22>'+String[_0x592674(0xaa)](0x41+_0x13b5f0)+'.\x20'+XD[_0x592674(0x84)](_0x5259ea['opts'][_0x13b5f0])+(_0x13b5f0===_0x5259ea['a']?'\x20✅':'')+_0x592674(0xa4);}_0x4294c1+=_0x592674(0xa5);if(_0x5259ea[_0x592674(0x92)])_0x4294c1+='<div\x20class=\x22err-exp\x22>💡\x20'+XD['escapeHtml'](_0x5259ea['exp'])+'</div>';_0x4294c1+=_0x592674(0x8a)+XD['escapeHtml'](_0x5259ea['qid'])+'\x22>🗑️\x20删掉这道</button></div></div>';}_0x150d4d['innerHTML']=_0x4294c1,_0x35ad1e['innerHTML']='<button\x20class=\x22btn\x20btn-danger\x22\x20id=\x22errClear\x22>🗑️\x20清空全部错题</button>',_0x150d4d[_0x592674(0x9c)]('.err-del')[_0x592674(0x98)](function(_0x563369){var _0x223200=_0x592674;_0x563369['addEventListener'](_0x223200(0x87),function(){var _0x57eb9a=_0x223200;XD['quiz']['removeErr'](_0x563369['getAttribute'](_0x57eb9a(0x94))),_0xa4f638();});});var _0x3f4462=document[_0x592674(0x99)]('errClear');if(_0x3f4462)_0x3f4462['addEventListener']('click',function(){var _0xc9c4b6=_0x592674;window[_0xc9c4b6(0x89)]('确定清空全部错题吗？此操作不可恢复。')&&(XD['quiz']['clearErr'](),_0xa4f638());});}_0xa4f638();if(XD['on'])XD['on']('errbook.changed',_0xa4f638);});function _0x44bb(){var _0x1eafe1=['escapeHtml','如何使用\x20AI','10\x20题\x20·\x20模块F','click','yourPick','confirm','<div\x20class=\x22err-ops\x22><button\x20class=\x22btn\x20btn-danger\x20err-del\x22\x20data-qid=\x22','quiz','</a>','10\x20题\x20·\x20模块C','length','手机与平板','计算机基础','现代-模块B测验：电脑使用.html','exp','score','data-qid','errItems','10\x20题\x20·\x20模块N','<span\x20class=\x22score\x22>未开始</span>','forEach','getElementById','12\x20题\x20·\x20模块A','quizCenters','querySelectorAll','</span>','数字生活进阶','quizTitle','10\x20题\x20·\x20模块I','<a\x20class=\x22qc-card\x22\x20href=\x22','<div\x20class=\x22callout\x20tip\x22\x20style=\x22margin-top:12px;\x22><b>🎉\x20错题本是空的</b>做测验时答错的题会自动出现在这里。没有错题，说明你掌握得很扎实。</div>','<ul\x20class=\x22err-opts\x22>','</li>','</ul>','errCount','10\x20题\x20·\x20模块J','innerHTML','电脑使用','fromCharCode','\x20分\x20·\x20未通过</span>','现代-模块I测验：微信与生活服务.html'];_0x44bb=function(){return _0x1eafe1;};return _0x44bb();}
 </script>
 </body>
 </html>

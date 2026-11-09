@@ -69,6 +69,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -123,7 +193,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-function _0x3b12(_0x4058d7,_0x538c01){_0x4058d7=_0x4058d7-0x78;var _0x3b1299=_0x538c();var _0x518502=_0x3b1299[_0x4058d7];return _0x518502;}function _0x538c(){var _0x5cecbc=['getElementById','termOut','echo','git\x20status','escapeHtml','把当前目录变成一个\x20Git\x20仓库（第\x202\x20课讲过）。','给暂存的内容拍一张快照，记得带说明，例如\x20-m\x20\x22第一版\x22。','最后把本地提交推送到远程，-u\x20记住分支。','😅\x20命令不对，看看提示：需要的是「',':\x20command\x20not\x20found','practice','test','getItem','cmdInput','进度\x20','skipBtn','你已经练熟\x20init\x20/\x20status\x20/\x20add\x20/\x20commit\x20/\x20log\x20/\x20remote\x20/\x20push\x20七大命令。去\x20<a\x20href=\x22现代-上传网页到GitHubPages全流程.html\x22>F5\x20上传网页全流程</a>\x20实战一次，或重玩巩固肌肉记忆。','ans','length','round','</span>','join','<span\x20class=\x22t-dim\x22>—\x20等你在下方输入命令\x20—</span>','preventDefault','click','4f3a2b1\x20第一版\x20(HEAD\x20->\x20main)','git\x20commit\x20-m\x20\x22第一版\x22'];_0x538c=function(){return _0x5cecbc;};return _0x538c();}(function(){var _0x48f65a=_0x3b12,_0x594145=document[_0x48f65a(0x78)](_0x48f65a(0x79)),_0x543cc4=document['getElementById'](_0x48f65a(0x85)),_0x276de6=document['getElementById']('stageTitle'),_0x1771c0=document['getElementById']('stageTag'),_0x3e038b=document[_0x48f65a(0x78)]('stageHint'),_0x39aa0a=document[_0x48f65a(0x78)]('resetBtn'),_0x4f2073=document['getElementById'](_0x48f65a(0x87)),_0x1bb79e=[{'hint':_0x48f65a(0x7d),'match':/^git init$/,'ans':'git\x20init','echo':'Initialized\x20empty\x20Git\x20repository\x20in\x20/my-site/.git/'},{'hint':'看看当前仓库的状态（哪个文件改了、还没提交）。','match':/^git status$/,'ans':_0x48f65a(0x7b),'echo':'On\x20branch\x20main\x0anothing\x20to\x20commit,\x20working\x20tree\x20clean'},{'hint':'把改动的文件放进\x22购物车\x22（暂存区）。试过\x20add\x20某个文件或\x20add\x20.\x20吗？','match':/^git add (\.|[^ ]+)$/,'ans':'git\x20add\x20.','echo':'\x20\x201\x20file\x20changed,\x205\x20insertions(+)'},{'hint':_0x48f65a(0x7e),'match':/^git commit -m "?.*"?$/,'ans':_0x48f65a(0x92),'echo':'[main\x204f3a2b1]\x20第一版\x0a\x201\x20file\x20changed,\x205\x20insertions(+)'},{'hint':'看一眼提交历史，精简模式试试\x20--oneline。','match':/^git log( --oneline)?$/,'ans':'git\x20log\x20--oneline','echo':_0x48f65a(0x91)},{'hint':'关联远程仓库\x20origin，地址是\x20https://github.com/bishihuihuang/xiandaihua.git（第\x204、5\x20课）。','match':/^git remote add origin https:\/\/github\.com\/[^ ]+\/[^ ]+\.git$/,'ans':'git\x20remote\x20add\x20origin\x20https://github.com/bishihuihuang/xiandaihua.git','echo':'（无输出，表示成功）'},{'hint':_0x48f65a(0x7f),'match':/^git push( -u origin main)?$/,'ans':'git\x20push\x20-u\x20origin\x20main','echo':'To\x20https://github.com/bishihuihuang/xiandaihua.git\x0a\x20*\x20[new\x20branch]\x20main\x20->\x20main'}],_0x15de4b='xd_git_lab_v1',_0x136f35=0x0,_0x3a5b2d=[];function _0x4e6252(){try{localStorage['setItem'](_0x15de4b,String(_0x136f35));}catch(_0x1e6d2c){}}function _0x13c937(){var _0x2df13b=_0x48f65a;try{var _0x37ed83=localStorage[_0x2df13b(0x84)](_0x15de4b);_0x136f35=_0x37ed83?parseInt(_0x37ed83,0xa)||0x0:0x0;}catch(_0x2fb6e6){_0x136f35=0x0;}}function _0x560c58(){var _0x37252d=_0x48f65a;if(_0x136f35>=_0x1bb79e[_0x37252d(0x8a)]){_0x276de6['textContent']='🎉\x20全部通关！',_0x3e038b['innerHTML']=_0x37252d(0x88),_0x594145['innerHTML']=_0x3a5b2d['join']('\x0a')+(_0x3a5b2d[_0x37252d(0x8a)]?'\x0a':'')+'<span\x20class=\x22done-line\x22>✔\x20恭喜完成\x20Git\x20命令演练场！</span>';if(window['XD']&&XD['studyLog'])XD['studyLog']['add']({'type':_0x37252d(0x82),'itemId':'F6','mod':'F'});_0x1771c0['textContent']='已通关\x20🏆';return;}var _0x2f9d0d=_0x1bb79e[_0x136f35];_0x276de6['textContent']='第\x20'+(_0x136f35+0x1)+'\x20关\x20/\x20'+_0x1bb79e[_0x37252d(0x8a)],_0x1771c0['textContent']=_0x37252d(0x86)+Math[_0x37252d(0x8b)](_0x136f35/_0x1bb79e[_0x37252d(0x8a)]*0x64)+'%',_0x3e038b['innerHTML']=_0x2f9d0d['hint'],_0x594145['innerHTML']=_0x3a5b2d[_0x37252d(0x8d)]('\x0a')+(_0x3a5b2d['length']?'\x0a':'')+_0x37252d(0x8e),_0x543cc4['value']='',_0x543cc4['focus']();}function _0x2cf6c7(_0x5940ad){_0x3a5b2d['push'](_0x5940ad);}function _0x53d707(){_0x3a5b2d=[],_0x136f35=0x0;try{localStorage['removeItem'](_0x15de4b);}catch(_0x4230c1){}_0x560c58();}function _0x21f7c0(_0x2a8e8a){var _0x5d88a2=_0x48f65a,_0x1f0063=(_0x2a8e8a||'')['trim']();if(!_0x1f0063)return;_0x2cf6c7('<span\x20class=\x22t-in\x22>$\x20'+XD[_0x5d88a2(0x7c)](_0x1f0063)+'</span>');var _0x221ebd=_0x1bb79e[_0x136f35];if(_0x221ebd&&_0x221ebd['match'][_0x5d88a2(0x83)](_0x1f0063))_0x2cf6c7(XD['escapeHtml'](_0x221ebd[_0x5d88a2(0x7a)])),_0x136f35++,_0x4e6252(),_0x560c58();else{var _0x2271ca='bash:\x20'+XD['escapeHtml'](_0x1f0063['split']('\x20')[0x0])+_0x5d88a2(0x81);if(/^git [a-z]+/[_0x5d88a2(0x83)](_0x1f0063))_0x2271ca=_0x5d88a2(0x80)+XD['escapeHtml'](_0x221ebd[_0x5d88a2(0x89)])+'」';_0x2cf6c7('<span\x20class=\x22t-err\x22>'+_0x2271ca+_0x5d88a2(0x8c)),_0x560c58();}}_0x543cc4['addEventListener']('keydown',function(_0x3d0ee0){var _0x23cafc=_0x48f65a;_0x3d0ee0['key']==='Enter'&&(_0x3d0ee0[_0x23cafc(0x8f)](),_0x21f7c0(_0x543cc4['value']));}),_0x39aa0a['addEventListener'](_0x48f65a(0x90),_0x53d707),_0x4f2073['addEventListener']('click',function(){var _0x47b09a=_0x48f65a,_0x731fff=_0x1bb79e[_0x136f35];if(!_0x731fff)return;_0x2cf6c7('<span\x20class=\x22t-in\x22>$\x20'+XD['escapeHtml'](_0x731fff['ans'])+'</span>'),_0x2cf6c7(XD[_0x47b09a(0x7c)](_0x731fff['echo'])),_0x136f35++,_0x4e6252(),_0x560c58();}),_0x13c937(),_0x560c58();}());
+function _0x38aa(){var _0x1eb318=['ans','git\x20commit\x20-m\x20\x22第一版\x22','match','getElementById','split','trim','</span>','innerHTML','join','hint','length','给暂存的内容拍一张快照，记得带说明，例如\x20-m\x20\x22第一版\x22。','textContent','git\x20remote\x20add\x20origin\x20https://github.com/bishihuihuang/xiandaihua.git','studyLog',':\x20command\x20not\x20found','removeItem','git\x20init','test','<span\x20class=\x22t-dim\x22>—\x20等你在下方输入命令\x20—</span>','看看当前仓库的状态（哪个文件改了、还没提交）。','skipBtn','bash:\x20','addEventListener','click','git\x20status','escapeHtml','\x20关\x20/\x20','🎉\x20全部通关！','<span\x20class=\x22t-in\x22>$\x20'];_0x38aa=function(){return _0x1eb318;};return _0x38aa();}function _0xf61a(_0x61020a,_0x38aa27){_0x61020a=_0x61020a-0x114;var _0xf61a43=_0x38aa();var _0x5abf9c=_0xf61a43[_0x61020a];return _0x5abf9c;}(function(){var _0x18806c=_0xf61a,_0x5a1838=document['getElementById']('termOut'),_0x160ca4=document[_0x18806c(0x117)]('cmdInput'),_0x5c6f1e=document[_0x18806c(0x117)]('stageTitle'),_0x212f9f=document['getElementById']('stageTag'),_0xcd38c=document['getElementById']('stageHint'),_0x2fd43a=document['getElementById']('resetBtn'),_0x23c55a=document['getElementById'](_0x18806c(0x129)),_0x371ff2=[{'hint':'把当前目录变成一个\x20Git\x20仓库（第\x202\x20课讲过）。','match':/^git init$/,'ans':_0x18806c(0x125),'echo':'Initialized\x20empty\x20Git\x20repository\x20in\x20/my-site/.git/'},{'hint':_0x18806c(0x128),'match':/^git status$/,'ans':_0x18806c(0x12d),'echo':'On\x20branch\x20main\x0anothing\x20to\x20commit,\x20working\x20tree\x20clean'},{'hint':'把改动的文件放进\x22购物车\x22（暂存区）。试过\x20add\x20某个文件或\x20add\x20.\x20吗？','match':/^git add (\.|[^ ]+)$/,'ans':'git\x20add\x20.','echo':'\x20\x201\x20file\x20changed,\x205\x20insertions(+)'},{'hint':_0x18806c(0x11f),'match':/^git commit -m "?.*"?$/,'ans':_0x18806c(0x115),'echo':'[main\x204f3a2b1]\x20第一版\x0a\x201\x20file\x20changed,\x205\x20insertions(+)'},{'hint':'看一眼提交历史，精简模式试试\x20--oneline。','match':/^git log( --oneline)?$/,'ans':'git\x20log\x20--oneline','echo':'4f3a2b1\x20第一版\x20(HEAD\x20->\x20main)'},{'hint':'关联远程仓库\x20origin，地址是\x20https://github.com/bishihuihuang/xiandaihua.git（第\x204、5\x20课）。','match':/^git remote add origin https:\/\/github\.com\/[^ ]+\/[^ ]+\.git$/,'ans':_0x18806c(0x121),'echo':'（无输出，表示成功）'},{'hint':'最后把本地提交推送到远程，-u\x20记住分支。','match':/^git push( -u origin main)?$/,'ans':'git\x20push\x20-u\x20origin\x20main','echo':'To\x20https://github.com/bishihuihuang/xiandaihua.git\x0a\x20*\x20[new\x20branch]\x20main\x20->\x20main'}],_0xcccd9f='xd_git_lab_v1',_0x5dd33a=0x0,_0x25c7fe=[];function _0x5e9b68(){try{localStorage['setItem'](_0xcccd9f,String(_0x5dd33a));}catch(_0x20c012){}}function _0x120c76(){try{var _0x5992f7=localStorage['getItem'](_0xcccd9f);_0x5dd33a=_0x5992f7?parseInt(_0x5992f7,0xa)||0x0:0x0;}catch(_0x3d6f5b){_0x5dd33a=0x0;}}function _0x3da061(){var _0x3106b4=_0x18806c;if(_0x5dd33a>=_0x371ff2[_0x3106b4(0x11e)]){_0x5c6f1e[_0x3106b4(0x120)]=_0x3106b4(0x130),_0xcd38c['innerHTML']='你已经练熟\x20init\x20/\x20status\x20/\x20add\x20/\x20commit\x20/\x20log\x20/\x20remote\x20/\x20push\x20七大命令。去\x20<a\x20href=\x22现代-上传网页到GitHubPages全流程.html\x22>F5\x20上传网页全流程</a>\x20实战一次，或重玩巩固肌肉记忆。',_0x5a1838['innerHTML']=_0x25c7fe[_0x3106b4(0x11c)]('\x0a')+(_0x25c7fe['length']?'\x0a':'')+'<span\x20class=\x22done-line\x22>✔\x20恭喜完成\x20Git\x20命令演练场！</span>';if(window['XD']&&XD[_0x3106b4(0x122)])XD['studyLog']['add']({'type':'practice','itemId':'F6','mod':'F'});_0x212f9f['textContent']='已通关\x20🏆';return;}var _0x43e447=_0x371ff2[_0x5dd33a];_0x5c6f1e[_0x3106b4(0x120)]='第\x20'+(_0x5dd33a+0x1)+_0x3106b4(0x12f)+_0x371ff2['length'],_0x212f9f[_0x3106b4(0x120)]='进度\x20'+Math['round'](_0x5dd33a/_0x371ff2['length']*0x64)+'%',_0xcd38c['innerHTML']=_0x43e447[_0x3106b4(0x11d)],_0x5a1838[_0x3106b4(0x11b)]=_0x25c7fe[_0x3106b4(0x11c)]('\x0a')+(_0x25c7fe['length']?'\x0a':'')+_0x3106b4(0x127),_0x160ca4['value']='',_0x160ca4['focus']();}function _0x335d21(_0x24d76f){_0x25c7fe['push'](_0x24d76f);}function _0x4ff391(){var _0x1cc2fb=_0x18806c;_0x25c7fe=[],_0x5dd33a=0x0;try{localStorage[_0x1cc2fb(0x124)](_0xcccd9f);}catch(_0x441c93){}_0x3da061();}function _0xe4cb73(_0xb08187){var _0x1a5b24=_0x18806c,_0x1fa3d2=(_0xb08187||'')[_0x1a5b24(0x119)]();if(!_0x1fa3d2)return;_0x335d21(_0x1a5b24(0x131)+XD['escapeHtml'](_0x1fa3d2)+'</span>');var _0x5c5eed=_0x371ff2[_0x5dd33a];if(_0x5c5eed&&_0x5c5eed[_0x1a5b24(0x116)][_0x1a5b24(0x126)](_0x1fa3d2))_0x335d21(XD[_0x1a5b24(0x12e)](_0x5c5eed['echo'])),_0x5dd33a++,_0x5e9b68(),_0x3da061();else{var _0x3441e3=_0x1a5b24(0x12a)+XD['escapeHtml'](_0x1fa3d2[_0x1a5b24(0x118)]('\x20')[0x0])+_0x1a5b24(0x123);if(/^git [a-z]+/[_0x1a5b24(0x126)](_0x1fa3d2))_0x3441e3='😅\x20命令不对，看看提示：需要的是「'+XD['escapeHtml'](_0x5c5eed[_0x1a5b24(0x114)])+'」';_0x335d21('<span\x20class=\x22t-err\x22>'+_0x3441e3+_0x1a5b24(0x11a)),_0x3da061();}}_0x160ca4[_0x18806c(0x12b)]('keydown',function(_0x24fcf0){_0x24fcf0['key']==='Enter'&&(_0x24fcf0['preventDefault'](),_0xe4cb73(_0x160ca4['value']));}),_0x2fd43a['addEventListener']('click',_0x4ff391),_0x23c55a[_0x18806c(0x12b)](_0x18806c(0x12c),function(){var _0x31c594=_0x18806c,_0x4562f7=_0x371ff2[_0x5dd33a];if(!_0x4562f7)return;_0x335d21(_0x31c594(0x131)+XD[_0x31c594(0x12e)](_0x4562f7['ans'])+'</span>'),_0x335d21(XD['escapeHtml'](_0x4562f7['echo'])),_0x5dd33a++,_0x5e9b68(),_0x3da061();}),_0x120c76(),_0x3da061();}());
 </script>
 </body>
 </html>

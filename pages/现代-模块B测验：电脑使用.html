@@ -48,6 +48,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -94,7 +164,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-function _0x45d8(_0x49274c,_0x301a80){_0x49274c=_0x49274c-0x1da;var _0x45d865=_0x301a();var _0x293674=_0x45d865[_0x49274c];return _0x293674;}function _0x301a(){var _0x3c3067=['立刻长按电源键','装\x202-3\x20套杀毒软件交叉防护','设置→存储\x20逐项清理最安全；C:\x5cWindows\x20里的文件别乱删，那不是垃圾。','取消无关勾选（捆绑项），看清每一步','XX软件园的\x22高速下载\x22按钮','电脑有病毒','quiz','先看占用揪出\x22吃货\x22，再对症下药；重装是最后手段。','全部勾选，功能多总没错','告诉系统用什么程序打开','软件官网的下载页面','程序假死（无响应），正确处理是？','把浏览器缓存拷去\x20D\x20盘继续用','定期给系统盘拍照片当防护','快捷方式（指向程序的链接）','重装系统','文件夹层级分隔符','用\x20Shift+Tab\x20切换','控制文件体积'];_0x301a=function(){return _0x3c3067;};return _0x301a();}document['addEventListener']('DOMContentLoaded',function(){var _0x49b77d=_0x45d8;if(!window['XD']||!XD[_0x49b77d(0x1e0)])return;XD[_0x49b77d(0x1e0)]['run']('quiz',{'id':'B','title':'模块B测验：电脑使用','questions':[{'q':'桌面上带小箭头的图标大多是？','opts':['文件的原身',_0x49b77d(0x1e8),'回收站','系统组件不可删除'],'a':0x1,'exp':'快捷方式只是个\x22门牌\x22，删掉它程序还在；删真文件才是真删。'},{'q':'想要边写文档边查资料，各占半屏，最快的方法是？','opts':['把两个窗口分别拖到屏幕左右两侧',_0x49b77d(0x1eb),'最小化一个窗口','用\x20F11\x20全屏'],'a':0x0,'exp':'拖到边缘自动分半屏，是\x20Windows\x20最常用的分屏操作。'},{'q':'C:\x5cUsers\x5c小明\x5cDocuments\x5c报告.docx\x20中的\x22\x5c\x22表示？','opts':['盘符',_0x49b77d(0x1ea),'文件名','隐藏标记'],'a':0x1,'exp':'反斜杠\x20\x5c\x20分隔路径层级：盘符\x20→\x20用户\x20→\x20文档\x20→\x20文件。'},{'q':'文件扩展名最大的作用是？','opts':['让文件名更好看',_0x49b77d(0x1e3),_0x49b77d(0x1ec),'让文件不能被复制'],'a':0x1,'exp':'.docx/.jpg/.exe\x20等后缀决定了默认打开方式，也帮助你识别文件类型。'},{'q':'下载.exe\x20安装包时，最安全的来源是？','opts':[_0x49b77d(0x1de),'搜索引擎广告位链接',_0x49b77d(0x1e4),'微信群里的安装包'],'a':0x2,'exp':'只认官网与官方应用商店；第三方\x22高速下载\x22往往是捆绑全家桶的重灾区。'},{'q':'装软件时发现\x22自定义安装\x22里有几个勾选项，正确做法是？','opts':[_0x49b77d(0x1e2),_0x49b77d(0x1dd),'无所谓，直接下一步','不装这个软件'],'a':0x1,'exp':'捆绑项藏在勾选里，务必取消勾选再继续。'},{'q':'关于杀毒防护，下列做法正确的是？','opts':[_0x49b77d(0x1db),'只留系统自带\x20Defender，实时保护打开','关掉实时保护省资源',_0x49b77d(0x1e7)],'a':0x1,'exp':'多杀毒互相冲突反而拖慢；Defender\x20对普通用户已足够。'},{'q':'\x22明明办的\x20300\x20兆宽带，下载只有\x2030\x20多\x20MB/s\x22，正确解释是？','opts':['运营商坑钱','Mbps\x20是兆比特，除以\x208\x20才是兆字节',_0x49b77d(0x1df),'路由器坏了要换\x201000\x20元的'],'a':0x1,'exp':'300Mbps\x20÷\x208\x20≈\x2037.5MB/s，属正常；区别在小写\x20b（bit）与大写\x20B（Byte）。'},{'q':'电脑\x22卡成\x20PPT\x22，第一步应该做什么？','opts':[_0x49b77d(0x1e9),'打开任务管理器看\x20CPU/内存/磁盘占用','清理桌面图标','换电脑'],'a':0x1,'exp':_0x49b77d(0x1e1)},{'q':_0x49b77d(0x1e5),'opts':[_0x49b77d(0x1da),'Ctrl+Shift+Esc\x20打开任务管理器结束该程序','敲键盘发泄','拔掉网线'],'a':0x1,'exp':'任务管理器\x20→\x20结束任务能救回系统；强关电源是最后手段。'},{'q':'蓝屏上的关键词\x20MEMORY_MANAGEMENT\x20通常提示？','opts':['内存或驱动问题','网速太慢','屏幕坏了','Office\x20需要续费'],'a':0x0,'exp':'这类代码提示内存/驱动异常，先插拔内存、更新驱动，再查内存健康。'},{'q':'C\x20盘快满了，最稳妥的清理动作是？','opts':['删掉\x20C:\x5cWindows\x20里的文件','用系统存储管理清理临时文件/缓存，大文件搬\x20D\x20盘','格式化\x20C\x20盘',_0x49b77d(0x1e6)],'a':0x1,'exp':_0x49b77d(0x1dc)}]});});
+function _0x1239(_0x350aee,_0x577453){_0x350aee=_0x350aee-0xd9;var _0x123949=_0x5774();var _0x8489f3=_0x123949[_0x350aee];return _0x8489f3;}var _0x200be7=_0x1239;document[_0x200be7(0xe1)]('DOMContentLoaded',function(){var _0x2441f2=_0x200be7;if(!window['XD']||!XD[_0x2441f2(0xe3)])return;XD['quiz']['run']('quiz',{'id':'B','title':_0x2441f2(0xe5),'questions':[{'q':_0x2441f2(0xd9),'opts':['文件的原身',_0x2441f2(0xe8),_0x2441f2(0xe4),'系统组件不可删除'],'a':0x1,'exp':'快捷方式只是个\x22门牌\x22，删掉它程序还在；删真文件才是真删。'},{'q':'想要边写文档边查资料，各占半屏，最快的方法是？','opts':['把两个窗口分别拖到屏幕左右两侧',_0x2441f2(0xeb),'最小化一个窗口','用\x20F11\x20全屏'],'a':0x0,'exp':_0x2441f2(0xdc)},{'q':'C:\x5cUsers\x5c小明\x5cDocuments\x5c报告.docx\x20中的\x22\x5c\x22表示？','opts':['盘符','文件夹层级分隔符',_0x2441f2(0xe0),_0x2441f2(0xea)],'a':0x1,'exp':'反斜杠\x20\x5c\x20分隔路径层级：盘符\x20→\x20用户\x20→\x20文档\x20→\x20文件。'},{'q':'文件扩展名最大的作用是？','opts':[_0x2441f2(0xed),'告诉系统用什么程序打开','控制文件体积','让文件不能被复制'],'a':0x1,'exp':'.docx/.jpg/.exe\x20等后缀决定了默认打开方式，也帮助你识别文件类型。'},{'q':'下载.exe\x20安装包时，最安全的来源是？','opts':[_0x2441f2(0xdf),'搜索引擎广告位链接',_0x2441f2(0xde),_0x2441f2(0xdd)],'a':0x2,'exp':'只认官网与官方应用商店；第三方\x22高速下载\x22往往是捆绑全家桶的重灾区。'},{'q':_0x2441f2(0xe6),'opts':['全部勾选，功能多总没错','取消无关勾选（捆绑项），看清每一步',_0x2441f2(0xe9),'不装这个软件'],'a':0x1,'exp':'捆绑项藏在勾选里，务必取消勾选再继续。'},{'q':'关于杀毒防护，下列做法正确的是？','opts':['装\x202-3\x20套杀毒软件交叉防护',_0x2441f2(0xe2),_0x2441f2(0xee),_0x2441f2(0xf0)],'a':0x1,'exp':_0x2441f2(0xdb)},{'q':'\x22明明办的\x20300\x20兆宽带，下载只有\x2030\x20多\x20MB/s\x22，正确解释是？','opts':['运营商坑钱','Mbps\x20是兆比特，除以\x208\x20才是兆字节','电脑有病毒','路由器坏了要换\x201000\x20元的'],'a':0x1,'exp':'300Mbps\x20÷\x208\x20≈\x2037.5MB/s，属正常；区别在小写\x20b（bit）与大写\x20B（Byte）。'},{'q':'电脑\x22卡成\x20PPT\x22，第一步应该做什么？','opts':['重装系统','打开任务管理器看\x20CPU/内存/磁盘占用','清理桌面图标',_0x2441f2(0xef)],'a':0x1,'exp':'先看占用揪出\x22吃货\x22，再对症下药；重装是最后手段。'},{'q':_0x2441f2(0xda),'opts':['立刻长按电源键','Ctrl+Shift+Esc\x20打开任务管理器结束该程序','敲键盘发泄','拔掉网线'],'a':0x1,'exp':'任务管理器\x20→\x20结束任务能救回系统；强关电源是最后手段。'},{'q':'蓝屏上的关键词\x20MEMORY_MANAGEMENT\x20通常提示？','opts':['内存或驱动问题','网速太慢','屏幕坏了','Office\x20需要续费'],'a':0x0,'exp':_0x2441f2(0xec)},{'q':'C\x20盘快满了，最稳妥的清理动作是？','opts':['删掉\x20C:\x5cWindows\x20里的文件','用系统存储管理清理临时文件/缓存，大文件搬\x20D\x20盘','格式化\x20C\x20盘',_0x2441f2(0xe7)],'a':0x1,'exp':'设置→存储\x20逐项清理最安全；C:\x5cWindows\x20里的文件别乱删，那不是垃圾。'}]});});function _0x5774(){var _0x5358e1=['桌面上带小箭头的图标大多是？','程序假死（无响应），正确处理是？','多杀毒互相冲突反而拖慢；Defender\x20对普通用户已足够。','拖到边缘自动分半屏，是\x20Windows\x20最常用的分屏操作。','微信群里的安装包','软件官网的下载页面','XX软件园的\x22高速下载\x22按钮','文件名','addEventListener','只留系统自带\x20Defender，实时保护打开','quiz','回收站','模块B测验：电脑使用','装软件时发现\x22自定义安装\x22里有几个勾选项，正确做法是？','把浏览器缓存拷去\x20D\x20盘继续用','快捷方式（指向程序的链接）','无所谓，直接下一步','隐藏标记','用\x20Shift+Tab\x20切换','这类代码提示内存/驱动异常，先插拔内存、更新驱动，再查内存健康。','让文件名更好看','关掉实时保护省资源','换电脑','定期给系统盘拍照片当防护'];_0x5774=function(){return _0x5358e1;};return _0x5774();}
 </script>
 </body>
 </html>

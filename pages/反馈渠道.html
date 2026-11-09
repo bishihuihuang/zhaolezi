@@ -526,6 +526,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -604,7 +674,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-function _0x348d(){var _0x46e573=['remove','fallbackCopy','clipboard','createElement','preventDefault','click','active','backHome','getElementById','writeText','addEventListener','https://mail.163.com','body','value','src','邮箱地址已复制！','appendChild','娱乐游戏.html','163.com','add','classList','location','bump','fb_open','then','href','Escape','copy'];_0x348d=function(){return _0x46e573;};return _0x348d();}function _0x3d68(_0x532b69,_0x348d27){_0x532b69=_0x532b69-0x6c;var _0x3d6849=_0x348d();var _0x34f893=_0x3d6849[_0x532b69];return _0x34f893;}(function(){'use strict';var _0x3b2528=_0x3d68;document['getElementById']('emailAddr')['textContent']='w550w550'+'c'+'@'+_0x3b2528(0x7e);var _0x59f09d=document['getElementById'](_0x3b2528(0x73)),_0x3e4d32=document['getElementById']('overlay'),_0x4a8844=![];_0x59f09d['addEventListener'](_0x3b2528(0x71),function(_0x2f470c){var _0x457b6c=_0x3b2528;_0x2f470c[_0x457b6c(0x70)]();if(_0x4a8844)return;_0x4a8844=!![],_0x3e4d32[_0x457b6c(0x80)][_0x457b6c(0x7f)](_0x457b6c(0x72)),setTimeout(function(){var _0x5f5ddb=_0x457b6c;window[_0x5f5ddb(0x81)][_0x5f5ddb(0x85)]=(document['referrer']||'')['indexOf'](_0x5f5ddb(0x7d))>=0x0?'娱乐游戏.html':'../index.html';},0x3e8);}),document['addEventListener']('keydown',function(_0x47cd90){var _0x18d3ac=_0x3b2528;_0x47cd90['key']===_0x18d3ac(0x86)&&_0x3e4d32['classList']['contains']('active')&&(_0x3e4d32[_0x18d3ac(0x80)][_0x18d3ac(0x6c)]('active'),_0x4a8844=![]);});var _0x3d2cda=document[_0x3b2528(0x74)]('copyEmail');_0x3d2cda[_0x3b2528(0x76)](_0x3b2528(0x71),function(){var _0x2f7853=_0x3b2528,_0x547348=document[_0x2f7853(0x74)]('emailAddr')['textContent'];navigator['clipboard']&&navigator[_0x2f7853(0x6e)]['writeText']?navigator[_0x2f7853(0x6e)][_0x2f7853(0x75)](_0x547348)[_0x2f7853(0x84)](function(){var _0x54778b=_0x2f7853;alert(_0x54778b(0x7b));})['catch'](function(){_0x3e44ae(_0x547348);}):_0x3e44ae(_0x547348);});function _0x3e44ae(_0x5da46a){var _0x55f9a9=_0x3b2528,_0x327b7a=document[_0x55f9a9(0x6f)]('textarea');_0x327b7a[_0x55f9a9(0x79)]=_0x5da46a,document[_0x55f9a9(0x78)][_0x55f9a9(0x7c)](_0x327b7a),_0x327b7a['select'](),document['execCommand'](_0x55f9a9(0x87)),document['body']['removeChild'](_0x327b7a),alert('邮箱地址已复制！');}var _0x4d5779=document[_0x3b2528(0x74)]('gotoEmail');_0x4d5779['addEventListener']('click',function(){var _0x24c0da=_0x3b2528;window['location']['href']=_0x24c0da(0x77);if(window['ZL']&&ZL['bump'])ZL['bump']('fb_sent',0x1);}),window['setFeedbackText']=function(_0x835302){var _0x962e1f=document['getElementById']('textDisplay');if(_0x962e1f)_0x962e1f['innerHTML']=_0x835302;},window['setFeedbackImage']=function(_0x4a6983){var _0x5a3e75=document['querySelector']('.image-display\x20img');if(_0x5a3e75&&_0x4a6983)_0x5a3e75['src']=_0x4a6983;},window['clearFeedbackImage']=function(){var _0x35d82f=_0x3b2528,_0x3f40f9=document['querySelector']('.image-display\x20img');if(_0x3f40f9)_0x3f40f9[_0x35d82f(0x7a)]='';},window['clearFeedbackText']=function(){var _0x24f827=document['getElementById']('textDisplay');if(_0x24f827)_0x24f827['innerHTML']='';},window[_0x3b2528(0x6d)]=_0x3e44ae;if(window['ZL']&&ZL[_0x3b2528(0x82)])ZL['bump'](_0x3b2528(0x83),0x1);}());
+function _0x2aa2(_0x48e1bb,_0x3be636){_0x48e1bb=_0x48e1bb-0x171;var _0x2aa2ac=_0x3be6();var _0x235b7f=_0x2aa2ac[_0x48e1bb];return _0x235b7f;}(function(){'use strict';var _0x5ae39b=_0x2aa2;document['getElementById'](_0x5ae39b(0x187))[_0x5ae39b(0x174)]='w550w550'+'c'+'@'+_0x5ae39b(0x17d);var _0xcf80b5=document['getElementById'](_0x5ae39b(0x179)),_0x206813=document['getElementById'](_0x5ae39b(0x18a)),_0x1df507=![];_0xcf80b5['addEventListener']('click',function(_0x542534){var _0x3ccbc0=_0x5ae39b;_0x542534[_0x3ccbc0(0x17c)]();if(_0x1df507)return;_0x1df507=!![],_0x206813[_0x3ccbc0(0x177)][_0x3ccbc0(0x17a)]('active'),setTimeout(function(){var _0xb5e982=_0x3ccbc0;window[_0xb5e982(0x189)][_0xb5e982(0x178)]=(document['referrer']||'')['indexOf']('娱乐游戏.html')>=0x0?_0xb5e982(0x184):'../index.html';},0x3e8);}),document['addEventListener']('keydown',function(_0x540526){var _0x5229c7=_0x5ae39b;_0x540526[_0x5229c7(0x181)]===_0x5229c7(0x17b)&&_0x206813['classList'][_0x5229c7(0x182)](_0x5229c7(0x172))&&(_0x206813['classList'][_0x5229c7(0x17f)]('active'),_0x1df507=![]);});var _0xd7cba9=document['getElementById'](_0x5ae39b(0x176));_0xd7cba9['addEventListener'](_0x5ae39b(0x186),function(){var _0x69ff9f=_0x5ae39b,_0x32f762=document['getElementById'](_0x69ff9f(0x187))['textContent'];navigator['clipboard']&&navigator['clipboard']['writeText']?navigator['clipboard']['writeText'](_0x32f762)['then'](function(){alert('邮箱地址已复制！');})['catch'](function(){_0x5d3c21(_0x32f762);}):_0x5d3c21(_0x32f762);});function _0x5d3c21(_0x547e3e){var _0x5ee62c=_0x5ae39b,_0xd1279c=document['createElement']('textarea');_0xd1279c['value']=_0x547e3e,document['body']['appendChild'](_0xd1279c),_0xd1279c[_0x5ee62c(0x185)](),document['execCommand']('copy'),document['body']['removeChild'](_0xd1279c),alert('邮箱地址已复制！');}var _0x4a4d79=document[_0x5ae39b(0x171)]('gotoEmail');_0x4a4d79['addEventListener']('click',function(){var _0x261c99=_0x5ae39b;window[_0x261c99(0x189)]['href']=_0x261c99(0x17e);if(window['ZL']&&ZL['bump'])ZL['bump']('fb_sent',0x1);}),window['setFeedbackText']=function(_0x5192e1){var _0x469954=document['getElementById']('textDisplay');if(_0x469954)_0x469954['innerHTML']=_0x5192e1;},window['setFeedbackImage']=function(_0x5f3ee4){var _0xf0c758=_0x5ae39b,_0x473280=document['querySelector']('.image-display\x20img');if(_0x473280&&_0x5f3ee4)_0x473280[_0xf0c758(0x180)]=_0x5f3ee4;},window[_0x5ae39b(0x183)]=function(){var _0x2a94cf=_0x5ae39b,_0x109fe1=document['querySelector'](_0x2a94cf(0x188));if(_0x109fe1)_0x109fe1['src']='';},window['clearFeedbackText']=function(){var _0x30b5b5=_0x5ae39b,_0x546984=document['getElementById'](_0x30b5b5(0x173));if(_0x546984)_0x546984['innerHTML']='';},window['fallbackCopy']=_0x5d3c21;if(window['ZL']&&ZL['bump'])ZL[_0x5ae39b(0x175)]('fb_open',0x1);}());function _0x3be6(){var _0x33eb7c=['getElementById','active','textDisplay','textContent','bump','copyEmail','classList','href','backHome','add','Escape','preventDefault','163.com','https://mail.163.com','remove','src','key','contains','clearFeedbackImage','娱乐游戏.html','select','click','emailAddr','.image-display\x20img','location','overlay'];_0x3be6=function(){return _0x33eb7c;};return _0x3be6();}
 </script>
 </body>
 </html>

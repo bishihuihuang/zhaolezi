@@ -335,6 +335,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -387,7 +457,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-const _0x511e72=_0x150b,toolsConfig=[{'title':'💡\x20灵感火花','desc':'组合式创意点子生成器：8\x20大领域、数千种组合，专治灵感枯竭','link':_0x511e72(0x163),'icon':'💡'},{'title':_0x511e72(0x172),'desc':_0x511e72(0x17e),'link':'创意-文案工坊.html','icon':'✍️'},{'title':'📑\x20摘要萃取','desc':'抽取式智能摘要：自动提炼长文核心句与关键词','link':'创意-摘要萃取.html','icon':'📑'},{'title':'🔍\x20文本体检','desc':'字数\x20/\x20词频\x20/\x20词云\x20/\x20阅读时长\x20/\x20情感倾向，全方位文本分析','link':'创意-文本体检.html','icon':'🔍'},{'title':_0x511e72(0x167),'desc':'6\x20种配色算法\x20+\x20WCAG\x20对比度检查，灵感配色一键带走','link':'创意-配色灵感.html','icon':'🎨'},{'title':'🖼️\x20生成艺术','desc':'流场\x20/\x20分形\x20/\x20粒子等\x206\x20种代码画布，生成独一无二的艺术图','link':'创意-生成艺术.html','icon':_0x511e72(0x183)},{'title':'⚖️\x20决策矩阵','desc':'加权打分\x20+\x20敏感性分析，让选择不再凭感觉','link':'创意-决策矩阵.html','icon':'⚖️'},{'title':_0x511e72(0x159),'desc':'SMART\x20体检\x20+\x20里程碑自动规划\x20+\x20甘特图可视化','link':'创意-目标拆解.html','icon':'🎯'},{'title':'📓\x20灵感记录本','desc':_0x511e72(0x176),'link':'创意-灵感记录本.html','icon':'📓'},{'title':'🧩\x20创意连线','desc':_0x511e72(0x164),'link':'创意-创意连线.html','icon':'🧩'},{'title':'📚\x20创作方法库','desc':'头脑风暴\x20/\x20SCAMPER\x20/\x20六顶思考帽，交互式创作方法论','link':'创意-创作方法库.html','icon':'📚'},{'title':'ℹ️\x20关于与更新','desc':_0x511e72(0x182),'link':'创意-关于与更新.html','icon':'ℹ️'},{'title':'🛡️\x20全站自检','desc':'一键体检全站状态：存储\x20/\x20离线\x20/\x20页面可达性','link':'创意-自检.html','icon':'🛡️'}];function normalizeLink(_0x24ae3e){const _0x4b2597=_0x511e72;if(!_0x24ae3e)return'#';if(/^www\./i[_0x4b2597(0x168)](_0x24ae3e))return'https://'+_0x24ae3e;return _0x24ae3e;}function createToolBox(_0xdb2821){const _0x589908=_0x511e72,_0x537757=document[_0x589908(0x171)]('a');_0x537757[_0x589908(0x181)]='tool-box\x20color-'+_0xdb2821%0x5,_0x537757[_0x589908(0x15a)]['index']=_0xdb2821;const _0x59d27c=toolsConfig[_0xdb2821],_0x5c5fe2=document[_0x589908(0x171)](_0x589908(0x178));_0x5c5fe2['className']=_0x589908(0x165);const _0x4e129a=document['createElement']('span');_0x4e129a['className']=_0x589908(0x170);const _0x1c8037=document['createElement'](_0x589908(0x178));_0x1c8037[_0x589908(0x181)]='tooltip';if(_0x59d27c&&_0x59d27c['title']){_0x5c5fe2['textContent']=_0x59d27c['icon']||'';var _0xcd13eb=_0x59d27c[_0x589908(0x180)],_0x1baf9f=_0xcd13eb['lastIndexOf']('\x20');_0x1baf9f!==-0x1&&_0x1baf9f+0x1<_0xcd13eb['length']?_0x4e129a['innerHTML']=_0xcd13eb['substring'](0x0,_0x1baf9f+0x1)+_0x589908(0x15c)+_0xcd13eb['substring'](_0x1baf9f+0x1):_0x4e129a['textContent']=_0xcd13eb,_0x1c8037['textContent']=_0x59d27c[_0x589908(0x175)]||'点我试试～',_0x537757[_0x589908(0x15d)]=normalizeLink(_0x59d27c['link']),_0x537757[_0x589908(0x15f)](_0x589908(0x16c),_0x59d27c[_0x589908(0x180)]+(_0x59d27c['desc']?'\x20-\x20'+_0x59d27c['desc']:'')),_0x537757['setAttribute']('title',_0x59d27c['desc']||_0x59d27c[_0x589908(0x180)]);}else _0x5c5fe2[_0x589908(0x17f)]='',_0x4e129a['textContent']='敬请期待～',_0x1c8037[_0x589908(0x17f)]=_0x589908(0x16d),_0x537757[_0x589908(0x15d)]='#',_0x537757['setAttribute']('aria-label','敬请期待～'),_0x537757[_0x589908(0x15f)]('title','敬请期待～');return _0x537757['appendChild'](_0x5c5fe2),_0x537757['appendChild'](_0x4e129a),_0x537757[_0x589908(0x16f)](_0x1c8037),_0x537757[_0x589908(0x17b)](_0x589908(0x17c),function(_0x1771fa){_0x1771fa['preventDefault']();const _0x320230=_0x59d27c&&_0x59d27c['link']?_0x59d27c['link']:'';showLoadingOverlay(_0x320230);}),_0x537757;}function _0x150b(_0x55402a,_0x30f17b){_0x55402a=_0x55402a-0x158;const _0x150b68=_0x30f1();let _0x1893ad=_0x150b68[_0x55402a];return _0x1893ad;}function renderTools(){const _0x3139b1=_0x511e72,_0x1cbcd2=document['getElementById'](_0x3139b1(0x173));_0x1cbcd2['innerHTML']='';const _0x41c606=document[_0x3139b1(0x171)](_0x3139b1(0x158));_0x41c606['className']='title-area',_0x41c606['innerHTML']='<h2>创意引擎<br\x20class=\x22mobile-break\x22>灵感工坊</h2>'+_0x3139b1(0x17a)+'<div\x20class=\x22stats\x22\x20id=\x22heroStats\x22></div>',_0x1cbcd2[_0x3139b1(0x16f)](_0x41c606),renderHeroStats();for(let _0x19d998=0x0;_0x19d998<toolsConfig[_0x3139b1(0x16b)];_0x19d998++){_0x1cbcd2['appendChild'](createToolBox(_0x19d998));}}function _0x30f1(){const _0x23daf6=['div','🎯\x20目标拆解','dataset','isArray','<br\x20class=\x22mobile-break\x22>','href','remove','setAttribute','\x20天</span>','<span\x20class=\x22stat-chip\x22>🔥\x20今日灵感\x20','heroStats','创意-灵感火花.html','随机词汇强制连接训练，练出天马行空的联想力','tool-icon','add','🎨\x20配色灵感','test','glass','renderTools','length','aria-label','敬请期待～','getElementById','appendChild','tool-title','createElement','✍️\x20文案工坊','grid','normalizeLink','desc','想法速记\x20/\x20标签管理\x20/\x20搜索\x20/\x20导入导出，灵感不流失','enableTilt','span','DOMContentLoaded','<div\x20class=\x22tagline\x22>为灵感而生的创作工具箱</div>','addEventListener','click','showLoadingOverlay','品牌标语\x20/\x20广告标题\x20/\x20社交金句\x20/\x20祝福文案，5\x20种模式一键产出','textContent','title','className','项目说明\x20/\x20更新日志\x20/\x20每日签到\x20/\x20使用统计','🖼️'];_0x30f1=function(){return _0x23daf6;};return _0x30f1();}function renderHeroStats(){const _0x9976f6=_0x511e72,_0x4085cd=document[_0x9976f6(0x16e)](_0x9976f6(0x162));if(!_0x4085cd)return;let _0x2a46b5=0x0,_0xd765f0=0x0,_0x55da85=0x0;try{window['CY']&&CY['activity']&&(_0x2a46b5=CY['activity']['todayCount'](),_0xd765f0=CY['activity']['streakDays']()),_0x55da85=(CY['getUnlocked']?CY['getUnlocked']():[])['length'];}catch(_0x541191){}_0x4085cd['innerHTML']=_0x9976f6(0x161)+_0x2a46b5+'</span>'+'<span\x20class=\x22stat-chip\x22>📅\x20连续活跃\x20'+_0xd765f0+_0x9976f6(0x160)+'<span\x20class=\x22stat-chip\x22>🏆\x20已点亮\x20'+_0x55da85+'\x20/\x20'+(window['CY']&&CY['ACHIEVEMENTS']?CY['ACHIEVEMENTS'][_0x9976f6(0x16b)]:0xc)+'\x20徽章</span>';}let overlayTimer=null;function showLoadingOverlay(_0x551a10){const _0x9a8630=_0x511e72,_0x32b439=document['getElementById']('overlay');_0x32b439['classList'][_0x9a8630(0x166)]('active');if(overlayTimer)clearTimeout(overlayTimer);overlayTimer=setTimeout(()=>{const _0x4d8b62=_0x9a8630;_0x32b439['classList'][_0x4d8b62(0x15e)]('active');if(!_0x551a10||_0x551a10==='#')return;const _0x2005dc=normalizeLink(_0x551a10);window['location'][_0x4d8b62(0x15d)]=_0x2005dc;},0x384);}document[_0x511e72(0x17b)](_0x511e72(0x179),function(){const _0x51f946=_0x511e72;renderTools(),window['CY']&&CY['glass']&&CY[_0x51f946(0x169)][_0x51f946(0x177)]&&CY['glass']['enableTilt']('.tool-box',{'maxTilt':0x7,'lift':0x8,'zoom':1.02}),window['refreshTools']=function(_0xe7f61a){const _0x37abc3=_0x51f946;_0xe7f61a&&Array[_0x37abc3(0x15b)](_0xe7f61a)&&(toolsConfig['length']=0x0,toolsConfig['push'](..._0xe7f61a)),renderTools();};});if(!('normalizeLink'in window))window[_0x511e72(0x174)]=normalizeLink;if(!('createToolBox'in window))window['createToolBox']=createToolBox;if(!(_0x511e72(0x16a)in window))window['renderTools']=renderTools;if(!('showLoadingOverlay'in window))window[_0x511e72(0x17d)]=showLoadingOverlay;
+function _0x4239(){const _0x2a3174=['length','isArray','tool-icon','创意-灵感记录本.html','<span\x20class=\x22stat-chip\x22>🏆\x20已点亮\x20','⚖️\x20决策矩阵','点我试试～','🛡️\x20全站自检','renderTools','desc','index','grid','<br\x20class=\x22mobile-break\x22>','active','创意-生成艺术.html','\x20天</span>','preventDefault','创意-目标拆解.html','SMART\x20体检\x20+\x20里程碑自动规划\x20+\x20甘特图可视化','ℹ️\x20关于与更新','add','<div\x20class=\x22stats\x22\x20id=\x22heroStats\x22></div>','href','textContent','todayCount','抽取式智能摘要：自动提炼长文核心句与关键词','<div\x20class=\x22tagline\x22>为灵感而生的创作工具箱</div>','📚\x20创作方法库','title','push','组合式创意点子生成器：8\x20大领域、数千种组合，专治灵感枯竭','createElement','className','setAttribute','创意-关于与更新.html','activity','appendChild','aria-label','📑\x20摘要萃取','innerHTML','heroStats','字数\x20/\x20词频\x20/\x20词云\x20/\x20阅读时长\x20/\x20情感倾向，全方位文本分析','ACHIEVEMENTS','test','项目说明\x20/\x20更新日志\x20/\x20每日签到\x20/\x20使用统计','敬请期待～','📓\x20灵感记录本','</span>','tooltip','\x20/\x20','enableTilt'];_0x4239=function(){return _0x2a3174;};return _0x4239();}const _0x5955c5=_0x4434,toolsConfig=[{'title':'💡\x20灵感火花','desc':_0x5955c5(0xc8),'link':'创意-灵感火花.html','icon':'💡'},{'title':'✍️\x20文案工坊','desc':'品牌标语\x20/\x20广告标题\x20/\x20社交金句\x20/\x20祝福文案，5\x20种模式一键产出','link':'创意-文案工坊.html','icon':'✍️'},{'title':_0x5955c5(0xd0),'desc':_0x5955c5(0xc3),'link':'创意-摘要萃取.html','icon':'📑'},{'title':'🔍\x20文本体检','desc':_0x5955c5(0xd3),'link':'创意-文本体检.html','icon':'🔍'},{'title':'🎨\x20配色灵感','desc':'6\x20种配色算法\x20+\x20WCAG\x20对比度检查，灵感配色一键带走','link':'创意-配色灵感.html','icon':'🎨'},{'title':'🖼️\x20生成艺术','desc':'流场\x20/\x20分形\x20/\x20粒子等\x206\x20种代码画布，生成独一无二的艺术图','link':_0x5955c5(0xb8),'icon':'🖼️'},{'title':_0x5955c5(0xaf),'desc':'加权打分\x20+\x20敏感性分析，让选择不再凭感觉','link':'创意-决策矩阵.html','icon':'⚖️'},{'title':'🎯\x20目标拆解','desc':_0x5955c5(0xbc),'link':_0x5955c5(0xbb),'icon':'🎯'},{'title':_0x5955c5(0xd8),'desc':'想法速记\x20/\x20标签管理\x20/\x20搜索\x20/\x20导入导出，灵感不流失','link':_0x5955c5(0xad),'icon':'📓'},{'title':'🧩\x20创意连线','desc':'随机词汇强制连接训练，练出天马行空的联想力','link':'创意-创意连线.html','icon':'🧩'},{'title':_0x5955c5(0xc5),'desc':'头脑风暴\x20/\x20SCAMPER\x20/\x20六顶思考帽，交互式创作方法论','link':'创意-创作方法库.html','icon':'📚'},{'title':_0x5955c5(0xbd),'desc':_0x5955c5(0xd6),'link':_0x5955c5(0xcc),'icon':'ℹ️'},{'title':_0x5955c5(0xb1),'desc':'一键体检全站状态：存储\x20/\x20离线\x20/\x20页面可达性','link':'创意-自检.html','icon':'🛡️'}];function normalizeLink(_0x466089){const _0x10c798=_0x5955c5;if(!_0x466089)return'#';if(/^www\./i[_0x10c798(0xd5)](_0x466089))return'https://'+_0x466089;return _0x466089;}function createToolBox(_0x49b41c){const _0x4fc6e7=_0x5955c5,_0xef9a31=document['createElement']('a');_0xef9a31[_0x4fc6e7(0xca)]='tool-box\x20color-'+_0x49b41c%0x5,_0xef9a31['dataset'][_0x4fc6e7(0xb4)]=_0x49b41c;const _0x37b198=toolsConfig[_0x49b41c],_0x5a6cd2=document['createElement']('span');_0x5a6cd2['className']=_0x4fc6e7(0xac);const _0x228405=document[_0x4fc6e7(0xc9)]('span');_0x228405['className']='tool-title';const _0x1fde5d=document[_0x4fc6e7(0xc9)]('span');_0x1fde5d['className']=_0x4fc6e7(0xda);if(_0x37b198&&_0x37b198['title']){_0x5a6cd2[_0x4fc6e7(0xc1)]=_0x37b198['icon']||'';var _0x1761af=_0x37b198[_0x4fc6e7(0xc6)],_0x5305fa=_0x1761af['lastIndexOf']('\x20');_0x5305fa!==-0x1&&_0x5305fa+0x1<_0x1761af['length']?_0x228405[_0x4fc6e7(0xd1)]=_0x1761af['substring'](0x0,_0x5305fa+0x1)+_0x4fc6e7(0xb6)+_0x1761af['substring'](_0x5305fa+0x1):_0x228405['textContent']=_0x1761af,_0x1fde5d['textContent']=_0x37b198[_0x4fc6e7(0xb3)]||_0x4fc6e7(0xb0),_0xef9a31['href']=normalizeLink(_0x37b198['link']),_0xef9a31['setAttribute']('aria-label',_0x37b198['title']+(_0x37b198['desc']?'\x20-\x20'+_0x37b198['desc']:'')),_0xef9a31[_0x4fc6e7(0xcb)]('title',_0x37b198['desc']||_0x37b198[_0x4fc6e7(0xc6)]);}else _0x5a6cd2['textContent']='',_0x228405['textContent']=_0x4fc6e7(0xd7),_0x1fde5d[_0x4fc6e7(0xc1)]=_0x4fc6e7(0xd7),_0xef9a31['href']='#',_0xef9a31['setAttribute'](_0x4fc6e7(0xcf),'敬请期待～'),_0xef9a31[_0x4fc6e7(0xcb)](_0x4fc6e7(0xc6),_0x4fc6e7(0xd7));return _0xef9a31['appendChild'](_0x5a6cd2),_0xef9a31[_0x4fc6e7(0xce)](_0x228405),_0xef9a31['appendChild'](_0x1fde5d),_0xef9a31['addEventListener']('click',function(_0x46aaaf){const _0x73b063=_0x4fc6e7;_0x46aaaf[_0x73b063(0xba)]();const _0xd45ccd=_0x37b198&&_0x37b198['link']?_0x37b198['link']:'';showLoadingOverlay(_0xd45ccd);}),_0xef9a31;}function renderTools(){const _0x1083c3=_0x5955c5,_0x5e4bf9=document['getElementById'](_0x1083c3(0xb5));_0x5e4bf9['innerHTML']='';const _0x4f5255=document['createElement']('div');_0x4f5255['className']='title-area',_0x4f5255['innerHTML']='<h2>创意引擎<br\x20class=\x22mobile-break\x22>灵感工坊</h2>'+_0x1083c3(0xc4)+_0x1083c3(0xbf),_0x5e4bf9['appendChild'](_0x4f5255),renderHeroStats();for(let _0x28326b=0x0;_0x28326b<toolsConfig['length'];_0x28326b++){_0x5e4bf9[_0x1083c3(0xce)](createToolBox(_0x28326b));}}function renderHeroStats(){const _0x26bb3c=_0x5955c5,_0x4f90dc=document['getElementById'](_0x26bb3c(0xd2));if(!_0x4f90dc)return;let _0x3cf953=0x0,_0x478002=0x0,_0x57e563=0x0;try{window['CY']&&CY['activity']&&(_0x3cf953=CY[_0x26bb3c(0xcd)][_0x26bb3c(0xc2)](),_0x478002=CY['activity']['streakDays']()),_0x57e563=(CY['getUnlocked']?CY['getUnlocked']():[])['length'];}catch(_0x5a5418){}_0x4f90dc[_0x26bb3c(0xd1)]='<span\x20class=\x22stat-chip\x22>🔥\x20今日灵感\x20'+_0x3cf953+_0x26bb3c(0xd9)+'<span\x20class=\x22stat-chip\x22>📅\x20连续活跃\x20'+_0x478002+_0x26bb3c(0xb9)+_0x26bb3c(0xae)+_0x57e563+_0x26bb3c(0xdb)+(window['CY']&&CY[_0x26bb3c(0xd4)]?CY[_0x26bb3c(0xd4)]['length']:0xc)+'\x20徽章</span>';}let overlayTimer=null;function showLoadingOverlay(_0x115b02){const _0x121226=_0x5955c5,_0x401a10=document['getElementById']('overlay');_0x401a10['classList'][_0x121226(0xbe)]('active');if(overlayTimer)clearTimeout(overlayTimer);overlayTimer=setTimeout(()=>{const _0x42a3ef=_0x121226;_0x401a10['classList']['remove'](_0x42a3ef(0xb7));if(!_0x115b02||_0x115b02==='#')return;const _0x397ccc=normalizeLink(_0x115b02);window['location'][_0x42a3ef(0xc0)]=_0x397ccc;},0x384);}document['addEventListener']('DOMContentLoaded',function(){const _0x493aa8=_0x5955c5;renderTools(),window['CY']&&CY['glass']&&CY['glass'][_0x493aa8(0xdc)]&&CY['glass'][_0x493aa8(0xdc)]('.tool-box',{'maxTilt':0x7,'lift':0x8,'zoom':1.02}),window['refreshTools']=function(_0x558b32){const _0xed5ef7=_0x493aa8;_0x558b32&&Array[_0xed5ef7(0xab)](_0x558b32)&&(toolsConfig[_0xed5ef7(0xaa)]=0x0,toolsConfig[_0xed5ef7(0xc7)](..._0x558b32)),renderTools();};});if(!('normalizeLink'in window))window['normalizeLink']=normalizeLink;if(!('createToolBox'in window))window['createToolBox']=createToolBox;if(!(_0x5955c5(0xb2)in window))window['renderTools']=renderTools;function _0x4434(_0x577b7f,_0x423939){_0x577b7f=_0x577b7f-0xaa;const _0x44347d=_0x4239();let _0x4e2325=_0x44347d[_0x577b7f];return _0x4e2325;}if(!('showLoadingOverlay'in window))window['showLoadingOverlay']=showLoadingOverlay;
 </script>
 
 </body>

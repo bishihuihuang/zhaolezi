@@ -68,6 +68,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -124,7 +194,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-var _0x28cc5c=_0x39ea,RECENT_WINDOW=0x64*0x64;function refresh(){var _0x5f4345=_0x39ea,_0x50710b=typeof CY[_0x5f4345(0xce)]==='object'?CY[_0x5f4345(0xce)]:null;_0x50710b&&(document['getElementById'](_0x5f4345(0xd8))['textContent']=_0x50710b['recent'](RECENT_WINDOW)[_0x5f4345(0xd6)]||0x0,document['getElementById'](_0x5f4345(0xca))['textContent']=_0x50710b['todayCount'](),document[_0x5f4345(0xd5)]('stStreak')['textContent']=_0x50710b['streakDays']());var _0x3f0192=CY['getUnlocked']?CY[_0x5f4345(0xd2)]():[];document['getElementById']('stAch')['textContent']=_0x3f0192[_0x5f4345(0xd6)];var _0x4949fa=[];try{_0x4949fa=JSON['parse'](localStorage['getItem'](_0x5f4345(0xd7)))||[];}catch(_0x2e7c01){}document[_0x5f4345(0xd5)]('stTools')['textContent']=_0x4949fa[_0x5f4345(0xd6)];var _0x3d4359=document['getElementById']('achBox');_0x3d4359[_0x5f4345(0xc7)]='',(CY['ACHIEVEMENTS']||[])['forEach'](function(_0xc332d6){var _0x224114=_0x5f4345,_0x572e77=_0x3f0192['indexOf'](_0xc332d6['id'])>=0x0,_0xf3a6bf=document[_0x224114(0xd0)]('span');_0xf3a6bf['className']='ach-item\x20'+(_0x572e77?'on':'off'),_0xf3a6bf['innerHTML']=(_0x572e77?'✅':'🔒')+'\x20'+_0xc332d6['icon']+'\x20'+_0xc332d6['t'],_0xf3a6bf[_0x224114(0xc6)]=_0xc332d6['d'],_0x3d4359[_0x224114(0xd3)](_0xf3a6bf);});var _0x144d5d=document['getElementById']('verBox');_0x144d5d[_0x5f4345(0xc7)]='';var _0x4f7a59=(CY['VERSION_LOG']||[])['slice']()['reverse']();_0x4f7a59['forEach'](function(_0xf038c6){var _0x44dc11=_0x5f4345,_0x19ad14=document['createElement'](_0x44dc11(0xc5));_0x19ad14['className']='ver-item',_0x19ad14['innerHTML']=_0x44dc11(0xdb)+_0xf038c6['ver']+_0x44dc11(0xda)+_0xf038c6['title']+_0x44dc11(0xd9)+_0xf038c6['desc']+_0x44dc11(0xcf),_0x144d5d['appendChild'](_0x19ad14);});}function _0x39ea(_0x3a3375,_0x56d68d){_0x3a3375=_0x3a3375-0xc5;var _0x39eabb=_0x56d6();var _0x2c54bd=_0x39eabb[_0x3a3375];return _0x2c54bd;}function checkin(){var _0x35e3c9=_0x39ea;if(typeof CY['activity']!==_0x35e3c9(0xd4)){CY['showToast']('数据层尚未就绪，稍后再试');return;}var _0x4852c8=CY[_0x35e3c9(0xce)][_0x35e3c9(0xc9)](0x3e8),_0x105c17=new Date(),_0x9fe3b6=_0x105c17['getFullYear']()+'-'+(_0x105c17['getMonth']()+0x1)+'-'+_0x105c17['getDate'](),_0x433265=![];for(var _0x26faa1=0x0;_0x26faa1<_0x4852c8['length'];_0x26faa1++){var _0x338f8e=new Date(_0x4852c8[_0x26faa1]['at']);if(_0x4852c8[_0x26faa1]['type']==='checkin'&&_0x338f8e['getFullYear']()===_0x105c17['getFullYear']()&&_0x338f8e['getMonth']()===_0x105c17[_0x35e3c9(0xc8)]()&&_0x338f8e['getDate']()===_0x105c17['getDate']()){_0x433265=!![];break;}}if(_0x433265){CY['showToast']('📅\x20今天已经签过到啦，明天再来');return;}CY['activity']['add']({'type':'checkin','page':'创意-关于与更新.html'});var _0xe8eba9=CY[_0x35e3c9(0xce)][_0x35e3c9(0xcc)]();CY['showToast'](_0x35e3c9(0xcb)+_0xe8eba9+'\x20天'),refresh();}document[_0x28cc5c(0xd1)]('DOMContentLoaded',function(){var _0x1554c7=_0x28cc5c;document['getElementById']('btnCheckin')['onclick']=checkin,document[_0x1554c7(0xd5)]('btnRefreshStats')[_0x1554c7(0xcd)]=function(){refresh(),CY['showToast']('🔄\x20已刷新');},refresh();if(typeof CY['activity']==='object'&&CY[_0x1554c7(0xce)]['add'])CY['activity']['add']({'type':'open_tool','page':'创意-关于与更新.html'});});function _0x56d6(){var _0x24dd58=['div','title','innerHTML','getMonth','recent','stToday','📅\x20签到成功！连续\x20','streakDays','onclick','activity','</div>','createElement','addEventListener','getUnlocked','appendChild','object','getElementById','length','cy_used','stActs','</div><div\x20class=\x22vd\x22>','\x20·\x20','<div\x20class=\x22vt\x22>v'];_0x56d6=function(){return _0x24dd58;};return _0x56d6();}
+var _0x8dfedc=_0x4767,RECENT_WINDOW=0x64*0x64;function _0x1166(){var _0x308c06=['createElement','stAch','btnCheckin','getUnlocked','🔄\x20已刷新','VERSION_LOG','length','stStreak','DOMContentLoaded','innerHTML','addEventListener','getElementById','getFullYear','off','ach-item\x20','activity','showToast','verBox','todayCount','span','getMonth','onclick','textContent','add','object','btnRefreshStats','className','</div>','desc','title'];_0x1166=function(){return _0x308c06;};return _0x1166();}function refresh(){var _0x3d7ed3=_0x4767,_0x44eaca=typeof CY['activity']==='object'?CY[_0x3d7ed3(0x1d4)]:null;_0x44eaca&&(document['getElementById']('stActs')[_0x3d7ed3(0x1db)]=_0x44eaca['recent'](RECENT_WINDOW)['length']||0x0,document[_0x3d7ed3(0x1d0)]('stToday')['textContent']=_0x44eaca[_0x3d7ed3(0x1d7)](),document[_0x3d7ed3(0x1d0)](_0x3d7ed3(0x1cc))[_0x3d7ed3(0x1db)]=_0x44eaca['streakDays']());var _0x18c8c4=CY['getUnlocked']?CY[_0x3d7ed3(0x1c8)]():[];document[_0x3d7ed3(0x1d0)](_0x3d7ed3(0x1c6))[_0x3d7ed3(0x1db)]=_0x18c8c4[_0x3d7ed3(0x1cb)];var _0x452fd5=[];try{_0x452fd5=JSON['parse'](localStorage['getItem']('cy_used'))||[];}catch(_0x5e3878){}document['getElementById']('stTools')['textContent']=_0x452fd5['length'];var _0x5689b7=document['getElementById']('achBox');_0x5689b7['innerHTML']='',(CY['ACHIEVEMENTS']||[])['forEach'](function(_0x4db500){var _0x1e1377=_0x3d7ed3,_0x11b6f1=_0x18c8c4['indexOf'](_0x4db500['id'])>=0x0,_0x5d52f6=document[_0x1e1377(0x1c5)](_0x1e1377(0x1d8));_0x5d52f6[_0x1e1377(0x1df)]=_0x1e1377(0x1d3)+(_0x11b6f1?'on':_0x1e1377(0x1d2)),_0x5d52f6['innerHTML']=(_0x11b6f1?'✅':'🔒')+'\x20'+_0x4db500['icon']+'\x20'+_0x4db500['t'],_0x5d52f6['title']=_0x4db500['d'],_0x5689b7['appendChild'](_0x5d52f6);});var _0x2c2438=document['getElementById'](_0x3d7ed3(0x1d6));_0x2c2438[_0x3d7ed3(0x1ce)]='';var _0x184e2f=(CY[_0x3d7ed3(0x1ca)]||[])['slice']()['reverse']();_0x184e2f['forEach'](function(_0xa0d358){var _0x5124fd=_0x3d7ed3,_0x21d83a=document[_0x5124fd(0x1c5)]('div');_0x21d83a['className']='ver-item',_0x21d83a[_0x5124fd(0x1ce)]='<div\x20class=\x22vt\x22>v'+_0xa0d358['ver']+'\x20·\x20'+_0xa0d358[_0x5124fd(0x1e2)]+'</div><div\x20class=\x22vd\x22>'+_0xa0d358[_0x5124fd(0x1e1)]+_0x5124fd(0x1e0),_0x2c2438['appendChild'](_0x21d83a);});}function checkin(){var _0x18c02c=_0x4767;if(typeof CY[_0x18c02c(0x1d4)]!==_0x18c02c(0x1dd)){CY[_0x18c02c(0x1d5)]('数据层尚未就绪，稍后再试');return;}var _0x16357e=CY['activity']['recent'](0x3e8),_0x3de91c=new Date(),_0x3fe893=_0x3de91c[_0x18c02c(0x1d1)]()+'-'+(_0x3de91c[_0x18c02c(0x1d9)]()+0x1)+'-'+_0x3de91c['getDate'](),_0x53f808=![];for(var _0x6f22ea=0x0;_0x6f22ea<_0x16357e[_0x18c02c(0x1cb)];_0x6f22ea++){var _0x2b6a85=new Date(_0x16357e[_0x6f22ea]['at']);if(_0x16357e[_0x6f22ea]['type']==='checkin'&&_0x2b6a85[_0x18c02c(0x1d1)]()===_0x3de91c['getFullYear']()&&_0x2b6a85['getMonth']()===_0x3de91c['getMonth']()&&_0x2b6a85['getDate']()===_0x3de91c['getDate']()){_0x53f808=!![];break;}}if(_0x53f808){CY[_0x18c02c(0x1d5)]('📅\x20今天已经签过到啦，明天再来');return;}CY[_0x18c02c(0x1d4)]['add']({'type':'checkin','page':'创意-关于与更新.html'});var _0x40bff4=CY[_0x18c02c(0x1d4)]['streakDays']();CY['showToast']('📅\x20签到成功！连续\x20'+_0x40bff4+'\x20天'),refresh();}function _0x4767(_0x16ee95,_0x116696){_0x16ee95=_0x16ee95-0x1c5;var _0x4767ed=_0x1166();var _0xecc916=_0x4767ed[_0x16ee95];return _0xecc916;}document[_0x8dfedc(0x1cf)](_0x8dfedc(0x1cd),function(){var _0xcb2f3d=_0x8dfedc;document[_0xcb2f3d(0x1d0)](_0xcb2f3d(0x1c7))['onclick']=checkin,document['getElementById'](_0xcb2f3d(0x1de))[_0xcb2f3d(0x1da)]=function(){var _0x531753=_0xcb2f3d;refresh(),CY['showToast'](_0x531753(0x1c9));},refresh();if(typeof CY[_0xcb2f3d(0x1d4)]==='object'&&CY['activity'][_0xcb2f3d(0x1dc)])CY['activity'][_0xcb2f3d(0x1dc)]({'type':'open_tool','page':'创意-关于与更新.html'});});
 </script>
 </body>
 </html>

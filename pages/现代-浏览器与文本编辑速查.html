@@ -48,6 +48,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -151,7 +221,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-function _0x5ae2(_0x4782b5,_0x5d10a2){_0x4782b5=_0x4782b5-0x1c0;var _0x5ae277=_0x5d10();var _0x54ba60=_0x5ae277[_0x4782b5];return _0x54ba60;}(function(){var _0x3fe104=_0x5ae2,_0x286906=document[_0x3fe104(0x1c6)]('filter');if(!_0x286906)return;_0x286906[_0x3fe104(0x1c0)](_0x3fe104(0x1c2),function(){var _0xd4cb9d=_0x3fe104,_0x3ef145=_0x286906[_0xd4cb9d(0x1c3)][_0xd4cb9d(0x1c4)]()['toLowerCase'](),_0x4c0be0=document[_0xd4cb9d(0x1c1)]('#shortcutTable\x20tr');for(var _0x5727f4=0x1;_0x5727f4<_0x4c0be0['length'];_0x5727f4++){_0x4c0be0[_0x5727f4]['style'][_0xd4cb9d(0x1c7)]=!_0x3ef145||_0x4c0be0[_0x5727f4]['textContent'][_0xd4cb9d(0x1c5)]()['indexOf'](_0x3ef145)>=0x0?'':'none';}});}());function _0x5d10(){var _0x133c2e=['addEventListener','querySelectorAll','input','value','trim','toLowerCase','getElementById','display'];_0x5d10=function(){return _0x133c2e;};return _0x5d10();}
+function _0x5581(_0x57086b,_0x2f55bb){_0x57086b=_0x57086b-0x140;var _0x558146=_0x2f55();var _0x2d295e=_0x558146[_0x57086b];return _0x2d295e;}function _0x2f55(){var _0x52712a=['indexOf','querySelectorAll','addEventListener','trim','filter'];_0x2f55=function(){return _0x52712a;};return _0x2f55();}(function(){var _0x3878de=_0x5581,_0x5a7e38=document['getElementById'](_0x3878de(0x144));if(!_0x5a7e38)return;_0x5a7e38[_0x3878de(0x142)]('input',function(){var _0x463e05=_0x3878de,_0x3b846e=_0x5a7e38['value'][_0x463e05(0x143)]()['toLowerCase'](),_0x39222b=document[_0x463e05(0x141)]('#shortcutTable\x20tr');for(var _0x193626=0x1;_0x193626<_0x39222b['length'];_0x193626++){_0x39222b[_0x193626]['style']['display']=!_0x3b846e||_0x39222b[_0x193626]['textContent']['toLowerCase']()[_0x463e05(0x140)](_0x3b846e)>=0x0?'':'none';}});}());
 </script>
 </body>
 </html>

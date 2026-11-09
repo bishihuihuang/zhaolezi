@@ -633,6 +633,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -732,7 +802,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-(function(){'use strict';const _0x27716e=_0x2ed5;const _0x2917b2=document['getElementById']('textInput'),_0x22a54c=document['getElementById'](_0x27716e(0x1bc)),_0x50e31d=document[_0x27716e(0x1b9)]('cnCount'),_0x42ad9=document[_0x27716e(0x1b9)]('enCount'),_0x3bdce6=document['getElementById'](_0x27716e(0x1c2)),_0x4da58d=document[_0x27716e(0x1b9)](_0x27716e(0x1bb)),_0x33da40=document[_0x27716e(0x1b9)](_0x27716e(0x1bd)),_0x421a8f=document['getElementById']('resetBtn'),_0x243b2d=document['getElementById']('infoBtn'),_0x5dc2fd=document['getElementById']('infoModal'),_0x4b54e1=document[_0x27716e(0x1b9)]('closeModal'),_0x8c2a7a=document['getElementById']('backHome'),_0xf52880=document['getElementById'](_0x27716e(0x1c3));function _0x32e0d4(){const _0x21fa95=_0x27716e,_0x271645=_0x2917b2[_0x21fa95(0x1c0)],_0x3086e8=Array['from'](_0x271645)[_0x21fa95(0x1b0)](_0x2401e0=>_0x2401e0['trim']()!=='')[_0x21fa95(0x1b6)];_0x22a54c[_0x21fa95(0x1be)]=_0x3086e8;const _0xbf4b92=(_0x271645['match'](/[\u4e00-\u9fff]/g)||[])[_0x21fa95(0x1b6)];_0x50e31d[_0x21fa95(0x1be)]=_0xbf4b92;const _0x1b314a=(_0x271645['match'](/[a-zA-Z]/g)||[])['length'];_0x42ad9[_0x21fa95(0x1be)]=_0x1b314a;const _0x47c30e=(_0x271645['match'](/[a-zA-Z]+/g)||[])['length'];_0x33da40['textContent']=_0x47c30e;const _0x19e096=_0x271645[_0x21fa95(0x1b2)]('\x0a');let _0x13c5c2=_0x19e096['length']-0x1;while(_0x13c5c2>=0x0&&_0x19e096[_0x13c5c2][_0x21fa95(0x1ba)]()===''){_0x13c5c2--;}_0x3bdce6['textContent']=_0x13c5c2>=0x0?_0x13c5c2+0x1:0x0,_0x4da58d['textContent']=_0x3086e8-_0xbf4b92-_0x1b314a;}_0x2917b2['addEventListener']('input',_0x32e0d4),_0x421a8f['addEventListener']('click',function(){const _0x5392cb=_0x27716e;_0x32e0d4(),alert(_0x5392cb(0x1b1));}),_0x243b2d['addEventListener'](_0x27716e(0x1bf),function(){_0x5dc2fd['classList']['add']('show');}),_0x4b54e1[_0x27716e(0x1b3)](_0x27716e(0x1bf),function(){const _0x276141=_0x27716e;_0x5dc2fd['classList'][_0x276141(0x1af)](_0x276141(0x1b7));}),_0x5dc2fd[_0x27716e(0x1b3)](_0x27716e(0x1bf),function(_0x91072){const _0x419113=_0x27716e;_0x91072[_0x419113(0x1b4)]===_0x5dc2fd&&_0x5dc2fd['classList']['remove']('show');}),_0x32e0d4();let _0x35f6a5=![];_0x8c2a7a[_0x27716e(0x1b3)]('click',function(_0x4f3722){const _0x48ac4b=_0x27716e;_0x4f3722['preventDefault']();if(_0x35f6a5)return;_0x35f6a5=!![],_0xf52880['classList'][_0x48ac4b(0x1b5)]('active'),setTimeout(function(){const _0x3be34=_0x48ac4b;window['location'][_0x3be34(0x1c1)]='工具导航.html';},0x3e8);}),window[_0x27716e(0x1b8)]=_0x32e0d4;}());function _0x2ed5(_0x3aae20,_0x32ac5d){_0x3aae20=_0x3aae20-0x1af;const _0x2ed552=_0x32ac();let _0x153fa0=_0x2ed552[_0x3aae20];return _0x153fa0;}function _0x32ac(){const _0x4aa391=['remove','filter','已重新识别修改后的新文本！','split','addEventListener','target','add','length','show','updateStats','getElementById','trim','otherCount','totalCount','wordCount','textContent','click','value','href','lineCount','overlay'];_0x32ac=function(){return _0x4aa391;};return _0x32ac();}
+function _0x3824(_0x550a04,_0x3e89d0){_0x550a04=_0x550a04-0x8e;const _0x382468=_0x3e89();let _0xe1a030=_0x382468[_0x550a04];return _0xe1a030;}function _0x3e89(){const _0x23bd99=['preventDefault','click','totalCount','wordCount','addEventListener','remove','input','otherCount','show','href','enCount','lineCount','length','classList','textContent','工具导航.html','getElementById','add'];_0x3e89=function(){return _0x23bd99;};return _0x3e89();}(function(){'use strict';const _0x5c7b01=_0x3824;const _0x3ccc2d=document['getElementById']('textInput'),_0xb0d31d=document[_0x5c7b01(0x9e)](_0x5c7b01(0x90)),_0x5c1f30=document['getElementById']('cnCount'),_0x50fbec=document['getElementById'](_0x5c7b01(0x98)),_0x2058ed=document['getElementById'](_0x5c7b01(0x99)),_0x4484be=document[_0x5c7b01(0x9e)](_0x5c7b01(0x95)),_0x31d8b0=document['getElementById'](_0x5c7b01(0x91)),_0x49dea4=document['getElementById']('resetBtn'),_0x3de67b=document[_0x5c7b01(0x9e)]('infoBtn'),_0x55523d=document[_0x5c7b01(0x9e)]('infoModal'),_0x4fbd4e=document[_0x5c7b01(0x9e)]('closeModal'),_0x508d71=document[_0x5c7b01(0x9e)]('backHome'),_0x37a726=document['getElementById']('overlay');function _0x2d2010(){const _0xecb970=_0x5c7b01,_0x321185=_0x3ccc2d['value'],_0x6fcef2=Array['from'](_0x321185)['filter'](_0x533fe2=>_0x533fe2['trim']()!=='')['length'];_0xb0d31d[_0xecb970(0x9c)]=_0x6fcef2;const _0xd6603c=(_0x321185['match'](/[\u4e00-\u9fff]/g)||[])['length'];_0x5c1f30['textContent']=_0xd6603c;const _0x53a6f3=(_0x321185['match'](/[a-zA-Z]/g)||[])['length'];_0x50fbec[_0xecb970(0x9c)]=_0x53a6f3;const _0x32d054=(_0x321185['match'](/[a-zA-Z]+/g)||[])['length'];_0x31d8b0[_0xecb970(0x9c)]=_0x32d054;const _0x255ee7=_0x321185['split']('\x0a');let _0x3b43dd=_0x255ee7[_0xecb970(0x9a)]-0x1;while(_0x3b43dd>=0x0&&_0x255ee7[_0x3b43dd]['trim']()===''){_0x3b43dd--;}_0x2058ed['textContent']=_0x3b43dd>=0x0?_0x3b43dd+0x1:0x0,_0x4484be['textContent']=_0x6fcef2-_0xd6603c-_0x53a6f3;}_0x3ccc2d['addEventListener'](_0x5c7b01(0x94),_0x2d2010),_0x49dea4['addEventListener']('click',function(){_0x2d2010(),alert('已重新识别修改后的新文本！');}),_0x3de67b[_0x5c7b01(0x92)](_0x5c7b01(0x8f),function(){const _0x6694c2=_0x5c7b01;_0x55523d['classList'][_0x6694c2(0x9f)]('show');}),_0x4fbd4e[_0x5c7b01(0x92)](_0x5c7b01(0x8f),function(){const _0x88944e=_0x5c7b01;_0x55523d[_0x88944e(0x9b)][_0x88944e(0x93)](_0x88944e(0x96));}),_0x55523d['addEventListener'](_0x5c7b01(0x8f),function(_0x51f615){const _0x553559=_0x5c7b01;_0x51f615['target']===_0x55523d&&_0x55523d['classList']['remove'](_0x553559(0x96));}),_0x2d2010();let _0x53517=![];_0x508d71[_0x5c7b01(0x92)]('click',function(_0x4e8029){const _0xe3943d=_0x5c7b01;_0x4e8029[_0xe3943d(0x8e)]();if(_0x53517)return;_0x53517=!![],_0x37a726[_0xe3943d(0x9b)]['add']('active'),setTimeout(function(){const _0x1f4514=_0xe3943d;window['location'][_0x1f4514(0x97)]=_0x1f4514(0x9d);},0x3e8);}),window['updateStats']=_0x2d2010;}());
 </script>
 </body>
 </html>

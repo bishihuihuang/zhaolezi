@@ -929,6 +929,13 @@ function ensurePwaBlock(html, fileName) {
     const isHome = (!fileName || fileName === 'index.html');
     // V2.9.3 分层：公共层位于 assets/css|js
     const COMMON_CSS = '<link rel="stylesheet" href="' + P + 'assets/css/common.css">';
+    // V3.0 全站通用打磨层：单数据源 _全站打磨.css，内联注入每页（含首页），级联于家族 CSS 之后。
+    // 零 HTML 结构改动、零布局变化、不参与混淆（纯 CSS）；focus-visible/reduced-motion 带 !important
+    // 压过页面 outline:none，但 :where() 零特异性保证不覆盖其它既有样式。
+    const POLISH_CSS_FILE = path.join(ROOT, SOURCE_DIR, '_全站打磨.css');
+    const POLISH_CSS = fs.existsSync(POLISH_CSS_FILE)
+        ? '<style data-no-obf>/* 全站打磨层 V3.0 */\n' + fs.readFileSync(POLISH_CSS_FILE, 'utf8') + '\n</style>\n'
+        : '';
     const COMMON_JS = '<script defer src="' + P + 'assets/js/common.js"></script>';
     const THEME_JS = '<script defer src="' + P + 'assets/js/theme.js"></script>';
     const ZL_JS = '<script defer src="' + P + 'assets/js/zl-features.js"></script>';
@@ -1004,7 +1011,7 @@ function ensurePwaBlock(html, fileName) {
             if (list) html = html.replace(/<\/body>/i, '<nav class="zl-static-links sr-only" aria-label="全站页面列表">' + list + '</nav>\n</body>');
         }
     }
-    const inject = faviconLine + THEME_EARLY + '\n' + PWA + '\n' + ogBlock + '\n' + COMMON_CSS + '\n' + COMMON_JS + '\n' + (hasOwnTheme ? '' : THEME_JS + '\n') + ZL_JS + '\n' + SEARCH_INDEX_TAG(P);
+    const inject = faviconLine + THEME_EARLY + '\n' + PWA + '\n' + ogBlock + '\n' + COMMON_CSS + '\n' + POLISH_CSS + '\n' + COMMON_JS + '\n' + (hasOwnTheme ? '' : THEME_JS + '\n') + ZL_JS + '\n' + SEARCH_INDEX_TAG(P);
     if (/<\/head>/i.test(html)) {
         return html.replace(/<\/head>/i, inject + '\n</head>');
     }

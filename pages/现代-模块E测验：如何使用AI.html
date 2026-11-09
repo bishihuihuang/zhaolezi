@@ -48,6 +48,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -94,7 +164,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-var _0x3324c6=_0x1a39;function _0x1a39(_0x32a2fe,_0x36832e){_0x32a2fe=_0x32a2fe-0x157;var _0x1a397f=_0x3683();var _0x3b9e88=_0x1a397f[_0x32a2fe];return _0x3b9e88;}document['addEventListener'](_0x3324c6(0x164),function(){var _0x1164b5=_0x3324c6;if(!window['XD']||!XD['quiz'])return;XD['quiz']['run']('quiz',{'id':'E','title':'模块E测验：如何使用\x20AI','questions':[{'q':'大语言模型（LLM）最准确的比喻是？','opts':['一本按索引查询的百科全书','一个靠海量文本训练、擅长\x22猜下一句\x22的接话大师',_0x1164b5(0x163),'一个会独立思考的机器人'],'a':0x1,'exp':_0x1164b5(0x157)},{'q':'AI\x20产生\x22幻觉\x22是指？','opts':['AI\x20显示器出现花屏','AI\x20编造出看似可信的错误信息',_0x1164b5(0x15c),'AI\x20的算力不足导致卡顿'],'a':0x1,'exp':_0x1164b5(0x15f)},{'q':_0x1164b5(0x15a),'opts':[_0x1164b5(0x158),'给\x20AI\x20设定角色能显著影响回复风格与深度',_0x1164b5(0x167),_0x1164b5(0x16a)],'a':0x1,'exp':_0x1164b5(0x169)},{'q':_0x1164b5(0x16d),'opts':['帮我改，快',_0x1164b5(0x159),_0x1164b5(0x165),'你猜我想改什么'],'a':0x1,'exp':'用五要素结构把身份、任务、素材、格式一次说清，AI\x20才能对症下药。'},{'q':'AI\x20输出的内容，最关键的一步是？','opts':['直接转发给别人',_0x1164b5(0x161),_0x1164b5(0x16b),'立刻付费升级账号'],'a':0x1,'exp':_0x1164b5(0x162)},{'q':'下列哪种信息最不应该贴进公开\x20AI\x20对话？','opts':['一道数学题',_0x1164b5(0x166),'自己的身份证号和银行卡号','一篇需要改写的文章草稿'],'a':0x2,'exp':_0x1164b5(0x168)},{'q':'让\x20AI\x20帮你写作业后直接全文提交，正确的态度是？','opts':[_0x1164b5(0x15d),'先确认课程/学校是否允许，多数场景属于学术诚信问题','只有英文作业可以',_0x1164b5(0x160)],'a':0x1,'exp':'AI\x20代写是否允许取决于课程规定，多数场景不被允许。润色自己的文字则普遍没问题。'},{'q':'想查最新新闻/实时信息，最适合的\x20AI\x20工具类型是？','opts':[_0x1164b5(0x16c),_0x1164b5(0x15e),'文生图工具','本地离线模型'],'a':0x1,'exp':_0x1164b5(0x15b)}]});});function _0x3683(){var _0x49f4a2=['它是靠概率预测生成文字的\x22接话大师\x22：知识面广，但不是查字典式检索，更不会独立思考。','提示词越短越好，AI\x20自己会猜','【角色】你是资深编辑…【任务】帮我改下面这段…【上下文】粘贴原稿…【格式】…','关于提示词五要素，下列哪个说法正确？','训练数据有截止时间，查最新资讯选带联网搜索的\x20AI，回答通常带来源链接。','AI\x20拒绝回答任何问题','完全没问题，效率最高','带联网搜索能力的\x20AI\x20助手','幻觉=AI\x20一本正经地编造（假书名、假数据、错步骤）。识别它靠人工核实，不能全信。','AI\x20生成的不算抄袭','人工核实关键事实后再使用','AI\x20输出是\x22初稿\x22，人做终审。数字、日期、链接、步骤等关键信息必须人工核实。','一台能上网的超级计算机','DOMContentLoaded','文字如下，改吧：','一段想润色的自我介绍','上下文素材不必提供，AI\x20全都知道','敏感个人信息（身份证、银行卡、密码、验证码）绝不可进\x20AI\x20对话，防止泄露与被用于训练。','角色、任务、上下文、格式、迭代是五要素；明确角色能让风格和深度对齐需求。','输出格式完全由\x20AI\x20决定，用户管不了','多复制几份留底','不带联网能力的普通聊天模型','想请\x20AI\x20帮自己改一段文字，最规范的提示词开头是？'];_0x3683=function(){return _0x49f4a2;};return _0x3683();}
+document['addEventListener']('DOMContentLoaded',function(){var _0x2075a2=_0x37f3;if(!window['XD']||!XD['quiz'])return;XD['quiz'][_0x2075a2(0x196)](_0x2075a2(0x1a7),{'id':'E','title':'模块E测验：如何使用\x20AI','questions':[{'q':'大语言模型（LLM）最准确的比喻是？','opts':['一本按索引查询的百科全书','一个靠海量文本训练、擅长\x22猜下一句\x22的接话大师','一台能上网的超级计算机','一个会独立思考的机器人'],'a':0x1,'exp':'它是靠概率预测生成文字的\x22接话大师\x22：知识面广，但不是查字典式检索，更不会独立思考。'},{'q':_0x2075a2(0x195),'opts':['AI\x20显示器出现花屏','AI\x20编造出看似可信的错误信息',_0x2075a2(0x19c),'AI\x20的算力不足导致卡顿'],'a':0x1,'exp':'幻觉=AI\x20一本正经地编造（假书名、假数据、错步骤）。识别它靠人工核实，不能全信。'},{'q':'关于提示词五要素，下列哪个说法正确？','opts':['提示词越短越好，AI\x20自己会猜','给\x20AI\x20设定角色能显著影响回复风格与深度',_0x2075a2(0x19d),'输出格式完全由\x20AI\x20决定，用户管不了'],'a':0x1,'exp':'角色、任务、上下文、格式、迭代是五要素；明确角色能让风格和深度对齐需求。'},{'q':_0x2075a2(0x1a4),'opts':[_0x2075a2(0x1a3),'【角色】你是资深编辑…【任务】帮我改下面这段…【上下文】粘贴原稿…【格式】…',_0x2075a2(0x1a6),'你猜我想改什么'],'a':0x1,'exp':_0x2075a2(0x1a8)},{'q':'AI\x20输出的内容，最关键的一步是？','opts':[_0x2075a2(0x19f),'人工核实关键事实后再使用',_0x2075a2(0x1a5),'立刻付费升级账号'],'a':0x1,'exp':_0x2075a2(0x194)},{'q':'下列哪种信息最不应该贴进公开\x20AI\x20对话？','opts':['一道数学题',_0x2075a2(0x19b),'自己的身份证号和银行卡号',_0x2075a2(0x1a1)],'a':0x2,'exp':'敏感个人信息（身份证、银行卡、密码、验证码）绝不可进\x20AI\x20对话，防止泄露与被用于训练。'},{'q':'让\x20AI\x20帮你写作业后直接全文提交，正确的态度是？','opts':['完全没问题，效率最高',_0x2075a2(0x1a2),'只有英文作业可以',_0x2075a2(0x19e)],'a':0x1,'exp':_0x2075a2(0x198)},{'q':'想查最新新闻/实时信息，最适合的\x20AI\x20工具类型是？','opts':[_0x2075a2(0x197),_0x2075a2(0x1a0),_0x2075a2(0x19a),'本地离线模型'],'a':0x1,'exp':_0x2075a2(0x199)}]});});function _0x37f3(_0x329f0c,_0x272943){_0x329f0c=_0x329f0c-0x194;var _0x37f323=_0x2729();var _0x4acdb4=_0x37f323[_0x329f0c];return _0x4acdb4;}function _0x2729(){var _0x2e1b1a=['AI\x20输出是\x22初稿\x22，人做终审。数字、日期、链接、步骤等关键信息必须人工核实。','AI\x20产生\x22幻觉\x22是指？','run','不带联网能力的普通聊天模型','AI\x20代写是否允许取决于课程规定，多数场景不被允许。润色自己的文字则普遍没问题。','训练数据有截止时间，查最新资讯选带联网搜索的\x20AI，回答通常带来源链接。','文生图工具','一段想润色的自我介绍','AI\x20拒绝回答任何问题','上下文素材不必提供，AI\x20全都知道','AI\x20生成的不算抄袭','直接转发给别人','带联网搜索能力的\x20AI\x20助手','一篇需要改写的文章草稿','先确认课程/学校是否允许，多数场景属于学术诚信问题','帮我改，快','想请\x20AI\x20帮自己改一段文字，最规范的提示词开头是？','多复制几份留底','文字如下，改吧：','quiz','用五要素结构把身份、任务、素材、格式一次说清，AI\x20才能对症下药。'];_0x2729=function(){return _0x2e1b1a;};return _0x2729();}
 </script>
 </body>
 </html>

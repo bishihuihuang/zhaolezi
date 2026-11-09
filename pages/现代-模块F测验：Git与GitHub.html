@@ -48,6 +48,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -94,7 +164,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-function _0x2cda(_0x2ab2a8,_0x18e9a7){_0x2ab2a8=_0x2ab2a8-0x79;var _0x2cda47=_0x18e9();var _0x489be0=_0x2cda47[_0x2ab2a8];return _0x489be0;}var _0x588256=_0x2cda;document[_0x588256(0x8e)]('DOMContentLoaded',function(){var _0x2f4579=_0x588256;if(!window['XD']||!XD['quiz'])return;XD['quiz'][_0x2f4579(0x79)]('quiz',{'id':'F','title':_0x2f4579(0x80),'questions':[{'q':_0x2f4579(0x88),'opts':['随时回到任意历史版本',_0x2f4579(0x7d),_0x2f4579(0x86),_0x2f4579(0x8f)],'a':0x2,'exp':_0x2f4579(0x92)},{'q':'Git\x20的三区模型中，git\x20add\x20的作用是？','opts':['把文件从版本库恢复到工作区',_0x2f4579(0x8d),'把改动直接永久删除','把文件上传到\x20GitHub'],'a':0x1,'exp':'工作区（改）→\x20add\x20→\x20暂存区（挑）→\x20commit\x20→\x20版本库。add\x20是把改动装进\x22购物车\x22。'},{'q':_0x2f4579(0x7b),'opts':['磁盘空间不足','没有设置\x20user.name\x20和\x20user.email','仓库没有\x20init','网络不通'],'a':0x1,'exp':'Git\x20要知道\x22谁提交的\x22，先执行\x20git\x20config\x20--global\x20user.name/user.email（换成你自己的）。'},{'q':_0x2f4579(0x91),'opts':[_0x2f4579(0x90),'git\x20add\x20.',_0x2f4579(0x85),'git\x20status'],'a':0x2,'exp':'commit\x20才产生版本快照；add\x20只是暂存，init\x20是开仓库，status\x20是看状态。'},{'q':'想看精简的提交历史，用哪个命令？','opts':['git\x20log\x20--oneline',_0x2f4579(0x84),'git\x20push\x20-v','git\x20clone\x20--short'],'a':0x0,'exp':'git\x20log\x20看历史，--oneline\x20一行一个提交，最常用。'},{'q':'HTTPS\x20方式向\x20GitHub\x20推送时，输入的\x22密码\x22实际上是？','opts':[_0x2f4579(0x93),_0x2f4579(0x82),_0x2f4579(0x89),_0x2f4579(0x94)],'a':0x1,'exp':_0x2f4579(0x81)},{'q':'免费\x20GitHub\x20账户要使用\x20GitHub\x20Pages\x20托管网站，仓库必须？','opts':['设为\x20Private','设为\x20Public',_0x2f4579(0x7f),'至少\x20100\x20个文件'],'a':0x1,'exp':_0x2f4579(0x7a)},{'q':'第一次推送时执行\x20git\x20push\x20-u\x20origin\x20main，其中\x20-u\x20的作用是？','opts':['立即发布到\x20Pages',_0x2f4579(0x8a),_0x2f4579(0x87),_0x2f4579(0x8b)],'a':0x1,'exp':'-u（--set-upstream）记住关联，之后日常更新只需\x20git\x20push。'},{'q':'推送时报\x20\x22rejected\x20...\x20fetch\x20first\x22，最可能的原因是？','opts':['远程仓库里有本地没有的提交','本地文件太多','用户名拼写错误','Pages\x20没开启'],'a':0x0,'exp':_0x2f4579(0x8c)},{'q':'想把自己网站的新版本更新到\x20GitHub\x20上，正确的顺序是？','opts':[_0x2f4579(0x83),'add\x20.\x20→\x20commit\x20-m\x20\x22说明\x22\x20→\x20push',_0x2f4579(0x7e),'commit\x20→\x20init\x20→\x20add'],'a':0x1,'exp':_0x2f4579(0x7c)}]});});function _0x18e9(){var _0x4e64e9=['run','免费账户的\x20Pages\x20需要\x20Public\x20仓库；名称和文件数没有这些限制。','第一次使用\x20Git，提交时报错\x22Please\x20tell\x20me\x20who\x20you\x20are\x22，原因是？','高频组合拳：git\x20add\x20.（暂存）→\x20git\x20commit\x20-m（快照）→\x20git\x20push（上传）。','对比任意两版差异','init\x20→\x20pull\x20→\x20push','名称以\x20.com\x20结尾','模块F测验：Git\x20与\x20GitHub','HTTPS\x20推送用令牌验证（Settings\x20→\x20Developer\x20settings\x20→\x20Personal\x20access\x20tokens），不是登录密码。','个人访问令牌（Personal\x20Access\x20Token）','push\x20→\x20commit\x20→\x20add','git\x20status\x20-v','git\x20commit\x20-m\x20\x22说明\x22','保证文件永远不会损坏','把\x20main\x20改名为\x20master','版本控制系统的核心价值不包括下列哪项？','邮箱密码','记住本地分支与远程分支的关联，之后直接\x20git\x20push\x20即可','强制覆盖远程','典型是建仓时勾了\x20README\x20等文件。解决：git\x20pull\x20--rebase\x20origin\x20main\x20后重推。','把改动从工作区放进暂存区','addEventListener','多人协作互不覆盖','git\x20init','以下哪个命令把暂存区内容正式归档成一张快照？','版本控制能回退、对比、协作、备份，但不能保证硬件/文件永远不损坏——该备份备份，该加密加密。','GitHub\x20登录密码','电脑开机密码'];_0x18e9=function(){return _0x4e64e9;};return _0x18e9();}
+function _0x3806(){var _0x19ce0f=['用户名拼写错误','强制覆盖远程','run','随时回到任意历史版本','本地文件太多','git\x20clone\x20--short','Pages\x20没开启','想看精简的提交历史，用哪个命令？','Git\x20要知道\x22谁提交的\x22，先执行\x20git\x20config\x20--global\x20user.name/user.email（换成你自己的）。','仓库没有\x20init','DOMContentLoaded','保证文件永远不会损坏','工作区（改）→\x20add\x20→\x20暂存区（挑）→\x20commit\x20→\x20版本库。add\x20是把改动装进\x22购物车\x22。','多人协作互不覆盖','git\x20commit\x20-m\x20\x22说明\x22','立即发布到\x20Pages','记住本地分支与远程分支的关联，之后直接\x20git\x20push\x20即可','git\x20log\x20--oneline','电脑开机密码','-u（--set-upstream）记住关联，之后日常更新只需\x20git\x20push。','quiz'];_0x3806=function(){return _0x19ce0f;};return _0x3806();}function _0x349e(_0x472874,_0x3806d0){_0x472874=_0x472874-0x130;var _0x349e09=_0x3806();var _0x30e0ee=_0x349e09[_0x472874];return _0x30e0ee;}var _0x53a486=_0x349e;document['addEventListener'](_0x53a486(0x13a),function(){var _0x1fc333=_0x53a486;if(!window['XD']||!XD['quiz'])return;XD[_0x1fc333(0x144)][_0x1fc333(0x132)]('quiz',{'id':'F','title':'模块F测验：Git\x20与\x20GitHub','questions':[{'q':'版本控制系统的核心价值不包括下列哪项？','opts':[_0x1fc333(0x133),'对比任意两版差异',_0x1fc333(0x13b),_0x1fc333(0x13d)],'a':0x2,'exp':'版本控制能回退、对比、协作、备份，但不能保证硬件/文件永远不损坏——该备份备份，该加密加密。'},{'q':'Git\x20的三区模型中，git\x20add\x20的作用是？','opts':['把文件从版本库恢复到工作区','把改动从工作区放进暂存区','把改动直接永久删除','把文件上传到\x20GitHub'],'a':0x1,'exp':_0x1fc333(0x13c)},{'q':'第一次使用\x20Git，提交时报错\x22Please\x20tell\x20me\x20who\x20you\x20are\x22，原因是？','opts':['磁盘空间不足','没有设置\x20user.name\x20和\x20user.email',_0x1fc333(0x139),'网络不通'],'a':0x1,'exp':_0x1fc333(0x138)},{'q':'以下哪个命令把暂存区内容正式归档成一张快照？','opts':['git\x20init','git\x20add\x20.',_0x1fc333(0x13e),'git\x20status'],'a':0x2,'exp':'commit\x20才产生版本快照；add\x20只是暂存，init\x20是开仓库，status\x20是看状态。'},{'q':_0x1fc333(0x137),'opts':[_0x1fc333(0x141),'git\x20status\x20-v','git\x20push\x20-v',_0x1fc333(0x135)],'a':0x0,'exp':'git\x20log\x20看历史，--oneline\x20一行一个提交，最常用。'},{'q':'HTTPS\x20方式向\x20GitHub\x20推送时，输入的\x22密码\x22实际上是？','opts':['GitHub\x20登录密码','个人访问令牌（Personal\x20Access\x20Token）','邮箱密码',_0x1fc333(0x142)],'a':0x1,'exp':'HTTPS\x20推送用令牌验证（Settings\x20→\x20Developer\x20settings\x20→\x20Personal\x20access\x20tokens），不是登录密码。'},{'q':'免费\x20GitHub\x20账户要使用\x20GitHub\x20Pages\x20托管网站，仓库必须？','opts':['设为\x20Private','设为\x20Public','名称以\x20.com\x20结尾','至少\x20100\x20个文件'],'a':0x1,'exp':'免费账户的\x20Pages\x20需要\x20Public\x20仓库；名称和文件数没有这些限制。'},{'q':'第一次推送时执行\x20git\x20push\x20-u\x20origin\x20main，其中\x20-u\x20的作用是？','opts':[_0x1fc333(0x13f),_0x1fc333(0x140),'把\x20main\x20改名为\x20master',_0x1fc333(0x131)],'a':0x1,'exp':_0x1fc333(0x143)},{'q':'推送时报\x20\x22rejected\x20...\x20fetch\x20first\x22，最可能的原因是？','opts':['远程仓库里有本地没有的提交',_0x1fc333(0x134),_0x1fc333(0x130),_0x1fc333(0x136)],'a':0x0,'exp':'典型是建仓时勾了\x20README\x20等文件。解决：git\x20pull\x20--rebase\x20origin\x20main\x20后重推。'},{'q':'想把自己网站的新版本更新到\x20GitHub\x20上，正确的顺序是？','opts':['push\x20→\x20commit\x20→\x20add','add\x20.\x20→\x20commit\x20-m\x20\x22说明\x22\x20→\x20push','init\x20→\x20pull\x20→\x20push','commit\x20→\x20init\x20→\x20add'],'a':0x1,'exp':'高频组合拳：git\x20add\x20.（暂存）→\x20git\x20commit\x20-m（快照）→\x20git\x20push（上传）。'}]});});
 </script>
 </body>
 </html>

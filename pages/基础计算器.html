@@ -444,6 +444,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -528,7 +598,7 @@
 
     <script>
 /*ZL-OBF-V2*/
-function _0x2ef3(){const _0x52b48b=['clear','test','.btn','displayText','textContent','classList','overlay','click','addEventListener','location','querySelectorAll','getElementById','action','add','calc_add'];_0x2ef3=function(){return _0x52b48b;};return _0x2ef3();}const _0x2d44e5=_0x1f21,display=document['getElementById'](_0x2d44e5(0x10f));function _0x1f21(_0x5bf8a8,_0x2ef3fb){_0x5bf8a8=_0x5bf8a8-0x10c;const _0x1f21fd=_0x2ef3();let _0x1fc3b9=_0x1f21fd[_0x5bf8a8];return _0x1fc3b9;}let expression='';function updateDisplay(){const _0x531a85=_0x2d44e5;display[_0x531a85(0x110)]=expression===''?'0':expression;}function inputValue(_0x33a069){expression+=_0x33a069,updateDisplay();}function clearAll(){expression='',updateDisplay();}function safeEvaluate(_0x33c9d8){const _0x4a9c1f=_0x2d44e5;let _0x374371=_0x33c9d8['replace'](/÷/g,'/')['replace'](/×/g,'*');if(!/^[0-9+\-*/().\s]+$/[_0x4a9c1f(0x10d)](_0x374371))return'错误';try{const _0x263682=Function('\x22use\x20strict\x22;\x20return\x20('+_0x374371+')')();return parseFloat(_0x263682['toPrecision'](0xc));}catch(_0x545107){return'错误';}}function evaluate(){const _0x3c33af=_0x2d44e5;if(expression==='')return;const _0x4d3a6b=safeEvaluate(expression);if(_0x4d3a6b==='错误')display['textContent']='错误',expression='';else{expression=String(_0x4d3a6b),updateDisplay();if(window['ZL']&&ZL['bump'])ZL['bump'](_0x3c33af(0x11a),0x1);}}document[_0x2d44e5(0x116)](_0x2d44e5(0x10e))['forEach'](_0x232313=>{_0x232313['addEventListener']('click',function(){const _0x1769d3=_0x1f21,_0x4bdf55=this['dataset'][_0x1769d3(0x118)],_0x108997=this['dataset']['value'];if(_0x4bdf55==='input')inputValue(_0x108997);else{if(_0x4bdf55===_0x1769d3(0x10c))clearAll();else _0x4bdf55==='equals'&&evaluate();}});}),updateDisplay(),document[_0x2d44e5(0x117)]('backHome')[_0x2d44e5(0x114)](_0x2d44e5(0x113),function(_0x3105ef){const _0x5e6b29=_0x2d44e5;_0x3105ef['preventDefault']();const _0x28a2aa=document[_0x5e6b29(0x117)](_0x5e6b29(0x112));_0x28a2aa[_0x5e6b29(0x111)][_0x5e6b29(0x119)]('active'),setTimeout(()=>{const _0x5b2a4b=_0x5e6b29;window[_0x5b2a4b(0x115)]['href']='工具导航.html';},0x3e8);});
+const _0x666d55=_0x550d,display=document['getElementById'](_0x666d55(0xc5));let expression='';function _0x1b2c(){const _0x5c4aa7=['overlay','click','href','dataset','replace','textContent','active','equals','test','displayText','location','backHome'];_0x1b2c=function(){return _0x5c4aa7;};return _0x1b2c();}function updateDisplay(){const _0xa49677=_0x666d55;display[_0xa49677(0xc1)]=expression===''?'0':expression;}function inputValue(_0x5ac42c){expression+=_0x5ac42c,updateDisplay();}function _0x550d(_0x42906f,_0x1b2c2d){_0x42906f=_0x42906f-0xbc;const _0x550d8a=_0x1b2c();let _0x45a5fb=_0x550d8a[_0x42906f];return _0x45a5fb;}function clearAll(){expression='',updateDisplay();}function safeEvaluate(_0x56421d){const _0xb9525f=_0x666d55;let _0x292162=_0x56421d[_0xb9525f(0xc0)](/÷/g,'/')['replace'](/×/g,'*');if(!/^[0-9+\-*/().\s]+$/[_0xb9525f(0xc4)](_0x292162))return'错误';try{const _0x59ffbd=Function('\x22use\x20strict\x22;\x20return\x20('+_0x292162+')')();return parseFloat(_0x59ffbd['toPrecision'](0xc));}catch(_0x2b6862){return'错误';}}function evaluate(){const _0x438ba8=_0x666d55;if(expression==='')return;const _0x3ade8f=safeEvaluate(expression);if(_0x3ade8f==='错误')display[_0x438ba8(0xc1)]='错误',expression='';else{expression=String(_0x3ade8f),updateDisplay();if(window['ZL']&&ZL['bump'])ZL['bump']('calc_add',0x1);}}document['querySelectorAll']('.btn')['forEach'](_0x2d76ed=>{const _0x4284a4=_0x666d55;_0x2d76ed['addEventListener'](_0x4284a4(0xbd),function(){const _0x1554e4=_0x4284a4,_0x184015=this[_0x1554e4(0xbf)]['action'],_0x9c8211=this['dataset']['value'];if(_0x184015==='input')inputValue(_0x9c8211);else{if(_0x184015==='clear')clearAll();else _0x184015===_0x1554e4(0xc3)&&evaluate();}});}),updateDisplay(),document['getElementById'](_0x666d55(0xc7))['addEventListener']('click',function(_0x3807de){const _0x22edc6=_0x666d55;_0x3807de['preventDefault']();const _0x16497e=document['getElementById'](_0x22edc6(0xbc));_0x16497e['classList']['add'](_0x22edc6(0xc2)),setTimeout(()=>{const _0x4e5d4a=_0x22edc6;window[_0x4e5d4a(0xc6)][_0x4e5d4a(0xbe)]='工具导航.html';},0x3e8);});
 </script>
 
     <!-- 转场覆盖层样式 -->

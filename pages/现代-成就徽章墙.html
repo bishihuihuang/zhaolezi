@@ -65,6 +65,76 @@
 <meta property="og:image" content="https://bishihuihuang.github.io/zhaolezi/assets/images/og-default.png">
 
 <link rel="stylesheet" href="../assets/css/common.css">
+<style data-no-obf>/* 全站打磨层 V3.0 */
+/* ==================================================================
+   全站通用打磨层（V3.0 · 综合提升）
+   追加到 common.css / xd-common.css / cy-common.css 末尾，级联覆盖全站。
+   设计原则：
+   - 零破坏：:where() 包裹 = 零特异性，绝不覆盖页面既有样式；不设 margin/尺寸/定位。
+   - 主题自适应：一律 var(--zl-*，fallback)，不引入新硬编码色。
+   - 不变量：不改任何布局结构、跳转逻辑、找乐子主题。
+   - 提升：可访问性（焦点/减少动效/色彩方案/触摸）、可读性（tabular-nums）、
+           交互反馈（hover/active 过渡）、文本健壮性（长词换行）。
+   ================================================================== */
+
+/* 1. 原生控件随系统深浅色自适应（修复滚动条/输入框/下拉在深色下刺眼白块） */
+:root { color-scheme: light dark; }
+
+/* 2. 触摸设备消除双击缩放延迟（移动端点按更跟手） */
+html { -webkit-tap-highlight-color: transparent; }
+:where(a, button, [role="button"], input, select, textarea, summary, label:has(input), [tabindex]):not([disabled]) {
+    touch-action: manipulation;
+}
+
+/* 3. 键盘焦点统一可见（:where 零特异性 + !important 压过页面 outline:none）
+      仅键盘触发（focus-visible），鼠标点击不出现，不打扰普通点击用户 */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+    outline: 3px solid var(--zl-accent, var(--gold, #f6d365)) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+/* 4. 交互反馈：hover/active 平滑过渡（仅列属性，不用 transition:all） */
+:where(a, button, [role="button"], summary, [tabindex]):where(:not([disabled])) {
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* 5. 文本健壮性：长英文词/URL 在窄屏不再撑破容器 */
+:where(p, li, dd, dt, td, th, figcaption, blockquote, h1, h2, h3, h4, h5, h6, a, span, div) {
+    overflow-wrap: break-word;
+}
+
+/* 6. 数字对齐：统计/计数/表格数字用等宽数字，跳动更整齐 */
+:where(td, .stat, .stat-num, .count, .num, [data-num]) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 6b. 图片响应式：窄屏不撑破容器、保持比例不失真（未显式设尺寸的图更稳） */
+:where(img, picture, video) {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 7. 尊重系统"减少动态效果"（兜底层：common.css 已有，此处保证三家族全覆盖）
+      用 :where 包裹，特异性为 0，页面更具体的动效规则仍可生效 */
+@media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 8. 打印友好：隐藏固定悬浮件，正文铺满（低成本加分项） */
+@media print {
+    :where([class*="fab"], [class*="float"], [class*="dock"], nav.zl-crumb, .zl-skip-link) {
+        display: none !important;
+    }
+}
+
+</style>
+
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
@@ -105,7 +175,7 @@
 
 <script>
 /*ZL-OBF-V2*/
-var _0x522310=_0x585a;document[_0x522310(0x1e5)]('DOMContentLoaded',function(){var _0x5d14ca=_0x522310;if(!window['XD']||!XD[_0x5d14ca(0x1e8)])return;function _0x35a867(){var _0xa9ed55=_0x5d14ca,_0x4123c9=XD[_0xa9ed55(0x1e8)]['list'](),_0x292c61=0x0;for(var _0x311d28=0x0;_0x311d28<_0x4123c9['length'];_0x311d28++)if(_0x4123c9[_0x311d28]['at'])_0x292c61++;var _0x4edb8c=document['getElementById'](_0xa9ed55(0x1e0)),_0x5ca5e4=Math[_0xa9ed55(0x1de)](_0x292c61/_0x4123c9['length']*0x64);_0x4edb8c[_0xa9ed55(0x1e6)]='<div\x20class=\x22ach-ring\x22\x20style=\x22--ring-p:'+_0x5ca5e4+_0xa9ed55(0x1e9)+_0x292c61+'/'+_0x4123c9['length']+'</b></div>'+'<div\x20class=\x22ach-sum-text\x22><b>'+_0x5ca5e4+'%\x20已点亮</b>'+_0xa9ed55(0x1e1);var _0x10dad5=document['getElementById'](_0xa9ed55(0x1df)),_0x11c55a='';for(var _0x3f0dad=0x0;_0x3f0dad<_0x4123c9[_0xa9ed55(0x1e3)];_0x3f0dad++){var _0x9f5b9b=_0x4123c9[_0x3f0dad];_0x11c55a+=_0xa9ed55(0x1e2)+(_0x9f5b9b['at']?'':'\x20locked')+'\x22>'+'<span\x20class=\x22ico\x22>'+(_0x9f5b9b['at']?_0x9f5b9b['icon']:'🔒')+'</span>'+'<b>'+XD[_0xa9ed55(0x1e7)](_0x9f5b9b['t'])+'</b>'+'<span>'+XD[_0xa9ed55(0x1e7)](_0x9f5b9b['d'])+'</span>'+'<span\x20class=\x22date\x22>'+(_0x9f5b9b['at']?'✅\x20'+XD[_0xa9ed55(0x1ea)](new Date(_0x9f5b9b['at'])):_0xa9ed55(0x1e4))+'</span></div>';}_0x10dad5['innerHTML']=_0x11c55a;}_0x35a867();if(XD['on'])XD['on']('achieve.unlocked',_0x35a867);});function _0x585a(_0x18c0cf,_0x1dafb1){_0x18c0cf=_0x18c0cf-0x1de;var _0x585a38=_0x1daf();var _0x2c391d=_0x585a38[_0x18c0cf];return _0x2c391d;}function _0x1daf(){var _0x2054ff=['round','achGrid','achSummary','<span>解锁徽章会在右下角弹出提示，并自动记录时间。</span></div>','<div\x20class=\x22ach-card','length','未解锁','addEventListener','innerHTML','escapeHtml','achieve','%;\x22><b>','fmtDate'];_0x1daf=function(){return _0x2054ff;};return _0x1daf();}
+function _0x159b(_0x57b89d,_0xf4969b){_0x57b89d=_0x57b89d-0x124;var _0x159bcc=_0xf496();var _0x36547f=_0x159bcc[_0x57b89d];return _0x36547f;}document['addEventListener']('DOMContentLoaded',function(){var _0x52cf77=_0x159b;if(!window['XD']||!XD[_0x52cf77(0x12b)])return;function _0x1e1b61(){var _0x15b5fe=_0x52cf77,_0x5502f0=XD['achieve']['list'](),_0x467641=0x0;for(var _0x5620d1=0x0;_0x5620d1<_0x5502f0[_0x15b5fe(0x127)];_0x5620d1++)if(_0x5502f0[_0x5620d1]['at'])_0x467641++;var _0x128ae7=document[_0x15b5fe(0x12f)]('achSummary'),_0x3eeef8=Math[_0x15b5fe(0x129)](_0x467641/_0x5502f0[_0x15b5fe(0x127)]*0x64);_0x128ae7['innerHTML']=_0x15b5fe(0x12a)+_0x3eeef8+_0x15b5fe(0x12c)+_0x467641+'/'+_0x5502f0['length']+'</b></div>'+_0x15b5fe(0x125)+_0x3eeef8+'%\x20已点亮</b>'+'<span>解锁徽章会在右下角弹出提示，并自动记录时间。</span></div>';var _0x520ddb=document[_0x15b5fe(0x12f)]('achGrid'),_0x727a7d='';for(var _0x5f162e=0x0;_0x5f162e<_0x5502f0['length'];_0x5f162e++){var _0x1386aa=_0x5502f0[_0x5f162e];_0x727a7d+='<div\x20class=\x22ach-card'+(_0x1386aa['at']?'':'\x20locked')+'\x22>'+'<span\x20class=\x22ico\x22>'+(_0x1386aa['at']?_0x1386aa[_0x15b5fe(0x12d)]:'🔒')+'</span>'+_0x15b5fe(0x126)+XD[_0x15b5fe(0x128)](_0x1386aa['t'])+'</b>'+'<span>'+XD[_0x15b5fe(0x128)](_0x1386aa['d'])+'</span>'+'<span\x20class=\x22date\x22>'+(_0x1386aa['at']?'✅\x20'+XD['fmtDate'](new Date(_0x1386aa['at'])):'未解锁')+_0x15b5fe(0x12e);}_0x520ddb[_0x15b5fe(0x130)]=_0x727a7d;}_0x1e1b61();if(XD['on'])XD['on'](_0x52cf77(0x124),_0x1e1b61);});function _0xf496(){var _0x1df726=['achieve.unlocked','<div\x20class=\x22ach-sum-text\x22><b>','<b>','length','escapeHtml','round','<div\x20class=\x22ach-ring\x22\x20style=\x22--ring-p:','achieve','%;\x22><b>','icon','</span></div>','getElementById','innerHTML'];_0xf496=function(){return _0x1df726;};return _0xf496();}
 </script>
 </body>
 </html>
