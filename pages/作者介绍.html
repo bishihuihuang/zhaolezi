@@ -1,395 +1,125 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>作者介绍 - 找乐子</title>
 <style>
-/* ========== 基础重置 ========== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent; /* 【优化】移除触摸高亮 */
-}
+/* 作者介绍 · 编辑风：一页作者名片 */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-/* ========== 1. 流光溢彩动态背景（与系列页面一致） ========== */
 body {
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    font-family: "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-    /* 六主题适配：背景随主题（原霓虹流动渐变 + background-position 动画移除，触性能铁律） */
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
     background: var(--bg);
+    color: var(--txt);
+    min-height: 100vh;
 }
 
-/* ========== 背景漂浮光球 ========== */
-.bg-orb {
-    position: absolute;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--glow) 14%, transparent);
-    filter: blur(2px);
-    z-index: 1;
-    animation: orbFloat 8s ease-in-out infinite;
-}
-.orb1 { width: 120px; height: 120px; top: 15%; left: 12%; }
-.orb2 { width: 80px;  height: 80px;  bottom: 18%; right: 15%; animation-delay: -3s; }
-.orb3 { width: 50px;  height: 50px;  top: 65%; left: 22%; animation-delay: -5s; }
-@keyframes orbFloat {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50%      { transform: translateY(-25px) scale(1.08); }
-}
-
-/* ========== 2. 中央白色正方形卡片 ========== */
-.card {
-    position: relative;
-    width: 440px;
-    height: 440px;                    /* 宽高相等 => 正方形 */
-    background: var(--card);
-    backdrop-filter: blur(10px);      /* 磨砂玻璃效果 */
-    border-radius: 25px;              /* 大圆角 */
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;          /* 内容整体垂直居中 */
-    align-items: center;
-    gap: 22px;
-    z-index: 10;
-    animation: cardEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-    /* 顶部四色装饰条 */
-    border-top: none;
-}
-/* 卡片顶部四色渐变装饰条 */
-.card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 55%;
-    height: 5px;
-    border-radius: 0 0 10px 10px;
-    background: linear-gradient(90deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); /* 页系签名霓虹条（白名单） */
-}
-
-/* 卡片入场动画（上浮淡入） */
-@keyframes cardEnter {
-    from { opacity: 0; transform: translateY(40px) scale(0.96); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* 小屏幕适配：整体等比缩小，仍保持正方形 */
-@media (max-width: 480px) {
-    .card { width: 92vw; height: 92vw; }
-    .card { padding: 20px; } /* 【优化】增加内边距，避免内容贴边 */
-    .author-name { font-size: 20px; } /* 【优化】缩字号保证可读性 */
-    .intro-text { font-size: 13px; }  /* 【优化】缩字号 */
-}
-
-/* ========== 3. 左上角"返回"胶囊按钮 ========== */
+/* 返回：发丝线幽灵 pill */
+.back-line { padding: 18px 0 0; }
 .back-link {
-    position: absolute;
-    top: 14px;
-    left: 16px;
-    font-size: 13px;
-    font-weight: bold;
-    color: var(--glow);
-    text-decoration: none;
-    background: var(--card-2);
-    border: 1px solid var(--line);
-    padding: 7px 18px;
-    border-radius: 50px;              /* 胶囊形 */
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-    z-index: 20;
-    /* 【优化】确保触摸目标尺寸不小于44×44 */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    min-width: 44px;
+    display: inline-flex; align-items: center;
+    min-height: 40px; padding: 0 6px;
+    font-size: 14px; color: var(--dim); text-decoration: none;
+    transition: color .18s ease;
 }
-.back-link:hover {
-    background: var(--glow);
-    color: var(--btn-txt);
-    transform: translateX(-3px);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--glow) 35%, transparent);
-}
+.back-link:hover { color: var(--txt); }
 
-/* ========== 4. 头像小正方形（内放 1.jpg） ========== */
+/* 作者名片：头像 + 署名 + 简介，发丝线分区 */
+.author-card {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    padding: var(--ed-s6, 48px) 0 var(--ed-s7, 80px);
+}
 .avatar-box {
-    width: 140px;
-    height: 140px;                    /* 小正方形 */
-    border-radius: 18px;
-    padding: 6px;
-    background: var(--card-2);        /* 相框边→主题卡面 */
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
-    transform: rotate(-3deg);         /* 轻微歪头，俏皮感 */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 132px; height: 132px;
+    padding: 5px;
+    background: var(--card-2, #fff);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    transform: rotate(-2deg);
+    transition: transform .3s ease;
 }
-.avatar-box:hover {
-    transform: rotate(0deg) scale(1.06);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-}
+.avatar-box:hover { transform: rotate(0deg); }
 .avatar-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;                /* 图片铺满小方块，不变形 */
-    border-radius: 12px;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
     display: block;
 }
-/* 图片缺失时的占位提示 */
 .avatar-fallback {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 12px;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--glow) 12%, var(--card-2)), color-mix(in srgb, var(--blue) 12%, var(--card-2)));
-    color: var(--dim);
-    font-size: 13px;
-    text-align: center;
-    line-height: 1.6;
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    background: var(--cy-wash, rgba(35,38,58,.045));
+    color: var(--dim); font-size: 13px; text-align: center;
 }
 
-/* ========== 5. 作者署名（楷体 + 香槟金渐变，与 3.html 一致） ========== */
 .author-name {
-    font-family: "KaiTi", "STKaiti", "FangSong", "Microsoft YaHei", serif;
-    font-size: 24px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    background: var(--title-grad);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 2px 5px color-mix(in srgb, var(--gold) 30%, transparent));
-    animation: goldFlow 4s linear infinite;   /* 金光缓缓流转 */
+    font-family: "KaiTi", "STKaiti", "FangSong", serif;
+    font-size: 30px; font-weight: 500; letter-spacing: .12em;
+    margin: 22px 0 4px;
+    color: var(--txt);
 }
-@keyframes goldFlow {
-    to { background-position: 200% center; }
+.author-alias {
+    font-size: 12.5px; letter-spacing: .2em; color: var(--dim);
+    margin-bottom: 22px;
 }
-
-/* 两侧细金线 + 菱形点缀 */
-.author-deco {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+.author-rule {
+    width: 56px; height: 1px; background: var(--line);
+    margin: 0 auto 22px;
 }
-.author-deco .line {
-    width: 46px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 60%, transparent), transparent);
-}
-.author-deco .diamond {
-    width: 6px;
-    height: 6px;
-    background: var(--gold);
-    transform: rotate(45deg);
-    opacity: 0.8;
-}
-
-/* ========== 6. 简介文字 ========== */
 .intro-text {
-    font-size: 14px;
-    color: var(--dim);
-    letter-spacing: 1px;
+    font-size: 15.5px; line-height: 1.9; color: var(--dim);
+    max-width: var(--ed-measure, 68ch);
 }
+.intro-text + .intro-text { margin-top: 12px; }
 
-/* ========== 7. 转场遮罩层（与 1/2/3.html 一致） ========== */
+/* 转场遮罩（品牌件） */
 #transitionMask {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 9999;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    /* 六主题适配：遮罩随主题底色 */
+    position: fixed; inset: 0; z-index: 9999;
+    display: none; justify-content: center; align-items: center;
     background: var(--bg);
-    /* 【优化】无障碍角色 */
-    role: dialog;
-    aria-modal: true;
 }
-#transitionMask.show {
-    display: flex;
-    animation: maskFadeIn 0.3s ease;
-}
-@keyframes maskFadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* 遮罩正中间的旋转小圆 */
+#transitionMask.show { display: flex; animation: maskFadeIn .3s ease; }
+@keyframes maskFadeIn { from { opacity: 0; } to { opacity: 1; } }
 .spinner-circle {
-    width: 100px;
-    height: 100px;
-    border: 5px solid color-mix(in srgb, var(--txt) 35%, transparent);
+    width: 88px; height: 88px;
+    border: 3px solid color-mix(in srgb, var(--txt) 30%, transparent);
     border-top-color: var(--txt);
     border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex; align-items: center; justify-content: center;
     animation: spinRotate 1.5s linear infinite;
 }
 .spinner-circle span {
-    color: var(--txt);
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 2px;
+    color: var(--txt); font-size: 16px; letter-spacing: 2px;
     animation: spinReverse 1.5s linear infinite;
 }
 @keyframes spinRotate  { to { transform: rotate(360deg); } }
 @keyframes spinReverse { to { transform: rotate(-360deg); } }
 
-        /* ========== 手机端响应式适配（通用） ========== */
-        @media (max-width: 768px) {
-            html, body {
-                overflow-x: hidden;
-                width: 100%;
-            }
-            main {
-                padding: 70px 0 30px !important;
-            }
-            .container, .card-container, .wrapper, .box, .panel, .form-box {
-                width: 94% !important;
-                max-width: 94vw !important;
-                padding: 14px !important;
-                margin: 0 auto !important;
-            }
-            /* 6列/多列网格改3列 */
-            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 8px !important;
-                padding: 4px !important;
-            }
-            /* 大区域占满整行 */
-            .title-area, .back-area, .display-area, .game-main,
-            .calculator-area, .main-area, .content-area, .result-area,
-            .input-area, .output-area, .board-area, .info-area, .settings-area {
-                grid-column: 1 / -1 !important;
-                grid-row: auto !important;
-            }
-            /* 左右分栏改上下堆叠 */
-            .left-panel, .right-panel, .side-panel, .sidebar {
-                flex: 1 1 100% !important;
-                width: 100% !important;
-                border-right: none !important;
-                border-bottom: 1px solid var(--line) !important;
-            }
-            .display-area, .game-main, .calculator-area {
-                flex-direction: column !important;
-                padding: 12px !important;
-            }
-            .cell, .tool-cell, .grid-cell {
-                padding: 10px 6px !important;
-                min-height: 70px !important;
-            }
-            h1, h2, h3, .title-text, .author-name, .main-title {
-                font-size: 22px !important;
-                letter-spacing: 1px !important;
-            }
-            .btn, button, input, select, textarea {
-                font-size: 14px !important;
-                padding: 10px 14px !important;
-            }
-            .ghost-btn, .back-btn, .return-btn {
-                padding: 8px 16px !important;
-                font-size: 13px !important;
-            }
-            /* 隐藏非必要装饰元素 */
-            .orb, .decoration, .deco-element, .floating-shape {
-                display: none !important;
-            }
-        }
-        @media (max-width: 480px) {
-            .container, .card-container, .wrapper, .box {
-                width: 96% !important;
-                padding: 10px !important;
-            }
-            /* 小屏手机改2列 */
-            .grid, .tools-grid, .item-grid, .card-grid, .button-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 6px !important;
-            }
-            h1, h2, h3, .title-text, .author-name {
-                font-size: 18px !important;
-            }
-            .cell, .tool-cell {
-                min-height: 80px !important;
-                padding: 8px 4px !important;
-            }
-            .btn, button {
-                font-size: 13px !important;
-                padding: 8px 12px !important;
-            }
-        }
+/* 小房子键（站规：右上角） */
+.home-fab {
+    position: fixed; top: 14px; right: 16px; z-index: 2147483647;
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; text-decoration: none; color: var(--txt);
+    background: var(--card-2); border: 1px solid var(--line); border-radius: 50%;
+    transition: border-color .2s ease;
+}
+.home-fab:hover { border-color: var(--txt); }
 
-    /* ========== 返回主程序·小房子键（V2.5.3 全站统一，左下角浮动） ========== */
-    .home-fab {
-        position: fixed;
-        top: 14px;
-        right: 16px;
-        z-index: 2147483647;
-        width: 56px;
-        height: 56px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 26px;
-        line-height: 1;
-        color: #fff;
-        text-decoration: none;
-        background: linear-gradient(145deg, rgba(17, 153, 142, .94), rgba(10, 90, 84, .94));
-        border: 2px solid rgba(255, 255, 255, .35);
-        border-radius: 50%;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(255, 255, 255, .25);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        transition: transform .3s, box-shadow .3s;
-    }
-    .home-fab:hover { transform: translateY(-4px) scale(1.06); box-shadow: 0 16px 36px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.25); }
-    .home-fab:active { transform: translateY(-1px) scale(.94); }
-
-    /* ========== 返回主程序·转场遮罩（与39/36同款） ========== */
-    .home-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 999999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(8, 10, 25, .72);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity .4s ease, visibility .4s ease;
-        pointer-events: none;
-    }
-    .home-overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
-    .home-loader-wrap { position: relative; width: 170px; height: 170px; display: flex; align-items: center; justify-content: center; }
-    .home-loader-ring {
-        position: absolute; width: 100%; height: 100%; border-radius: 50%;
-        border: 3px solid rgba(255,255,255,.1);
-        border-top-color: #f6d365; border-right-color: #fda085;
-        animation: homeRingSpin .8s linear infinite;
-    }
-    .home-loader-ring::before {
-        content: ''; position: absolute; inset: 22px; border-radius: 50%;
-        border: 3px solid rgba(255,255,255,.08);
-        border-bottom-color: #5ee7df; border-left-color: #b490ca;
-        animation: homeRingSpin 1.1s linear infinite reverse;
-    }
-    .home-loader-text { color: #fff; font-size: 19px; font-weight: 700; letter-spacing: 5px; }
-    @keyframes homeRingSpin { to { transform: rotate(360deg); } }
+.home-overlay {
+    position: fixed; inset: 0; z-index: 999999;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(8, 10, 25, .72);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    opacity: 0; visibility: hidden;
+    transition: opacity .4s ease, visibility .4s ease;
+    pointer-events: none;
+}
+.home-overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
+.home-loader-text { color: var(--card-2); font-size: 19px; font-weight: 700; letter-spacing: 5px; }
 </style>
 
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
@@ -511,65 +241,49 @@ html { -webkit-tap-highlight-color: transparent; }
 <h1 class="sr-only" data-auto>作者介绍 - 找乐子</h1>
 
 
+<main id="zl-main" class="ed-wrap">
+    <p class="back-line"><a class="back-link" id="backLink" href="授权确认.html" aria-label="返回上一页" title="返回">&larr; 返回</a></p>
 
+    <section class="author-card">
+        <div class="avatar-box">
+            <img src="../assets/images/fake_qrcode.png" alt="作者头像"
+                 onerror="this.outerHTML='<div class=&quot;avatar-fallback&quot;>图片未找到</div>';">
+        </div>
+        <div class="author-name">碧世辉煌</div>
+        <div class="author-alias">找乐子 · 作者</div>
+        <div class="author-rule"></div>
+        <p class="intro-text">写代码，也写字。把日常里用得上的小工具、耐玩的小游戏，和一套从零开始的计算机课程，一点点凑成了「找乐子」。</p>
+        <p class="intro-text">这里没有账号，没有广告，也不收集任何数据——你用过的记录只存在你自己的浏览器里。遇到问题或想提建议，欢迎去「反馈渠道」留言；如果觉得有用，「赞赏支持」里可以请我喝杯咖啡。</p>
+    </section>
 
+    <details class="ed-fold">
+        <summary>关于本站</summary>
+        <div class="ed-fold-body">
+            <p>找乐子由几部分组成：<strong>工具箱</strong>（十几个只在本机运行的小工具）、<strong>小游戏</strong>（扫雷、棋局、打字、记忆）、<strong>看看作业</strong>（密码访问的作业区）、<strong>现代化课程</strong>（从零开始的计算机与网络课）、<strong>创意引擎</strong> 与 <strong>AI 提示词库</strong>。</p>
+            <p>所有东西都只在你自己的浏览器里运行，离线也能用；换设备或清浏览器数据会清空本地记录，重要内容记得导出备份。</p>
+        </div>
+    </details>
 
+    <footer class="ed-footer">找乐子 · 自留地，慢慢建</footer>
+</main>
 
-
-<!-- 中央白色正方形卡片 -->
-<div role="main" id="zl-main" class="card">
-
-    <!-- 左上角返回按钮：点击跳转回 3.html -->
-    <a class="back-link" id="backLink" href="授权确认.html" aria-label="返回上一页" title="返回">&larr; 返回</a>
-
-    <!-- 小正方形：头像图片 1.jpg -->
-    <div class="avatar-box">
-        <img src="../assets/images/fake_qrcode.png" alt="作者头像"
-             onerror="this.outerHTML='<div class=&quot;avatar-fallback&quot; loading="lazy" decoding="async">图片未找到</div>';">
-    </div>
-
-    <!-- 作者署名 -->
-    <div class="author-name">作者：碧世辉煌</div>
-    <p class="ed-lede" style="margin:10px auto 0;max-width:34ch;">找乐子的作者页——把工具、游戏和课程凑在一起的一块自留地。</p>
-    <div class="author-deco">
-        <span class="line"></span>
-        <span class="diamond"></span>
-        <span class="line"></span>
-    </div>
-
-    <!-- 笔名 -->
-    <div class="intro-text" style="color:var(--dim); font-family:'KaiTi','STKaiti',serif;">啥也没有</div>
-
-    <!-- 简介 -->
-    <div class="intro-text">你的简介空空如也。</div>
-
-</div>
-
-<!-- 转场遮罩层 -->
+<!-- 转场遮罩层（品牌件） -->
 <div id="transitionMask" role="dialog" aria-modal="true" aria-label="页面加载中">
     <div class="spinner-circle"><span>找乐子</span></div>
 </div>
 
 <script>
 /*ZL-OBF-V2*/
-function _0x31eb(_0x57e98d,_0x1d1119){_0x57e98d=_0x57e98d-0xc8;const _0x31ebda=_0x1d11();let _0x4a3ed8=_0x31ebda[_0x57e98d];return _0x4a3ed8;}function _0x1d11(){const _0x543557=['key','preventDefault','授权确认.html','getElementById','show'];_0x1d11=function(){return _0x543557;};return _0x1d11();}(function(){const _0x551c98=_0x31eb;let _0x44f1d0=![];function _0x5382b3(_0x4226fe){if(_0x44f1d0)return;_0x44f1d0=!![],document['getElementById']('transitionMask')['classList']['add']('show'),setTimeout(function(){window['location']['href']=_0x4226fe;},0x3e8);}let _0x2144fe=document[_0x551c98(0xcb)]('backLink');_0x2144fe['addEventListener']('click',function(_0x6cb675){const _0x15e2c6=_0x551c98;_0x6cb675[_0x15e2c6(0xc9)](),_0x5382b3(_0x15e2c6(0xca));}),document['addEventListener']('keydown',function(_0xeb1ca6){const _0x3b7a8d=_0x551c98;if(_0xeb1ca6[_0x3b7a8d(0xc8)]==='Escape'){let _0x3704f9=document['getElementById']('transitionMask');_0x3704f9['classList']['contains']('show')&&(_0x3704f9['classList']['remove'](_0x3b7a8d(0xcc)),_0x44f1d0=![]);}}),window['showTransition']=_0x5382b3;}());
+function _0x2de8(_0x30f1f3,_0x369b83){_0x30f1f3=_0x30f1f3-0xd4;const _0x2de8ec=_0x369b();let _0x1d01ca=_0x2de8ec[_0x30f1f3];return _0x1d01ca;}(function(){const _0x5bf1c4=_0x2de8;let _0x5d28ee=![];function _0x18dda2(_0x232b01){const _0x1c26cb=_0x2de8;if(_0x5d28ee)return;_0x5d28ee=!![],document['getElementById']('transitionMask')['classList'][_0x1c26cb(0xd8)](_0x1c26cb(0xd4)),setTimeout(function(){const _0x2ba86f=_0x1c26cb;window['location'][_0x2ba86f(0xdc)]=_0x232b01;},0x3e8);}let _0xae0a2e=document[_0x5bf1c4(0xd6)]('backLink');_0xae0a2e['addEventListener']('click',function(_0x67cf7){const _0x2c8980=_0x5bf1c4;_0x67cf7[_0x2c8980(0xd9)](),_0x18dda2('授权确认.html');}),document[_0x5bf1c4(0xd7)](_0x5bf1c4(0xd5),function(_0x2c5f71){const _0x114232=_0x5bf1c4;if(_0x2c5f71['key']==='Escape'){let _0x2611fa=document['getElementById']('transitionMask');_0x2611fa['classList']['contains'](_0x114232(0xd4))&&(_0x2611fa[_0x114232(0xdb)][_0x114232(0xda)](_0x114232(0xd4)),_0x5d28ee=![]);}}),window['showTransition']=_0x18dda2;}());function _0x369b(){const _0x1b5abd=['show','keydown','getElementById','addEventListener','add','preventDefault','remove','classList','href'];_0x369b=function(){return _0x1b5abd;};return _0x369b();}
 </script>
-
-
-    <div class="ed-wrap">
-        <details class="ed-fold">
-            <summary>关于本站</summary>
-            <div class="ed-fold-body"><p>找乐子由几部分组成：<strong>工具箱</strong>（十几个只在本机运行的小工具）、<strong>小游戏</strong>（扫雷、棋局、打字、记忆）、<strong>看看作业</strong>（密码访问的作业区）、<strong>现代化课程</strong>（从零开始的计算机与网络课）、<strong>创意引擎</strong> 与 <strong>AI 提示词库</strong>。</p><p>本站没有账号系统、没有广告、不做数据收集——你用过的记录只存在你自己的浏览器里。</p><p>遇到问题或想提建议，欢迎去「反馈渠道」留言；如果觉得有用，「赞赏支持」里可以请作者喝杯咖啡。</p></div>
-        </details>
-    </div>
 
 <a class="home-fab" id="homeFab" href="娱乐游戏.html" aria-label="返回主程序" title="返回主程序">🏠</a>
 <div class="home-overlay" id="homeOverlay" role="dialog" aria-modal="true" aria-label="页面跳转中">
-    <div class="home-loader-wrap"><div class="home-loader-ring"></div><div class="home-loader-text">找乐子～</div></div>
+    <div class="home-loader-wrap"><div class="home-loader-text">找乐子～</div></div>
 </div>
 <script>
 /*ZL-OBF-V2*/
-function _0xa3e2(_0x40e3ad,_0x8c6a65){_0x40e3ad=_0x40e3ad-0x186;var _0xa3e228=_0x8c6a();var _0x2f364f=_0xa3e228[_0x40e3ad];return _0x2f364f;}function _0x8c6a(){var _0x1c3fd7=['Escape','show','click','classList','homeFab','remove'];_0x8c6a=function(){return _0x1c3fd7;};return _0x8c6a();}(function(){var _0x551c31=_0xa3e2,_0xb995fd=document['getElementById'](_0x551c31(0x18a)),_0x7d83e0=document['getElementById']('homeOverlay');if(!_0xb995fd||!_0x7d83e0)return;var _0x388c0c=![];_0xb995fd['addEventListener'](_0x551c31(0x188),function(_0x2c7434){var _0x225310=_0x551c31;_0x2c7434['preventDefault']();if(_0x388c0c)return;_0x388c0c=!![],_0x7d83e0[_0x225310(0x189)]['add'](_0x225310(0x187)),setTimeout(function(){window['location']['href']=_0xb995fd['getAttribute']('href');},0x4b0);}),document['addEventListener']('keydown',function(_0x50b8aa){var _0x7ca1bb=_0x551c31;_0x50b8aa['key']===_0x7ca1bb(0x186)&&_0x7d83e0['classList']['contains']('show')&&(_0x7d83e0['classList'][_0x7ca1bb(0x18b)](_0x7ca1bb(0x187)),_0x388c0c=![]);});}());
+function _0x5ef4(_0x49f151,_0x297f2e){_0x49f151=_0x49f151-0x65;var _0x5ef4fc=_0x297f();var _0x2255c7=_0x5ef4fc[_0x49f151];return _0x2255c7;}function _0x297f(){var _0x276faf=['classList','show','Escape','click','preventDefault'];_0x297f=function(){return _0x276faf;};return _0x297f();}(function(){var _0x50a7f2=_0x5ef4,_0x3a2bb8=document['getElementById']('homeFab'),_0x16995d=document['getElementById']('homeOverlay');if(!_0x3a2bb8||!_0x16995d)return;var _0x1ff1a7=![];_0x3a2bb8['addEventListener'](_0x50a7f2(0x68),function(_0x4a8330){var _0x4b39cf=_0x50a7f2;_0x4a8330[_0x4b39cf(0x69)]();if(_0x1ff1a7)return;_0x1ff1a7=!![],_0x16995d[_0x4b39cf(0x65)]['add'](_0x4b39cf(0x66)),setTimeout(function(){window['location']['href']=_0x3a2bb8['getAttribute']('href');},0x4b0);}),document['addEventListener']('keydown',function(_0x1519cf){var _0x54213f=_0x50a7f2;_0x1519cf['key']===_0x54213f(0x67)&&_0x16995d['classList']['contains']('show')&&(_0x16995d['classList']['remove']('show'),_0x1ff1a7=![]);});}());
 </script>
 </body>
 </html>

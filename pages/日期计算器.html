@@ -82,7 +82,7 @@
             position: absolute;
             border-radius: 50%;
             background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--card-2) 60%, transparent), color-mix(in srgb, var(--card-2) 15%, transparent) 45%, transparent 75%);
-            box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 10%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
+            10%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
             pointer-events: none;
             will-change: transform, opacity;
         }
@@ -116,8 +116,8 @@
             width: 80%;
             max-width: 1200px;
             background: var(--card);
-            border-radius: 24px;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px var(--line);
+            border-radius: 8px;
+            box-shadow: none;
             padding: 24px;
             backdrop-filter: blur(4px);
             margin-top: 30px;
@@ -136,7 +136,7 @@
 
         /* 通用格子样式 */
         .cell {
-            border-radius: 14px;
+            border-radius: 8px;
             background: color-mix(in srgb, var(--glow) 5%, transparent);
             display: flex;
             flex-direction: column;
@@ -145,19 +145,19 @@
             padding: 12px;
             position: relative;
             transition: transform .3s, box-shadow .3s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+            box-shadow: none;
             border: 3px solid transparent;
         }
         .cell:hover {
             transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .12), 0 0 20px color-mix(in srgb, var(--glow) 15%, transparent);
+            box-shadow: none;
         }
 
         /* ===== 标题区（1-2行，1-4列） ===== */
         .title-area {
             grid-row: 1 / 3;
             grid-column: 1 / 5;
-            background: var(--btn-grad);
+            background: var(--blue);
             border-color: var(--gold);
             cursor: default;
         }
@@ -171,9 +171,9 @@
         .back-area {
             grid-row: 1 / 3;
             grid-column: 5 / 7;
-            background: var(--btn-grad);
+            background: var(--blue);
             color: var(--btn-txt);
-            font-weight: 800;
+            font-weight: 600;
             font-size: 22px;
             letter-spacing: 3px;
             text-decoration: none;
@@ -182,7 +182,7 @@
         }
         .back-area:hover {
             filter: brightness(1.12);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+            box-shadow: none;
         }
 
         /* ===== 计算器主体区（第3-8行，全部6列） ===== */
@@ -190,7 +190,7 @@
             grid-row: 3 / 9;
             grid-column: 1 / 7;
             background: var(--card-2);
-            border-radius: 14px;
+            border-radius: 8px;
             border: 3px solid var(--green);
             display: flex;
             gap: 20px;
@@ -218,8 +218,8 @@
         .number-input {
             width: 100%;
             padding: 12px 16px;
-            border-radius: 12px;
-            border: 2px solid var(--line);
+            border-radius: 6px;
+            border: 1px solid var(--line);
             background: var(--card);
             font-size: 15px;
             color: var(--txt);
@@ -253,7 +253,7 @@
             flex: 1 1 auto;
             min-width: 100px;
             text-align: center;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            box-shadow: none;
             min-height: 44px; /* 修复：确保触摸目标 ≥44px */
             display: flex;
             align-items: center;
@@ -275,7 +275,7 @@
             justify-content: center;
             align-items: center;
             background: linear-gradient(160deg, color-mix(in srgb, var(--purple) 5%, var(--card-2)), color-mix(in srgb, var(--purple) 9%, var(--card-2)));
-            border-radius: 18px;
+            border-radius: 8px;
             padding: 20px;
             border: 2px solid color-mix(in srgb, var(--purple) 10%, transparent);
         }
@@ -292,9 +292,9 @@
             word-break: break-all;
             text-align: center;
             padding: 14px 16px;
-            border-radius: 12px;
+            border-radius: 6px;
             background: var(--card-2);
-            border: 2px solid var(--line);
+            border: 1px solid var(--line);
             min-height: 60px;
             line-height: 1.6;
             user-select: text;
@@ -305,7 +305,7 @@
         }
         .result-display.highlight {
             border-color: color-mix(in srgb, var(--purple) 45%, transparent);
-            box-shadow: 0 0 20px color-mix(in srgb, var(--purple) 12%, transparent);
+            12%, transparent);
         }
 
         /* ========== 转场覆盖层（index.html通用样式） ========== */
@@ -383,7 +383,7 @@
             position: relative;
             z-index: 5;
             font-size: 24px;
-            font-weight: 900;
+            font-weight: 500;
             letter-spacing: 4px;
             background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
             background-size: 200% 100%;
@@ -692,7 +692,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-function _0x4924(_0x5e5117,_0x37a6d4){_0x5e5117=_0x5e5117-0x197;const _0x4924a9=_0x37a6();let _0x1736e8=_0x4924a9[_0x5e5117];return _0x1736e8;}(function(){'use strict';const _0x33feba=_0x4924;const _0x4a6db8=document[_0x33feba(0x199)](_0x33feba(0x1ab)),_0x420b88=document[_0x33feba(0x199)]('dateEnd'),_0x20ccce=document['getElementById']('daysInput'),_0x3f4fe2=document['getElementById']('diffBtn'),_0x5ca568=document[_0x33feba(0x199)]('targetBtn'),_0x2a1bdc=document['getElementById']('timestampBtn'),_0x708213=document['getElementById']('resultDisplay'),_0x333e6d=document['getElementById'](_0x33feba(0x19e)),_0x10cb68=document[_0x33feba(0x199)]('overlay');function _0x5a9631(_0x2d32f9){const _0xa60bee=_0x33feba;if(!_0x2d32f9)return null;const _0x39cdab=_0x2d32f9['split']('-');if(_0x39cdab[_0xa60bee(0x19c)]!==0x3)return null;return new Date(parseInt(_0x39cdab[0x0]),parseInt(_0x39cdab[0x1])-0x1,parseInt(_0x39cdab[0x2]));}function _0x5c1642(_0x25dfcb){const _0x415b9f=_0x33feba,_0x55e20d=_0x25dfcb['getFullYear'](),_0x380099=String(_0x25dfcb[_0x415b9f(0x1a5)]()+0x1)['padStart'](0x2,'0'),_0x1b5340=String(_0x25dfcb['getDate']())[_0x415b9f(0x19d)](0x2,'0');return _0x55e20d+'-'+_0x380099+'-'+_0x1b5340;}function _0x43cdfd(_0x4ad586,_0x385a23=![]){const _0x4b2f84=_0x33feba;_0x708213['textContent']=_0x4ad586,_0x708213[_0x4b2f84(0x1a9)]['toggle']('placeholder',_0x385a23),!_0x385a23?_0x708213['classList'][_0x4b2f84(0x1a0)](_0x4b2f84(0x1a1)):_0x708213['classList'][_0x4b2f84(0x198)]('highlight');}function _0x219d48(){const _0x32f879=_0x33feba,_0x1a4dc0=_0x5a9631(_0x4a6db8['value']),_0x2bcf27=_0x5a9631(_0x420b88['value']);if(!_0x1a4dc0||!_0x2bcf27){_0x43cdfd('请先选择起始和结束日期',!![]);return;}const _0x1bfbe8=Math['floor']((_0x2bcf27['getTime']()-_0x1a4dc0['getTime']())/0x5265c00),_0x241fd4=Math[_0x32f879(0x1a2)](_0x1bfbe8),_0x2f5f4b=_0x1bfbe8>=0x0?'之后':'之前';_0x43cdfd('相差\x20'+_0x241fd4+'\x20天\x0a（结束日期在起始日期'+_0x2f5f4b+'）');}function _0x2d52ca(){const _0xe6621f=_0x33feba,_0x467785=_0x5a9631(_0x4a6db8[_0xe6621f(0x1a8)]),_0x4dfd02=parseInt(_0x20ccce['value'],0xa);if(!_0x467785){_0x43cdfd('请先选择起始日期',!![]);return;}if(isNaN(_0x4dfd02)){_0x43cdfd('请输入推算天数（可正可负）',!![]);return;}const _0x53f051=new Date(_0x467785[_0xe6621f(0x1a3)]()+_0x4dfd02*0x5265c00);_0x43cdfd('目标日期：'+_0x5c1642(_0x53f051)+'\x0a（'+_0x467785['getFullYear']()+'年'+(_0x467785[_0xe6621f(0x1a5)]()+0x1)+'月'+_0x467785['getDate']()+'日\x20'+(_0x4dfd02>=0x0?'+':'')+_0x4dfd02+'\x20天）');}function _0x202927(){const _0x495439=_0x33feba,_0x419279=_0x20ccce['value']['trim']();if(!_0x419279){_0x43cdfd(_0x495439(0x19f),!![]);return;}const _0x543060=Number(_0x419279);if(isNaN(_0x543060)){_0x43cdfd('请输入有效的数字时间戳',!![]);return;}const _0x42d857=new Date(_0x543060);if(isNaN(_0x42d857['getTime']())){_0x43cdfd('无效的时间戳',!![]);return;}_0x43cdfd(_0x42d857['toLocaleString'](_0x495439(0x197),{'year':'numeric','month':'2-digit','day':'2-digit','hour':_0x495439(0x1a4),'minute':'2-digit','second':'2-digit','hour12':![]}));}function _0x4cdd36(){const _0x4d1293=_0x33feba;if(_0x10cb68['classList'][_0x4d1293(0x1a6)]('active'))return;_0x10cb68[_0x4d1293(0x1a9)]['add']('active'),setTimeout(()=>{const _0x5166ca=_0x4d1293;window['location'][_0x5166ca(0x19a)]='工具导航.html';},0x3e8);}_0x3f4fe2['addEventListener'](_0x33feba(0x1a7),_0x219d48),_0x5ca568[_0x33feba(0x1aa)]('click',_0x2d52ca),_0x2a1bdc['addEventListener']('click',_0x202927),_0x333e6d['addEventListener'](_0x33feba(0x1a7),function(_0x858c18){const _0x25a4d9=_0x33feba;_0x858c18[_0x25a4d9(0x19b)](),_0x4cdd36();});const _0x51a41a=new Date(),_0x5f06fd=_0x5c1642(_0x51a41a);_0x4a6db8['value']=_0x5f06fd,_0x420b88[_0x33feba(0x1a8)]=_0x5f06fd,_0x20ccce['value']='',document['addEventListener']('keydown',function(_0x56ee25){_0x56ee25['key']==='Escape'&&_0x4cdd36();});}());function _0x37a6(){const _0x496835=['zh-CN','remove','getElementById','href','preventDefault','length','padStart','backHome','请在推算天数输入框中输入时间戳（毫秒）','add','highlight','abs','getTime','2-digit','getMonth','contains','click','value','classList','addEventListener','dateStart'];_0x37a6=function(){return _0x496835;};return _0x37a6();}
+function _0x27b9(_0x446fe9,_0x32a2d9){_0x446fe9=_0x446fe9-0x12d;const _0x27b930=_0x32a2();let _0x3e2fad=_0x27b930[_0x446fe9];return _0x3e2fad;}(function(){'use strict';const _0x1ac542=_0x27b9;const _0x3acec2=document['getElementById']('dateStart'),_0xd70566=document[_0x1ac542(0x141)](_0x1ac542(0x130)),_0xb41544=document['getElementById']('daysInput'),_0x30f040=document['getElementById'](_0x1ac542(0x137)),_0x207576=document[_0x1ac542(0x141)]('targetBtn'),_0x2a76b7=document['getElementById'](_0x1ac542(0x13e)),_0x16b1d7=document['getElementById']('resultDisplay'),_0x322b7a=document[_0x1ac542(0x141)](_0x1ac542(0x145)),_0x50011c=document['getElementById']('overlay');function _0x18aa28(_0xd7e438){const _0x473656=_0x1ac542;if(!_0xd7e438)return null;const _0x2a304d=_0xd7e438['split']('-');if(_0x2a304d[_0x473656(0x138)]!==0x3)return null;return new Date(parseInt(_0x2a304d[0x0]),parseInt(_0x2a304d[0x1])-0x1,parseInt(_0x2a304d[0x2]));}function _0xf9f8dc(_0x29a21a){const _0x1e84ab=_0x1ac542,_0x5438e8=_0x29a21a[_0x1e84ab(0x148)](),_0x4e84c1=String(_0x29a21a['getMonth']()+0x1)['padStart'](0x2,'0'),_0x525c3a=String(_0x29a21a[_0x1e84ab(0x136)]())['padStart'](0x2,'0');return _0x5438e8+'-'+_0x4e84c1+'-'+_0x525c3a;}function _0x144ef0(_0x707576,_0xe6c9f2=![]){const _0x3aef9b=_0x1ac542;_0x16b1d7[_0x3aef9b(0x147)]=_0x707576,_0x16b1d7['classList']['toggle'](_0x3aef9b(0x149),_0xe6c9f2),!_0xe6c9f2?_0x16b1d7[_0x3aef9b(0x13a)]['add'](_0x3aef9b(0x143)):_0x16b1d7[_0x3aef9b(0x13a)][_0x3aef9b(0x13b)]('highlight');}function _0x1f084d(){const _0x17f143=_0x1ac542,_0x5391d3=_0x18aa28(_0x3acec2[_0x17f143(0x144)]),_0x1ab543=_0x18aa28(_0xd70566['value']);if(!_0x5391d3||!_0x1ab543){_0x144ef0('请先选择起始和结束日期',!![]);return;}const _0x68780b=Math[_0x17f143(0x132)]((_0x1ab543[_0x17f143(0x142)]()-_0x5391d3['getTime']())/0x5265c00),_0xb118a3=Math['abs'](_0x68780b),_0x39d6c6=_0x68780b>=0x0?'之后':'之前';_0x144ef0(_0x17f143(0x146)+_0xb118a3+_0x17f143(0x12e)+_0x39d6c6+'）');}function _0x4ab10a(){const _0x246d1b=_0x1ac542,_0x10c161=_0x18aa28(_0x3acec2[_0x246d1b(0x144)]),_0x1ffb63=parseInt(_0xb41544['value'],0xa);if(!_0x10c161){_0x144ef0('请先选择起始日期',!![]);return;}if(isNaN(_0x1ffb63)){_0x144ef0(_0x246d1b(0x134),!![]);return;}const _0x209cac=new Date(_0x10c161['getTime']()+_0x1ffb63*0x5265c00);_0x144ef0(_0x246d1b(0x12f)+_0xf9f8dc(_0x209cac)+'\x0a（'+_0x10c161['getFullYear']()+'年'+(_0x10c161['getMonth']()+0x1)+'月'+_0x10c161[_0x246d1b(0x136)]()+'日\x20'+(_0x1ffb63>=0x0?'+':'')+_0x1ffb63+'\x20天）');}function _0x5f2814(){const _0x263537=_0x1ac542,_0x2ff71d=_0xb41544['value']['trim']();if(!_0x2ff71d){_0x144ef0('请在推算天数输入框中输入时间戳（毫秒）',!![]);return;}const _0x33cfb1=Number(_0x2ff71d);if(isNaN(_0x33cfb1)){_0x144ef0(_0x263537(0x140),!![]);return;}const _0x6f1333=new Date(_0x33cfb1);if(isNaN(_0x6f1333['getTime']())){_0x144ef0('无效的时间戳',!![]);return;}_0x144ef0(_0x6f1333['toLocaleString']('zh-CN',{'year':'numeric','month':'2-digit','day':_0x263537(0x13f),'hour':_0x263537(0x13f),'minute':_0x263537(0x13f),'second':_0x263537(0x13f),'hour12':![]}));}function _0x43e085(){const _0x2e9761=_0x1ac542;if(_0x50011c['classList']['contains'](_0x2e9761(0x139)))return;_0x50011c['classList'][_0x2e9761(0x13c)]('active'),setTimeout(()=>{window['location']['href']='工具导航.html';},0x3e8);}_0x30f040[_0x1ac542(0x12d)]('click',_0x1f084d),_0x207576['addEventListener'](_0x1ac542(0x133),_0x4ab10a),_0x2a76b7['addEventListener'](_0x1ac542(0x133),_0x5f2814),_0x322b7a[_0x1ac542(0x12d)](_0x1ac542(0x133),function(_0x169e1d){_0x169e1d['preventDefault'](),_0x43e085();});const _0x59257d=new Date(),_0x3c52d7=_0xf9f8dc(_0x59257d);_0x3acec2['value']=_0x3c52d7,_0xd70566[_0x1ac542(0x144)]=_0x3c52d7,_0xb41544['value']='',document['addEventListener'](_0x1ac542(0x131),function(_0x591325){const _0x20f06b=_0x1ac542;_0x591325[_0x20f06b(0x135)]===_0x20f06b(0x13d)&&_0x43e085();});}());function _0x32a2(){const _0xe369f3=['addEventListener','\x20天\x0a（结束日期在起始日期','目标日期：','dateEnd','keydown','floor','click','请输入推算天数（可正可负）','key','getDate','diffBtn','length','active','classList','remove','add','Escape','timestampBtn','2-digit','请输入有效的数字时间戳','getElementById','getTime','highlight','value','backHome','相差\x20','textContent','getFullYear','placeholder'];_0x32a2=function(){return _0xe369f3;};return _0x32a2();}
 </script>
 </body>
 </html>

@@ -101,7 +101,7 @@
                     rgba(255, 255, 255, .3),
                     color-mix(in srgb, var(--card-2) 15%, transparent) 50%,
                     transparent 70%);
-            box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 8%, transparent),
+            8%, transparent),
                 inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
             pointer-events: none;
             will-change: transform, opacity;
@@ -145,14 +145,14 @@
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border-bottom: 1px solid var(--line);
-            box-shadow: 0 4px 40px rgba(0,0,0,.3);
+            box-shadow: none;
         }
 
         header h1 {
             font-size: 28px;
-            font-weight: 900;
+            font-weight: 500;
             letter-spacing: 5px;
-            var(--title-grad);
+            var(--blue);
             background-size: 200% 100%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -184,8 +184,8 @@
             width: 80%;
             max-width: 1440px;
             background: var(--card);
-            border-radius: 24px;
-            box-shadow: 0 25px 70px rgba(0,0,0,.35), 0 0 0 1px var(--line);
+            border-radius: 8px;
+            box-shadow: none;
             max-height: calc(100vh - 130px);
             overflow-y: auto;
             padding: 20px;
@@ -193,8 +193,8 @@
         }
 
         .container::-webkit-scrollbar { width: 10px; }
-        .container::-webkit-scrollbar-track { background: rgba(0,0,0,.04); border-radius: 12px; }
-        .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 12px; border: 2px solid transparent; }
+        .container::-webkit-scrollbar-track { background: rgba(0,0,0,.04); border-radius: 6px; }
+        .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 6px; border: 2px solid transparent; }
 
         /* ========== 网格布局（6列） ========== */
         .grid {
@@ -213,7 +213,7 @@
             justify-content: center;
             background: var(--gold-3-grad);
             background-size: 300% 300%;
-            border-radius: 20px;
+            border-radius: 8px;
             box-shadow: 0 12px 40px color-mix(in srgb, var(--gold-2) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
             animation: titleGradient 6s ease infinite;
             position: relative;
@@ -229,7 +229,7 @@
 
         .title-area h2 {
             font-size: 46px;
-            font-weight: 900;
+            font-weight: 500;
             text-align: center;
             line-height: 1.3;
             letter-spacing: 5px;
@@ -250,12 +250,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--back-grad);
+            background: var(--green);
             color: var(--btn-txt);
             font-size: 24px;
-            font-weight: 800;
+            font-weight: 600;
             text-decoration: none;
-            border-radius: 20px;
+            border-radius: 8px;
             box-shadow: 0 12px 40px color-mix(in srgb, var(--green) 40%, transparent), inset 0 1px 0 rgba(255,255,255,.2);
             transition: transform .3s, box-shadow .3s;
             cursor: pointer;
@@ -274,10 +274,10 @@
         .announcement-card {
             grid-column: 1 / 7;
             background: var(--card-2);
-            border-radius: 16px;
+            border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,.1);
-            border: 2px solid var(--line);
+            box-shadow: none;
+            border: 1px solid var(--line);
             position: relative;
             overflow: hidden;
             transition: transform .3s, box-shadow .3s, border-color .3s;
@@ -309,7 +309,7 @@
 
         .announcement-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0,0,0,.15);
+            box-shadow: none;
             border-color: var(--gold);
         }
 
@@ -318,7 +318,7 @@
             var(--gold-3-grad);
             color: var(--btn-txt);
             padding: 4px 12px;
-            border-radius: 20px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 700;
             margin-bottom: 10px;
@@ -342,14 +342,14 @@
             grid-column: 1 / -1;
             margin-bottom: 14px;
             padding: 14px 16px;
-            border-radius: 14px;
+            border-radius: 8px;
             background: var(--zl-card);
             border: 1px solid var(--zl-accent);
             box-shadow: var(--zl-shadow);
             font-size: 14px;
             color: var(--zl-text);
         }
-        .wn-head { font-weight: 800; font-size: 15px; margin-bottom: 8px; color: var(--zl-accent); }
+        .wn-head { font-weight: 600; font-size: 15px; margin-bottom: 8px; color: var(--zl-accent); }
         .wn-item b { display: block; margin-bottom: 3px; color: var(--zl-accent); }
         .wn-desc { line-height: 1.7; margin-bottom: 8px; color: var(--zl-muted); }
         .wn-btn {
@@ -443,7 +443,7 @@
             position: relative;
             z-index: 5;
             font-size: 24px;
-            font-weight: 900;
+            font-weight: 500;
             letter-spacing: 4px;
             background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
             background-size: 200% 100%;
@@ -471,16 +471,16 @@
             header { padding: 14px 16px; }
             header h1 { font-size: 20px; letter-spacing: 2px; }
             main { padding-top: 80px; padding-bottom: 30px; }
-            .container { width: 94%; padding: 12px; max-height: none; border-radius: 18px; }
+            .container { width: 94%; padding: 12px; max-height: none; border-radius: 8px; }
             .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px; }
-            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 80px; border-radius: 16px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 80px; border-radius: 8px; }
             .title-area h2 { font-size: 26px; letter-spacing: 2px; }
             .back-area { font-size: 20px; }
-            .announcement-card { grid-column: 1 / -1; padding: 14px; border-radius: 14px; }
+            .announcement-card { grid-column: 1 / -1; padding: 14px; border-radius: 8px; }
             .announcement-card .date { font-size: 13px; padding: 3px 10px; }
             .announcement-card .content { font-size: 15px; line-height: 1.7; }
             /* 手机端去除hover效果，使用active */
-            .announcement-card:hover { transform: none; box-shadow: 0 6px 20px rgba(0,0,0,.1); border-color: var(--line); }
+            .announcement-card:hover { transform: none; box-shadow: none; border-color: var(--line); }
             .announcement-card:active { transform: scale(.98); }
             .title-area:hover { transform: none; }
             .back-area:hover { transform: none; }
@@ -507,12 +507,12 @@
             header { padding: 12px 12px; }
             header h1 { font-size: 16px; letter-spacing: 1px; }
             main { padding-top: 70px; }
-            .container { width: 96%; padding: 8px; border-radius: 14px; }
+            .container { width: 96%; padding: 8px; border-radius: 8px; }
             .grid { grid-template-columns: 1fr; gap: 6px; padding: 2px; }
-            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 60px; border-radius: 12px; }
+            .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 60px; border-radius: 6px; }
             .title-area h2 { font-size: 20px; letter-spacing: 1px; }
             .back-area { font-size: 16px; }
-            .announcement-card { grid-column: 1 / -1; padding: 10px; border-radius: 12px; }
+            .announcement-card { grid-column: 1 / -1; padding: 10px; border-radius: 6px; }
             .announcement-card .date { font-size: 12px; padding: 2px 8px; margin-bottom: 8px; }
             .announcement-card .content { font-size: 13px; line-height: 1.7; padding-left: 6px; }
             .announcement-card::before { width: 3px; }

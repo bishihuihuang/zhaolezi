@@ -82,7 +82,7 @@
         position: absolute;
         border-radius: 50%;
         background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--card-2) 60%, transparent), color-mix(in srgb, var(--card-2) 15%, transparent) 50%, transparent 70%);
-        box-shadow: 0 0 60px color-mix(in srgb, var(--glow) 8%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
+        8%, transparent), inset 0 0 30px color-mix(in srgb, var(--card-2) 20%, transparent);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         pointer-events: none;
@@ -121,16 +121,16 @@
         width: 80%;
         max-width: 1200px;
         background: var(--card);
-        border-radius: 24px;
-        box-shadow: 0 25px 70px rgba(0, 0, 0, .35), 0 0 0 1px var(--line);
+        border-radius: 8px;
+        box-shadow: none;
         max-height: calc(100vh - 100px);
         overflow-y: auto;
         padding: 20px;
         color: var(--txt);
     }
     .container::-webkit-scrollbar { width: 10px; }
-    .container::-webkit-scrollbar-track { background: rgba(0, 0, 0, .04); border-radius: 12px; }
-    .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 12px; border: 2px solid transparent; }
+    .container::-webkit-scrollbar-track { background: rgba(0, 0, 0, .04); border-radius: 6px; }
+    .container::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 6px; border: 2px solid transparent; }
 
     .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
     .title-area {
@@ -139,10 +139,10 @@
         align-items: center;
         justify-content: center;
         min-height: 90px;
-        background: var(--title-grad);
+        background: var(--blue);
         background-size: 300% 300%;
         animation: titleGradient 6s ease infinite;
-        border-radius: 20px;
+        border-radius: 8px;
         box-shadow: 0 12px 40px color-mix(in srgb, var(--gold-2) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
         padding: 10px;
     }
@@ -159,13 +159,13 @@
         align-items: center;
         justify-content: center;
         min-height: 90px;
-        background: var(--back-grad);
-        border-radius: 20px;
+        background: var(--green);
+        border-radius: 8px;
         box-shadow: 0 12px 40px color-mix(in srgb, var(--green) 40%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
         text-decoration: none;
         color: var(--btn-txt);
         font-size: 18px;
-        font-weight: 800;
+        font-weight: 600;
         cursor: pointer;
         transition: transform .3s, box-shadow .3s;
     }
@@ -179,15 +179,15 @@
     .card {
         grid-column: 1 / -1;
         background: var(--card-2);
-        border-radius: 16px;
+        border-radius: 8px;
         padding: 20px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
-        border: 2px solid var(--line);
+        box-shadow: none;
+        border: 1px solid var(--line);
     }
     .btn {
         display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-        border: none; cursor: pointer; font-size: 15px; padding: 10px 20px; border-radius: 10px;
-        background: var(--btn-grad); color: var(--btn-txt);
+        border: none; cursor: pointer; font-size: 15px; padding: 10px 20px; border-radius: 6px;
+        background: var(--blue); color: var(--btn-txt);
         box-shadow: 0 4px 14px color-mix(in srgb, var(--glow) 40%, transparent); transition: transform .2s, box-shadow .2s;
     }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px color-mix(in srgb, var(--glow) 55%, transparent); }
@@ -195,14 +195,14 @@
     .btn-secondary { background: #e8eaf6; color: var(--txt); box-shadow: none; }
     .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
     input, textarea, select {
-        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+        width: 100%; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px;
         font-size: 14px; background: var(--card-2); color: var(--txt); outline: none;
     }
     input:focus, textarea:focus { border-color: var(--glow); box-shadow: 0 0 0 3px color-mix(in srgb, var(--glow) 20%, transparent); }
     .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
     .hint { font-size: 12px; color: var(--dim); margin-top: 8px; }
     .stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
-    .stat div { background: color-mix(in srgb, var(--glow) 8%, transparent); border-radius: 10px; padding: 10px; text-align: center; }
+    .stat div { background: color-mix(in srgb, var(--glow) 8%, transparent); border-radius: 6px; padding: 10px; text-align: center; }
     .stat b { display: block; font-size: 20px; color: var(--glow); }
     .stat span { font-size: 12px; color: var(--dim); }
     /* ========== 转场遮罩（全站统一样式） ========== */
@@ -277,7 +277,7 @@
         position: relative;
         z-index: 5;
         font-size: 24px;
-        font-weight: 900;
+        font-weight: 500;
         letter-spacing: 4px;
         background: linear-gradient(90deg, #f6d365, #fda085, #f6d365);
         background-size: 200% 100%;
@@ -484,7 +484,7 @@ html { -webkit-tap-highlight-color: transparent; }
 </div>
 <script>
 /*ZL-OBF-V2*/
-function _0x41fc(_0x27bafa,_0x33da49){_0x27bafa=_0x27bafa-0x6a;var _0x41fc29=_0x33da();var _0x46b30f=_0x41fc29[_0x27bafa];return _0x46b30f;}function _0x33da(){var _0x5ec142=['bump','文案已复制','then','#fff','cardCanvas','arcTo','textAlign','#ff9800','找乐子分享卡片_','getElementById','toDataURL','getContext','#ff5722','fillStyle','#764ba2','active','今天也是元气满满的一天！','arc','download','#2e7d32','center','catch','autoGen','fill','addEventListener','rgba(255,255,255,.85)','image/png','removeChild','downloadBtn','.png','classList','keydown','24px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif','beginPath','push','value','length','🎲\x20找乐子','font','trim','日\x20·\x20来自找乐子','contains','genBtn','fillText','Escape','showToast'];_0x33da=function(){return _0x5ec142;};return _0x33da();}(function(){'use strict';var _0x1cb7c1=_0x41fc;var _0x315df0=[['#667eea',_0x1cb7c1(0x78)],['#f093fb','#f5576c'],['#43a047',_0x1cb7c1(0x7d)],[_0x1cb7c1(0x71),_0x1cb7c1(0x76)]],_0x2e2613=0x0,_0x239692=document['getElementById']('nickInput'),_0x434ee8=document['getElementById']('msgInput'),_0x1c356a=document[_0x1cb7c1(0x73)](_0x1cb7c1(0x6e)),_0x546632=_0x1c356a[_0x1cb7c1(0x75)]('2d');document['querySelectorAll']('.bgPick')['forEach'](function(_0x3fc2a3){var _0x36258b=_0x1cb7c1;_0x3fc2a3[_0x36258b(0x82)]('click',function(){_0x2e2613=parseInt(_0x3fc2a3['dataset']['bg'],0xa),_0x53c0c2();});});function _0x166593(_0x5b86e3,_0x4eacde,_0x2c0d2c,_0xfb8586,_0x5884df){var _0x5802b3=_0x1cb7c1;_0x546632['beginPath'](),_0x546632['moveTo'](_0x5b86e3+_0x5884df,_0x4eacde),_0x546632[_0x5802b3(0x6f)](_0x5b86e3+_0x2c0d2c,_0x4eacde,_0x5b86e3+_0x2c0d2c,_0x4eacde+_0xfb8586,_0x5884df),_0x546632['arcTo'](_0x5b86e3+_0x2c0d2c,_0x4eacde+_0xfb8586,_0x5b86e3,_0x4eacde+_0xfb8586,_0x5884df),_0x546632['arcTo'](_0x5b86e3,_0x4eacde+_0xfb8586,_0x5b86e3,_0x4eacde,_0x5884df),_0x546632['arcTo'](_0x5b86e3,_0x4eacde,_0x5b86e3+_0x2c0d2c,_0x4eacde,_0x5884df),_0x546632['closePath']();}function _0x53c0c2(){var _0x2e7f0f=_0x1cb7c1,_0xc3dbef=_0x546632['createLinearGradient'](0x0,0x0,0x258,0x320);_0xc3dbef['addColorStop'](0x0,_0x315df0[_0x2e2613][0x0]),_0xc3dbef['addColorStop'](0x1,_0x315df0[_0x2e2613][0x1]),_0x546632[_0x2e7f0f(0x77)]=_0xc3dbef,_0x546632['fillRect'](0x0,0x0,0x258,0x320),_0x546632['fillStyle']='rgba(255,255,255,.12)',_0x546632['beginPath'](),_0x546632['arc'](0x208,0x78,0x5a,0x0,Math['PI']*0x2),_0x546632['fill'](),_0x546632['beginPath'](),_0x546632[_0x2e7f0f(0x7b)](0x50,0x2b2,0x3c,0x0,Math['PI']*0x2),_0x546632['fill'](),_0x546632[_0x2e7f0f(0x8b)](),_0x546632['arc'](0x21c,0x280,0x24,0x0,Math['PI']*0x2),_0x546632[_0x2e7f0f(0x81)](),_0x546632['fillStyle']='rgba(255,255,255,.9)',_0x546632['font']='bold\x2026px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x546632['textAlign']=_0x2e7f0f(0x7e),_0x546632[_0x2e7f0f(0x95)](_0x2e7f0f(0x8f),0x12c,0x5a);var _0x297f0b=_0x434ee8[_0x2e7f0f(0x8d)][_0x2e7f0f(0x91)]()||_0x2e7f0f(0x7a),_0x4131ce=_0x239692[_0x2e7f0f(0x8d)][_0x2e7f0f(0x91)]()||'小乐';_0x546632['fillStyle']=_0x2e7f0f(0x6d),_0x546632[_0x2e7f0f(0x90)]='bold\x2034px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x546632[_0x2e7f0f(0x70)]='center';var _0x9dc604=[],_0x394eb7='',_0x5879a8=0x1cc;for(var _0x4d0fbe=0x0;_0x4d0fbe<_0x297f0b['length'];_0x4d0fbe++){_0x394eb7+=_0x297f0b[_0x4d0fbe],_0x546632['measureText'](_0x394eb7)['width']>_0x5879a8&&(_0x9dc604['push'](_0x394eb7['slice'](0x0,-0x1)),_0x394eb7=_0x297f0b[_0x4d0fbe]);}if(_0x394eb7)_0x9dc604[_0x2e7f0f(0x8c)](_0x394eb7);var _0x4c8a86=0x154-(_0x9dc604[_0x2e7f0f(0x8e)]-0x1)*0x1e;_0x9dc604['forEach'](function(_0x401521,_0x37bc7b){var _0xe180ca=_0x2e7f0f;_0x546632[_0xe180ca(0x95)](_0x401521,0x12c,_0x4c8a86+_0x37bc7b*0x3c);}),_0x546632['font']=_0x2e7f0f(0x8a),_0x546632[_0x2e7f0f(0x77)]=_0x2e7f0f(0x83),_0x546632['fillText']('——\x20'+_0x4131ce,0x12c,_0x4c8a86+_0x9dc604['length']*0x3c+0x28);var _0x31c0f3=new Date();_0x546632[_0x2e7f0f(0x90)]='18px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x546632['fillStyle']='rgba(255,255,255,.6)',_0x546632['fillText'](_0x31c0f3['getFullYear']()+'年'+(_0x31c0f3['getMonth']()+0x1)+'月'+_0x31c0f3['getDate']()+_0x2e7f0f(0x92),0x12c,0x2ee);}function _0x3b3521(){var _0xa7916=_0x1cb7c1;_0x53c0c2();if(window['ZL']&&ZL[_0xa7916(0x97)])ZL[_0xa7916(0x97)]('卡片已生成');if(window['ZL']&&ZL['bump'])ZL[_0xa7916(0x6a)]('share_add',0x1);}document[_0x1cb7c1(0x73)](_0x1cb7c1(0x94))['addEventListener']('click',_0x3b3521),document[_0x1cb7c1(0x73)](_0x1cb7c1(0x86))[_0x1cb7c1(0x82)]('click',function(){var _0x58c522=_0x1cb7c1,_0x4ce8db=document['createElement']('a');_0x4ce8db['href']=_0x1c356a[_0x58c522(0x74)](_0x58c522(0x84)),_0x4ce8db[_0x58c522(0x7c)]=_0x58c522(0x72)+Date['now']()+_0x58c522(0x87),document['body']['appendChild'](_0x4ce8db),_0x4ce8db['click'](),document['body'][_0x58c522(0x85)](_0x4ce8db);if(window['ZL']&&ZL[_0x58c522(0x97)])ZL[_0x58c522(0x97)]('卡片已下载');}),document['getElementById']('copyBtn')[_0x1cb7c1(0x82)]('click',function(){var _0x2e1c29=_0x1cb7c1,_0x1a182b=(_0x239692['value']['trim']()||'小乐')+'：'+(_0x434ee8['value']['trim']()||_0x2e1c29(0x7a))+'（来自找乐子）';try{navigator['clipboard']['writeText'](_0x1a182b)[_0x2e1c29(0x6c)](function(){var _0x1d81ea=_0x2e1c29;if(window['ZL']&&ZL['showToast'])ZL['showToast'](_0x1d81ea(0x6b));})[_0x2e1c29(0x7f)](function(){});}catch(_0xf983ce){}}),_0x53c0c2();var _0x2efae2=document[_0x1cb7c1(0x73)]('overlay');document['getElementById']('backHome')['addEventListener']('click',function(_0x346efd){var _0x3842ba=_0x1cb7c1;_0x346efd['preventDefault']();if(_0x2efae2[_0x3842ba(0x88)][_0x3842ba(0x93)]('active'))return;_0x2efae2['classList']['add'](_0x3842ba(0x79)),setTimeout(function(){window['location']['href']='工具导航.html';},0x4b0);}),document[_0x1cb7c1(0x82)](_0x1cb7c1(0x89),function(_0x26f70c){var _0x169c14=_0x1cb7c1;_0x26f70c['key']===_0x169c14(0x96)&&_0x2efae2[_0x169c14(0x88)][_0x169c14(0x93)]('active')&&_0x2efae2['classList']['remove']('active');}),window['roundedRect']=_0x166593,window['drawCard']=_0x53c0c2,window[_0x1cb7c1(0x80)]=_0x3b3521;}());
+(function(){'use strict';var _0x131189=_0x5830;var _0x1a741d=[['#667eea','#764ba2'],['#f093fb','#f5576c'],['#43a047','#2e7d32'],['#ff9800',_0x131189(0xec)]],_0x2b666a=0x0,_0x1a586c=document['getElementById']('nickInput'),_0x2a0e39=document[_0x131189(0xe7)]('msgInput'),_0x3c5866=document['getElementById']('cardCanvas'),_0x5db155=_0x3c5866['getContext']('2d');document['querySelectorAll']('.bgPick')['forEach'](function(_0x3e7ec4){var _0x59439a=_0x131189;_0x3e7ec4[_0x59439a(0xdc)]('click',function(){var _0x2b6d77=_0x59439a;_0x2b666a=parseInt(_0x3e7ec4[_0x2b6d77(0xf6)]['bg'],0xa),_0x50050f();});});function _0x227d41(_0x1d973f,_0x26e722,_0x465f41,_0x1d0adf,_0x62ea1c){var _0x2b786b=_0x131189;_0x5db155[_0x2b786b(0xea)](),_0x5db155[_0x2b786b(0xfb)](_0x1d973f+_0x62ea1c,_0x26e722),_0x5db155[_0x2b786b(0x101)](_0x1d973f+_0x465f41,_0x26e722,_0x1d973f+_0x465f41,_0x26e722+_0x1d0adf,_0x62ea1c),_0x5db155['arcTo'](_0x1d973f+_0x465f41,_0x26e722+_0x1d0adf,_0x1d973f,_0x26e722+_0x1d0adf,_0x62ea1c),_0x5db155['arcTo'](_0x1d973f,_0x26e722+_0x1d0adf,_0x1d973f,_0x26e722,_0x62ea1c),_0x5db155['arcTo'](_0x1d973f,_0x26e722,_0x1d973f+_0x465f41,_0x26e722,_0x62ea1c),_0x5db155['closePath']();}function _0x50050f(){var _0x3baf29=_0x131189,_0xaa7020=_0x5db155['createLinearGradient'](0x0,0x0,0x258,0x320);_0xaa7020['addColorStop'](0x0,_0x1a741d[_0x2b666a][0x0]),_0xaa7020['addColorStop'](0x1,_0x1a741d[_0x2b666a][0x1]),_0x5db155[_0x3baf29(0x106)]=_0xaa7020,_0x5db155[_0x3baf29(0xf0)](0x0,0x0,0x258,0x320),_0x5db155['fillStyle']='rgba(255,255,255,.12)',_0x5db155['beginPath'](),_0x5db155[_0x3baf29(0xde)](0x208,0x78,0x5a,0x0,Math['PI']*0x2),_0x5db155[_0x3baf29(0xfc)](),_0x5db155['beginPath'](),_0x5db155[_0x3baf29(0xde)](0x50,0x2b2,0x3c,0x0,Math['PI']*0x2),_0x5db155['fill'](),_0x5db155[_0x3baf29(0xea)](),_0x5db155['arc'](0x21c,0x280,0x24,0x0,Math['PI']*0x2),_0x5db155['fill'](),_0x5db155['fillStyle']='rgba(255,255,255,.9)',_0x5db155['font']=_0x3baf29(0x100),_0x5db155[_0x3baf29(0xeb)]='center',_0x5db155['fillText'](_0x3baf29(0xdb),0x12c,0x5a);var _0x5e9993=_0x2a0e39['value']['trim']()||'今天也是元气满满的一天！',_0x11877=_0x1a586c['value']['trim']()||'小乐';_0x5db155[_0x3baf29(0x106)]='#fff',_0x5db155[_0x3baf29(0xed)]=_0x3baf29(0xda),_0x5db155['textAlign']='center';var _0x48fb63=[],_0xc5858d='',_0x30f25e=0x1cc;for(var _0x16078f=0x0;_0x16078f<_0x5e9993['length'];_0x16078f++){_0xc5858d+=_0x5e9993[_0x16078f],_0x5db155['measureText'](_0xc5858d)['width']>_0x30f25e&&(_0x48fb63[_0x3baf29(0xe3)](_0xc5858d['slice'](0x0,-0x1)),_0xc5858d=_0x5e9993[_0x16078f]);}if(_0xc5858d)_0x48fb63['push'](_0xc5858d);var _0x28a336=0x154-(_0x48fb63['length']-0x1)*0x1e;_0x48fb63[_0x3baf29(0xdd)](function(_0x1762b9,_0x551009){var _0x279a78=_0x3baf29;_0x5db155[_0x279a78(0xf8)](_0x1762b9,0x12c,_0x28a336+_0x551009*0x3c);}),_0x5db155[_0x3baf29(0xed)]='24px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x5db155['fillStyle']='rgba(255,255,255,.85)',_0x5db155['fillText']('——\x20'+_0x11877,0x12c,_0x28a336+_0x48fb63[_0x3baf29(0xf9)]*0x3c+0x28);var _0x125bb1=new Date();_0x5db155[_0x3baf29(0xed)]='18px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif',_0x5db155['fillStyle']='rgba(255,255,255,.6)',_0x5db155['fillText'](_0x125bb1[_0x3baf29(0xf7)]()+'年'+(_0x125bb1[_0x3baf29(0xef)]()+0x1)+'月'+_0x125bb1[_0x3baf29(0xfe)]()+'日\x20·\x20来自找乐子',0x12c,0x2ee);}function _0x58f790(){var _0x3780af=_0x131189;_0x50050f();if(window['ZL']&&ZL['showToast'])ZL['showToast']('卡片已生成');if(window['ZL']&&ZL['bump'])ZL[_0x3780af(0xe6)]('share_add',0x1);}document['getElementById'](_0x131189(0xf3))['addEventListener'](_0x131189(0xee),_0x58f790),document[_0x131189(0xe7)]('downloadBtn')['addEventListener']('click',function(){var _0x1ce95a=_0x131189,_0x52bc94=document['createElement']('a');_0x52bc94[_0x1ce95a(0xe8)]=_0x3c5866['toDataURL']('image/png'),_0x52bc94[_0x1ce95a(0xf5)]='找乐子分享卡片_'+Date[_0x1ce95a(0x105)]()+_0x1ce95a(0x108),document[_0x1ce95a(0xf1)][_0x1ce95a(0x102)](_0x52bc94),_0x52bc94['click'](),document[_0x1ce95a(0xf1)][_0x1ce95a(0xff)](_0x52bc94);if(window['ZL']&&ZL['showToast'])ZL['showToast']('卡片已下载');}),document['getElementById']('copyBtn')['addEventListener'](_0x131189(0xee),function(){var _0xa8542d=_0x131189,_0x57836f=(_0x1a586c['value']['trim']()||'小乐')+'：'+(_0x2a0e39[_0xa8542d(0x103)]['trim']()||_0xa8542d(0x107))+'（来自找乐子）';try{navigator['clipboard'][_0xa8542d(0xfa)](_0x57836f)['then'](function(){var _0x4439bf=_0xa8542d;if(window['ZL']&&ZL['showToast'])ZL[_0x4439bf(0xe5)](_0x4439bf(0xf2));})[_0xa8542d(0xfd)](function(){});}catch(_0x284084){}}),_0x50050f();var _0x385357=document[_0x131189(0xe7)]('overlay');document['getElementById'](_0x131189(0xdf))['addEventListener'](_0x131189(0xee),function(_0x43c0b4){var _0x4b2b48=_0x131189;_0x43c0b4['preventDefault']();if(_0x385357['classList']['contains']('active'))return;_0x385357['classList']['add'](_0x4b2b48(0x104)),setTimeout(function(){var _0x5e7e12=_0x4b2b48;window['location'][_0x5e7e12(0xe8)]=_0x5e7e12(0xe2);},0x4b0);}),document['addEventListener']('keydown',function(_0xe13f2){var _0x5899f8=_0x131189;_0xe13f2['key']===_0x5899f8(0xe0)&&_0x385357['classList']['contains']('active')&&_0x385357[_0x5899f8(0xe4)][_0x5899f8(0xe9)]('active');}),window['roundedRect']=_0x227d41,window[_0x131189(0xf4)]=_0x50050f,window[_0x131189(0xe1)]=_0x58f790;}());function _0x5830(_0x144b56,_0x4b7b92){_0x144b56=_0x144b56-0xda;var _0x583033=_0x4b7b();var _0x373d36=_0x583033[_0x144b56];return _0x373d36;}function _0x4b7b(){var _0x40aaa4=['bold\x2034px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif','🎲\x20找乐子','addEventListener','forEach','arc','backHome','Escape','autoGen','工具导航.html','push','classList','showToast','bump','getElementById','href','remove','beginPath','textAlign','#ff5722','font','click','getMonth','fillRect','body','文案已复制','genBtn','drawCard','download','dataset','getFullYear','fillText','length','writeText','moveTo','fill','catch','getDate','removeChild','bold\x2026px\x20\x22Microsoft\x20YaHei\x22,\x20sans-serif','arcTo','appendChild','value','active','now','fillStyle','今天也是元气满满的一天！','.png'];_0x4b7b=function(){return _0x40aaa4;};return _0x4b7b();}
 </script>
 </body>
 </html>

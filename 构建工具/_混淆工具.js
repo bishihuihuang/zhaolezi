@@ -861,6 +861,11 @@ function ensureImgLazy(html) {
     return html.replace(/<img\b([^>]*)>/gi, (m, attrs) => {
         if (/src=["']data:/i.test(attrs)) return m;
         if (/\bloading=|\bfetchpriority=/i.test(attrs)) return m;
+        /* V4.1 修复：onerror 属性值内可能含 &quot;/> 等转义尖括号，[^>]* 会在引号内
+           提前截断并把 loading 插进属性值中间，砸碎整个 img 的引号结构
+           （实测作者介绍/背包的头像 onerror 被打断，页面解析出碎片文本）。
+           凡带 onerror/onload 的 img 一律跳过注入，宁可不少一条 lazy。 */
+        if (/\son(?:error|load)\s*=/i.test(attrs)) return m;
         return '<img' + attrs + ' loading="lazy" decoding="async">';
     });
 }

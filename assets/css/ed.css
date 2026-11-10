@@ -5,7 +5,7 @@
    层级：主题令牌(common.css) → 站点家族(xd-/cy-common.css)
          → 页面样式 → 本层（构建注入，位于 </head> 前，最后生效）。
    本层只做三件事：
-     1) 定义 --ed-* 语义令牌：全部派生自 --zl-*/主题变量，
+     1) 定义 --ed-* 语义令牌：全部派生自 --zl-* 家族与主题变量，
         零新增硬编码色；非首页页面全量可用；
      2) 给元素级排版与控件以「纸面默认值」——元素选择器
         (0,0,1) 只兜底，任何页面类/id 样式 (0,1,0+) 永远赢过本层；
@@ -225,6 +225,8 @@ td {
     border-radius: 0;
     box-shadow: none;
     padding: 0;
+    max-height: none !important;   /* 原多页把容器限成一屏内滚，内容被裁 */
+    overflow: visible !important;  /* 交还文档级滚动，纸面承载 */
 }
 .card, .box {
     background: none;
@@ -236,6 +238,7 @@ td {
 }
 /* 旧版渐变大标题横幅 → 编辑风页头：退掉渐变与阴影，交还给字阶 */
 .title-area {
+    display: block !important;   /* 原多为 flex 行：页头三件套必须纵向堆叠 */
     background: none !important;
     box-shadow: none !important;
     border-radius: 0;
@@ -245,7 +248,25 @@ td {
     animation: none !important;
     cursor: default;
 }
+.title-area .ed-kicker { margin-top: var(--ed-s5); }
+.title-area .ed-lede { margin-top: var(--ed-s2); }
 .title-area::before, .title-area::after { content: none !important; }
+/* 网格页：页头通栏置顶，返回键收缩为幽灵 pill（原二者各占巨格造成大片空白） */
+.title-area { grid-column: 1 / -1 !important; grid-row: auto !important; }
+.back-area {
+    grid-column: 1 / -1 !important;
+    grid-row: auto !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: auto !important;
+    min-height: auto !important;
+    justify-self: start;
+    margin: 0 0 var(--ed-s4);
+    padding: 9px 16px;
+}
 .title-area h2 {
     background: none !important;
     -webkit-background-clip: initial;
@@ -264,10 +285,22 @@ td {
     border: 1px solid var(--ed-hairline-strong);
     border-radius: var(--ed-radius);
     color: var(--ed-ink);
+    font-size: 14px;
+    font-weight: 500;
     text-decoration: none;
     transition: border-color .18s ease;
 }
 .back-area:hover { border-color: var(--ed-ink); transform: none; }
+/* 滚动条：中性细线（原主题为彩虹渐变；页面级规则用 !important 强制覆盖） */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ed-hairline-strong) !important; border-radius: 8px; }
+/* 装饰静默（属性子串版）：页级自造的装饰光斑/光球/圆弧一律退场 */
+[class*="decor"], [class*="orb"], [class*="glow"], [class*="float-shape"], [class*="deco-"], [class*="bg-flow"] {
+    display: none !important;
+}
+/* 页头三件套容器（部分页面置于网格内，须通栏） */
+.page-head { grid-column: 1 / -1; max-width: var(--ed-measure); margin-bottom: var(--ed-s5); }
 
 /* ------------------------------------------------------------
    7. 布局原语 .ed-*（页面重设计时按需取用）

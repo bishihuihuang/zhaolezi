@@ -139,3 +139,14 @@ service-worker.js / manifest.json ← PWA
 - 构建工具：outDir/refPrefix/fixHomePath 恢复分层 + 资产映射重写 + JS 字符串路径 + SW currentScript 根注册
 - 旧平铺产物 227 项归档 E:\AI永久记忆\85_备份\找乐子旧平铺产物-20261108\
 - 验证：190 页本地全量扫描（除 api/log/today 预期与 4s 超时误报外零异常）；页面引用 ../assets/ 与 pages/ 全部 200
+
+## 2026-11-11 V4.0 · 全站「留白编辑风」重设计（189 页逐页完成）
+
+- **理念**：大道至简——纸面、字阶、发丝线；留白即装饰。用户唯一一次确认：留白编辑风 + 直接到底（设计→验证→修复→发布全环节自主完成）。
+- **新增设计系统 `ed.css`**（源区根级，构建自动同步 assets/css/ed.css 并注入全部**非首页**页面，index.html 零接触）：--ed-* 语义令牌（全部派生自 --zl-*/主题变量，零新硬编码色）+ 元素级纸面默认值（h1 大细标题/控件/表格/代码/选择色）+ 装饰静默（.bg-animation/.bg-flow/.orb/.bg-orb 全 display:none）+ .ed-* 布局原语（wrap/measure/kicker/lede/btn三态/card/list/fold/footer）+ 找乐子词汇层（.container/.card/.title-area/.back-area 扁平化）。SW 预缓存已登记 ed.css。
+- **xd-common.css V5.0 / cy-common.css V5.0 全量重写**：所有类选择器契约 100% 保留（校验脚本 .tmp/选择器契约校验.js），令牌值不动（JS/画布读取），渐变标题→墨色细字重，玻璃卡→发丝线，悬停位移取消，进度/焦点=主题蓝，全站统一跳转动画（.overlay/.loader-ring）按铁律原封未动。
+- **找乐子 43 页逐页**：枢纽 5 页改为编辑风索引行（372 个「敬请期待」占位格全部清除，首卡返回站规保留）；门禁 5 页统一「纸面之门」（哈希校验/?go=白名单/转场契约原封）；工具 13 页 + 游戏 6 页补齐编辑风页头（kicker+h1+lede）与「原理与技巧」深度内容（details.ed-fold 折叠）；站务/重页 14 页同样处理（媒体池/背包为舞台页保持最小干预）。
+- **现代 127 页**：127 块 bg-animation 装饰 div 全部移除（codemod 平衡走位防嵌套误切）；15 个内联样式页规整（渐变→主题蓝/阴影→无/圆角统一/tint→color-mix）；首页键 emoji 清理；doc 课内容已扎实（中位 1030 字）未强行注水。
+- **创意/提示词/全能**：cy-common V5 + 15 页去装饰与规整；提示词-欢迎页纯纸面重写（splashShown/跳转逻辑原封）；提示词-管理器与全能-文件保存规整扫（渐变→令牌/阴影→无/圆角统一）。
+- **净化与验证**：死装饰 CSS 括号匹配式剥离；transition:all 清除 25 页；风格闸门绿（存量 403 < 基线 407）；冒烟 189/190（豁免 1）；产物校验 20/0/0；indexdiff 首页 body 结构 0 变化；p0 回归探针 0 异常。
+- **新契约提醒**：① 页面 JS 若新增单字母变量会被风格闸门拦截（ exempts: i/j/k/x/y/e/_ ）；② 深度内容统一放 `<details class="ed-fold"><summary>…</summary><div class="ed-fold-body">…</div></details>`；③ 编辑风页头三件套 = `.ed-kicker` + `h1` + `.ed-lede`；④ ed.css 不注入 index.html，别给首页引用它。
