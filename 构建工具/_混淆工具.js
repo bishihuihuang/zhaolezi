@@ -936,6 +936,10 @@ function ensurePwaBlock(html, fileName) {
     const POLISH_CSS = fs.existsSync(POLISH_CSS_FILE)
         ? '<style data-no-obf>/* 全站打磨层 V3.0 */\n' + fs.readFileSync(POLISH_CSS_FILE, 'utf8') + '\n</style>\n'
         : '';
+    // V4.0 留白编辑风设计系统：ed.css 单数据源，非首页全量注入（首页布局锁死，零接触）。
+    // 外链而非内联：一份缓存全站复用，不把 ~30KB 重复进 189 份 HTML；
+    // 注入于 POLISH_CSS 之后 → 级联在家族 CSS 与页面样式之后，元素级兜底按设计生效。
+    const ED_CSS = isHome ? '' : '<link rel="stylesheet" href="' + P + 'assets/css/ed.css">';
     const COMMON_JS = '<script defer src="' + P + 'assets/js/common.js"></script>';
     const THEME_JS = '<script defer src="' + P + 'assets/js/theme.js"></script>';
     const ZL_JS = '<script defer src="' + P + 'assets/js/zl-features.js"></script>';
@@ -1011,7 +1015,7 @@ function ensurePwaBlock(html, fileName) {
             if (list) html = html.replace(/<\/body>/i, '<nav class="zl-static-links sr-only" aria-label="全站页面列表">' + list + '</nav>\n</body>');
         }
     }
-    const inject = faviconLine + THEME_EARLY + '\n' + PWA + '\n' + ogBlock + '\n' + COMMON_CSS + '\n' + POLISH_CSS + '\n' + COMMON_JS + '\n' + (hasOwnTheme ? '' : THEME_JS + '\n') + ZL_JS + '\n' + SEARCH_INDEX_TAG(P);
+    const inject = faviconLine + THEME_EARLY + '\n' + PWA + '\n' + ogBlock + '\n' + COMMON_CSS + '\n' + POLISH_CSS + '\n' + ED_CSS + '\n' + COMMON_JS + '\n' + (hasOwnTheme ? '' : THEME_JS + '\n') + ZL_JS + '\n' + SEARCH_INDEX_TAG(P);
     if (/<\/head>/i.test(html)) {
         return html.replace(/<\/head>/i, inject + '\n</head>');
     }

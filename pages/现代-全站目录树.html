@@ -16,13 +16,13 @@
     /* 目录树专属 */
     .tree { margin: 10px 0; }
     .tree-node { margin: 4px 0; }
-    .tree-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: var(--card-2); border: 1px solid var(--line); flex-wrap: wrap; }
+    .tree-row { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: var(--card-2); border: 1px solid var(--line); flex-wrap: wrap; }
     .tree-row:hover { border-color: var(--gold); }
     .tree-row .t-icon { font-size: 18px; }
     .tree-row a { font-weight: 700; }
     .tree-row .t-d { color: var(--dim); font-size: 12.5px; flex: 1; min-width: 140px; }
-    .tree-row .t-p { font-size: 12px; font-weight: 800; color: var(--btn-txt); background: var(--btn-grad); border-radius: 999px; padding: 2px 10px; }
-    .tree-row .t-p.done { background: var(--back-grad); }
+    .tree-row .t-p { font-size: 12px; font-weight: 600; color: var(--btn-txt); background: var(--blue); border-radius: 999px; padding: 2px 10px; }
+    .tree-row .t-p.done { background: var(--green); }
     .tree-kids { margin: 4px 0 4px 26px; padding-left: 12px; border-left: 2px solid var(--line); }
     .tree-toggle { border: none; background: transparent; cursor: pointer; font-size: 12px; color: var(--dim); padding: 2px 6px; }
 </style>
@@ -132,19 +132,15 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
 </head>
 <body data-page="现代-全站目录树.html" data-kind="dir">
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">全站目录树 - 现代化·知识学习站</span></nav>
-<div class="bg-animation">
-    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
-    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
-</div>
-
 <header role="navigation" aria-label="页面导航" class="site-header">
-    <a class="home-link" href="现代-全站目录树.html">🏠 首页</a>
+    <a class="home-link" href="现代-全站目录树.html">首页</a>
     <span class="site-title">现代化·知识学习站</span>
     <span class="mod-badge">🗂 全站目录树</span>
 </header>
@@ -165,7 +161,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 <script>
 /*ZL-OBF-V2*/
-(function(){document['addEventListener']('DOMContentLoaded',function(){var _0x47e9b4=_0xce0e;if(!window['XD'])return;var _0x16b60d=document[_0x47e9b4(0xd0)](_0x47e9b4(0xce));if(!_0x16b60d)return;function _0x5a494e(_0x45caf9,_0x51c15b){var _0xfd7965=_0x47e9b4,_0x284ebe=_0x45caf9[_0xfd7965(0xd1)]&&_0x45caf9['children']['length'],_0x1ad362=XD[_0xfd7965(0xca)]['nodeProgress'](_0x45caf9),_0xecce49=_0x45caf9[_0xfd7965(0xc8)]||(_0x284ebe?'📁':_0x45caf9['quiz']?'📝':_0x45caf9[_0xfd7965(0xcb)]?'🧪':'📖'),_0x445abf='<div\x20class=\x22tree-node\x22>';_0x445abf+='<div\x20class=\x22tree-row\x22>',_0x445abf+='<span\x20class=\x22t-icon\x22>'+_0xecce49+'</span>',_0x445abf+=_0xfd7965(0xc9)+_0x45caf9['f']+'\x22>'+XD['escapeHtml'](_0x45caf9['n'])+'</a>',_0x445abf+=_0xfd7965(0xcc)+(_0x1ad362===0x64?'\x20done':'')+'\x22>'+(_0x1ad362===0x64?'✅\x20100%':_0x1ad362+'%')+_0xfd7965(0xcd);if(_0x45caf9['d'])_0x445abf+=_0xfd7965(0xc7)+XD['escapeHtml'](_0x45caf9['d'])+_0xfd7965(0xcd);if(_0x284ebe)_0x445abf+='<span\x20style=\x22font-size:12px;color:var(--dim);\x22>'+XD['leafCount'](_0x45caf9)+'\x20页</span>';_0x445abf+='</div>';if(_0x284ebe){_0x445abf+='<div\x20class=\x22tree-kids\x22>';for(var _0x4c0d35=0x0;_0x4c0d35<_0x45caf9[_0xfd7965(0xd1)]['length'];_0x4c0d35++){_0x445abf+=_0x5a494e(_0x45caf9['children'][_0x4c0d35],_0x51c15b+0x1);}_0x445abf+='</div>';}return _0x445abf+=_0xfd7965(0xcf),_0x445abf;}var _0x327b79='';for(var _0x279a56=0x0;_0x279a56<XD[_0x47e9b4(0xd2)]['length'];_0x279a56++){_0x327b79+=_0x5a494e(XD['TREE'][_0x279a56],0x0);}_0x16b60d['innerHTML']=_0x327b79;});}());function _0xce0e(_0x4dc2f5,_0x25b6dc){_0x4dc2f5=_0x4dc2f5-0xc7;var _0xce0ee1=_0x25b6();var _0x23df34=_0xce0ee1[_0x4dc2f5];return _0x23df34;}function _0x25b6(){var _0x544f7c=['<span\x20class=\x22t-d\x22>','icon','<a\x20href=\x22','progress','tool','<span\x20class=\x22t-p','</span>','tree','</div>','getElementById','children','TREE'];_0x25b6=function(){return _0x544f7c;};return _0x25b6();}
+(function(){document['addEventListener']('DOMContentLoaded',function(){var _0x56331e=_0x214d;if(!window['XD'])return;var _0x1a98b1=document[_0x56331e(0x15e)](_0x56331e(0x15f));if(!_0x1a98b1)return;function _0x3c4527(_0x22c7ee,_0x409fad){var _0x4b9147=_0x56331e,_0x5a654f=_0x22c7ee[_0x4b9147(0x15d)]&&_0x22c7ee['children']['length'],_0x529451=XD['progress'][_0x4b9147(0x157)](_0x22c7ee),_0x45c3c6=_0x22c7ee['icon']||(_0x5a654f?'📁':_0x22c7ee[_0x4b9147(0x160)]?'📝':_0x22c7ee['tool']?'🧪':'📖'),_0x2bd1fb='<div\x20class=\x22tree-node\x22>';_0x2bd1fb+=_0x4b9147(0x167),_0x2bd1fb+='<span\x20class=\x22t-icon\x22>'+_0x45c3c6+'</span>',_0x2bd1fb+=_0x4b9147(0x162)+_0x22c7ee['f']+'\x22>'+XD[_0x4b9147(0x158)](_0x22c7ee['n'])+_0x4b9147(0x15c),_0x2bd1fb+='<span\x20class=\x22t-p'+(_0x529451===0x64?_0x4b9147(0x164):'')+'\x22>'+(_0x529451===0x64?'✅\x20100%':_0x529451+'%')+_0x4b9147(0x161);if(_0x22c7ee['d'])_0x2bd1fb+=_0x4b9147(0x159)+XD[_0x4b9147(0x158)](_0x22c7ee['d'])+_0x4b9147(0x161);if(_0x5a654f)_0x2bd1fb+='<span\x20style=\x22font-size:12px;color:var(--dim);\x22>'+XD['leafCount'](_0x22c7ee)+'\x20页</span>';_0x2bd1fb+=_0x4b9147(0x163);if(_0x5a654f){_0x2bd1fb+=_0x4b9147(0x15b);for(var _0x49dfd6=0x0;_0x49dfd6<_0x22c7ee[_0x4b9147(0x15d)]['length'];_0x49dfd6++){_0x2bd1fb+=_0x3c4527(_0x22c7ee[_0x4b9147(0x15d)][_0x49dfd6],_0x409fad+0x1);}_0x2bd1fb+='</div>';}return _0x2bd1fb+='</div>',_0x2bd1fb;}var _0x3c463f='';for(var _0x1133ed=0x0;_0x1133ed<XD['TREE'][_0x56331e(0x165)];_0x1133ed++){_0x3c463f+=_0x3c4527(XD[_0x56331e(0x15a)][_0x1133ed],0x0);}_0x1a98b1[_0x56331e(0x166)]=_0x3c463f;});}());function _0x214d(_0x586bfa,_0x326c92){_0x586bfa=_0x586bfa-0x157;var _0x214df8=_0x326c();var _0x36a797=_0x214df8[_0x586bfa];return _0x36a797;}function _0x326c(){var _0xa2a7b2=['nodeProgress','escapeHtml','<span\x20class=\x22t-d\x22>','TREE','<div\x20class=\x22tree-kids\x22>','</a>','children','getElementById','tree','quiz','</span>','<a\x20href=\x22','</div>','\x20done','length','innerHTML','<div\x20class=\x22tree-row\x22>'];_0x326c=function(){return _0xa2a7b2;};return _0x326c();}
 </script>
 </body>
 </html>

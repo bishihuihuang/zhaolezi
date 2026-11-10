@@ -161,17 +161,7 @@
             border-color: var(--gold);
             cursor: default;
         }
-        .title-area h1 {
-            font-size: 42px;
-            font-weight: 900;
-            letter-spacing: 6px;
-            background: linear-gradient(90deg, var(--btn-txt), color-mix(in srgb, var(--btn-txt) 55%, transparent), var(--btn-txt));
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: titleShine 4s ease-in-out infinite;
-        }
+        .title-area h1 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
         @keyframes titleShine {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -234,7 +224,7 @@
             font-size: 15px;
             color: var(--txt);
             outline: none;
-            transition: all .3s ease;
+            transition: color .3s ease, background-color .3s ease, border-color .3s ease, opacity .3s ease, transform .3s ease, box-shadow .3s ease;
         }
         .date-input:focus,
         .number-input:focus {
@@ -259,7 +249,7 @@
             font-size: 13px;
             font-weight: 700;
             color: var(--btn-txt);
-            transition: all .28s ease;
+            transition: color .28s ease, background-color .28s ease, border-color .28s ease, opacity .28s ease, transform .28s ease, box-shadow .28s ease;
             flex: 1 1 auto;
             min-width: 100px;
             text-align: center;
@@ -412,7 +402,7 @@
         @media (max-width: 768px) {
             .container { width: 95%; padding: 16px; }
             .calculator-body { flex-direction: column; }
-            .title-area h1 { font-size: 28px; }
+            .title-area h1 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
             .back-area { font-size: 18px; }
         }
     
@@ -634,6 +624,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -643,24 +634,15 @@ html { -webkit-tap-highlight-color: transparent; }
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">日期计算器 - 找乐子</span></nav>
 
     <!-- 背景流光层 -->
-    <div class="bg-animation">
-        <div class="bg-flow-1"></div>
-        <div class="bg-flow-2"></div>
-        <div class="bg-flow-3"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-        <div class="orb orb-5"></div>
-    </div>
-
-    <!-- 主体 -->
+        <!-- 主体 -->
     <main id="zl-main">
         <div class="container">
             <div class="grid">
                 <!-- 标题区 -->
                 <div class="cell title-area">
+                    <p class="ed-kicker">找乐子 · 工具</p>
                     <h1>日期计算器</h1>
+                    <p class="ed-lede">两个日期相隔多少天、推算 N 天后是哪天、时间戳与日期互转——一次搞定。</p>
                 </div>
                 <!-- 返回主页 -->
                 <a href="工具导航.html" class="cell back-area" id="backHome">返回<br>主页</a>
@@ -692,6 +674,15 @@ html { -webkit-tap-highlight-color: transparent; }
     </main>
 
     <!-- 转场遮罩 -->
+    
+        <div class="ed-wrap">
+            <details class="ed-fold">
+                <summary>原理与技巧</summary>
+                <div class="ed-fold-body"><p>「相隔天数」的算法是把两个日期各自折算成天数序号再相减，期间自动处理<strong>闰年</strong>：能被 4 整除、且逢百年须被 400 整除才是闰年（2000 年是，1900 年不是）。</p><p>「时间戳」是计算机记录时间的方式：从 <strong>1970-01-01 00:00:00 UTC</strong> 起累计的秒数（Unix 纪元）。10 位时间戳是秒，13 位是毫秒——看到 13 位的先除以 1000 再转换。</p><p>常见场景：项目倒计时（截止日减今天）、试用期天数、纪念日提醒。跨时区换算时先统一到 UTC 再算，避免差一天。</p></div>
+            </details>
+            <footer class="ed-footer">找乐子 · 工具全程在本机运行，数据不出浏览器</footer>
+        </div>
+    
     <div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
@@ -701,7 +692,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-function _0x444e(_0x44c4ec,_0x4967ba){_0x44c4ec=_0x44c4ec-0x6f;const _0x444e3d=_0x4967();let _0x1a5304=_0x444e3d[_0x44c4ec];return _0x1a5304;}function _0x4967(){const _0x188a84=['addEventListener','highlight','overlay','2-digit','remove','getElementById','value','getDate','dateStart','getFullYear','abs','dateEnd','daysInput','getMonth','getTime','请输入推算天数（可正可负）','click','classList','zh-CN','location'];_0x4967=function(){return _0x188a84;};return _0x4967();}(function(){'use strict';const _0x329695=_0x444e;const _0x3798e5=document[_0x329695(0x74)](_0x329695(0x77)),_0x58e92b=document['getElementById'](_0x329695(0x7a)),_0x476381=document['getElementById'](_0x329695(0x7b)),_0x462cfd=document[_0x329695(0x74)]('diffBtn'),_0x23d6af=document[_0x329695(0x74)]('targetBtn'),_0x49d6e2=document['getElementById']('timestampBtn'),_0x2ba884=document['getElementById']('resultDisplay'),_0x793e79=document['getElementById']('backHome'),_0x265095=document['getElementById'](_0x329695(0x71));function _0x5bc7f4(_0x729c3e){if(!_0x729c3e)return null;const _0x594d50=_0x729c3e['split']('-');if(_0x594d50['length']!==0x3)return null;return new Date(parseInt(_0x594d50[0x0]),parseInt(_0x594d50[0x1])-0x1,parseInt(_0x594d50[0x2]));}function _0x3e7a7c(_0x4e9327){const _0x48791f=_0x329695,_0x4811a4=_0x4e9327[_0x48791f(0x78)](),_0x254039=String(_0x4e9327[_0x48791f(0x7c)]()+0x1)['padStart'](0x2,'0'),_0x3603e3=String(_0x4e9327[_0x48791f(0x76)]())['padStart'](0x2,'0');return _0x4811a4+'-'+_0x254039+'-'+_0x3603e3;}function _0x5ef679(_0x264b75,_0x45bfa3=![]){const _0x114cd7=_0x329695;_0x2ba884['textContent']=_0x264b75,_0x2ba884['classList']['toggle']('placeholder',_0x45bfa3),!_0x45bfa3?_0x2ba884['classList']['add'](_0x114cd7(0x70)):_0x2ba884['classList'][_0x114cd7(0x73)]('highlight');}function _0x5ac4c8(){const _0x32f0f8=_0x329695,_0x5e269d=_0x5bc7f4(_0x3798e5['value']),_0x193d82=_0x5bc7f4(_0x58e92b[_0x32f0f8(0x75)]);if(!_0x5e269d||!_0x193d82){_0x5ef679('请先选择起始和结束日期',!![]);return;}const _0x23aed4=Math['floor']((_0x193d82[_0x32f0f8(0x7d)]()-_0x5e269d['getTime']())/0x5265c00),_0xcc676d=Math[_0x32f0f8(0x79)](_0x23aed4),_0x2f55f8=_0x23aed4>=0x0?'之后':'之前';_0x5ef679('相差\x20'+_0xcc676d+'\x20天\x0a（结束日期在起始日期'+_0x2f55f8+'）');}function _0x1f28b0(){const _0x382b89=_0x329695,_0x3c4f4c=_0x5bc7f4(_0x3798e5['value']),_0x56db3c=parseInt(_0x476381[_0x382b89(0x75)],0xa);if(!_0x3c4f4c){_0x5ef679('请先选择起始日期',!![]);return;}if(isNaN(_0x56db3c)){_0x5ef679(_0x382b89(0x7e),!![]);return;}const _0x290ec4=new Date(_0x3c4f4c['getTime']()+_0x56db3c*0x5265c00);_0x5ef679('目标日期：'+_0x3e7a7c(_0x290ec4)+'\x0a（'+_0x3c4f4c['getFullYear']()+'年'+(_0x3c4f4c['getMonth']()+0x1)+'月'+_0x3c4f4c['getDate']()+'日\x20'+(_0x56db3c>=0x0?'+':'')+_0x56db3c+'\x20天）');}function _0x8cf9d8(){const _0x54460e=_0x329695,_0x554529=_0x476381['value']['trim']();if(!_0x554529){_0x5ef679('请在推算天数输入框中输入时间戳（毫秒）',!![]);return;}const _0x1b1733=Number(_0x554529);if(isNaN(_0x1b1733)){_0x5ef679('请输入有效的数字时间戳',!![]);return;}const _0x9749a6=new Date(_0x1b1733);if(isNaN(_0x9749a6['getTime']())){_0x5ef679('无效的时间戳',!![]);return;}_0x5ef679(_0x9749a6['toLocaleString'](_0x54460e(0x81),{'year':'numeric','month':'2-digit','day':_0x54460e(0x72),'hour':'2-digit','minute':_0x54460e(0x72),'second':'2-digit','hour12':![]}));}function _0xf26ce8(){const _0x211ba9=_0x329695;if(_0x265095['classList']['contains']('active'))return;_0x265095[_0x211ba9(0x80)]['add']('active'),setTimeout(()=>{const _0x34e7fd=_0x211ba9;window[_0x34e7fd(0x82)]['href']='工具导航.html';},0x3e8);}_0x462cfd['addEventListener']('click',_0x5ac4c8),_0x23d6af[_0x329695(0x6f)](_0x329695(0x7f),_0x1f28b0),_0x49d6e2['addEventListener'](_0x329695(0x7f),_0x8cf9d8),_0x793e79['addEventListener'](_0x329695(0x7f),function(_0x3f9ff3){_0x3f9ff3['preventDefault'](),_0xf26ce8();});const _0x113349=new Date(),_0x1530af=_0x3e7a7c(_0x113349);_0x3798e5['value']=_0x1530af,_0x58e92b[_0x329695(0x75)]=_0x1530af,_0x476381['value']='',document['addEventListener']('keydown',function(_0x1d8622){_0x1d8622['key']==='Escape'&&_0xf26ce8();});}());
+function _0x4924(_0x5e5117,_0x37a6d4){_0x5e5117=_0x5e5117-0x197;const _0x4924a9=_0x37a6();let _0x1736e8=_0x4924a9[_0x5e5117];return _0x1736e8;}(function(){'use strict';const _0x33feba=_0x4924;const _0x4a6db8=document[_0x33feba(0x199)](_0x33feba(0x1ab)),_0x420b88=document[_0x33feba(0x199)]('dateEnd'),_0x20ccce=document['getElementById']('daysInput'),_0x3f4fe2=document['getElementById']('diffBtn'),_0x5ca568=document[_0x33feba(0x199)]('targetBtn'),_0x2a1bdc=document['getElementById']('timestampBtn'),_0x708213=document['getElementById']('resultDisplay'),_0x333e6d=document['getElementById'](_0x33feba(0x19e)),_0x10cb68=document[_0x33feba(0x199)]('overlay');function _0x5a9631(_0x2d32f9){const _0xa60bee=_0x33feba;if(!_0x2d32f9)return null;const _0x39cdab=_0x2d32f9['split']('-');if(_0x39cdab[_0xa60bee(0x19c)]!==0x3)return null;return new Date(parseInt(_0x39cdab[0x0]),parseInt(_0x39cdab[0x1])-0x1,parseInt(_0x39cdab[0x2]));}function _0x5c1642(_0x25dfcb){const _0x415b9f=_0x33feba,_0x55e20d=_0x25dfcb['getFullYear'](),_0x380099=String(_0x25dfcb[_0x415b9f(0x1a5)]()+0x1)['padStart'](0x2,'0'),_0x1b5340=String(_0x25dfcb['getDate']())[_0x415b9f(0x19d)](0x2,'0');return _0x55e20d+'-'+_0x380099+'-'+_0x1b5340;}function _0x43cdfd(_0x4ad586,_0x385a23=![]){const _0x4b2f84=_0x33feba;_0x708213['textContent']=_0x4ad586,_0x708213[_0x4b2f84(0x1a9)]['toggle']('placeholder',_0x385a23),!_0x385a23?_0x708213['classList'][_0x4b2f84(0x1a0)](_0x4b2f84(0x1a1)):_0x708213['classList'][_0x4b2f84(0x198)]('highlight');}function _0x219d48(){const _0x32f879=_0x33feba,_0x1a4dc0=_0x5a9631(_0x4a6db8['value']),_0x2bcf27=_0x5a9631(_0x420b88['value']);if(!_0x1a4dc0||!_0x2bcf27){_0x43cdfd('请先选择起始和结束日期',!![]);return;}const _0x1bfbe8=Math['floor']((_0x2bcf27['getTime']()-_0x1a4dc0['getTime']())/0x5265c00),_0x241fd4=Math[_0x32f879(0x1a2)](_0x1bfbe8),_0x2f5f4b=_0x1bfbe8>=0x0?'之后':'之前';_0x43cdfd('相差\x20'+_0x241fd4+'\x20天\x0a（结束日期在起始日期'+_0x2f5f4b+'）');}function _0x2d52ca(){const _0xe6621f=_0x33feba,_0x467785=_0x5a9631(_0x4a6db8[_0xe6621f(0x1a8)]),_0x4dfd02=parseInt(_0x20ccce['value'],0xa);if(!_0x467785){_0x43cdfd('请先选择起始日期',!![]);return;}if(isNaN(_0x4dfd02)){_0x43cdfd('请输入推算天数（可正可负）',!![]);return;}const _0x53f051=new Date(_0x467785[_0xe6621f(0x1a3)]()+_0x4dfd02*0x5265c00);_0x43cdfd('目标日期：'+_0x5c1642(_0x53f051)+'\x0a（'+_0x467785['getFullYear']()+'年'+(_0x467785[_0xe6621f(0x1a5)]()+0x1)+'月'+_0x467785['getDate']()+'日\x20'+(_0x4dfd02>=0x0?'+':'')+_0x4dfd02+'\x20天）');}function _0x202927(){const _0x495439=_0x33feba,_0x419279=_0x20ccce['value']['trim']();if(!_0x419279){_0x43cdfd(_0x495439(0x19f),!![]);return;}const _0x543060=Number(_0x419279);if(isNaN(_0x543060)){_0x43cdfd('请输入有效的数字时间戳',!![]);return;}const _0x42d857=new Date(_0x543060);if(isNaN(_0x42d857['getTime']())){_0x43cdfd('无效的时间戳',!![]);return;}_0x43cdfd(_0x42d857['toLocaleString'](_0x495439(0x197),{'year':'numeric','month':'2-digit','day':'2-digit','hour':_0x495439(0x1a4),'minute':'2-digit','second':'2-digit','hour12':![]}));}function _0x4cdd36(){const _0x4d1293=_0x33feba;if(_0x10cb68['classList'][_0x4d1293(0x1a6)]('active'))return;_0x10cb68[_0x4d1293(0x1a9)]['add']('active'),setTimeout(()=>{const _0x5166ca=_0x4d1293;window['location'][_0x5166ca(0x19a)]='工具导航.html';},0x3e8);}_0x3f4fe2['addEventListener'](_0x33feba(0x1a7),_0x219d48),_0x5ca568[_0x33feba(0x1aa)]('click',_0x2d52ca),_0x2a1bdc['addEventListener']('click',_0x202927),_0x333e6d['addEventListener'](_0x33feba(0x1a7),function(_0x858c18){const _0x25a4d9=_0x33feba;_0x858c18[_0x25a4d9(0x19b)](),_0x4cdd36();});const _0x51a41a=new Date(),_0x5f06fd=_0x5c1642(_0x51a41a);_0x4a6db8['value']=_0x5f06fd,_0x420b88[_0x33feba(0x1a8)]=_0x5f06fd,_0x20ccce['value']='',document['addEventListener']('keydown',function(_0x56ee25){_0x56ee25['key']==='Escape'&&_0x4cdd36();});}());function _0x37a6(){const _0x496835=['zh-CN','remove','getElementById','href','preventDefault','length','padStart','backHome','请在推算天数输入框中输入时间戳（毫秒）','add','highlight','abs','getTime','2-digit','getMonth','contains','click','value','classList','addEventListener','dateStart'];_0x37a6=function(){return _0x496835;};return _0x37a6();}
 </script>
 </body>
 </html>

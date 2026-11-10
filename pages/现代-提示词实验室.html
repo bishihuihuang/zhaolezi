@@ -15,28 +15,28 @@
 <style>
     #lab { width: 100%; }
     .lab-card {
-        background: var(--card-2); border: 2px solid var(--line); border-radius: 16px;
+        background: var(--card-2); border: 1px solid var(--line); border-radius: 8px;
         padding: 18px 20px; margin-top: 16px;
     }
     .lab-field { margin-bottom: 14px; }
-    .lab-field label { display: block; font-size: 13px; font-weight: 800; color: var(--blue); margin-bottom: 6px; }
+    .lab-field label { display: block; font-size: 13px; font-weight: 600; color: var(--blue); margin-bottom: 6px; }
     .lab-field select, .lab-field textarea, .lab-field input {
-        width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+        width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
         font-size: 14px; background: var(--card); color: var(--txt); outline: none; box-sizing: border-box;
     }
     .lab-field select:focus, .lab-field textarea:focus, .lab-field input:focus {
-        border-color: var(--blue); box-shadow: 0 0 0 3px rgba(102, 126, 234, .2);
+        border-color: var(--blue); box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 20%, transparent);
     }
     .lab-hint { font-size: 12px; color: var(--dim); margin-top: 5px; }
     .role-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
     .chip {
         border: 1px solid var(--line); background: var(--card); color: var(--txt);
-        padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all .2s;
+        padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: color .2s, background-color .2s, border-color .2s, opacity .2s, transform .2s, box-shadow .2s;
     }
     .chip:hover { border-color: var(--blue); color: var(--blue); }
-    .chip.on { background: var(--btn-grad); color: #fff; border-color: transparent; }
+    .chip.on { background: var(--blue); color: #fff; border-color: transparent; }
     #labOut {
-        width: 100%; min-height: 150px; border: 1px solid var(--line); border-radius: 10px;
+        width: 100%; min-height: 150px; border: 1px solid var(--line); border-radius: 8px;
         padding: 12px; font-size: 14px; line-height: 1.8; background: var(--card); color: var(--txt);
         box-sizing: border-box; outline: none;
     }
@@ -149,19 +149,15 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
 <script defer src="../assets/js/zl-search-index.js"></script>
 </head>
 <body data-page="现代-提示词实验室.html" data-kind="tool">
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">提示词实验室 - 现代化·知识学习站</span></nav>
-<div class="bg-animation">
-    <div class="bg-flow-1"></div><div class="bg-flow-2"></div><div class="bg-flow-3"></div>
-    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div><div class="orb orb-5"></div>
-</div>
-
 <header class="site-header">
-    <a class="home-link" href="现代-全站目录树.html">🏠 首页</a>
+    <a class="home-link" href="现代-全站目录树.html">首页</a>
     <span class="site-title">现代化·知识学习站</span>
     <span class="mod-badge">模块E · 如何使用 AI</span>
 </header>
@@ -242,7 +238,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 <script>
 /*ZL-OBF-V2*/
-function _0x37e0(){var _0x1dce88=['value','【格式】','【角色】','labOut','classList','task','例：我是零基础的初中生；目标读者是\x2055\x20岁阿姨；粘贴你的原稿…','提示词已复制，去\x20AI\x20工具粘贴吧\x20✨','addEventListener','getElementById','资深新媒体编辑，擅长面向大众写文章','帮我制定一个「这里填目标」的\x207\x20天计划，每天安排具体任务','用通俗的语言解释「这里填概念」，并给\x201\x20个生活中的例子'];_0x37e0=function(){return _0x1dce88;};return _0x37e0();}function _0x509f(_0x2060f3,_0x37e07a){_0x2060f3=_0x2060f3-0x15f;var _0x509fae=_0x37e0();var _0x1550eb=_0x509fae[_0x2060f3];return _0x1550eb;}(function(){var _0x3c8ebd=_0x509f,_0x1d8cc2=document['getElementById']('sceneSel'),_0x3bcb93=document[_0x3c8ebd(0x168)]('roleIn'),_0x4ded4d=document['getElementById']('taskIn'),_0x1bf5bf=document['getElementById']('ctxIn'),_0x1de910=document['getElementById']('fmtSel'),_0x87ddb=document['getElementById'](_0x3c8ebd(0x162)),_0x4ec7b1=document['getElementById']('labNote'),_0x2056e3=document['getElementById']('genBtn'),_0x5879fe=document[_0x3c8ebd(0x168)]('copyBtn'),_0x40747b={'learn':{'role':'一位耐心的初中数学老师，讲解要通俗，避免术语堆砌','task':_0x3c8ebd(0x16b)},'write':{'role':_0x3c8ebd(0x169),'task':'写一篇关于「这里填主题」的短文，受众是普通读者，结尾给一个行动号召'},'polish':{'role':'资深中文编辑，润色文字但绝不改变原意','task':'帮我改下面这段文字，要求更口语化、更有感情'},'plan':{'role':'效率规划师，擅长把目标拆成可执行任务','task':_0x3c8ebd(0x16a)},'debug':{'role':'经验丰富的程序员，解释报错简洁准确','task':'我运行代码报错：请解释原因并给出修复代码，不要长篇大论'},'custom':{'role':'','task':''}};function _0x27127f(){var _0x12182a=_0x3c8ebd,_0x53eee2=_0x40747b[_0x1d8cc2['value']];if(_0x53eee2&&_0x53eee2['role'])_0x3bcb93['value']=_0x53eee2['role'];if(_0x53eee2&&_0x53eee2[_0x12182a(0x164)])_0x4ded4d[_0x12182a(0x15f)]=_0x53eee2['task'];_0x1d8cc2[_0x12182a(0x15f)]!=='custom'&&(_0x1bf5bf['placeholder']=_0x12182a(0x165));}_0x1d8cc2['addEventListener']('change',_0x27127f);var _0x52a33e=document['querySelectorAll']('.chip');_0x52a33e['forEach'](function(_0x3380a2){_0x3380a2['addEventListener']('click',function(){var _0x508feb=_0x509f;_0x52a33e['forEach'](function(_0x4cf8cd){_0x4cf8cd['classList']['remove']('on');}),_0x3380a2[_0x508feb(0x163)]['add']('on'),_0x3bcb93['value']=_0x3380a2['textContent'];});});function _0x57e2ce(){var _0x360060=_0x3c8ebd,_0x54fa50=_0x3bcb93['value']['trim'](),_0x268706=_0x4ded4d['value']['trim'](),_0x501016=_0x1bf5bf[_0x360060(0x15f)]['trim'](),_0x47a1fa=_0x1de910['value']==='自由'?'':_0x1de910['value'];if(!_0x268706){_0x87ddb[_0x360060(0x15f)]='',_0x4ec7b1['textContent']='任务还没填哦，至少写一句「要\x20AI\x20做什么」。';return;}var _0x46ac8e=[];if(_0x54fa50)_0x46ac8e['push'](_0x360060(0x161)+_0x54fa50);_0x46ac8e['push']('【任务】'+_0x268706);if(_0x501016)_0x46ac8e['push']('【上下文】'+_0x501016);if(_0x47a1fa)_0x46ac8e['push'](_0x360060(0x160)+_0x47a1fa);_0x87ddb[_0x360060(0x15f)]=_0x46ac8e['join']('\x0a'),_0x4ec7b1['textContent']='已按五要素组装，共\x20'+_0x46ac8e['length']+'\x20个组件；复制后去\x20AI\x20对话框粘贴即可。';}_0x2056e3[_0x3c8ebd(0x167)]('click',_0x57e2ce),_0x5879fe['addEventListener']('click',function(){var _0xbb22d=_0x3c8ebd;if(!_0x87ddb['value']){_0x57e2ce();if(!_0x87ddb[_0xbb22d(0x15f)])return;}if(window['XD']&&XD['copy'])XD['copy'](_0x87ddb['value'],_0xbb22d(0x166));}),_0x27127f();}());
+function _0x6ba7(_0x213d46,_0x3369a8){_0x213d46=_0x213d46-0x141;var _0x6ba74e=_0x3369();var _0x50d6fb=_0x6ba74e[_0x213d46];return _0x50d6fb;}function _0x3369(){var _0x915fbc=['帮我制定一个「这里填目标」的\x207\x20天计划，每天安排具体任务','forEach','addEventListener','push','value','custom','copy','remove','任务还没填哦，至少写一句「要\x20AI\x20做什么」。','trim','labNote','click','getElementById','已按五要素组装，共\x20','\x20个组件；复制后去\x20AI\x20对话框粘贴即可。','querySelectorAll','roleIn'];_0x3369=function(){return _0x915fbc;};return _0x3369();}(function(){var _0xa6fea7=_0x6ba7,_0x5aa3bd=document['getElementById']('sceneSel'),_0x49327a=document[_0xa6fea7(0x14d)](_0xa6fea7(0x151)),_0x1592bb=document['getElementById']('taskIn'),_0x2b9c82=document['getElementById']('ctxIn'),_0x11402c=document['getElementById']('fmtSel'),_0x46da49=document['getElementById']('labOut'),_0x162335=document['getElementById'](_0xa6fea7(0x14b)),_0x51e370=document[_0xa6fea7(0x14d)]('genBtn'),_0x3d86b7=document[_0xa6fea7(0x14d)]('copyBtn'),_0x84a982={'learn':{'role':'一位耐心的初中数学老师，讲解要通俗，避免术语堆砌','task':'用通俗的语言解释「这里填概念」，并给\x201\x20个生活中的例子'},'write':{'role':'资深新媒体编辑，擅长面向大众写文章','task':'写一篇关于「这里填主题」的短文，受众是普通读者，结尾给一个行动号召'},'polish':{'role':'资深中文编辑，润色文字但绝不改变原意','task':'帮我改下面这段文字，要求更口语化、更有感情'},'plan':{'role':'效率规划师，擅长把目标拆成可执行任务','task':_0xa6fea7(0x141)},'debug':{'role':'经验丰富的程序员，解释报错简洁准确','task':'我运行代码报错：请解释原因并给出修复代码，不要长篇大论'},'custom':{'role':'','task':''}};function _0x3a4fe1(){var _0x24a7b7=_0xa6fea7,_0xf6bf37=_0x84a982[_0x5aa3bd['value']];if(_0xf6bf37&&_0xf6bf37['role'])_0x49327a[_0x24a7b7(0x145)]=_0xf6bf37['role'];if(_0xf6bf37&&_0xf6bf37['task'])_0x1592bb[_0x24a7b7(0x145)]=_0xf6bf37['task'];_0x5aa3bd['value']!==_0x24a7b7(0x146)&&(_0x2b9c82['placeholder']='例：我是零基础的初中生；目标读者是\x2055\x20岁阿姨；粘贴你的原稿…');}_0x5aa3bd[_0xa6fea7(0x143)]('change',_0x3a4fe1);var _0x59d95e=document[_0xa6fea7(0x150)]('.chip');_0x59d95e[_0xa6fea7(0x142)](function(_0x5f47b6){var _0x43f4fa=_0xa6fea7;_0x5f47b6['addEventListener'](_0x43f4fa(0x14c),function(){var _0x470aa4=_0x43f4fa;_0x59d95e['forEach'](function(_0x1d14ca){var _0x48431e=_0x6ba7;_0x1d14ca['classList'][_0x48431e(0x148)]('on');}),_0x5f47b6['classList']['add']('on'),_0x49327a[_0x470aa4(0x145)]=_0x5f47b6['textContent'];});});function _0x15a024(){var _0x2647d8=_0xa6fea7,_0x54357c=_0x49327a[_0x2647d8(0x145)][_0x2647d8(0x14a)](),_0x5cfce7=_0x1592bb['value']['trim'](),_0x1d8284=_0x2b9c82['value'][_0x2647d8(0x14a)](),_0xad078=_0x11402c['value']==='自由'?'':_0x11402c[_0x2647d8(0x145)];if(!_0x5cfce7){_0x46da49['value']='',_0x162335['textContent']=_0x2647d8(0x149);return;}var _0x161f37=[];if(_0x54357c)_0x161f37['push']('【角色】'+_0x54357c);_0x161f37['push']('【任务】'+_0x5cfce7);if(_0x1d8284)_0x161f37[_0x2647d8(0x144)]('【上下文】'+_0x1d8284);if(_0xad078)_0x161f37['push']('【格式】'+_0xad078);_0x46da49['value']=_0x161f37['join']('\x0a'),_0x162335['textContent']=_0x2647d8(0x14e)+_0x161f37['length']+_0x2647d8(0x14f);}_0x51e370[_0xa6fea7(0x143)]('click',_0x15a024),_0x3d86b7['addEventListener']('click',function(){var _0x18725c=_0xa6fea7;if(!_0x46da49['value']){_0x15a024();if(!_0x46da49['value'])return;}if(window['XD']&&XD[_0x18725c(0x147)])XD['copy'](_0x46da49['value'],'提示词已复制，去\x20AI\x20工具粘贴吧\x20✨');}),_0x3a4fe1();}());
 </script>
 </body>
 </html>

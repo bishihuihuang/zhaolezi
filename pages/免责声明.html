@@ -158,13 +158,7 @@
         border-radius: 20px;
         box-shadow: 0 12px 40px color-mix(in srgb, var(--gold-2) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
     }
-    .title-area h2 {
-        font-size: 42px;
-        font-weight: 900;
-        letter-spacing: 4px;
-        color: var(--btn-txt);
-        text-shadow: 2px 2px 10px rgba(0,0,0,.3);
-    }
+    .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
     @keyframes titleGradient {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
@@ -578,6 +572,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -585,25 +580,14 @@ html { -webkit-tap-highlight-color: transparent; }
 </head>
 <body>
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">找乐子——免责声明</span></nav>
-<h1 class="sr-only" data-auto>找乐子——免责声明</h1>
-
     <!-- 背景 -->
-    <div class="bg-animation">
-        <div class="bg-flow-1"></div>
-        <div class="bg-flow-2"></div>
-        <div class="bg-flow-3"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-        <div class="orb orb-5"></div>
-    </div>
-
-    <main id="zl-main">
+        <main id="zl-main">
         <div class="container">
             <div class="grid">
                 <div class="title-area">
-                    <h2>找乐子——免责声明</h2>
+                    <p class="ed-kicker">找乐子 · 站务</p>
+                    <h1>免责声明</h1>
+                    <p class="ed-lede">关于本站内容、工具与数据使用边界的一句话说明与细则。</p>
                 </div>
                 <a href="../index.html" class="back-area" id="backHome">
                     <span style="font-size:32px;">🏠</span>
@@ -644,6 +628,15 @@ html { -webkit-tap-highlight-color: transparent; }
     </main>
 
     <!-- 转场遮罩 -->
+    
+        <div class="ed-wrap">
+            <details class="ed-fold">
+                <summary>原理与技巧</summary>
+                <div class="ed-fold-body"></div>
+            </details>
+            <footer class="ed-footer">找乐子 · 工具全程在本机运行，数据不出浏览器</footer>
+        </div>
+    
     <div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
@@ -653,7 +646,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-function _0x252e(_0x333096,_0xaf9c5b){_0x333096=_0x333096-0xfd;var _0x252e70=_0xaf9c();var _0x57388f=_0x252e70[_0x333096];return _0x57388f;}function _0xaf9c(){var _0x35160d=['key','remove','../index.html','backHome','classList','overlay','getElementById','active'];_0xaf9c=function(){return _0x35160d;};return _0xaf9c();}(function(){'use strict';var _0x318e22=_0x252e;var _0x5a9572=document[_0x318e22(0x103)](_0x318e22(0x100)),_0x23fb57=document['getElementById'](_0x318e22(0x102)),_0x5b7c5f=![];_0x5a9572['addEventListener']('click',function(_0xa699fd){_0xa699fd['preventDefault']();if(_0x5b7c5f)return;_0x5b7c5f=!![],_0x23fb57['classList']['add']('active'),setTimeout(function(){var _0x5975e6=_0x252e;window['location']['href']=(document['referrer']||'')['indexOf']('娱乐游戏.html')>=0x0?'娱乐游戏.html':_0x5975e6(0xff);},0x3e8);}),document['addEventListener']('keydown',function(_0x23e16b){var _0x373999=_0x318e22;_0x23e16b[_0x373999(0xfd)]==='Escape'&&_0x23fb57['classList']['contains'](_0x373999(0x104))&&(_0x23fb57[_0x373999(0x101)][_0x373999(0xfe)]('active'),_0x5b7c5f=![]);});}());
+function _0x13d4(_0x166b1e,_0x1c089e){_0x166b1e=_0x166b1e-0x195;var _0x13d466=_0x1c08();var _0x1b4ad6=_0x13d466[_0x166b1e];return _0x1b4ad6;}function _0x1c08(){var _0x2d2151=['preventDefault','referrer','backHome','location','addEventListener','active','娱乐游戏.html','getElementById','classList','keydown','key'];_0x1c08=function(){return _0x2d2151;};return _0x1c08();}(function(){'use strict';var _0x59d42e=_0x13d4;var _0x2cd11b=document['getElementById'](_0x59d42e(0x197)),_0x4ada82=document[_0x59d42e(0x19c)]('overlay'),_0x2f76e1=![];_0x2cd11b[_0x59d42e(0x199)]('click',function(_0x5035c0){var _0xde7d96=_0x59d42e;_0x5035c0[_0xde7d96(0x195)]();if(_0x2f76e1)return;_0x2f76e1=!![],_0x4ada82['classList']['add'](_0xde7d96(0x19a)),setTimeout(function(){var _0x4618ea=_0xde7d96;window[_0x4618ea(0x198)]['href']=(document[_0x4618ea(0x196)]||'')['indexOf'](_0x4618ea(0x19b))>=0x0?_0x4618ea(0x19b):'../index.html';},0x3e8);}),document['addEventListener'](_0x59d42e(0x19e),function(_0x16d78d){var _0x479f62=_0x59d42e;_0x16d78d[_0x479f62(0x19f)]==='Escape'&&_0x4ada82['classList']['contains']('active')&&(_0x4ada82[_0x479f62(0x19d)]['remove']('active'),_0x2f76e1=![]);});}());
 </script>
 </body>
 </html>

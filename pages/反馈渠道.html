@@ -151,13 +151,7 @@
         border-radius: 20px;
         box-shadow: 0 12px 40px color-mix(in srgb, var(--gold-2) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
     }
-    .title-area h2 {
-        font-size: 42px;
-        font-weight: 900;
-        letter-spacing: 4px;
-        color: var(--btn-txt);
-        text-shadow: 2px 2px 10px rgba(0,0,0,.3);
-    }
+    .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
     /* 返回主页（前2行5-6列） */
     .back-area {
         grid-column: 5 / 7;
@@ -200,7 +194,7 @@
         font-weight: 600;
         color: var(--txt);
         box-shadow: 0 4px 12px rgba(0,0,0,.06);
-        transition: all .3s;
+        transition: color .3s, background-color .3s, border-color .3s, opacity .3s, transform .3s, box-shadow .3s;
     }
     .email-display:hover {
         box-shadow: 0 8px 20px rgba(0,0,0,.12);
@@ -238,7 +232,7 @@
         color: var(--btn-txt);
         font-size: 14px;
         cursor: pointer;
-        transition: all .2s;
+        transition: color .2s, background-color .2s, border-color .2s, opacity .2s, transform .2s, box-shadow .2s;
     }
     .email-actions .btn:hover {
         transform: translateY(-2px);
@@ -269,7 +263,7 @@
         font-weight: 700;
         line-height: 1.8;
         box-shadow: 0 6px 20px rgba(0,0,0,.1);
-        transition: all .3s;
+        transition: color .3s, background-color .3s, border-color .3s, opacity .3s, transform .3s, box-shadow .3s;
         text-align: left;
     }
     .text-display:hover {
@@ -295,7 +289,7 @@
         justify-content: center;
         overflow: hidden;
         box-shadow: 0 6px 20px rgba(0,0,0,.08);
-        transition: all .3s;
+        transition: color .3s, background-color .3s, border-color .3s, opacity .3s, transform .3s, box-shadow .3s;
         position: relative;
     }
     .image-display:hover {
@@ -596,6 +590,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -603,26 +598,15 @@ html { -webkit-tap-highlight-color: transparent; }
 </head>
 <body>
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">找乐子——反馈渠道</span></nav>
-<h1 class="sr-only" data-auto>找乐子——反馈渠道</h1>
-
     <!-- 背景 -->
-    <div class="bg-animation">
-        <div class="bg-flow-1"></div>
-        <div class="bg-flow-2"></div>
-        <div class="bg-flow-3"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-        <div class="orb orb-5"></div>
-    </div>
-
-    <main id="zl-main">
+        <main id="zl-main">
         <div class="container">
             <div class="grid">
                 <!-- 标题区 -->
                 <div class="title-area">
-                    <h2>找乐子——反馈渠道</h2>
+                    <p class="ed-kicker">找乐子 · 站务</p>
+                    <h1>反馈渠道</h1>
+                    <p class="ed-lede">遇到 bug、想到新工具、或者只是想说声谢谢——都在这里。</p>
                 </div>
                 <!-- 返回主页 -->
                 <a href="../index.html" class="back-area" id="backHome">
@@ -665,6 +649,15 @@ html { -webkit-tap-highlight-color: transparent; }
     </main>
 
     <!-- 转场遮罩 -->
+    
+        <div class="ed-wrap">
+            <details class="ed-fold">
+                <summary>原理与技巧</summary>
+                <div class="ed-fold-body"><p>反馈写得越具体，修得越快。一个好用的 bug 报告包含三件事：<strong>怎么操作</strong>（在哪一页、点了什么）、<strong>发生了什么</strong>（你看到的错误现象）、<strong>期望是什么</strong>（你认为该发生什么）。附上浏览器与设备型号更好。</p><p>提新功能建议时，说清楚「你想完成的任务」比指定「要加一个按钮」更有价值——同一件事往往有更顺手的做法。</p></div>
+            </details>
+            <footer class="ed-footer">找乐子 · 工具全程在本机运行，数据不出浏览器</footer>
+        </div>
+    
     <div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
@@ -674,7 +667,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-function _0x2aa2(_0x48e1bb,_0x3be636){_0x48e1bb=_0x48e1bb-0x171;var _0x2aa2ac=_0x3be6();var _0x235b7f=_0x2aa2ac[_0x48e1bb];return _0x235b7f;}(function(){'use strict';var _0x5ae39b=_0x2aa2;document['getElementById'](_0x5ae39b(0x187))[_0x5ae39b(0x174)]='w550w550'+'c'+'@'+_0x5ae39b(0x17d);var _0xcf80b5=document['getElementById'](_0x5ae39b(0x179)),_0x206813=document['getElementById'](_0x5ae39b(0x18a)),_0x1df507=![];_0xcf80b5['addEventListener']('click',function(_0x542534){var _0x3ccbc0=_0x5ae39b;_0x542534[_0x3ccbc0(0x17c)]();if(_0x1df507)return;_0x1df507=!![],_0x206813[_0x3ccbc0(0x177)][_0x3ccbc0(0x17a)]('active'),setTimeout(function(){var _0xb5e982=_0x3ccbc0;window[_0xb5e982(0x189)][_0xb5e982(0x178)]=(document['referrer']||'')['indexOf']('娱乐游戏.html')>=0x0?_0xb5e982(0x184):'../index.html';},0x3e8);}),document['addEventListener']('keydown',function(_0x540526){var _0x5229c7=_0x5ae39b;_0x540526[_0x5229c7(0x181)]===_0x5229c7(0x17b)&&_0x206813['classList'][_0x5229c7(0x182)](_0x5229c7(0x172))&&(_0x206813['classList'][_0x5229c7(0x17f)]('active'),_0x1df507=![]);});var _0xd7cba9=document['getElementById'](_0x5ae39b(0x176));_0xd7cba9['addEventListener'](_0x5ae39b(0x186),function(){var _0x69ff9f=_0x5ae39b,_0x32f762=document['getElementById'](_0x69ff9f(0x187))['textContent'];navigator['clipboard']&&navigator['clipboard']['writeText']?navigator['clipboard']['writeText'](_0x32f762)['then'](function(){alert('邮箱地址已复制！');})['catch'](function(){_0x5d3c21(_0x32f762);}):_0x5d3c21(_0x32f762);});function _0x5d3c21(_0x547e3e){var _0x5ee62c=_0x5ae39b,_0xd1279c=document['createElement']('textarea');_0xd1279c['value']=_0x547e3e,document['body']['appendChild'](_0xd1279c),_0xd1279c[_0x5ee62c(0x185)](),document['execCommand']('copy'),document['body']['removeChild'](_0xd1279c),alert('邮箱地址已复制！');}var _0x4a4d79=document[_0x5ae39b(0x171)]('gotoEmail');_0x4a4d79['addEventListener']('click',function(){var _0x261c99=_0x5ae39b;window[_0x261c99(0x189)]['href']=_0x261c99(0x17e);if(window['ZL']&&ZL['bump'])ZL['bump']('fb_sent',0x1);}),window['setFeedbackText']=function(_0x5192e1){var _0x469954=document['getElementById']('textDisplay');if(_0x469954)_0x469954['innerHTML']=_0x5192e1;},window['setFeedbackImage']=function(_0x5f3ee4){var _0xf0c758=_0x5ae39b,_0x473280=document['querySelector']('.image-display\x20img');if(_0x473280&&_0x5f3ee4)_0x473280[_0xf0c758(0x180)]=_0x5f3ee4;},window[_0x5ae39b(0x183)]=function(){var _0x2a94cf=_0x5ae39b,_0x109fe1=document['querySelector'](_0x2a94cf(0x188));if(_0x109fe1)_0x109fe1['src']='';},window['clearFeedbackText']=function(){var _0x30b5b5=_0x5ae39b,_0x546984=document['getElementById'](_0x30b5b5(0x173));if(_0x546984)_0x546984['innerHTML']='';},window['fallbackCopy']=_0x5d3c21;if(window['ZL']&&ZL['bump'])ZL[_0x5ae39b(0x175)]('fb_open',0x1);}());function _0x3be6(){var _0x33eb7c=['getElementById','active','textDisplay','textContent','bump','copyEmail','classList','href','backHome','add','Escape','preventDefault','163.com','https://mail.163.com','remove','src','key','contains','clearFeedbackImage','娱乐游戏.html','select','click','emailAddr','.image-display\x20img','location','overlay'];_0x3be6=function(){return _0x33eb7c;};return _0x3be6();}
+function _0x41d3(){var _0x42a2bb=['../index.html','163.com','textDisplay','getElementById','娱乐游戏.html','fallbackCopy','https://mail.163.com','clipboard','bump','catch','邮箱地址已复制！','fb_sent','textarea','gotoEmail','classList','click','active','href','location','src','Escape','innerHTML','value'];_0x41d3=function(){return _0x42a2bb;};return _0x41d3();}function _0x6c75(_0x1d417e,_0x41d3e7){_0x1d417e=_0x1d417e-0xd2;var _0x6c751a=_0x41d3();var _0x5e27ad=_0x6c751a[_0x1d417e];return _0x5e27ad;}(function(){'use strict';var _0x2f5852=_0x6c75;document[_0x2f5852(0xd5)]('emailAddr')['textContent']='w550w550'+'c'+'@'+_0x2f5852(0xd3);var _0x3a5a5d=document['getElementById']('backHome'),_0x3e5c96=document[_0x2f5852(0xd5)]('overlay'),_0x4c4cac=![];_0x3a5a5d['addEventListener']('click',function(_0x42ae5b){_0x42ae5b['preventDefault']();if(_0x4c4cac)return;_0x4c4cac=!![],_0x3e5c96['classList']['add']('active'),setTimeout(function(){var _0x385a55=_0x6c75;window['location'][_0x385a55(0xe3)]=(document['referrer']||'')['indexOf'](_0x385a55(0xd6))>=0x0?'娱乐游戏.html':_0x385a55(0xd2);},0x3e8);}),document['addEventListener']('keydown',function(_0x10fc00){var _0x27d0df=_0x2f5852;_0x10fc00['key']===_0x27d0df(0xe6)&&_0x3e5c96[_0x27d0df(0xe0)]['contains']('active')&&(_0x3e5c96['classList']['remove'](_0x27d0df(0xe2)),_0x4c4cac=![]);});var _0x5a1a71=document['getElementById']('copyEmail');_0x5a1a71['addEventListener'](_0x2f5852(0xe1),function(){var _0x116c7a=_0x2f5852,_0x4257ae=document['getElementById']('emailAddr')['textContent'];navigator[_0x116c7a(0xd9)]&&navigator[_0x116c7a(0xd9)]['writeText']?navigator['clipboard']['writeText'](_0x4257ae)['then'](function(){var _0x396185=_0x116c7a;alert(_0x396185(0xdc));})[_0x116c7a(0xdb)](function(){_0x32187f(_0x4257ae);}):_0x32187f(_0x4257ae);});function _0x32187f(_0x1694e5){var _0x3d26c7=_0x2f5852,_0x22ab6d=document['createElement'](_0x3d26c7(0xde));_0x22ab6d[_0x3d26c7(0xe8)]=_0x1694e5,document['body']['appendChild'](_0x22ab6d),_0x22ab6d['select'](),document['execCommand']('copy'),document['body']['removeChild'](_0x22ab6d),alert('邮箱地址已复制！');}var _0xce8cff=document['getElementById'](_0x2f5852(0xdf));_0xce8cff['addEventListener'](_0x2f5852(0xe1),function(){var _0x504b4f=_0x2f5852;window[_0x504b4f(0xe4)]['href']=_0x504b4f(0xd8);if(window['ZL']&&ZL[_0x504b4f(0xda)])ZL[_0x504b4f(0xda)](_0x504b4f(0xdd),0x1);}),window['setFeedbackText']=function(_0x2d3a19){var _0x4a6d8b=_0x2f5852,_0x4ce0c3=document['getElementById']('textDisplay');if(_0x4ce0c3)_0x4ce0c3[_0x4a6d8b(0xe7)]=_0x2d3a19;},window['setFeedbackImage']=function(_0x501e4c){var _0x5f5283=_0x2f5852,_0x50d70f=document['querySelector']('.image-display\x20img');if(_0x50d70f&&_0x501e4c)_0x50d70f[_0x5f5283(0xe5)]=_0x501e4c;},window['clearFeedbackImage']=function(){var _0x18086a=document['querySelector']('.image-display\x20img');if(_0x18086a)_0x18086a['src']='';},window['clearFeedbackText']=function(){var _0x446ab1=_0x2f5852,_0x2d798a=document[_0x446ab1(0xd5)](_0x446ab1(0xd4));if(_0x2d798a)_0x2d798a['innerHTML']='';},window[_0x2f5852(0xd7)]=_0x32187f;if(window['ZL']&&ZL[_0x2f5852(0xda)])ZL['bump']('fb_open',0x1);}());
 </script>
 </body>
 </html>

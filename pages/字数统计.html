@@ -185,13 +185,7 @@
                 inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
         }
 
-        .title-area h2 {
-            font-size: 42px;
-            font-weight: 900;
-            letter-spacing: 4px;
-            color: var(--btn-txt);
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, .3);
-        }
+        .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
 
 /* t4: 已令牌化移除 */
 /* t4: 已令牌化移除 */
@@ -703,6 +697,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -710,25 +705,14 @@ html { -webkit-tap-highlight-color: transparent; }
 </head>
 <body>
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">字数统计 - 找乐子</span></nav>
-<h1 class="sr-only" data-auto>字数统计 - 找乐子</h1>
-
     <!-- 背景 -->
-    <div class="bg-animation">
-        <div class="bg-flow-1"></div>
-        <div class="bg-flow-2"></div>
-        <div class="bg-flow-3"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-        <div class="orb orb-5"></div>
-    </div>
-
-    <main id="zl-main">
+        <main id="zl-main">
         <div class="container">
             <div class="grid">
                 <div class="title-area">
-                    <h2>字数统计</h2>
+                    <p class="ed-kicker">找乐子 · 工具</p>
+                    <h1>字数统计</h1>
+                    <p class="ed-lede">粘贴即统计：字数、词数、中英文字符、行数一目了然，写作投稿必备。</p>
                 </div>
                 <a href="工具导航.html" class="back-area" id="backHome">
                     <span style="font-size:32px;">🏠</span>
@@ -793,6 +777,15 @@ html { -webkit-tap-highlight-color: transparent; }
     </div>
 
     <!-- 转场遮罩 -->
+    
+        <div class="ed-wrap">
+            <details class="ed-fold">
+                <summary>原理与技巧</summary>
+                <div class="ed-fold-body"><p>「字数」的统计口径不止一种：中文按<strong>字</strong>计，英文习惯按<strong>词</strong>计（空格分词），期刊投稿通常要求「字符数（含空格）」。本页把中文字符、英文单词、总字符、行数分列展示，对照要求取用即可。</p><p>两个容易踩的口径差：① 全角标点（，。「」）计入中文字符，半角标点计入符号；② Word 的「字数」与公众号编辑器口径不同，交稿前以收稿方要求为准。</p><p>写作小参考：中文正文一行 30~38 字最易读；摘要通常 200~300 字；一条朋友圈的最佳阅读长度在 100 字以内。</p></div>
+            </details>
+            <footer class="ed-footer">找乐子 · 工具全程在本机运行，数据不出浏览器</footer>
+        </div>
+    
     <div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
@@ -802,7 +795,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-function _0x3824(_0x550a04,_0x3e89d0){_0x550a04=_0x550a04-0x8e;const _0x382468=_0x3e89();let _0xe1a030=_0x382468[_0x550a04];return _0xe1a030;}function _0x3e89(){const _0x23bd99=['preventDefault','click','totalCount','wordCount','addEventListener','remove','input','otherCount','show','href','enCount','lineCount','length','classList','textContent','工具导航.html','getElementById','add'];_0x3e89=function(){return _0x23bd99;};return _0x3e89();}(function(){'use strict';const _0x5c7b01=_0x3824;const _0x3ccc2d=document['getElementById']('textInput'),_0xb0d31d=document[_0x5c7b01(0x9e)](_0x5c7b01(0x90)),_0x5c1f30=document['getElementById']('cnCount'),_0x50fbec=document['getElementById'](_0x5c7b01(0x98)),_0x2058ed=document['getElementById'](_0x5c7b01(0x99)),_0x4484be=document[_0x5c7b01(0x9e)](_0x5c7b01(0x95)),_0x31d8b0=document['getElementById'](_0x5c7b01(0x91)),_0x49dea4=document['getElementById']('resetBtn'),_0x3de67b=document[_0x5c7b01(0x9e)]('infoBtn'),_0x55523d=document[_0x5c7b01(0x9e)]('infoModal'),_0x4fbd4e=document[_0x5c7b01(0x9e)]('closeModal'),_0x508d71=document[_0x5c7b01(0x9e)]('backHome'),_0x37a726=document['getElementById']('overlay');function _0x2d2010(){const _0xecb970=_0x5c7b01,_0x321185=_0x3ccc2d['value'],_0x6fcef2=Array['from'](_0x321185)['filter'](_0x533fe2=>_0x533fe2['trim']()!=='')['length'];_0xb0d31d[_0xecb970(0x9c)]=_0x6fcef2;const _0xd6603c=(_0x321185['match'](/[\u4e00-\u9fff]/g)||[])['length'];_0x5c1f30['textContent']=_0xd6603c;const _0x53a6f3=(_0x321185['match'](/[a-zA-Z]/g)||[])['length'];_0x50fbec[_0xecb970(0x9c)]=_0x53a6f3;const _0x32d054=(_0x321185['match'](/[a-zA-Z]+/g)||[])['length'];_0x31d8b0[_0xecb970(0x9c)]=_0x32d054;const _0x255ee7=_0x321185['split']('\x0a');let _0x3b43dd=_0x255ee7[_0xecb970(0x9a)]-0x1;while(_0x3b43dd>=0x0&&_0x255ee7[_0x3b43dd]['trim']()===''){_0x3b43dd--;}_0x2058ed['textContent']=_0x3b43dd>=0x0?_0x3b43dd+0x1:0x0,_0x4484be['textContent']=_0x6fcef2-_0xd6603c-_0x53a6f3;}_0x3ccc2d['addEventListener'](_0x5c7b01(0x94),_0x2d2010),_0x49dea4['addEventListener']('click',function(){_0x2d2010(),alert('已重新识别修改后的新文本！');}),_0x3de67b[_0x5c7b01(0x92)](_0x5c7b01(0x8f),function(){const _0x6694c2=_0x5c7b01;_0x55523d['classList'][_0x6694c2(0x9f)]('show');}),_0x4fbd4e[_0x5c7b01(0x92)](_0x5c7b01(0x8f),function(){const _0x88944e=_0x5c7b01;_0x55523d[_0x88944e(0x9b)][_0x88944e(0x93)](_0x88944e(0x96));}),_0x55523d['addEventListener'](_0x5c7b01(0x8f),function(_0x51f615){const _0x553559=_0x5c7b01;_0x51f615['target']===_0x55523d&&_0x55523d['classList']['remove'](_0x553559(0x96));}),_0x2d2010();let _0x53517=![];_0x508d71[_0x5c7b01(0x92)]('click',function(_0x4e8029){const _0xe3943d=_0x5c7b01;_0x4e8029[_0xe3943d(0x8e)]();if(_0x53517)return;_0x53517=!![],_0x37a726[_0xe3943d(0x9b)]['add']('active'),setTimeout(function(){const _0x1f4514=_0xe3943d;window['location'][_0x1f4514(0x97)]=_0x1f4514(0x9d);},0x3e8);}),window['updateStats']=_0x2d2010;}());
+function _0x1de8(){const _0x488536=['location','length','addEventListener','lineCount','remove','工具导航.html','match','show','add','getElementById','preventDefault','target','trim','textContent','infoModal','from','click','href','classList','enCount','已重新识别修改后的新文本！'];_0x1de8=function(){return _0x488536;};return _0x1de8();}function _0x18f8(_0x339b3e,_0x1de87c){_0x339b3e=_0x339b3e-0x132;const _0x18f8c1=_0x1de8();let _0x3d7201=_0x18f8c1[_0x339b3e];return _0x3d7201;}(function(){'use strict';const _0x3a6a22=_0x18f8;const _0x54464c=document[_0x3a6a22(0x13b)]('textInput'),_0x5616ea=document[_0x3a6a22(0x13b)]('totalCount'),_0xedcf1b=document['getElementById']('cnCount'),_0x10e402=document[_0x3a6a22(0x13b)](_0x3a6a22(0x145)),_0x3ace9d=document[_0x3a6a22(0x13b)](_0x3a6a22(0x135)),_0x4c4c5f=document['getElementById']('otherCount'),_0x649034=document['getElementById']('wordCount'),_0x4d9531=document['getElementById']('resetBtn'),_0x388177=document['getElementById']('infoBtn'),_0x53f92a=document['getElementById'](_0x3a6a22(0x140)),_0x416350=document['getElementById']('closeModal'),_0x13671b=document['getElementById']('backHome'),_0x38a2d8=document[_0x3a6a22(0x13b)]('overlay');function _0x4b5a8c(){const _0x19baa9=_0x3a6a22,_0x291377=_0x54464c['value'],_0x9c53ea=Array[_0x19baa9(0x141)](_0x291377)['filter'](_0xbbbc92=>_0xbbbc92[_0x19baa9(0x13e)]()!=='')['length'];_0x5616ea[_0x19baa9(0x13f)]=_0x9c53ea;const _0x596aff=(_0x291377[_0x19baa9(0x138)](/[\u4e00-\u9fff]/g)||[])['length'];_0xedcf1b['textContent']=_0x596aff;const _0x223e8e=(_0x291377['match'](/[a-zA-Z]/g)||[])['length'];_0x10e402['textContent']=_0x223e8e;const _0x4779c8=(_0x291377['match'](/[a-zA-Z]+/g)||[])['length'];_0x649034['textContent']=_0x4779c8;const _0x55d13b=_0x291377['split']('\x0a');let _0x2e13b1=_0x55d13b[_0x19baa9(0x133)]-0x1;while(_0x2e13b1>=0x0&&_0x55d13b[_0x2e13b1]['trim']()===''){_0x2e13b1--;}_0x3ace9d['textContent']=_0x2e13b1>=0x0?_0x2e13b1+0x1:0x0,_0x4c4c5f['textContent']=_0x9c53ea-_0x596aff-_0x223e8e;}_0x54464c[_0x3a6a22(0x134)]('input',_0x4b5a8c),_0x4d9531[_0x3a6a22(0x134)](_0x3a6a22(0x142),function(){const _0x1a118f=_0x3a6a22;_0x4b5a8c(),alert(_0x1a118f(0x146));}),_0x388177['addEventListener'](_0x3a6a22(0x142),function(){_0x53f92a['classList']['add']('show');}),_0x416350['addEventListener'](_0x3a6a22(0x142),function(){const _0x4f2314=_0x3a6a22;_0x53f92a['classList'][_0x4f2314(0x136)]('show');}),_0x53f92a['addEventListener']('click',function(_0x254013){const _0x3b5d62=_0x3a6a22;_0x254013[_0x3b5d62(0x13d)]===_0x53f92a&&_0x53f92a[_0x3b5d62(0x144)]['remove'](_0x3b5d62(0x139));}),_0x4b5a8c();let _0x4d75d9=![];_0x13671b['addEventListener']('click',function(_0x285f60){const _0x2bb708=_0x3a6a22;_0x285f60[_0x2bb708(0x13c)]();if(_0x4d75d9)return;_0x4d75d9=!![],_0x38a2d8['classList'][_0x2bb708(0x13a)]('active'),setTimeout(function(){const _0x21a6b6=_0x2bb708;window[_0x21a6b6(0x132)][_0x21a6b6(0x143)]=_0x21a6b6(0x137);},0x3e8);}),window['updateStats']=_0x4b5a8c;}());
 </script>
 </body>
 </html>

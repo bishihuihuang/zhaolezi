@@ -156,13 +156,7 @@
         border-radius: 20px;
         box-shadow: 0 12px 40px color-mix(in srgb, var(--gold-2) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--card-2) 40%, transparent);
     }
-    .title-area h2 {
-        font-size: 42px;
-        font-weight: 900;
-        letter-spacing: 4px;
-        color: var(--btn-txt);
-        text-shadow: 2px 2px 10px rgba(0,0,0,.3);
-    }
+    .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
     @keyframes titleGradient {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
@@ -221,7 +215,7 @@
         font-size: 16px;
         font-weight: 700;
         cursor: pointer;
-        transition: all .2s;
+        transition: color .2s, background-color .2s, border-color .2s, opacity .2s, transform .2s, box-shadow .2s;
     }
     .mode-btn.active {
         border-color: var(--glow);
@@ -581,6 +575,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -588,25 +583,14 @@ html { -webkit-tap-highlight-color: transparent; }
 </head>
 <body>
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">摩斯密码转换 - 找乐子</span></nav>
-<h1 class="sr-only" data-auto>摩斯密码转换 - 找乐子</h1>
-
     <!-- 背景 -->
-    <div class="bg-animation">
-        <div class="bg-flow-1"></div>
-        <div class="bg-flow-2"></div>
-        <div class="bg-flow-3"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-        <div class="orb orb-5"></div>
-    </div>
-
-    <main id="zl-main">
+        <main id="zl-main">
         <div class="container">
             <div class="grid">
                 <div class="title-area">
-                    <h2>摩斯密码转换</h2>
+                    <p class="ed-kicker">找乐子 · 工具</p>
+                    <h1>摩斯密码转换</h1>
+                    <p class="ed-lede">文字与摩斯电码双向互转，附标准点划时值规则，适合对照练习发报节奏。</p>
                 </div>
                 <a href="工具导航.html" class="back-area" id="backHome">
                     <span style="font-size:32px;">🏠</span>
@@ -637,6 +621,15 @@ html { -webkit-tap-highlight-color: transparent; }
     </main>
 
     <!-- 转场遮罩 -->
+    
+        <div class="ed-wrap">
+            <details class="ed-fold">
+                <summary>原理与技巧</summary>
+                <div class="ed-fold-body"><p>摩斯电码只有两个元素：<strong>点</strong>（·）与<strong>划</strong>（—），靠时值区分。标准节奏是：点 = 1 拍，划 = 3 拍，字符内点划间隔 = 1 拍，字符之间 = 3 拍，单词之间 = 7 拍。字母不区分大小写。</p><p>最著名的呼号是 <code>··· — —— — ···</code>（SOS）：1906 年国际无线电公约定为通用求救信号，因为它是一段唯一、易记、不易误读的序列。泰坦尼克号 1912 年沉没时发出的就是它。</p><p>今天它仍是航海与业余无线电的备用语言——不依赖语音、抗噪、窄带宽也能传。练习时先背 <code>E（·）</code>、<code>T（—）</code> 等高频短码，再逐步扩到全表。</p></div>
+            </details>
+            <footer class="ed-footer">找乐子 · 工具全程在本机运行，数据不出浏览器</footer>
+        </div>
+    
     <div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
@@ -646,7 +639,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-function _0x205c(){const _0x2caf0e=['click','textContent','-.--','..-.','convert','getElementById','-.-','convertBtn','writeText','-.-.-.','saveRecent','例如：....\x20.\x20.-..\x20.-..\x20---\x20/\x20.--\x20---\x20.-.\x20.-..\x20-..','overlay','inputBox','.....','morse_add','..--.-','split','.----.','--.-','trim','--...','modeTextToMorse','join','例如：HELLO\x20WORLD','textToMorse','-....-','..---','toUpperCase','active','remove','outputLabel','.---','copy','...-','-...-','href','-.--.-','.-.','classList','addEventListener','value','.-..-.','bump'];_0x205c=function(){return _0x2caf0e;};return _0x205c();}function _0x1f25(_0xd9bde,_0x205caa){_0xd9bde=_0xd9bde-0x18a;const _0x1f259e=_0x205c();let _0x27aa6b=_0x1f259e[_0xd9bde];return _0x27aa6b;}(function(){'use strict';const _0x15f2bb=_0x1f25;const _0x531087={'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':_0x15f2bb(0x18d),'G':'--.','H':'....','I':'..','J':_0x15f2bb(0x1aa),'K':_0x15f2bb(0x190),'L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':_0x15f2bb(0x19d),'R':_0x15f2bb(0x1b0),'S':'...','T':'-','U':'..-','V':_0x15f2bb(0x1ac),'W':'.--','X':'-..-','Y':_0x15f2bb(0x18c),'Z':'--..','0':'-----','1':'.----','2':_0x15f2bb(0x1a5),'3':'...--','4':'....-','5':_0x15f2bb(0x198),'6':'-....','7':_0x15f2bb(0x19f),'8':'---..','9':'----.','.':'.-.-.-',',':'--..--','?':'..--..','\x27':_0x15f2bb(0x19c),'!':'-.-.--','/':'-..-.','(':'-.--.',')':_0x15f2bb(0x1af),'&':'.-...',':':'---...',';':_0x15f2bb(0x193),'=':_0x15f2bb(0x1ad),'+':'.-.-.','-':_0x15f2bb(0x1a4),'_':_0x15f2bb(0x19a),'\x22':_0x15f2bb(0x1b4),'$':'...-..-','@':'.--.-.','\x20':'\x20'},_0x3683e1={};for(const _0x1b8fcd in _0x531087){_0x531087[_0x1b8fcd]!=='\x20'&&(_0x3683e1[_0x531087[_0x1b8fcd]]=_0x1b8fcd);}const _0x3f3049=document['getElementById'](_0x15f2bb(0x197)),_0x62533f=document[_0x15f2bb(0x18f)]('outputBox'),_0x2b6f06=document['getElementById'](_0x15f2bb(0x191)),_0x2231ef=document[_0x15f2bb(0x18f)]('clearBtn'),_0xc6dd54=document[_0x15f2bb(0x18f)]('copyBtn'),_0x37de1e=document['getElementById']('backHome'),_0x42e8d5=document['getElementById'](_0x15f2bb(0x196)),_0x57e975=document['getElementById']('inputLabel'),_0x41ebf0=document[_0x15f2bb(0x18f)](_0x15f2bb(0x1a9)),_0x4e2b24=document['getElementById'](_0x15f2bb(0x1a0)),_0x3fdf24=document[_0x15f2bb(0x18f)]('modeMorseToText');let _0x71c234=_0x15f2bb(0x1a3);function _0x2a2a25(_0x38b38a){const _0x36e515=_0x15f2bb;_0x71c234=_0x38b38a,_0x38b38a===_0x36e515(0x1a3)?(_0x4e2b24['classList']['add']('active'),_0x3fdf24[_0x36e515(0x1b1)][_0x36e515(0x1a8)]('active'),_0x57e975[_0x36e515(0x18b)]='输入文本（支持英文、数字、常用标点）',_0x41ebf0[_0x36e515(0x18b)]='摩斯密码结果',_0x3f3049[_0x36e515(0x1b3)]='',_0x62533f['value']='',_0x3f3049['placeholder']=_0x36e515(0x1a2)):(_0x3fdf24['classList']['add']('active'),_0x4e2b24[_0x36e515(0x1b1)]['remove'](_0x36e515(0x1a7)),_0x57e975['textContent']='输入摩斯密码（字母间空格，单词间用\x20/\x20分隔）',_0x41ebf0[_0x36e515(0x18b)]='文本结果',_0x3f3049['value']='',_0x62533f[_0x36e515(0x1b3)]='',_0x3f3049['placeholder']=_0x36e515(0x195));}_0x4e2b24['addEventListener']('click',()=>_0x2a2a25(_0x15f2bb(0x1a3))),_0x3fdf24[_0x15f2bb(0x1b2)](_0x15f2bb(0x18a),()=>_0x2a2a25('morseToText'));function _0x1ea11c(_0x5768c1){const _0x23dd53=_0x15f2bb,_0x2713c5=_0x5768c1[_0x23dd53(0x1a6)]();let _0x1f7940=[];for(let _0x4c0fba=0x0;_0x4c0fba<_0x2713c5['length'];_0x4c0fba++){const _0x4af2da=_0x2713c5[_0x4c0fba];if(_0x4af2da==='\x20')_0x1f7940['push']('/');else{if(_0x531087[_0x4af2da]!==undefined&&_0x531087[_0x4af2da]!=='\x20')_0x1f7940['push'](_0x531087[_0x4af2da]);else continue;}}return _0x1f7940[_0x23dd53(0x1a1)]('\x20');}function _0x16cca3(_0x5a8344){const _0x17c476=_0x15f2bb,_0x16dd81=_0x5a8344['trim']()[_0x17c476(0x19b)](/\s*\/\s*/);let _0x418468='';for(let _0x5ba1e5 of _0x16dd81){const _0xd5dd04=_0x5ba1e5['trim']()['split'](/\s+/);for(let _0x1070a7 of _0xd5dd04){if(_0x1070a7==='')continue;_0x3683e1[_0x1070a7]!==undefined?_0x418468+=_0x3683e1[_0x1070a7]:_0x418468+='?';}_0x418468+='\x20';}return _0x418468[_0x17c476(0x19e)]();}function _0x2e923f(){const _0x50e9e2=_0x15f2bb,_0x3e47c3=_0x3f3049['value'];let _0x50af7a='';_0x71c234==='textToMorse'?_0x50af7a=_0x1ea11c(_0x3e47c3):_0x50af7a=_0x16cca3(_0x3e47c3);_0x62533f['value']=_0x50af7a;try{if(window['ZL']&&ZL[_0x50e9e2(0x194)])ZL['saveRecent']('zl_recent_morse',_0x3e47c3+'\x20=>\x20'+_0x50af7a);}catch(_0x6a5258){}if(window['ZL']&&ZL['bump'])ZL[_0x50e9e2(0x1b5)](_0x50e9e2(0x199),0x1);}_0x2b6f06['addEventListener']('click',_0x2e923f),_0x2231ef['addEventListener']('click',()=>{const _0x335154=_0x15f2bb;_0x3f3049[_0x335154(0x1b3)]='',_0x62533f['value']='';}),_0xc6dd54['addEventListener']('click',()=>{const _0x1675aa=_0x15f2bb;_0x62533f[_0x1675aa(0x1b3)]&&navigator['clipboard'][_0x1675aa(0x192)](_0x62533f['value'])['then'](()=>{alert('结果已复制到剪贴板');})['catch'](()=>{const _0x595cd5=_0x1675aa;_0x62533f['select'](),document['execCommand'](_0x595cd5(0x1ab)),alert('结果已复制到剪贴板');});});let _0x26b23c=![];_0x37de1e['addEventListener'](_0x15f2bb(0x18a),function(_0x58f1c9){_0x58f1c9['preventDefault']();if(_0x26b23c)return;_0x26b23c=!![],_0x42e8d5['classList']['add']('active'),setTimeout(function(){const _0x3eaacb=_0x1f25;window['location'][_0x3eaacb(0x1ae)]='工具导航.html';},0x3e8);}),_0x2a2a25('textToMorse'),window['setMode']=_0x2a2a25,window['textToMorse']=_0x1ea11c,window['morseToText']=_0x16cca3,window[_0x15f2bb(0x18e)]=_0x2e923f;}());
+(function(){'use strict';const _0x42fdc3=_0x5f0e;const _0x6222fb={'A':'.-','B':'-...','C':'-.-.','D':_0x42fdc3(0xa9),'E':'.','F':'..-.','G':'--.','H':_0x42fdc3(0x9d),'I':'..','J':'.---','K':_0x42fdc3(0x92),'L':'.-..','M':'--','N':'-.','O':'---','P':_0x42fdc3(0xad),'Q':_0x42fdc3(0x91),'R':'.-.','S':_0x42fdc3(0xb5),'T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':_0x42fdc3(0xb4),'Z':_0x42fdc3(0xac),'0':_0x42fdc3(0xa8),'1':'.----','2':_0x42fdc3(0x9c),'3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.','.':'.-.-.-',',':'--..--','?':'..--..','\x27':_0x42fdc3(0xaf),'!':_0x42fdc3(0xa2),'/':_0x42fdc3(0xae),'(':'-.--.',')':_0x42fdc3(0xab),'&':_0x42fdc3(0xa7),':':_0x42fdc3(0xb3),';':'-.-.-.','=':_0x42fdc3(0xaa),'+':'.-.-.','-':'-....-','_':'..--.-','\x22':_0x42fdc3(0xb6),'$':'...-..-','@':_0x42fdc3(0x9b),'\x20':'\x20'},_0xc0ccfe={};for(const _0x185ebf in _0x6222fb){_0x6222fb[_0x185ebf]!=='\x20'&&(_0xc0ccfe[_0x6222fb[_0x185ebf]]=_0x185ebf);}const _0x31be83=document['getElementById']('inputBox'),_0x473155=document['getElementById'](_0x42fdc3(0x94)),_0x3b9034=document['getElementById']('convertBtn'),_0x3f035d=document['getElementById']('clearBtn'),_0x677fd2=document[_0x42fdc3(0x9a)]('copyBtn'),_0x4683c8=document[_0x42fdc3(0x9a)]('backHome'),_0x40f3e5=document['getElementById'](_0x42fdc3(0x93)),_0x353679=document['getElementById'](_0x42fdc3(0xb7)),_0x58cd1c=document[_0x42fdc3(0x9a)]('outputLabel'),_0x3b1c86=document[_0x42fdc3(0x9a)](_0x42fdc3(0x95)),_0xcca72=document[_0x42fdc3(0x9a)](_0x42fdc3(0x90));let _0x1fd94a=_0x42fdc3(0xa6);function _0x21f0cf(_0x1f6e4e){const _0x268021=_0x42fdc3;_0x1fd94a=_0x1f6e4e,_0x1f6e4e===_0x268021(0xa6)?(_0x3b1c86[_0x268021(0xb2)][_0x268021(0x96)]('active'),_0xcca72[_0x268021(0xb2)]['remove']('active'),_0x353679['textContent']='输入文本（支持英文、数字、常用标点）',_0x58cd1c[_0x268021(0x9e)]='摩斯密码结果',_0x31be83['value']='',_0x473155['value']='',_0x31be83['placeholder']=_0x268021(0xa3)):(_0xcca72['classList'][_0x268021(0x96)](_0x268021(0xa5)),_0x3b1c86['classList']['remove']('active'),_0x353679[_0x268021(0x9e)]='输入摩斯密码（字母间空格，单词间用\x20/\x20分隔）',_0x58cd1c['textContent']=_0x268021(0x99),_0x31be83[_0x268021(0xa1)]='',_0x473155[_0x268021(0xa1)]='',_0x31be83['placeholder']='例如：....\x20.\x20.-..\x20.-..\x20---\x20/\x20.--\x20---\x20.-.\x20.-..\x20-..');}_0x3b1c86['addEventListener']('click',()=>_0x21f0cf(_0x42fdc3(0xa6))),_0xcca72['addEventListener']('click',()=>_0x21f0cf('morseToText'));function _0x5d222f(_0x5be17c){const _0x58688f=_0x5be17c['toUpperCase']();let _0x4f92bf=[];for(let _0x2a33b9=0x0;_0x2a33b9<_0x58688f['length'];_0x2a33b9++){const _0xbb3e44=_0x58688f[_0x2a33b9];if(_0xbb3e44==='\x20')_0x4f92bf['push']('/');else{if(_0x6222fb[_0xbb3e44]!==undefined&&_0x6222fb[_0xbb3e44]!=='\x20')_0x4f92bf['push'](_0x6222fb[_0xbb3e44]);else continue;}}return _0x4f92bf['join']('\x20');}function _0x5e3cfa(_0x50e770){const _0x2ef138=_0x42fdc3,_0x793f5=_0x50e770[_0x2ef138(0xb0)]()['split'](/\s*\/\s*/);let _0x4cab9c='';for(let _0x3d2904 of _0x793f5){const _0x3cbd90=_0x3d2904['trim']()['split'](/\s+/);for(let _0x5cdd14 of _0x3cbd90){if(_0x5cdd14==='')continue;_0xc0ccfe[_0x5cdd14]!==undefined?_0x4cab9c+=_0xc0ccfe[_0x5cdd14]:_0x4cab9c+='?';}_0x4cab9c+='\x20';}return _0x4cab9c['trim']();}function _0x1f149d(){const _0x1ee64b=_0x42fdc3,_0x2d1839=_0x31be83['value'];let _0x411e97='';_0x1fd94a==='textToMorse'?_0x411e97=_0x5d222f(_0x2d1839):_0x411e97=_0x5e3cfa(_0x2d1839);_0x473155['value']=_0x411e97;try{if(window['ZL']&&ZL['saveRecent'])ZL['saveRecent'](_0x1ee64b(0xa4),_0x2d1839+'\x20=>\x20'+_0x411e97);}catch(_0x324988){}if(window['ZL']&&ZL['bump'])ZL['bump']('morse_add',0x1);}_0x3b9034['addEventListener']('click',_0x1f149d),_0x3f035d['addEventListener']('click',()=>{const _0x4fe2d2=_0x42fdc3;_0x31be83['value']='',_0x473155[_0x4fe2d2(0xa1)]='';}),_0x677fd2['addEventListener']('click',()=>{const _0x14f289=_0x42fdc3;_0x473155[_0x14f289(0xa1)]&&navigator[_0x14f289(0x9f)]['writeText'](_0x473155['value'])['then'](()=>{alert('结果已复制到剪贴板');})['catch'](()=>{const _0x53b464=_0x14f289;_0x473155[_0x53b464(0xa0)](),document['execCommand']('copy'),alert('结果已复制到剪贴板');});});let _0x2168e4=![];_0x4683c8[_0x42fdc3(0x98)]('click',function(_0x1f00db){const _0x33d3b2=_0x42fdc3;_0x1f00db[_0x33d3b2(0xb8)]();if(_0x2168e4)return;_0x2168e4=!![],_0x40f3e5[_0x33d3b2(0xb2)][_0x33d3b2(0x96)]('active'),setTimeout(function(){const _0x50623e=_0x33d3b2;window[_0x50623e(0xb1)]['href']='工具导航.html';},0x3e8);}),_0x21f0cf('textToMorse'),window['setMode']=_0x21f0cf,window[_0x42fdc3(0xa6)]=_0x5d222f,window[_0x42fdc3(0x97)]=_0x5e3cfa,window['convert']=_0x1f149d;}());function _0x5f0e(_0x4e50ff,_0x1eccbe){_0x4e50ff=_0x4e50ff-0x90;const _0x5f0e12=_0x1ecc();let _0x88a20c=_0x5f0e12[_0x4e50ff];return _0x88a20c;}function _0x1ecc(){const _0x437914=['modeMorseToText','--.-','-.-','overlay','outputBox','modeTextToMorse','add','morseToText','addEventListener','文本结果','getElementById','.--.-.','..---','....','textContent','clipboard','select','value','-.-.--','例如：HELLO\x20WORLD','zl_recent_morse','active','textToMorse','.-...','-----','-..','-...-','-.--.-','--..','.--.','-..-.','.----.','trim','location','classList','---...','-.--','...','.-..-.','inputLabel','preventDefault'];_0x1ecc=function(){return _0x437914;};return _0x1ecc();}
 </script>
 </body>
 </html>

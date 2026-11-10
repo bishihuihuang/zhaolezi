@@ -31,7 +31,7 @@
         }
         [data-theme="light"] body { background: var(--bg); color: var(--txt); }
         [data-theme="zhaolezi"] body { background: var(--bg); color: var(--txt); }
-        [data-theme="light"] .wrap { box-shadow: 0 20px 60px rgba(99,102,241,.12); }
+        [data-theme="light"] .wrap { box-shadow: none; }
         .wrap {
             position: relative; z-index: 2;
             max-width: 520px; padding: 56px 40px;
@@ -40,7 +40,7 @@
             border-radius: 22px;
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-            box-shadow: 0 24px 70px rgba(0,0,0,.45);
+            box-shadow: none;
         }
         [data-theme="light"] .wrap { background: var(--card); border-color: var(--line); }
         .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .5; z-index: 1; pointer-events: none; }
@@ -49,7 +49,7 @@
         .orb.c { width: 240px; height: 240px; background: var(--brand-3); bottom: 10%; left: 30%; opacity: .28; }
         .emoji { font-size: 68px; line-height: 1; margin-bottom: 18px; }
         .code {
-            font-size: 84px; font-weight: 800; letter-spacing: -3px; margin: 0 0 6px;
+            font-size: 84px; font-weight: 600; letter-spacing: -3px; margin: 0 0 6px;
             background: linear-gradient(120deg, var(--brand-1), var(--brand-2) 55%, var(--brand-3));
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
@@ -59,10 +59,10 @@
             display: inline-block; padding: 13px 30px; border-radius: 999px; text-decoration: none;
             font-size: 15px; font-weight: 700; color: var(--on-brand);
             background: linear-gradient(120deg, var(--brand-1), var(--brand-2));
-            box-shadow: 0 10px 30px rgba(99,102,241,.45);
+            box-shadow: none;
             transition: transform .18s ease, box-shadow .18s ease;
         }
-        a.go:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(99,102,241,.55); }
+        a.go:hover { transform: translateY(-2px); box-shadow: none; }
         .tip { margin-top: 20px; font-size: 12px; opacity: .5; }
         .tip b { color: var(--brand-3); opacity: 1; }
         .foot {
@@ -180,6 +180,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -204,7 +205,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-(function(){var _0x21726b=0x5,_0x55477b=document['getElementById']('cnt'),_0x1b7967=setInterval(function(){_0x21726b--;if(_0x55477b)_0x55477b['textContent']=_0x21726b;_0x21726b<=0x0&&(clearInterval(_0x1b7967),location['replace']('创意-首页.html'));},0x3e8);}());
+function _0x137b(){var _0x202913=['创意-首页.html','replace'];_0x137b=function(){return _0x202913;};return _0x137b();}function _0x2611(_0xd277e8,_0x137bdf){_0xd277e8=_0xd277e8-0x6b;var _0x261153=_0x137b();var _0x175544=_0x261153[_0xd277e8];return _0x175544;}(function(){var _0x13a5dd=0x5,_0x2a00b8=document['getElementById']('cnt'),_0x3f2dde=setInterval(function(){var _0x19a413=_0x2611;_0x13a5dd--;if(_0x2a00b8)_0x2a00b8['textContent']=_0x13a5dd;_0x13a5dd<=0x0&&(clearInterval(_0x3f2dde),location[_0x19a413(0x6c)](_0x19a413(0x6b)));},0x3e8);}());
 </script>
 </body>
 </html>

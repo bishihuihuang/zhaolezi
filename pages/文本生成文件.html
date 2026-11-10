@@ -167,19 +167,7 @@
             justify-content: center;
             cursor: default;
         }
-        .title-area h1 {
-            font-size: 42px;
-            font-weight: 900;
-            letter-spacing: 6px;
-            text-align: center;
-            line-height: 1.4;
-            background: linear-gradient(90deg, var(--btn-txt), color-mix(in srgb, var(--btn-txt) 55%, transparent), var(--btn-txt));
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: titleShine 4s ease-in-out infinite;
-        }
+        .title-area h1 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
         @keyframes titleShine {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -248,7 +236,7 @@
             border: 3px solid var(--green);
             border-radius: 14px;
             user-select: none;
-            transition: all .3s ease;
+            transition: color .3s ease, background-color .3s ease, border-color .3s ease, opacity .3s ease, transform .3s ease, box-shadow .3s ease;
             letter-spacing: 2px;
         }
         .make-btn.active {
@@ -309,7 +297,7 @@
             border: 3px solid var(--glow);
             border-radius: 14px;
             user-select: none;
-            transition: all .3s ease;
+            transition: color .3s ease, background-color .3s ease, border-color .3s ease, opacity .3s ease, transform .3s ease, box-shadow .3s ease;
             text-align: center;
             padding: 10px;
             line-height: 1.4;
@@ -339,7 +327,7 @@
             border: 3px solid var(--red);
             border-radius: 14px;
             user-select: none;
-            transition: all .3s ease;
+            transition: color .3s ease, background-color .3s ease, border-color .3s ease, opacity .3s ease, transform .3s ease, box-shadow .3s ease;
             text-align: center;
             padding: 10px;
         }
@@ -411,7 +399,7 @@
             cursor: pointer;
             font-size: 15px;
             font-weight: 600;
-            transition: all .2s;
+            transition: color .2s, background-color .2s, border-color .2s, opacity .2s, transform .2s, box-shadow .2s;
         }
         .modal-btns button.ok {
             background: var(--green);
@@ -732,6 +720,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -740,23 +729,14 @@ html { -webkit-tap-highlight-color: transparent; }
 <body>
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">找乐子——纯文本一键生成txt文件</span></nav>
     <!-- 背景 -->
-    <div class="bg-animation">
-        <div class="bg-flow-1"></div>
-        <div class="bg-flow-2"></div>
-        <div class="bg-flow-3"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-        <div class="orb orb-5"></div>
-    </div>
-
-    <main id="zl-main">
+        <main id="zl-main">
         <div class="container">
             <div class="grid">
                 <!-- 标题区域 -->
                 <div class="cell title-area">
-                    <h1>找乐子——<br>优质工具箱</h1>
+                    <p class="ed-kicker">找乐子 · 工具</p>
+                    <h1>文本生成文件</h1>
+                    <p class="ed-lede">粘贴文字、命名、导出——把一段内容存成 txt 文件的小工具。</p>
                 </div>
 
                 <!-- 返回主页 -->
@@ -798,6 +778,15 @@ html { -webkit-tap-highlight-color: transparent; }
     </div>
 
     <!-- 转场覆盖层 -->
+    
+        <div class="ed-wrap">
+            <details class="ed-fold">
+                <summary>原理与技巧</summary>
+                <div class="ed-fold-body"><p>txt 是最朴素也最通用的文本格式：只有字符本身，没有样式，任何设备都能打开。保存时以 <strong>UTF-8</strong> 编码写出，中日英文混排都不会乱码。</p><p>Windows 记事本默认换行是 <strong>CRLF</strong>（\r\n），Linux/macOS 是 <strong>LF</strong>（\n）。跨系统传文件时个别老编辑器会出现整段错行，用现代编辑器都能自动识别。</p><p>命名建议：日期开头（2026-11-11-会议纪要.txt）天然按时间排序；避免用「新建文档」这类名字——三个月后你不会记得里面是什么。</p></div>
+            </details>
+            <footer class="ed-footer">找乐子 · 工具全程在本机运行，数据不出浏览器</footer>
+        </div>
+    
     <div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
@@ -807,7 +796,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-const _0x5ec5b1=_0x323c;let generatedFileName='',generatedContent='';const baseNames=['1899','1299','1599'];let usedNames=[];try{const stored=localStorage['getItem']('usedTxtNames');if(stored)usedNames=JSON['parse'](stored);}catch(_0x2aa455){usedNames=[];}const textInput=document['getElementById']('textInput'),makeBtn=document['getElementById'](_0x5ec5b1(0x134)),fileNameLabel=document[_0x5ec5b1(0x144)]('fileNameLabel'),fileContent=document[_0x5ec5b1(0x144)]('fileContent'),renameBtn=document[_0x5ec5b1(0x144)]('renameBtn'),exportBtn=document[_0x5ec5b1(0x144)](_0x5ec5b1(0x13c)),renameModal=document[_0x5ec5b1(0x144)]('renameModal'),renameInput=document[_0x5ec5b1(0x144)]('renameInput'),confirmRename=document['getElementById']('confirmRename'),cancelRename=document['getElementById']('cancelRename'),overlay=document[_0x5ec5b1(0x144)](_0x5ec5b1(0x148)),backHome=document['getElementById']('backHome');function updateMakeBtnState(){const _0x3661cd=_0x5ec5b1;textInput[_0x3661cd(0x140)]['trim']()===''?(makeBtn['classList']['remove'](_0x3661cd(0x138)),makeBtn[_0x3661cd(0x14a)]='请先输入文本',makeBtn['style'][_0x3661cd(0x141)]='none'):(makeBtn['classList']['add']('active'),makeBtn['textContent']='制作txt文件',makeBtn['style']['pointerEvents']=_0x3661cd(0x131));}textInput['addEventListener']('input',updateMakeBtnState),updateMakeBtnState();function generateFileName(){const _0x3b757e=_0x5ec5b1,_0x4d797c=[];for(const _0x593a26 of baseNames){!usedNames['includes'](_0x593a26+'.txt')&&_0x4d797c[_0x3b757e(0x142)](_0x593a26);}if(_0x4d797c[_0x3b757e(0x12c)]>0x0){const _0x453cae=_0x4d797c[Math[_0x3b757e(0x12b)](Math['random']()*_0x4d797c['length'])];return usedNames['push'](_0x453cae+'.txt'),localStorage[_0x3b757e(0x133)]('usedTxtNames',JSON['stringify'](usedNames)),_0x453cae+_0x3b757e(0x13b);}else{let _0x4d3133=0x1;while(!![]){const _0x5f1897=baseNames[0x0]+'_'+_0x4d3133+'.txt';if(!usedNames[_0x3b757e(0x13a)](_0x5f1897))return usedNames[_0x3b757e(0x142)](_0x5f1897),localStorage['setItem']('usedTxtNames',JSON[_0x3b757e(0x146)](usedNames)),_0x5f1897;_0x4d3133++;}}}function makeTxtFile(){const _0x269c55=_0x5ec5b1,_0x386b42=textInput[_0x269c55(0x140)]['trim']();if(_0x386b42==='')return;generatedFileName=generateFileName(),generatedContent=_0x386b42,fileNameLabel['textContent']=generatedFileName,fileContent[_0x269c55(0x14a)]=generatedContent,renameBtn[_0x269c55(0x12d)]['add'](_0x269c55(0x138)),renameBtn[_0x269c55(0x137)][_0x269c55(0x141)]='auto',renameBtn[_0x269c55(0x14a)]='改名',exportBtn['classList']['add'](_0x269c55(0x138)),exportBtn['style']['pointerEvents']='auto';if(window['ZL']&&ZL[_0x269c55(0x145)])ZL['bump'](_0x269c55(0x135),0x1);}function _0x1cfe(){const _0x5f2731=['click','floor','length','classList','add','focus','addEventListener','auto','trim','setItem','makeBtn','txt_add','preventDefault','style','active','revokeObjectURL','includes','.txt','exportBtn','remove','href','show','value','pointerEvents','push','test','getElementById','bump','stringify','none','overlay','contains','textContent'];_0x1cfe=function(){return _0x5f2731;};return _0x1cfe();}function _0x323c(_0xe5d959,_0x1cfe6c){_0xe5d959=_0xe5d959-0x12a;const _0x323c88=_0x1cfe();let _0x4d8ad6=_0x323c88[_0xe5d959];return _0x4d8ad6;}makeBtn['addEventListener']('click',function(){const _0x1f21cc=_0x5ec5b1;makeBtn[_0x1f21cc(0x12d)][_0x1f21cc(0x149)](_0x1f21cc(0x138))&&makeTxtFile();});function exportTxt(){const _0x1f5021=_0x5ec5b1;if(generatedContent===''||generatedFileName==='')return;const _0x23d301=new Blob([generatedContent],{'type':'text/plain;charset=utf-8'}),_0x42b265=URL['createObjectURL'](_0x23d301),_0x235a25=document['createElement']('a');_0x235a25[_0x1f5021(0x13e)]=_0x42b265,_0x235a25['download']=generatedFileName,document['body']['appendChild'](_0x235a25),_0x235a25['click'](),document['body']['removeChild'](_0x235a25),URL[_0x1f5021(0x139)](_0x42b265);}exportBtn[_0x5ec5b1(0x130)]('click',function(){const _0x7119=_0x5ec5b1;exportBtn['classList'][_0x7119(0x149)]('active')&&exportTxt();}),renameBtn[_0x5ec5b1(0x130)]('click',function(){const _0x4d501d=_0x5ec5b1;if(!renameBtn[_0x4d501d(0x12d)]['contains']('active'))return;const _0x427e10=generatedFileName['replace'](/\.txt$/i,'');renameInput['value']=_0x427e10,renameModal['classList'][_0x4d501d(0x12e)]('show'),renameInput[_0x4d501d(0x12f)]();}),confirmRename['addEventListener']('click',function(){const _0x43b85d=_0x5ec5b1;let _0x164375=renameInput['value'][_0x43b85d(0x132)]();if(_0x164375===''){alert('文件名不能为空！');return;}_0x164375=_0x164375['replace'](/\.txt$/i,'');if(!/^[\w\u4e00-\u9fa5-]+$/i[_0x43b85d(0x143)](_0x164375)){alert('文件名只能包含中文、字母、数字、下划线或中划线！');return;}generatedFileName=_0x164375+'.txt',fileNameLabel[_0x43b85d(0x14a)]=generatedFileName,renameModal['classList']['remove'](_0x43b85d(0x13f));}),cancelRename['addEventListener']('click',function(){const _0x982b5b=_0x5ec5b1;renameModal[_0x982b5b(0x12d)][_0x982b5b(0x13d)]('show');}),renameModal['addEventListener'](_0x5ec5b1(0x12a),function(_0x437903){const _0xb3fc75=_0x5ec5b1;_0x437903['target']===renameModal&&renameModal['classList']['remove'](_0xb3fc75(0x13f));}),backHome['addEventListener'](_0x5ec5b1(0x12a),function(_0x1b93e2){const _0x2ffaa3=_0x5ec5b1;_0x1b93e2[_0x2ffaa3(0x136)](),overlay['classList'][_0x2ffaa3(0x12e)]('active'),setTimeout(function(){const _0x48be83=_0x2ffaa3;window['location'][_0x48be83(0x13e)]='工具导航.html';},0x3e8);}),fileNameLabel['textContent']='',fileContent['textContent']='',renameBtn[_0x5ec5b1(0x12d)]['remove'](_0x5ec5b1(0x138)),renameBtn[_0x5ec5b1(0x137)]['pointerEvents']='none',exportBtn['classList']['remove']('active'),exportBtn['style']['pointerEvents']=_0x5ec5b1(0x147);
+const _0x522e40=_0x4b62;let generatedFileName='',generatedContent='';function _0x256d(){const _0x3ecb91=['1899','add','getElementById','download','confirmRename','textContent','renameModal','auto','body','pointerEvents','trim','contains','active','includes','replace','click','exportBtn','setItem','stringify','制作txt文件','show','preventDefault','.txt','test','location','remove','parse','txt_add','none','focus','文件名只能包含中文、字母、数字、下划线或中划线！','addEventListener','backHome','style','classList','length','text/plain;charset=utf-8','usedTxtNames','href'];_0x256d=function(){return _0x3ecb91;};return _0x256d();}const baseNames=[_0x522e40(0x6d),'1299','1599'];let usedNames=[];try{const stored=localStorage['getItem']('usedTxtNames');if(stored)usedNames=JSON[_0x522e40(0x87)](stored);}catch(_0x3bc98a){usedNames=[];}const textInput=document['getElementById']('textInput'),makeBtn=document['getElementById']('makeBtn'),fileNameLabel=document[_0x522e40(0x6f)]('fileNameLabel'),fileContent=document[_0x522e40(0x6f)]('fileContent'),renameBtn=document['getElementById']('renameBtn'),exportBtn=document[_0x522e40(0x6f)](_0x522e40(0x7d)),renameModal=document['getElementById'](_0x522e40(0x73)),renameInput=document['getElementById']('renameInput'),confirmRename=document['getElementById'](_0x522e40(0x71)),cancelRename=document[_0x522e40(0x6f)]('cancelRename'),overlay=document[_0x522e40(0x6f)]('overlay'),backHome=document[_0x522e40(0x6f)](_0x522e40(0x8d));function updateMakeBtnState(){const _0x5aa990=_0x522e40;textInput['value']['trim']()===''?(makeBtn['classList']['remove']('active'),makeBtn[_0x5aa990(0x72)]='请先输入文本',makeBtn[_0x5aa990(0x8e)][_0x5aa990(0x76)]='none'):(makeBtn['classList']['add'](_0x5aa990(0x79)),makeBtn['textContent']=_0x5aa990(0x80),makeBtn['style']['pointerEvents']='auto');}textInput['addEventListener']('input',updateMakeBtnState),updateMakeBtnState();function _0x4b62(_0x12b46f,_0x256ded){_0x12b46f=_0x12b46f-0x6d;const _0x4b62fc=_0x256d();let _0x5abf58=_0x4b62fc[_0x12b46f];return _0x5abf58;}function generateFileName(){const _0x2ca0a3=_0x522e40,_0x26dda9=[];for(const _0x23f998 of baseNames){!usedNames[_0x2ca0a3(0x7a)](_0x23f998+'.txt')&&_0x26dda9['push'](_0x23f998);}if(_0x26dda9['length']>0x0){const _0x452c56=_0x26dda9[Math['floor'](Math['random']()*_0x26dda9[_0x2ca0a3(0x90)])];return usedNames['push'](_0x452c56+'.txt'),localStorage['setItem'](_0x2ca0a3(0x92),JSON['stringify'](usedNames)),_0x452c56+_0x2ca0a3(0x83);}else{let _0xf19d68=0x1;while(!![]){const _0x590508=baseNames[0x0]+'_'+_0xf19d68+'.txt';if(!usedNames['includes'](_0x590508))return usedNames['push'](_0x590508),localStorage[_0x2ca0a3(0x7e)]('usedTxtNames',JSON[_0x2ca0a3(0x7f)](usedNames)),_0x590508;_0xf19d68++;}}}function makeTxtFile(){const _0xa113d6=_0x522e40,_0x49414d=textInput['value']['trim']();if(_0x49414d==='')return;generatedFileName=generateFileName(),generatedContent=_0x49414d,fileNameLabel['textContent']=generatedFileName,fileContent['textContent']=generatedContent,renameBtn[_0xa113d6(0x8f)]['add']('active'),renameBtn[_0xa113d6(0x8e)]['pointerEvents']='auto',renameBtn['textContent']='改名',exportBtn['classList'][_0xa113d6(0x6e)]('active'),exportBtn['style']['pointerEvents']=_0xa113d6(0x74);if(window['ZL']&&ZL['bump'])ZL['bump'](_0xa113d6(0x88),0x1);}makeBtn['addEventListener'](_0x522e40(0x7c),function(){makeBtn['classList']['contains']('active')&&makeTxtFile();});function exportTxt(){const _0x25b680=_0x522e40;if(generatedContent===''||generatedFileName==='')return;const _0x3c0003=new Blob([generatedContent],{'type':_0x25b680(0x91)}),_0x24ddce=URL['createObjectURL'](_0x3c0003),_0x4ea33d=document['createElement']('a');_0x4ea33d['href']=_0x24ddce,_0x4ea33d[_0x25b680(0x70)]=generatedFileName,document[_0x25b680(0x75)]['appendChild'](_0x4ea33d),_0x4ea33d[_0x25b680(0x7c)](),document['body']['removeChild'](_0x4ea33d),URL['revokeObjectURL'](_0x24ddce);}exportBtn['addEventListener']('click',function(){const _0x1a2b86=_0x522e40;exportBtn[_0x1a2b86(0x8f)][_0x1a2b86(0x78)]('active')&&exportTxt();}),renameBtn['addEventListener']('click',function(){const _0x54259d=_0x522e40;if(!renameBtn[_0x54259d(0x8f)]['contains']('active'))return;const _0x5350b3=generatedFileName[_0x54259d(0x7b)](/\.txt$/i,'');renameInput['value']=_0x5350b3,renameModal[_0x54259d(0x8f)][_0x54259d(0x6e)](_0x54259d(0x81)),renameInput[_0x54259d(0x8a)]();}),confirmRename[_0x522e40(0x8c)](_0x522e40(0x7c),function(){const _0x16b93f=_0x522e40;let _0x425fe2=renameInput['value'][_0x16b93f(0x77)]();if(_0x425fe2===''){alert('文件名不能为空！');return;}_0x425fe2=_0x425fe2['replace'](/\.txt$/i,'');if(!/^[\w\u4e00-\u9fa5-]+$/i[_0x16b93f(0x84)](_0x425fe2)){alert(_0x16b93f(0x8b));return;}generatedFileName=_0x425fe2+'.txt',fileNameLabel['textContent']=generatedFileName,renameModal['classList'][_0x16b93f(0x86)]('show');}),cancelRename[_0x522e40(0x8c)](_0x522e40(0x7c),function(){renameModal['classList']['remove']('show');}),renameModal[_0x522e40(0x8c)]('click',function(_0x55f414){const _0x4f312d=_0x522e40;_0x55f414['target']===renameModal&&renameModal['classList'][_0x4f312d(0x86)]('show');}),backHome['addEventListener'](_0x522e40(0x7c),function(_0x447141){const _0x3f1e6c=_0x522e40;_0x447141[_0x3f1e6c(0x82)](),overlay['classList']['add']('active'),setTimeout(function(){const _0x8580e7=_0x3f1e6c;window[_0x8580e7(0x85)][_0x8580e7(0x93)]='工具导航.html';},0x3e8);}),fileNameLabel['textContent']='',fileContent[_0x522e40(0x72)]='',renameBtn['classList']['remove']('active'),renameBtn['style']['pointerEvents']='none',exportBtn['classList'][_0x522e40(0x86)]('active'),exportBtn['style']['pointerEvents']=_0x522e40(0x89);
 </script>
 </body>
 </html>

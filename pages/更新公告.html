@@ -657,6 +657,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -666,21 +667,13 @@ html { -webkit-tap-highlight-color: transparent; }
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">找乐子——更新公告</span></nav>
 
     <!-- 背景流光层 -->
-    <div class="bg-animation">
-        <div class="bg-flow-1"></div>
-        <div class="bg-flow-2"></div>
-        <div class="bg-flow-3"></div>
-        <!-- 悬浮球 -->
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-        <div class="orb orb-5"></div>
-    </div>
-
-    <!-- 头部 -->
+        <!-- 头部 -->
     <header>
-        <h1>找乐子——更新公告</h1>
+        <p class="ed-kicker">找乐子 · 站务</p>
+    </header>    <header>
+        <h1>更新公告</h1>
+    </header>    <header>
+        <p class="ed-lede">找乐子的版本轨迹：新工具、新修复、新想法，都记在这里。</p>
     </header>
 
     <!-- 主体内容 -->
@@ -691,7 +684,14 @@ html { -webkit-tap-highlight-color: transparent; }
     </main>
 
     <!-- 跳转覆盖层 -->
-    <div class="overlay" id="overlay">
+        <div class="ed-wrap">
+        <details class="ed-fold">
+            <summary>版本号怎么读</summary>
+            <div class="ed-fold-body"><p>版本号按「大版本.功能.修复」递增：改动最大的数字，代表结构或内容层面的更新；中位数代表新增功能；末位代表问题修复。</p><p>公告采用「最新在上」的双行规则插入：每次更新都会标注日期与要点，方便回溯某次变化。</p></div>
+        </details>
+    </div>
+
+<div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
             <div class="loader-text">找乐子～</div>

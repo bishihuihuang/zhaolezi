@@ -5,141 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>验证 - 看看作业</title>
     <style>
-        :root {
-            --bg: #0f1729;
-            --card: rgba(255,255,255,0.08);
-            --txt: #e8e8e8;
-            --gold-1: #d4a843;
-            --gold-2: #b08d3b;
-            --line: rgba(212,168,67,0.25);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html, body { width: 100%; height: 100%; overflow: hidden; }
+        /* 作业验证 · 编辑风：一扇安静的纸面之门 */
+        html, body { height: 100%; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: var(--bg);
-            color: var(--txt);
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-        }
-        /* 背景流动层（与 41.html 同风格） */
-        .bg-flow-1, .bg-flow-2, .bg-flow-3 {
-            position: fixed; inset: 0; pointer-events: none; z-index: 0;
-        }
-        .bg-flow-1 {
-            background: radial-gradient(ellipse at 20% 20%, rgba(212,168,67,0.12) 0%, transparent 60%);
-            animation: bgMove1 20s ease-in-out infinite alternate;
-        }
-        .bg-flow-2 {
-            background: radial-gradient(ellipse at 80% 80%, rgba(17,153,142,0.10) 0%, transparent 55%);
-            animation: bgMove2 25s ease-in-out infinite alternate;
-        }
-        .bg-flow-3 {
-            background: radial-gradient(ellipse at 50% 50%, rgba(56,239,125,0.06) 0%, transparent 50%);
-            animation: bgMove3 18s ease-in-out infinite alternate;
-        }
-        @keyframes bgMove1 { from { transform: translate(-30px,-30px) scale(1); } to { transform: translate(30px,30px) scale(1.1); } }
-        @keyframes bgMove2 { from { transform: translate(20px,-20px) scale(1); } to { transform: translate(-20px,20px) scale(1.15); } }
-        @keyframes bgMove3 { from { transform: translate(-10px,10px) scale(1); } to { transform: translate(10px,-10px) scale(1.05); } }
-
-        /* 验证卡片 */
-        .verify-wrap {
-            position: relative; z-index: 1;
-            width: 90%; max-width: 360px;
-            padding: 36px 28px 32px;
-            border-radius: 20px;
-            background: var(--card);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--line);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
-            text-align: center;
-        }
-        .verify-icon {
-            width: 64px; height: 64px; margin: 0 auto 18px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; color: #1a1a2e;
-            box-shadow: 0 4px 16px rgba(212,168,67,0.3);
-        }
-        .verify-title {
-            font-size: 20px; font-weight: 700; letter-spacing: 2px;
-            margin-bottom: 6px; color: #fff;
-        }
-        .verify-sub {
-            font-size: 13px; color: rgba(255,255,255,0.5);
-            margin-bottom: 24px;
-        }
-        .input-wrap {
-            position: relative; margin-bottom: 16px;
-        }
-        .input-wrap input {
-            width: 100%;
-            padding: 14px 16px;
-            font-size: 16px; letter-spacing: 3px;
-            color: #fff;
-            background: rgba(0,0,0,0.25);
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            outline: none;
-            transition: border-color .3s, box-shadow .3s;
-            -webkit-appearance: none;
-        }
-        .input-wrap input:focus {
-            border-color: var(--gold-1);
-            box-shadow: 0 0 0 3px rgba(212,168,67,0.15);
-        }
-        .input-wrap input::placeholder {
-            color: rgba(255,255,255,0.25);
-            letter-spacing: 1px;
-        }
-        .verify-btn {
-            width: 100%;
-            padding: 14px 0;
-            font-size: 16px; font-weight: 600; letter-spacing: 4px;
-            color: #1a1a2e;
-            background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
-            border: none; border-radius: 12px;
-            cursor: pointer;
-            transition: transform .15s, box-shadow .3s, opacity .3s;
-            box-shadow: 0 4px 16px rgba(212,168,67,0.25);
             -webkit-tap-highlight-color: transparent;
         }
-        .verify-btn:active { transform: scale(0.97); }
-        .verify-btn:hover { box-shadow: 0 6px 24px rgba(212,168,67,0.35); }
-        .verify-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .verify-hint {
-            margin-top: 14px;
-            font-size: 13px;
-            min-height: 20px;
-            transition: color .3s;
+        .verify-wrap {
+            width: 90%;
+            max-width: 360px;
+            text-align: center;
         }
-        .verify-hint.ok { color: #38ef7d; }
-        .verify-hint.err { color: #ff6b6b; }
+        .verify-glyph {
+            font-size: 26px;
+            margin-bottom: 18px;
+            opacity: .75;
+        }
+        h1 {
+            margin: 0 0 6px;
+        }
+        .verify-sub {
+            font-size: 14px;
+            color: var(--dim);
+            margin-bottom: 30px;
+        }
+
+        .input-wrap { margin-bottom: 14px; }
+        .input-wrap input {
+            width: 100%;
+            padding: 13px 16px;
+            font-size: 16px;
+            letter-spacing: 3px;
+            text-align: center;
+            -webkit-appearance: none;
+        }
+        .input-wrap input::placeholder { letter-spacing: 1px; }
+
+        .verify-btn {
+            width: 100%;
+            padding: 13px 0;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 6px;
+            text-indent: 6px;
+            color: var(--btn-txt, #fff);
+            background: var(--blue, #667eea);
+            border: none;
+            border-radius: var(--ed-radius, 6px);
+            cursor: pointer;
+            transition: filter .18s ease, opacity .3s ease;
+        }
+        .verify-btn:hover { filter: brightness(1.08); }
+        .verify-btn:active { transform: translateY(1px); }
+        .verify-btn:disabled { opacity: .5; cursor: not-allowed; filter: none; }
+
+        .verify-hint { margin-top: 16px; font-size: 13px; min-height: 20px; color: var(--dim); }
+        .verify-hint.ok { color: var(--ok, var(--green, #11998e)); }
+        .verify-hint.err { color: var(--danger, var(--red, #fb7185)); }
 
         /* 加载转圈 */
         .loader {
-            display: inline-block; width: 16px; height: 16px;
-            border: 2px solid rgba(26,26,46,0.3);
-            border-top-color: #1a1a2e;
+            display: inline-block; width: 14px; height: 14px;
+            border: 2px solid color-mix(in srgb, var(--btn-txt, #fff) 35%, transparent);
+            border-top-color: var(--btn-txt, #fff);
             border-radius: 50%;
             animation: spin .6s linear infinite;
-            vertical-align: middle; margin-left: 6px;
+            vertical-align: middle; margin-left: 8px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* 适配微信内置浏览器与手机 */
-        @media (max-width: 480px) {
-            .verify-wrap { padding: 30px 22px 26px; border-radius: 16px; }
-            .verify-icon { width: 56px; height: 56px; font-size: 24px; }
-            .verify-title { font-size: 18px; }
-            .input-wrap input { font-size: 15px; padding: 12px 14px; }
-            .verify-btn { font-size: 15px; padding: 12px 0; }
-        }
     </style>
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <script data-no-obf>try{var _zt=localStorage.getItem("zl_theme");if(_zt!=="zhaolezi")_zt="zhaolezi";document.documentElement.setAttribute("data-theme",_zt);}catch(e){try{document.documentElement.setAttribute("data-theme","zhaolezi");}catch(_){}}</script>
@@ -249,6 +186,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -256,36 +194,34 @@ html { -webkit-tap-highlight-color: transparent; }
 </head>
 <body>
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">验证 - 看看作业</span></nav>
-    <div class="bg-flow-1" aria-hidden="true"></div>
-    <div class="bg-flow-2" aria-hidden="true"></div>
-    <div class="bg-flow-3" aria-hidden="true"></div>
+    <div role="main" id="zl-main" aria-label="密码验证">
+        <div class="verify-wrap">
+            <div class="verify-glyph" aria-hidden="true">🔒</div>
+            <h1>看看作业</h1>
+            <p class="verify-sub">此区域仅限授权访问，请输入访问密码</p>
 
-    <div role="main" id="zl-main" class="verify-wrap" role="dialog" aria-label="密码验证">
-        <div class="verify-icon" aria-hidden="true">🔒</div>
-        <h1 class="verify-title">看看作业</h1>
-        <p class="verify-sub">请输入访问密码</p>
+            <div class="input-wrap">
+                <input
+                    type="password"
+                    id="pwdInput"
+                    placeholder="请输入密码"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    maxlength="20"
+                    aria-label="密码输入框"
+                />
+            </div>
 
-        <div class="input-wrap">
-            <input
-                type="password"
-                id="pwdInput"
-                placeholder="请输入密码"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-                maxlength="20"
-                aria-label="密码输入框"
-            />
+            <button class="verify-btn" id="verifyBtn" type="button">进入</button>
+            <p class="verify-hint" id="verifyHint" aria-live="polite"></p>
         </div>
-
-        <button class="verify-btn" id="verifyBtn" type="button">进入</button>
-        <p class="verify-hint" id="verifyHint" aria-live="polite"></p>
     </div>
 
     <script>
 /*ZL-OBF-V2*/
-function _0x3ab7(){var _0x476654=['getElementById','click','验证通过，正在进入…','value','err','pwdInput','location','test','verifyBtn','请输入密码','keydown'];_0x3ab7=function(){return _0x476654;};return _0x3ab7();}function _0x2c70(_0x4e8dc8,_0x3ab7bc){_0x4e8dc8=_0x4e8dc8-0x184;var _0x2c70b2=_0x3ab7();var _0x3ee3db=_0x2c70b2[_0x4e8dc8];return _0x3ee3db;}(function(){var _0xfc590e=_0x2c70,_0x32a3c0=['403124901','403124——901'],_0x1a2dc4='看看作业.html';(function(){var _0x29d20e=_0x2c70,_0x74799e=location['search']['match'](/[?&]go=([^&]+)/),_0x1e444e=_0x74799e?decodeURIComponent(_0x74799e[0x1]):'';if(/^[\w\u4e00-\u9fa5]+\.html$/[_0x29d20e(0x18b)](_0x1e444e))_0x1a2dc4=_0x1e444e;}());var _0x31d107=document['getElementById'](_0xfc590e(0x189)),_0x21b05c=document[_0xfc590e(0x184)](_0xfc590e(0x18c)),_0x5dad18=document[_0xfc590e(0x184)]('verifyHint');function _0x40542f(_0x3e8e33,_0x159641){_0x5dad18['textContent']=_0x3e8e33,_0x5dad18['className']='verify-hint\x20'+(_0x159641||'');}function _0x26bfb4(){var _0x24946a=_0xfc590e,_0xdd4af2=_0x31d107[_0x24946a(0x187)]['trim']();if(!_0xdd4af2){_0x40542f(_0x24946a(0x18d),'err'),_0x31d107['focus']();return;}if(_0x32a3c0['indexOf'](_0xdd4af2)===-0x1){_0x40542f('密码错误，请重新输入',_0x24946a(0x188)),_0x31d107['value']='',_0x31d107['focus']();return;}_0x40542f(_0x24946a(0x186),'ok'),_0x21b05c['disabled']=!![],_0x21b05c['innerHTML']='进入<span\x20class=\x22loader\x22></span>',setTimeout(function(){var _0x42be81=_0x24946a;window[_0x42be81(0x18a)]['href']=_0x1a2dc4;},0x258);}_0x21b05c['addEventListener'](_0xfc590e(0x185),_0x26bfb4),_0x31d107['addEventListener'](_0xfc590e(0x18e),function(_0x358e31){if(_0x358e31['key']==='Enter')_0x26bfb4();}),setTimeout(function(){_0x31d107['focus']();},0x12c);}());
+function _0x3269(){var _0x573bf4=['keydown','Enter','403124901','location','403124——901','verifyHint','focus','进入<span\x20class=\x22loader\x22></span>','getElementById','textContent','innerHTML','click','trim','test','indexOf','err'];_0x3269=function(){return _0x573bf4;};return _0x3269();}function _0x140f(_0x28cf00,_0x326965){_0x28cf00=_0x28cf00-0xe9;var _0x140f74=_0x3269();var _0x51e4c0=_0x140f74[_0x28cf00];return _0x51e4c0;}(function(){var _0x14ecae=_0x140f,_0x4099a8=[_0x14ecae(0xeb),_0x14ecae(0xed)],_0x351060='看看作业.html';(function(){var _0x2dc261=_0x14ecae,_0x27ed8e=location['search']['match'](/[?&]go=([^&]+)/),_0x39cf12=_0x27ed8e?decodeURIComponent(_0x27ed8e[0x1]):'';if(/^[\w\u4e00-\u9fa5]+\.html$/[_0x2dc261(0xf6)](_0x39cf12))_0x351060=_0x39cf12;}());var _0x3cb4d4=document[_0x14ecae(0xf1)]('pwdInput'),_0x4fca8e=document['getElementById']('verifyBtn'),_0x457a2d=document[_0x14ecae(0xf1)](_0x14ecae(0xee));function _0xcec01(_0xf45565,_0x1f4a31){var _0x4ba71f=_0x14ecae;_0x457a2d[_0x4ba71f(0xf2)]=_0xf45565,_0x457a2d['className']='verify-hint\x20'+(_0x1f4a31||'');}function _0x2af984(){var _0x12b12d=_0x14ecae,_0x3e56be=_0x3cb4d4['value'][_0x12b12d(0xf5)]();if(!_0x3e56be){_0xcec01('请输入密码',_0x12b12d(0xf8)),_0x3cb4d4[_0x12b12d(0xef)]();return;}if(_0x4099a8[_0x12b12d(0xf7)](_0x3e56be)===-0x1){_0xcec01('密码错误，请重新输入',_0x12b12d(0xf8)),_0x3cb4d4['value']='',_0x3cb4d4[_0x12b12d(0xef)]();return;}_0xcec01('验证通过，正在进入…','ok'),_0x4fca8e['disabled']=!![],_0x4fca8e[_0x12b12d(0xf3)]=_0x12b12d(0xf0),setTimeout(function(){var _0x3f8a1a=_0x12b12d;window[_0x3f8a1a(0xec)]['href']=_0x351060;},0x258);}_0x4fca8e['addEventListener'](_0x14ecae(0xf4),_0x2af984),_0x3cb4d4['addEventListener'](_0x14ecae(0xe9),function(_0x37242d){var _0xb0f221=_0x14ecae;if(_0x37242d['key']===_0xb0f221(0xea))_0x2af984();}),setTimeout(function(){var _0x1063fb=_0x14ecae;_0x3cb4d4[_0x1063fb(0xef)]();},0x12c);}());
 </script>
 </body>
 </html>

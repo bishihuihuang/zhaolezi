@@ -103,7 +103,7 @@ body {
     border: 1px solid var(--line);
     padding: 7px 18px;
     border-radius: 50px;              /* 胶囊形 */
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     z-index: 20;
     /* 【优化】确保触摸目标尺寸不小于44×44 */
     display: inline-flex;
@@ -500,6 +500,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -510,10 +511,10 @@ html { -webkit-tap-highlight-color: transparent; }
 <h1 class="sr-only" data-auto>作者介绍 - 找乐子</h1>
 
 
-<!-- 背景漂浮光球 -->
-<div class="bg-orb orb1"></div>
-<div class="bg-orb orb2"></div>
-<div class="bg-orb orb3"></div>
+
+
+
+
 
 <!-- 中央白色正方形卡片 -->
 <div role="main" id="zl-main" class="card">
@@ -529,6 +530,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <!-- 作者署名 -->
     <div class="author-name">作者：碧世辉煌</div>
+    <p class="ed-lede" style="margin:10px auto 0;max-width:34ch;">找乐子的作者页——把工具、游戏和课程凑在一起的一块自留地。</p>
     <div class="author-deco">
         <span class="line"></span>
         <span class="diamond"></span>
@@ -550,9 +552,16 @@ html { -webkit-tap-highlight-color: transparent; }
 
 <script>
 /*ZL-OBF-V2*/
-(function(){const _0x126d9a=_0x59fc;let _0x3f53d7=![];function _0x2b3eed(_0x57e69d){const _0x36b6ad=_0x59fc;if(_0x3f53d7)return;_0x3f53d7=!![],document[_0x36b6ad(0x179)]('transitionMask')['classList'][_0x36b6ad(0x17d)]('show'),setTimeout(function(){window['location']['href']=_0x57e69d;},0x3e8);}let _0x9862c1=document[_0x126d9a(0x179)]('backLink');_0x9862c1['addEventListener']('click',function(_0x3f6c59){const _0x411dd1=_0x126d9a;_0x3f6c59[_0x411dd1(0x17c)](),_0x2b3eed(_0x411dd1(0x17e));}),document['addEventListener']('keydown',function(_0x38924e){const _0x1aeed8=_0x126d9a;if(_0x38924e['key']==='Escape'){let _0x1bd6a8=document['getElementById']('transitionMask');_0x1bd6a8['classList']['contains'](_0x1aeed8(0x17b))&&(_0x1bd6a8[_0x1aeed8(0x17a)]['remove'](_0x1aeed8(0x17b)),_0x3f53d7=![]);}}),window['showTransition']=_0x2b3eed;}());function _0x59fc(_0x11622b,_0x50f8de){_0x11622b=_0x11622b-0x179;const _0x59fc25=_0x50f8();let _0x80a388=_0x59fc25[_0x11622b];return _0x80a388;}function _0x50f8(){const _0x1d5300=['getElementById','classList','show','preventDefault','add','授权确认.html'];_0x50f8=function(){return _0x1d5300;};return _0x50f8();}
+function _0x31eb(_0x57e98d,_0x1d1119){_0x57e98d=_0x57e98d-0xc8;const _0x31ebda=_0x1d11();let _0x4a3ed8=_0x31ebda[_0x57e98d];return _0x4a3ed8;}function _0x1d11(){const _0x543557=['key','preventDefault','授权确认.html','getElementById','show'];_0x1d11=function(){return _0x543557;};return _0x1d11();}(function(){const _0x551c98=_0x31eb;let _0x44f1d0=![];function _0x5382b3(_0x4226fe){if(_0x44f1d0)return;_0x44f1d0=!![],document['getElementById']('transitionMask')['classList']['add']('show'),setTimeout(function(){window['location']['href']=_0x4226fe;},0x3e8);}let _0x2144fe=document[_0x551c98(0xcb)]('backLink');_0x2144fe['addEventListener']('click',function(_0x6cb675){const _0x15e2c6=_0x551c98;_0x6cb675[_0x15e2c6(0xc9)](),_0x5382b3(_0x15e2c6(0xca));}),document['addEventListener']('keydown',function(_0xeb1ca6){const _0x3b7a8d=_0x551c98;if(_0xeb1ca6[_0x3b7a8d(0xc8)]==='Escape'){let _0x3704f9=document['getElementById']('transitionMask');_0x3704f9['classList']['contains']('show')&&(_0x3704f9['classList']['remove'](_0x3b7a8d(0xcc)),_0x44f1d0=![]);}}),window['showTransition']=_0x5382b3;}());
 </script>
 
+
+    <div class="ed-wrap">
+        <details class="ed-fold">
+            <summary>关于本站</summary>
+            <div class="ed-fold-body"><p>找乐子由几部分组成：<strong>工具箱</strong>（十几个只在本机运行的小工具）、<strong>小游戏</strong>（扫雷、棋局、打字、记忆）、<strong>看看作业</strong>（密码访问的作业区）、<strong>现代化课程</strong>（从零开始的计算机与网络课）、<strong>创意引擎</strong> 与 <strong>AI 提示词库</strong>。</p><p>本站没有账号系统、没有广告、不做数据收集——你用过的记录只存在你自己的浏览器里。</p><p>遇到问题或想提建议，欢迎去「反馈渠道」留言；如果觉得有用，「赞赏支持」里可以请作者喝杯咖啡。</p></div>
+        </details>
+    </div>
 
 <a class="home-fab" id="homeFab" href="娱乐游戏.html" aria-label="返回主程序" title="返回主程序">🏠</a>
 <div class="home-overlay" id="homeOverlay" role="dialog" aria-modal="true" aria-label="页面跳转中">
@@ -560,7 +569,7 @@ html { -webkit-tap-highlight-color: transparent; }
 </div>
 <script>
 /*ZL-OBF-V2*/
-function _0x28f0(_0x345ec7,_0x4fa4fd){_0x345ec7=_0x345ec7-0x6c;var _0x28f037=_0x4fa4();var _0x36527a=_0x28f037[_0x345ec7];return _0x36527a;}function _0x4fa4(){var _0x81616d=['add','href','getAttribute','classList','addEventListener','getElementById','homeOverlay'];_0x4fa4=function(){return _0x81616d;};return _0x4fa4();}(function(){var _0x292ddf=_0x28f0,_0x332c8c=document[_0x292ddf(0x71)]('homeFab'),_0x27dde2=document['getElementById'](_0x292ddf(0x72));if(!_0x332c8c||!_0x27dde2)return;var _0x3779ac=![];_0x332c8c[_0x292ddf(0x70)]('click',function(_0x1921f1){var _0x28edf5=_0x292ddf;_0x1921f1['preventDefault']();if(_0x3779ac)return;_0x3779ac=!![],_0x27dde2['classList'][_0x28edf5(0x6c)]('show'),setTimeout(function(){var _0x22db9d=_0x28edf5;window['location'][_0x22db9d(0x6d)]=_0x332c8c[_0x22db9d(0x6e)]('href');},0x4b0);}),document[_0x292ddf(0x70)]('keydown',function(_0x206773){var _0x46e2c3=_0x292ddf;_0x206773['key']==='Escape'&&_0x27dde2[_0x46e2c3(0x6f)]['contains']('show')&&(_0x27dde2[_0x46e2c3(0x6f)]['remove']('show'),_0x3779ac=![]);});}());
+function _0xa3e2(_0x40e3ad,_0x8c6a65){_0x40e3ad=_0x40e3ad-0x186;var _0xa3e228=_0x8c6a();var _0x2f364f=_0xa3e228[_0x40e3ad];return _0x2f364f;}function _0x8c6a(){var _0x1c3fd7=['Escape','show','click','classList','homeFab','remove'];_0x8c6a=function(){return _0x1c3fd7;};return _0x8c6a();}(function(){var _0x551c31=_0xa3e2,_0xb995fd=document['getElementById'](_0x551c31(0x18a)),_0x7d83e0=document['getElementById']('homeOverlay');if(!_0xb995fd||!_0x7d83e0)return;var _0x388c0c=![];_0xb995fd['addEventListener'](_0x551c31(0x188),function(_0x2c7434){var _0x225310=_0x551c31;_0x2c7434['preventDefault']();if(_0x388c0c)return;_0x388c0c=!![],_0x7d83e0[_0x225310(0x189)]['add'](_0x225310(0x187)),setTimeout(function(){window['location']['href']=_0xb995fd['getAttribute']('href');},0x4b0);}),document['addEventListener']('keydown',function(_0x50b8aa){var _0x7ca1bb=_0x551c31;_0x50b8aa['key']===_0x7ca1bb(0x186)&&_0x7d83e0['classList']['contains']('show')&&(_0x7d83e0['classList'][_0x7ca1bb(0x18b)](_0x7ca1bb(0x187)),_0x388c0c=![]);});}());
 </script>
 </body>
 </html>

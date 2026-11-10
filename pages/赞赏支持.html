@@ -157,17 +157,7 @@
             border-color: var(--gold);
             cursor: default;
         }
-        .title-area h1 {
-            font-size: 46px;
-            font-weight: 900;
-            letter-spacing: 6px;
-            background: linear-gradient(90deg, var(--btn-txt), color-mix(in srgb, var(--btn-txt) 55%, transparent), var(--btn-txt));
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: titleShine 4s ease-in-out infinite;
-        }
+        .title-area h1 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
         .title-area p {
             font-size: 22px;
             color: color-mix(in srgb, var(--btn-txt) 92%, transparent);
@@ -341,9 +331,7 @@
                 width: 200px;
                 height: 200px;
             }
-            .title-area h1 {
-                font-size: 28px;
-            }
+            .title-area h1 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
         }
 
         /* ===== 转场覆盖层（与index一致） ===== */
@@ -652,6 +640,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -679,8 +668,9 @@ html { -webkit-tap-highlight-color: transparent; }
 
                 <!-- 标题区（1-2行，1-4列） -->
                 <div class="cell title-area">
-                    <h1>找乐子</h1>
-                    <p>优质工具库</p>
+                    <p class="ed-kicker">找乐子 · 站务</p>
+                    <h1>赞赏支持</h1>
+                    <p class="ed-lede">如果找乐子帮到了你，可以请作者喝杯咖啡——每一杯都算数。</p>
                 </div>
 
                 <!-- 返回主页（1-2行，5-6列） -->
@@ -756,6 +746,15 @@ html { -webkit-tap-highlight-color: transparent; }
     </main>
 
     <!-- 转场覆盖层 -->
+    
+        <div class="ed-wrap">
+            <details class="ed-fold">
+                <summary>原理与技巧</summary>
+                <div class="ed-fold-body"></div>
+            </details>
+            <footer class="ed-footer">找乐子 · 工具全程在本机运行，数据不出浏览器</footer>
+        </div>
+    
     <div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
@@ -765,7 +764,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-function _0x491c(){const _0x5d55aa=['sup_open','addEventListener','href','娱乐游戏.html','click','log','getElementById','找乐子——优质工具库已加载'];_0x491c=function(){return _0x5d55aa;};return _0x491c();}const _0x21fecf=_0x1397;document['getElementById']('backHome')[_0x21fecf(0x1ef)](_0x21fecf(0x1f2),function(_0x153fe8){const _0x6ce648=_0x21fecf;_0x153fe8['preventDefault']();const _0x1ba2df=document[_0x6ce648(0x1f4)]('overlay');_0x1ba2df['classList']['add']('active'),setTimeout(function(){const _0xb0a6b5=_0x6ce648;window['location'][_0xb0a6b5(0x1f0)]=(document['referrer']||'')['indexOf'](_0xb0a6b5(0x1f1))>=0x0?'娱乐游戏.html':'../index.html';},0x3e8);}),console[_0x21fecf(0x1f3)](_0x21fecf(0x1f5));function _0x1397(_0x2f2a1c,_0x491c44){_0x2f2a1c=_0x2f2a1c-0x1ee;const _0x13979d=_0x491c();let _0x579b23=_0x13979d[_0x2f2a1c];return _0x579b23;}if(window['ZL']&&ZL['bump'])ZL['bump'](_0x21fecf(0x1ee),0x1);
+const _0x1e0014=_0x4ee0;function _0x59d2(){const _0x4b1e5f=['href','log','location','getElementById','referrer','bump','sup_open'];_0x59d2=function(){return _0x4b1e5f;};return _0x59d2();}document[_0x1e0014(0x16d)]('backHome')['addEventListener']('click',function(_0x3a7600){_0x3a7600['preventDefault']();const _0x2e7342=document['getElementById']('overlay');_0x2e7342['classList']['add']('active'),setTimeout(function(){const _0x55716a=_0x4ee0;window[_0x55716a(0x16c)][_0x55716a(0x16a)]=(document[_0x55716a(0x16e)]||'')['indexOf']('娱乐游戏.html')>=0x0?'娱乐游戏.html':'../index.html';},0x3e8);}),console[_0x1e0014(0x16b)]('找乐子——优质工具库已加载');function _0x4ee0(_0xca7e14,_0x59d23a){_0xca7e14=_0xca7e14-0x16a;const _0x4ee0e1=_0x59d2();let _0x844c42=_0x4ee0e1[_0xca7e14];return _0x844c42;}if(window['ZL']&&ZL[_0x1e0014(0x16f)])ZL['bump'](_0x1e0014(0x170),0x1);
 </script>
 </body>
 </html>

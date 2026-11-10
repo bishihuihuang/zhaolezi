@@ -1,0 +1,398 @@
+/* ============================================================
+   找乐子 · 留白编辑风设计系统 ed.css   V4.0
+   ------------------------------------------------------------
+   理念：大道至简——一眼通透，高级而极简；留白即装饰。
+   层级：主题令牌(common.css) → 站点家族(xd-/cy-common.css)
+         → 页面样式 → 本层（构建注入，位于 </head> 前，最后生效）。
+   本层只做三件事：
+     1) 定义 --ed-* 语义令牌：全部派生自 --zl-*/主题变量，
+        零新增硬编码色；非首页页面全量可用；
+     2) 给元素级排版与控件以「纸面默认值」——元素选择器
+        (0,0,1) 只兜底，任何页面类/id 样式 (0,1,0+) 永远赢过本层；
+     3) 撤掉装饰噪音：流光背景层、光斑、orb 一律静默，
+        版面交还给留白、字阶与发丝线。
+   约束：index.html 不加载本层（构建对首页跳过注入），首页布局不受影响。
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. 语义令牌（颜色全部上游派生；几何/字号为本层自有）
+   ------------------------------------------------------------ */
+:root {
+    /* 纸与墨 */
+    --ed-bg:        var(--zl-bg, var(--bg, #f6f7fd));
+    --ed-surface:   var(--zl-card, var(--card, rgba(255, 255, 255, .85)));
+    --ed-surface-2: var(--zl-card-2, var(--card-2, #ffffff));
+    --ed-ink:       var(--zl-text, var(--txt, #23263a));
+    --ed-muted:     var(--zl-muted, var(--dim, #6b7086));
+    --ed-faint:     color-mix(in srgb, var(--ed-ink, #23263a) 52%, transparent);
+    --ed-hairline:  var(--zl-border, var(--line, rgba(110, 110, 180, .20)));
+    --ed-hairline-strong: color-mix(in srgb, var(--ed-ink, #23263a) 26%, transparent);
+    /* 强调：主题蓝只做焦点与关键强调 */
+    --ed-accent:    var(--zl-link, var(--blue, #667eea));
+    --ed-on-accent: var(--zl-btn-text, #ffffff);
+    --ed-ok:        var(--zl-ok, var(--green, #11998e));
+    --ed-danger:    var(--zl-danger, var(--red, #fb7185));
+    --ed-tint:      color-mix(in srgb, var(--ed-accent, #667eea) 8%, transparent);
+    --ed-wash:      color-mix(in srgb, var(--ed-ink, #23263a) 4%, transparent);
+
+    /* 几何 */
+    --ed-radius:    6px;
+    --ed-radius-lg: 10px;
+    --ed-wrap:      min(92%, 1040px);
+    --ed-measure:   68ch;
+
+    /* 留白音阶（4 的倍律，疏可走马） */
+    --ed-s1: 4px;  --ed-s2: 8px;   --ed-s3: 12px; --ed-s4: 20px;
+    --ed-s5: 32px; --ed-s6: 48px;  --ed-s7: 80px; --ed-s8: 128px;
+
+    /* 字阶：大而轻的标题，从容的正文 */
+    --ed-fz-display: clamp(30px, 5.4vw, 46px);
+    --ed-fz-h2:      clamp(21px, 3vw, 26px);
+    --ed-fz-h3:      18px;
+    --ed-fz-body:    16px;
+    --ed-fz-sm:      13.5px;
+    --ed-fz-xs:      12.5px;
+    --ed-lh:         1.85;
+    --ed-font-mono:  ui-monospace, "Cascadia Code", Consolas, "JetBrains Mono", monospace;
+}
+
+/* ------------------------------------------------------------
+   2. 元素级纸面默认值（兜底层：页面类/id 一律优先）
+   ------------------------------------------------------------ */
+:root:not([data-theme="none"]) body {
+    color: var(--ed-ink);
+}
+
+h1 {
+    font-size: var(--ed-fz-display);
+    font-weight: 300;
+    line-height: 1.22;
+    letter-spacing: .015em;
+    margin: var(--ed-s6) 0 var(--ed-s3);
+}
+h2 {
+    font-size: var(--ed-fz-h2);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: .02em;
+    margin: var(--ed-s6) 0 var(--ed-s3);
+}
+h3 {
+    font-size: var(--ed-fz-h3);
+    font-weight: 500;
+    line-height: 1.5;
+    margin: var(--ed-s5) 0 var(--ed-s2);
+}
+h4 { font-weight: 500; margin: var(--ed-s4) 0 var(--ed-s2); }
+h1 + p, h2 + p, h3 + p { margin-top: 0; }
+
+p, ul, ol {
+    line-height: var(--ed-lh);
+    letter-spacing: .01em;
+}
+li { line-height: inherit; }
+li + li { margin-top: var(--ed-s2); }
+ul, ol { padding-left: 1.4em; }
+
+strong, b { font-weight: 600; }
+small { font-size: var(--ed-fz-sm); }
+
+a {
+    color: var(--ed-accent);
+    text-decoration: none;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+}
+a:hover { text-decoration: underline; }
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--ed-hairline);
+    margin: var(--ed-s6) 0;
+}
+
+::selection { background: color-mix(in srgb, var(--ed-accent) 20%, transparent); }
+::placeholder { color: var(--ed-faint); }
+
+/* ------------------------------------------------------------
+   3. 控件：安静的表单，唯一的重音留给主按键
+   ------------------------------------------------------------ */
+button, .btn {
+    font: inherit;
+    color: var(--ed-ink);
+    background: var(--ed-surface-2);
+    border: 1px solid var(--ed-hairline-strong);
+    border-radius: var(--ed-radius);
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: border-color .18s ease, background-color .18s ease, color .18s ease;
+}
+button:hover, .btn:hover { border-color: var(--ed-ink); }
+button:active { transform: translateY(1px); }
+
+input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
+select, textarea {
+    font: inherit;
+    color: var(--ed-ink);
+    background: var(--ed-surface-2);
+    border: 1px solid var(--ed-hairline);
+    border-radius: var(--ed-radius);
+    padding: 9px 12px;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):focus,
+select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--ed-accent);
+    box-shadow: 0 0 0 3px var(--ed-tint);
+}
+input[type="range"] { accent-color: var(--ed-accent); }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--ed-accent); }
+textarea { line-height: var(--ed-lh); }
+
+/* 数字场合一律等宽对齐（结果区、计数、时间） */
+output, .ed-num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------
+   4. 代码、键盘与表格：发丝线世界
+   ------------------------------------------------------------ */
+code, kbd, pre, samp {
+    font-family: var(--ed-font-mono);
+    font-size: .92em;
+}
+code {
+    background: var(--ed-wash);
+    border-radius: 4px;
+    padding: .15em .45em;
+}
+kbd {
+    background: var(--ed-surface-2);
+    border: 1px solid var(--ed-hairline);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-size: var(--ed-fz-xs);
+}
+pre {
+    background: var(--ed-wash);
+    border-radius: var(--ed-radius);
+    padding: var(--ed-s4);
+    overflow-x: auto;
+    line-height: 1.7;
+}
+pre code { background: none; padding: 0; }
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--ed-fz-sm);
+    line-height: 1.7;
+}
+th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--ed-muted);
+    font-size: var(--ed-fz-xs);
+    letter-spacing: .08em;
+    padding: var(--ed-s2) var(--ed-s3);
+    border-bottom: 1px solid var(--ed-hairline-strong);
+}
+td {
+    padding: var(--ed-s3);
+    border-bottom: 1px solid var(--ed-hairline);
+}
+
+/* ------------------------------------------------------------
+   5. 装饰静默：流光、光斑、orb 全部退场，还给纸面留白
+   ------------------------------------------------------------ */
+.bg-animation, .bg-ambient,
+.bg-flow-1, .bg-flow-2, .bg-flow-3,
+.orb, .orb-1, .orb-2, .orb-3, .orb-4, .orb-5,
+.bg-orb, .bg-orb-1, .bg-orb-2, .bg-orb-3, .orb1, .orb2, .orb3 {
+    display: none !important;
+}
+
+/* ------------------------------------------------------------
+   6. 找乐子页面共享词汇层（.container/.card 等类名在 43 页同义）
+      容器不再是「悬浮玻璃卡」：纸面直接承载，留白分隔。
+   ------------------------------------------------------------ */
+.container {
+    width: min(94%, 1040px);
+    margin-inline: auto;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+}
+.card, .box {
+    background: none;
+    border: 0;
+    border-top: 1px solid var(--ed-hairline);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 20px 2px;
+}
+/* 旧版渐变大标题横幅 → 编辑风页头：退掉渐变与阴影，交还给字阶 */
+.title-area {
+    background: none !important;
+    box-shadow: none !important;
+    border-radius: 0;
+    border: 0;
+    min-height: auto;
+    padding: 0;
+    animation: none !important;
+    cursor: default;
+}
+.title-area::before, .title-area::after { content: none !important; }
+.title-area h2 {
+    background: none !important;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    -webkit-text-fill-color: var(--ed-ink);
+    color: var(--ed-ink);
+    text-shadow: none !important;
+    animation: none !important;
+    letter-spacing: .015em;
+    font-weight: 300;
+    text-align: left;
+}
+.back-area {
+    background: none !important;
+    box-shadow: none !important;
+    border: 1px solid var(--ed-hairline-strong);
+    border-radius: var(--ed-radius);
+    color: var(--ed-ink);
+    text-decoration: none;
+    transition: border-color .18s ease;
+}
+.back-area:hover { border-color: var(--ed-ink); transform: none; }
+
+/* ------------------------------------------------------------
+   7. 布局原语 .ed-*（页面重设计时按需取用）
+   ------------------------------------------------------------ */
+.ed-wrap {
+    width: var(--ed-wrap);
+    margin-inline: auto;
+    padding-inline: clamp(18px, 4vw, 40px);
+}
+.ed-measure { max-width: var(--ed-measure); }
+
+/* 页头：眉题 + 大标题 + 一句导语 */
+.ed-kicker {
+    font-size: var(--ed-fz-xs);
+    font-weight: 500;
+    letter-spacing: .18em;
+    color: var(--ed-muted);
+    margin: var(--ed-s6) 0 var(--ed-s2);
+}
+.ed-lede {
+    font-size: 17px;
+    color: var(--ed-muted);
+    max-width: 56ch;
+    margin: 0 0 var(--ed-s5);
+}
+
+/* 卡片：只是「留白围出来的一块地」，无投影不玻璃 */
+.ed-card {
+    background: var(--ed-surface);
+    border: 1px solid var(--ed-hairline);
+    border-radius: var(--ed-radius-lg);
+    padding: var(--ed-s5);
+}
+.ed-card--flat { background: none; border: 0; padding: 0; }
+
+/* 按键三态：主（蓝实心）/ 次（发丝线）/ 文（纯文字） */
+.ed-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ed-s2);
+    font: inherit;
+    font-size: 15px;
+    line-height: 1;
+    border-radius: var(--ed-radius);
+    padding: 12px 22px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: filter .18s ease, border-color .18s ease, color .18s ease, background-color .18s ease;
+}
+.ed-btn:active { transform: translateY(1px); }
+.ed-btn--primary {
+    background: var(--ed-accent);
+    color: var(--ed-on-accent);
+}
+.ed-btn--primary:hover { filter: brightness(1.08); text-decoration: none; }
+.ed-btn--ghost {
+    background: transparent;
+    border-color: var(--ed-hairline-strong);
+    color: var(--ed-ink);
+}
+.ed-btn--ghost:hover { border-color: var(--ed-ink); text-decoration: none; }
+.ed-btn--text {
+    background: none;
+    border: 0;
+    padding: 12px 6px;
+    color: var(--ed-accent);
+}
+.ed-btn--text:hover { text-decoration: underline; }
+.ed-btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* 表单行：标签在上，控件满宽 */
+.ed-field { display: grid; gap: var(--ed-s2); margin-bottom: var(--ed-s4); }
+.ed-field > label {
+    font-size: var(--ed-fz-sm);
+    font-weight: 500;
+    color: var(--ed-muted);
+    letter-spacing: .04em;
+}
+.ed-field > input, .ed-field > select, .ed-field > textarea { width: 100%; }
+
+/* 索引列表：条目即目录，行间发丝线 */
+.ed-list { list-style: none; padding: 0; margin: 0; }
+.ed-list > li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ed-s4);
+    padding: var(--ed-s4) 0;
+    border-bottom: 1px solid var(--ed-hairline);
+    margin: 0;
+}
+.ed-list > li:first-child { border-top: 1px solid var(--ed-hairline); }
+
+/* 折叠深读：页面主体保持极简，深度内容收进一折 */
+details.ed-fold { border-top: 1px solid var(--ed-hairline); }
+details.ed-fold summary {
+    cursor: pointer;
+    padding: var(--ed-s4) 0;
+    font-weight: 500;
+    color: var(--ed-ink);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+details.ed-fold summary::-webkit-details-marker { display: none; }
+details.ed-fold summary::after {
+    content: "+";
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--ed-faint);
+    line-height: 1;
+}
+details.ed-fold[open] summary::after { content: "−"; }
+details.ed-fold > .ed-fold-body {
+    padding: 0 0 var(--ed-s5);
+    max-width: var(--ed-measure);
+}
+
+/* 页脚：一行发丝线 + 一行安静的小字 */
+.ed-footer {
+    margin-top: var(--ed-s8);
+    padding: var(--ed-s5) 0 var(--ed-s6);
+    border-top: 1px solid var(--ed-hairline);
+    font-size: var(--ed-fz-sm);
+    color: var(--ed-faint);
+}

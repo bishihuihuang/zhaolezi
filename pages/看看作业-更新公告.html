@@ -227,15 +227,7 @@
             box-shadow: 0 18px 60px color-mix(in srgb, var(--gold-2) 50%, transparent), 0 0 50px color-mix(in srgb, var(--gold-2) 25%, transparent);
         }
 
-        .title-area h2 {
-            font-size: 46px;
-            font-weight: 900;
-            text-align: center;
-            line-height: 1.3;
-            letter-spacing: 5px;
-            color: var(--btn-txt);
-            text-shadow: 2px 2px 10px rgba(0,0,0,.3);
-        }
+        .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
 
         @keyframes titleGradient {
             0% { background-position: 0% 50%; }
@@ -437,7 +429,7 @@
             .container { width: 92%; padding: 14px; }
             .grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
             .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 100px; }
-            .title-area h2 { font-size: 32px; letter-spacing: 3px; }
+            .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
             .announcement-card { grid-column: 1 / -1; }
         }
 
@@ -449,7 +441,7 @@
             .container { width: 94%; padding: 12px; max-height: none; border-radius: 18px; }
             .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 4px; }
             .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 80px; border-radius: 16px; }
-            .title-area h2 { font-size: 26px; letter-spacing: 2px; }
+            .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
             .back-area { font-size: 20px; }
             .announcement-card { grid-column: 1 / -1; padding: 14px; border-radius: 14px; }
             .announcement-card .date { font-size: 13px; padding: 3px 10px; }
@@ -468,7 +460,7 @@
             .container { width: 95%; padding: 10px; }
             .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 70px; }
-            .title-area h2 { font-size: 24px; letter-spacing: 1px; }
+            .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
             .back-area { font-size: 18px; }
             .announcement-card { grid-column: 1 / -1; padding: 12px; }
             .announcement-card .content { font-size: 14px; line-height: 1.7; }
@@ -485,7 +477,7 @@
             .container { width: 96%; padding: 8px; border-radius: 14px; }
             .grid { grid-template-columns: 1fr; gap: 6px; padding: 2px; }
             .title-area, .back-area { grid-column: 1 / -1; grid-row: auto; min-height: 60px; border-radius: 12px; }
-            .title-area h2 { font-size: 20px; letter-spacing: 1px; }
+            .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
             .back-area { font-size: 16px; }
             .announcement-card { grid-column: 1 / -1; padding: 10px; border-radius: 12px; }
             .announcement-card .date { font-size: 12px; padding: 2px 8px; margin-bottom: 8px; }
@@ -633,6 +625,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -642,21 +635,11 @@ html { -webkit-tap-highlight-color: transparent; }
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">看看作业——更新公告</span></nav>
 
     <!-- 背景流光层 -->
-    <div class="bg-animation">
-        <div class="bg-flow-1"></div>
-        <div class="bg-flow-2"></div>
-        <div class="bg-flow-3"></div>
-        <!-- 悬浮球 -->
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-        <div class="orb orb-5"></div>
-    </div>
-
-    <!-- 头部 -->
+        <!-- 头部 -->
     <header>
-        <h1>看看作业——更新公告</h1>
+        <p class="ed-kicker">看看作业 · 站务</p>
+        <h1>更新公告</h1>
+        <p class="ed-lede">作业区的版本轨迹：内容更新与修复记录。</p>
     </header>
 
     <!-- 主体内容 -->
@@ -667,6 +650,15 @@ html { -webkit-tap-highlight-color: transparent; }
     </main>
 
     <!-- 跳转覆盖层 -->
+    
+        <div class="ed-wrap">
+            <details class="ed-fold">
+                <summary>原理与技巧</summary>
+                <div class="ed-fold-body"><p>作业区公告只记录作业内容与访问方式的变化；全站层面的更新见「找乐子 · 更新公告」。</p></div>
+            </details>
+            <footer class="ed-footer">找乐子 · 工具全程在本机运行，数据不出浏览器</footer>
+        </div>
+    
     <div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
@@ -676,7 +668,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-function _0x3ff2(_0x39be55,_0x3d129f){_0x39be55=_0x39be55-0xf3;const _0x3ff215=_0x3d12();let _0x18609f=_0x3ff215[_0x39be55];return _0x18609f;}const _0x28b048=_0x3ff2,announcementsConfig=[{'date':'2026-10-10','content':'更新第5周作业'},{'date':_0x28b048(0xf4),'content':'更新了以实玛利的作文'},{'date':'2026-10-03','content':'优化手机版体验'},{'date':_0x28b048(0x103),'content':'更新了碧世辉煌的征文《官逼民反的另一种真相》'},{'date':_0x28b048(0x103),'content':_0x28b048(0x102)},{'date':_0x28b048(0x103),'content':'反馈渠道更新'},{'date':'2026-10-01','content':'看看作业网页启动'}];function createTitleArea(){const _0x49285e=_0x28b048,_0x48b768=document['createElement']('div');return _0x48b768[_0x49285e(0xff)]='title-area',_0x48b768[_0x49285e(0xf7)]='<h2>看看作业——更新公告</h2>',_0x48b768;}function createBackArea(){const _0x10a900=_0x28b048,_0x275a9f=document[_0x10a900(0x107)]('a');return _0x275a9f[_0x10a900(0xff)]='back-area',_0x275a9f['href']='看看作业.html',_0x275a9f[_0x10a900(0xfc)]=_0x10a900(0x100),_0x275a9f['setAttribute'](_0x10a900(0x10a),_0x10a900(0x100)),_0x275a9f['title']='返回主页',_0x275a9f['addEventListener']('click',function(_0x542f50){const _0x430393=_0x10a900;_0x542f50[_0x430393(0x105)](),showLoadingOverlay('看看作业.html');}),_0x275a9f;}function createAnnouncementCard(_0x4038fb,_0x376ba3){const _0x56a618=_0x28b048,_0x4b4e7c=document['createElement'](_0x56a618(0x109));_0x4b4e7c[_0x56a618(0xff)]='announcement-card',_0x4b4e7c[_0x56a618(0x104)]['animationDelay']=0.1+_0x376ba3*0.1+'s';const _0x48f63d=document[_0x56a618(0x107)]('span');_0x48f63d['className']='date',_0x48f63d['textContent']=_0x4038fb[_0x56a618(0xf3)];const _0x38b34d=document['createElement']('div');return _0x38b34d[_0x56a618(0xff)]='content',_0x38b34d[_0x56a618(0xfc)]=_0x4038fb['content'],_0x4b4e7c['appendChild'](_0x48f63d),_0x4b4e7c[_0x56a618(0xf8)](_0x38b34d),_0x4b4e7c;}function renderAnnouncements(){const _0x4f766e=_0x28b048,_0x38ab7e=document[_0x4f766e(0xfd)]('grid');_0x38ab7e['innerHTML']='',_0x38ab7e['appendChild'](createTitleArea()),_0x38ab7e[_0x4f766e(0xf8)](createBackArea());const _0x54825c=[...announcementsConfig]['sort']((_0x4aca29,_0x4f4127)=>new Date(_0x4f4127[_0x4f766e(0xf3)])-new Date(_0x4aca29['date']));_0x54825c[_0x4f766e(0xf6)]((_0x3724ed,_0x2ba8c5)=>{_0x38ab7e['appendChild'](createAnnouncementCard(_0x3724ed,_0x2ba8c5));});}let overlayTimer=null;function showLoadingOverlay(_0x525d68){const _0x541a54=_0x28b048,_0x50aa95=document['getElementById'](_0x541a54(0x108));_0x50aa95['classList'][_0x541a54(0x106)](_0x541a54(0xfb)),overlayTimer&&clearTimeout(overlayTimer),overlayTimer=setTimeout(()=>{const _0xd7ddd5=_0x541a54;_0x50aa95['classList']['remove']('active'),_0x525d68&&_0x525d68!=='#'&&(window['location'][_0xd7ddd5(0xf9)]=_0x525d68);},0x3e8);}document[_0x28b048(0xf5)](_0x28b048(0xfe),function(){const _0xc0eca0=_0x28b048;renderAnnouncements(),window[_0xc0eca0(0x101)]=function(_0x567fc8){const _0x429451=_0xc0eca0;_0x567fc8&&Array['isArray'](_0x567fc8)&&(announcementsConfig['length']=0x0,announcementsConfig[_0x429451(0xfa)](..._0x567fc8)),renderAnnouncements();};});function _0x3d12(){const _0x51a67a=['date','2026-10-03','addEventListener','forEach','innerHTML','appendChild','href','push','active','textContent','getElementById','DOMContentLoaded','className','返回主页','refreshAnnouncements','更新国庆多科作业','2026-10-02','style','preventDefault','add','createElement','overlay','div','aria-label'];_0x3d12=function(){return _0x51a67a;};return _0x3d12();}
+const _0x45c8a3=_0x32c0,announcementsConfig=[{'date':'2026-10-10','content':_0x45c8a3(0xe3)},{'date':'2026-10-03','content':'更新了以实玛利的作文'},{'date':'2026-10-03','content':'优化手机版体验'},{'date':_0x45c8a3(0xee),'content':_0x45c8a3(0xe2)},{'date':'2026-10-02','content':'更新国庆多科作业'},{'date':_0x45c8a3(0xee),'content':'反馈渠道更新'},{'date':'2026-10-01','content':'看看作业网页启动'}];function createTitleArea(){const _0x27ad39=_0x45c8a3,_0x1d530a=document['createElement'](_0x27ad39(0xd7));return _0x1d530a['className']=_0x27ad39(0xec),_0x1d530a['innerHTML']=_0x27ad39(0xd8),_0x1d530a;}function createBackArea(){const _0x50db3d=_0x45c8a3,_0x6c5f96=document['createElement']('a');return _0x6c5f96['className']='back-area',_0x6c5f96[_0x50db3d(0xe0)]='看看作业.html',_0x6c5f96['textContent']=_0x50db3d(0xdb),_0x6c5f96[_0x50db3d(0xde)]('aria-label','返回主页'),_0x6c5f96['title']=_0x50db3d(0xdb),_0x6c5f96[_0x50db3d(0xdc)]('click',function(_0x1a1ee9){_0x1a1ee9['preventDefault'](),showLoadingOverlay('看看作业.html');}),_0x6c5f96;}function createAnnouncementCard(_0x190521,_0x44eb53){const _0x52cbb3=_0x45c8a3,_0x595afe=document['createElement']('div');_0x595afe['className']='announcement-card',_0x595afe[_0x52cbb3(0xd6)][_0x52cbb3(0xdd)]=0.1+_0x44eb53*0.1+'s';const _0x5c4245=document['createElement']('span');_0x5c4245[_0x52cbb3(0xed)]='date',_0x5c4245[_0x52cbb3(0xda)]=_0x190521['date'];const _0x2faa82=document[_0x52cbb3(0xdf)](_0x52cbb3(0xd7));return _0x2faa82[_0x52cbb3(0xed)]=_0x52cbb3(0xe1),_0x2faa82['textContent']=_0x190521['content'],_0x595afe['appendChild'](_0x5c4245),_0x595afe['appendChild'](_0x2faa82),_0x595afe;}function renderAnnouncements(){const _0x3338f7=_0x45c8a3,_0x2af9b5=document[_0x3338f7(0xe8)]('grid');_0x2af9b5['innerHTML']='',_0x2af9b5[_0x3338f7(0xe5)](createTitleArea()),_0x2af9b5['appendChild'](createBackArea());const _0x1d10f7=[...announcementsConfig]['sort']((_0x4b3b4e,_0x359a2f)=>new Date(_0x359a2f['date'])-new Date(_0x4b3b4e[_0x3338f7(0xe4)]));_0x1d10f7['forEach']((_0x5c66ce,_0x52deae)=>{_0x2af9b5['appendChild'](createAnnouncementCard(_0x5c66ce,_0x52deae));});}let overlayTimer=null;function showLoadingOverlay(_0x186d71){const _0x46aa9e=_0x45c8a3,_0x3b6ecf=document['getElementById'](_0x46aa9e(0xea));_0x3b6ecf[_0x46aa9e(0xe7)]['add'](_0x46aa9e(0xe9)),overlayTimer&&clearTimeout(overlayTimer),overlayTimer=setTimeout(()=>{const _0xe0a757=_0x46aa9e;_0x3b6ecf['classList'][_0xe0a757(0xd9)]('active'),_0x186d71&&_0x186d71!=='#'&&(window['location'][_0xe0a757(0xe0)]=_0x186d71);},0x3e8);}document['addEventListener']('DOMContentLoaded',function(){const _0x235537=_0x45c8a3;renderAnnouncements(),window[_0x235537(0xe6)]=function(_0x49a7b7){const _0x2438be=_0x235537;_0x49a7b7&&Array[_0x2438be(0xeb)](_0x49a7b7)&&(announcementsConfig['length']=0x0,announcementsConfig['push'](..._0x49a7b7)),renderAnnouncements();};});function _0x32c0(_0x2e99b9,_0x558172){_0x2e99b9=_0x2e99b9-0xd6;const _0x32c0cc=_0x5581();let _0x18036b=_0x32c0cc[_0x2e99b9];return _0x18036b;}function _0x5581(){const _0x3e7901=['style','div','<h2>看看作业——更新公告</h2>','remove','textContent','返回主页','addEventListener','animationDelay','setAttribute','createElement','href','content','更新了碧世辉煌的征文《官逼民反的另一种真相》','更新第5周作业','date','appendChild','refreshAnnouncements','classList','getElementById','active','overlay','isArray','title-area','className','2026-10-02'];_0x5581=function(){return _0x3e7901;};return _0x5581();}
 </script>
 </body>
 </html>

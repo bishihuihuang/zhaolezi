@@ -214,17 +214,7 @@
             transform: translateY(-6px) scale(1.01);
             box-shadow: 0 18px 60px rgba(0, 0, 0, .3), 0 0 50px color-mix(in srgb, var(--glow) 25%, transparent);
         }
-        .title-area h2 {
-            font-size: 42px;
-            font-weight: 900;
-            letter-spacing: 4px;
-            background: var(--title-grad);
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: titleShine 4s ease-in-out infinite;
-        }
+        .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
         @keyframes titleShine {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -295,7 +285,7 @@
             border-radius: 10px;
             font-size: 15px;
             background: var(--card);
-            transition: all .3s;
+            transition: color .3s, background-color .3s, border-color .3s, opacity .3s, transform .3s, box-shadow .3s;
             outline: none;
         }
         .field-group select:focus,
@@ -441,7 +431,7 @@
         }
         @media (max-width: 480px) {
             .container { padding: 10px; }
-            .title-area h2 { font-size: 28px; }
+            .title-area h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 300; letter-spacing: .015em; line-height: 1.25; text-align: left; }
             .back-area { font-size: 16px; }
             .field-group { gap: 4px; }
             .field-group label { font-size: 12px; }
@@ -643,6 +633,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
 </style>
 
+<link rel="stylesheet" href="../assets/css/ed.css">
 <script defer src="../assets/js/common.js"></script>
 <script defer src="../assets/js/theme.js"></script>
 <script defer src="../assets/js/zl-features.js"></script>
@@ -650,8 +641,6 @@ html { -webkit-tap-highlight-color: transparent; }
 </head>
 <body>
 <a class="zl-skip-link" href="#zl-main">跳到主要内容</a><nav class="zl-crumb sr-only" aria-label="面包屑"><a href="../index.html">找乐子</a> <span aria-hidden="true">›</span> <span aria-current="page">找乐子——单位换算</span></nav>
-<h1 class="sr-only" data-auto>找乐子——单位换算</h1>
-
     <!-- 背景 -->
     <div class="bg-animation" aria-hidden="true">
         <div class="bg-flow-1"></div>
@@ -669,7 +658,9 @@ html { -webkit-tap-highlight-color: transparent; }
         <div class="grid">
             <!-- 标题区 -->
             <div class="title-area">
-                <h2>单位换算</h2>
+                <p class="ed-kicker">找乐子 · 工具</p>
+                <h1>单位换算</h1>
+                <p class="ed-lede">长度、重量、温度、面积、速度、数据大小——选好类别，输入即换算，双向可逆。</p>
             </div>
             <!-- 返回主页 -->
             <a href="工具导航.html" class="back-area" id="backHome" aria-label="返回主页">
@@ -714,6 +705,15 @@ html { -webkit-tap-highlight-color: transparent; }
     </div>
 
     <!-- 转圈覆盖层 -->
+    
+        <div class="ed-wrap">
+            <details class="ed-fold">
+                <summary>原理与技巧</summary>
+                <div class="ed-fold-body"><p>单位换算的本质是<strong>乘一个换算系数</strong>：1 英寸 = 25.4 毫米，1 磅 ≈ 453.6 克，1 GiB = 1024 MiB。记住几条常用系数，一半的换算可以口算：米↔英尺约 3.28，公里↔英里约 1.61，公斤↔磅约 2.2。</p><p>温度是唯一的例外：摄氏与华氏之间不是简单乘除，而是<strong>仿射变换</strong>（先乘 9/5 再加 32），因为它们零点不同——0℃ 是冰点，0℉ 是盐水结冰点。</p><p>数据大小注意大小写：小写 b 是位（bit），大写 B 是字节（Byte），1 B = 8 bit。宽带「百兆」是 100 Mb/s，实际下载峰值约 12.5 MB/s。</p></div>
+            </details>
+            <footer class="ed-footer">找乐子 · 工具全程在本机运行，数据不出浏览器</footer>
+        </div>
+    
     <div class="overlay" id="overlay">
         <div class="loader-wrap">
             <div class="loader-ring"></div>
@@ -723,7 +723,7 @@ html { -webkit-tap-highlight-color: transparent; }
 
     <script>
 /*ZL-OBF-V2*/
-const _0x4c993b=_0x160f,unitData={'length':{'label':'长度','units':{'米':0x1,'千米':0x3e8,'厘米':0.01,'毫米':0.001,'英尺':3.28084,'英寸':39.3701,'英里':0.000621371,'码':1.09361,'海里':0.000539957}},'weight':{'label':'重量','units':{'千克':0x1,'克':0.001,'毫克':0.000001,'吨':0x3e8,'磅':2.20462,'盎司':35.274,'斤':0.5,'两':0.05}},'temperature':{'label':'温度','units':{'摄氏度':null,'华氏度':null,'开尔文':null}},'area':{'label':'面积','units':{'平方米':0x1,'平方千米':0xf4240,'平方厘米':0.0001,'公顷':0x2710,'亩':666.6667,'平方英尺':10.7639,'平方英寸':1550.0031,'平方码':1.19599}},'speed':{'label':'速度','units':{'米/秒':0x1,'千米/小时':0.277778,'英里/小时':2.23694,'节':1.94384,'英尺/秒':3.28084,'马赫':0.00293858}}},categorySelect=document['getElementById'](_0x4c993b(0x18f)),fromUnitSelect=document['getElementById'](_0x4c993b(0x191)),toUnitSelect=document[_0x4c993b(0x18c)]('toUnitSelect'),numberInput=document[_0x4c993b(0x18c)](_0x4c993b(0x189)),outputValue=document['getElementById'](_0x4c993b(0x18b)),outputUnit=document[_0x4c993b(0x18c)]('outputUnit'),backHome=document['getElementById']('backHome'),overlay=document[_0x4c993b(0x18c)](_0x4c993b(0x181));let currentCategory=_0x4c993b(0x18a),isTransitioning=![];function populateUnitSelects(_0x54ee68){const _0x5d8955=_0x4c993b;if(!unitData[_0x54ee68])_0x54ee68='length';const _0x540d89=Object['keys'](unitData[_0x54ee68][_0x5d8955(0x183)]);fromUnitSelect[_0x5d8955(0x182)]='',toUnitSelect['innerHTML']='',_0x540d89['forEach'](function(_0xf08195){const _0x4f31c9=_0x5d8955,_0xb56db4=document['createElement'](_0x4f31c9(0x199));_0xb56db4['value']=_0xf08195,_0xb56db4[_0x4f31c9(0x186)]=_0xf08195,fromUnitSelect['appendChild'](_0xb56db4);const _0x159084=document['createElement'](_0x4f31c9(0x199));_0x159084['value']=_0xf08195,_0x159084[_0x4f31c9(0x186)]=_0xf08195,toUnitSelect['appendChild'](_0x159084);}),_0x540d89['length']>=0x2?(fromUnitSelect['value']=_0x540d89[0x0],toUnitSelect['value']=_0x540d89[0x1]):(fromUnitSelect['value']=_0x540d89[0x0],toUnitSelect['value']=_0x540d89[0x0]);}function convertTemperature(_0x3e5442,_0x3c7439,_0x1b80af){const _0x203c22=_0x4c993b;let _0x2ac6df;switch(_0x3c7439){case'摄氏度':_0x2ac6df=_0x3e5442;break;case _0x203c22(0x187):_0x2ac6df=(_0x3e5442-0x20)*0x5/0x9;break;case _0x203c22(0x193):_0x2ac6df=_0x3e5442-273.15;break;default:return NaN;}switch(_0x1b80af){case'摄氏度':return _0x2ac6df;case'华氏度':return _0x2ac6df*0x9/0x5+0x20;case'开尔文':return _0x2ac6df+273.15;default:return NaN;}}function performConversion(){const _0x21a79d=_0x4c993b,_0x562e5b=currentCategory,_0x2dd353=fromUnitSelect[_0x21a79d(0x18e)],_0x2f61e9=toUnitSelect[_0x21a79d(0x18e)],_0x5b1004=numberInput['value']['trim']();if(_0x5b1004===''||_0x5b1004==='-'||_0x5b1004==='.'){outputValue['textContent']='—',outputValue['className']='output-value',outputUnit[_0x21a79d(0x186)]='';return;}const _0x233361=parseFloat(_0x5b1004);if(isNaN(_0x233361)){outputValue['textContent']=_0x21a79d(0x194),outputValue[_0x21a79d(0x196)]=_0x21a79d(0x188),outputUnit['textContent']='';return;}let _0x2e3b54;if(_0x562e5b==='temperature')_0x2e3b54=convertTemperature(_0x233361,_0x2dd353,_0x2f61e9);else{const _0x214cfd=unitData[_0x562e5b]['units'][_0x2dd353],_0x341c75=unitData[_0x562e5b]['units'][_0x2f61e9];if(_0x214cfd===undefined||_0x341c75===undefined){outputValue['textContent']='—',outputValue['className']='output-value',outputUnit['textContent']='';return;}const _0x54bbb1=_0x233361*_0x214cfd;_0x2e3b54=_0x54bbb1/_0x341c75;}if(isNaN(_0x2e3b54)||!isFinite(_0x2e3b54)){outputValue['textContent']=_0x21a79d(0x197),outputValue[_0x21a79d(0x196)]=_0x21a79d(0x188),outputUnit['textContent']='';return;}let _0x55ce8b;Math['abs'](_0x2e3b54)>=0x3b9aca00||Math[_0x21a79d(0x195)](_0x2e3b54)<0.000001&&_0x2e3b54!==0x0?_0x55ce8b=_0x2e3b54[_0x21a79d(0x185)](0x6):(_0x55ce8b=_0x2e3b54['toPrecision'](0xa)['replace'](/\.?0+$/,''),_0x55ce8b['length']>0xe&&(_0x55ce8b=_0x2e3b54['toFixed'](0x6)['replace'](/\.?0+$/,''))),outputValue['textContent']=_0x55ce8b,outputValue['className']='output-value',outputUnit['textContent']=_0x2f61e9;}categorySelect['addEventListener']('change',function(){const _0xca177=_0x4c993b;currentCategory=this[_0xca177(0x18e)],populateUnitSelects(currentCategory),performConversion();}),fromUnitSelect['addEventListener'](_0x4c993b(0x198),performConversion),toUnitSelect['addEventListener']('change',performConversion),numberInput[_0x4c993b(0x19a)]('input',performConversion),numberInput['addEventListener']('change',performConversion);function init(){currentCategory=categorySelect['value'],populateUnitSelects(currentCategory),performConversion();}function _0x25ed(){const _0x1a529b=['overlay','innerHTML','units','click','toExponential','textContent','华氏度','output-value\x20small-text','numberInput','length','outputValue','getElementById','active','value','categorySelect','location','fromUnitSelect','工具导航.html','开尔文','请输入有效数值','abs','className','无法换算','change','option','addEventListener'];_0x25ed=function(){return _0x1a529b;};return _0x25ed();}function _0x160f(_0xfa4c42,_0x25ed1b){_0xfa4c42=_0xfa4c42-0x181;const _0x160fba=_0x25ed();let _0x4551b5=_0x160fba[_0xfa4c42];return _0x4551b5;}init(),backHome['addEventListener'](_0x4c993b(0x184),function(_0x400374){const _0x5a90e0=_0x4c993b;_0x400374['preventDefault']();if(isTransitioning)return;isTransitioning=!![],overlay['classList']['add'](_0x5a90e0(0x18d)),setTimeout(function(){const _0x5b8ba4=_0x5a90e0;window[_0x5b8ba4(0x190)]['href']=_0x5b8ba4(0x192);},0x3e8);});
+function _0xaa5d(){const _0x3e35c9=['overlay','keys','value','length','appendChild','textContent','forEach','replace','temperature','add','className','createElement','option','开尔文','addEventListener','output-value','change','innerHTML','location','output-value\x20small-text','getElementById','units','abs'];_0xaa5d=function(){return _0x3e35c9;};return _0xaa5d();}const _0x3f864b=_0x551f,unitData={'length':{'label':'长度','units':{'米':0x1,'千米':0x3e8,'厘米':0.01,'毫米':0.001,'英尺':3.28084,'英寸':39.3701,'英里':0.000621371,'码':1.09361,'海里':0.000539957}},'weight':{'label':'重量','units':{'千克':0x1,'克':0.001,'毫克':0.000001,'吨':0x3e8,'磅':2.20462,'盎司':35.274,'斤':0.5,'两':0.05}},'temperature':{'label':'温度','units':{'摄氏度':null,'华氏度':null,'开尔文':null}},'area':{'label':'面积','units':{'平方米':0x1,'平方千米':0xf4240,'平方厘米':0.0001,'公顷':0x2710,'亩':666.6667,'平方英尺':10.7639,'平方英寸':1550.0031,'平方码':1.19599}},'speed':{'label':'速度','units':{'米/秒':0x1,'千米/小时':0.277778,'英里/小时':2.23694,'节':1.94384,'英尺/秒':3.28084,'马赫':0.00293858}}},categorySelect=document['getElementById']('categorySelect'),fromUnitSelect=document['getElementById']('fromUnitSelect'),toUnitSelect=document[_0x3f864b(0x1f3)]('toUnitSelect'),numberInput=document['getElementById']('numberInput'),outputValue=document[_0x3f864b(0x1f3)]('outputValue'),outputUnit=document['getElementById']('outputUnit'),backHome=document['getElementById']('backHome'),overlay=document[_0x3f864b(0x1f3)](_0x3f864b(0x1df));function _0x551f(_0x21e5b2,_0xaa5d37){_0x21e5b2=_0x21e5b2-0x1df;const _0x551f0c=_0xaa5d();let _0x20aae1=_0x551f0c[_0x21e5b2];return _0x20aae1;}let currentCategory='length',isTransitioning=![];function populateUnitSelects(_0x523051){const _0x1f4ebb=_0x3f864b;if(!unitData[_0x523051])_0x523051='length';const _0x475f85=Object[_0x1f4ebb(0x1e0)](unitData[_0x523051][_0x1f4ebb(0x1f4)]);fromUnitSelect['innerHTML']='',toUnitSelect[_0x1f4ebb(0x1f0)]='',_0x475f85[_0x1f4ebb(0x1e5)](function(_0x57344e){const _0x13967c=_0x1f4ebb,_0x249b67=document[_0x13967c(0x1ea)](_0x13967c(0x1eb));_0x249b67['value']=_0x57344e,_0x249b67[_0x13967c(0x1e4)]=_0x57344e,fromUnitSelect[_0x13967c(0x1e3)](_0x249b67);const _0x1ac2dd=document['createElement']('option');_0x1ac2dd['value']=_0x57344e,_0x1ac2dd['textContent']=_0x57344e,toUnitSelect['appendChild'](_0x1ac2dd);}),_0x475f85[_0x1f4ebb(0x1e2)]>=0x2?(fromUnitSelect['value']=_0x475f85[0x0],toUnitSelect['value']=_0x475f85[0x1]):(fromUnitSelect['value']=_0x475f85[0x0],toUnitSelect['value']=_0x475f85[0x0]);}function convertTemperature(_0x5c37e7,_0x2d3a20,_0x10335e){const _0x19dc81=_0x3f864b;let _0xfe89c0;switch(_0x2d3a20){case'摄氏度':_0xfe89c0=_0x5c37e7;break;case'华氏度':_0xfe89c0=(_0x5c37e7-0x20)*0x5/0x9;break;case _0x19dc81(0x1ec):_0xfe89c0=_0x5c37e7-273.15;break;default:return NaN;}switch(_0x10335e){case'摄氏度':return _0xfe89c0;case'华氏度':return _0xfe89c0*0x9/0x5+0x20;case _0x19dc81(0x1ec):return _0xfe89c0+273.15;default:return NaN;}}function performConversion(){const _0x22c639=_0x3f864b,_0x344e3e=currentCategory,_0x40417e=fromUnitSelect['value'],_0x50df7a=toUnitSelect['value'],_0x43622b=numberInput['value']['trim']();if(_0x43622b===''||_0x43622b==='-'||_0x43622b==='.'){outputValue['textContent']='—',outputValue['className']='output-value',outputUnit[_0x22c639(0x1e4)]='';return;}const _0x564fcb=parseFloat(_0x43622b);if(isNaN(_0x564fcb)){outputValue['textContent']='请输入有效数值',outputValue['className']=_0x22c639(0x1f2),outputUnit['textContent']='';return;}let _0x44f543;if(_0x344e3e===_0x22c639(0x1e7))_0x44f543=convertTemperature(_0x564fcb,_0x40417e,_0x50df7a);else{const _0x25c1b3=unitData[_0x344e3e][_0x22c639(0x1f4)][_0x40417e],_0x574ca4=unitData[_0x344e3e][_0x22c639(0x1f4)][_0x50df7a];if(_0x25c1b3===undefined||_0x574ca4===undefined){outputValue[_0x22c639(0x1e4)]='—',outputValue['className']='output-value',outputUnit[_0x22c639(0x1e4)]='';return;}const _0xcee4f4=_0x564fcb*_0x25c1b3;_0x44f543=_0xcee4f4/_0x574ca4;}if(isNaN(_0x44f543)||!isFinite(_0x44f543)){outputValue[_0x22c639(0x1e4)]='无法换算',outputValue[_0x22c639(0x1e9)]='output-value\x20small-text',outputUnit[_0x22c639(0x1e4)]='';return;}let _0x1698f8;Math['abs'](_0x44f543)>=0x3b9aca00||Math[_0x22c639(0x1f5)](_0x44f543)<0.000001&&_0x44f543!==0x0?_0x1698f8=_0x44f543['toExponential'](0x6):(_0x1698f8=_0x44f543['toPrecision'](0xa)[_0x22c639(0x1e6)](/\.?0+$/,''),_0x1698f8['length']>0xe&&(_0x1698f8=_0x44f543['toFixed'](0x6)['replace'](/\.?0+$/,''))),outputValue[_0x22c639(0x1e4)]=_0x1698f8,outputValue['className']=_0x22c639(0x1ee),outputUnit['textContent']=_0x50df7a;}categorySelect['addEventListener']('change',function(){currentCategory=this['value'],populateUnitSelects(currentCategory),performConversion();}),fromUnitSelect[_0x3f864b(0x1ed)](_0x3f864b(0x1ef),performConversion),toUnitSelect['addEventListener'](_0x3f864b(0x1ef),performConversion),numberInput['addEventListener']('input',performConversion),numberInput['addEventListener']('change',performConversion);function init(){const _0xee9e0f=_0x3f864b;currentCategory=categorySelect[_0xee9e0f(0x1e1)],populateUnitSelects(currentCategory),performConversion();}init(),backHome['addEventListener']('click',function(_0x38aa9c){const _0x43bf0f=_0x3f864b;_0x38aa9c['preventDefault']();if(isTransitioning)return;isTransitioning=!![],overlay['classList'][_0x43bf0f(0x1e8)]('active'),setTimeout(function(){const _0x1c2c65=_0x43bf0f;window[_0x1c2c65(0x1f1)]['href']='工具导航.html';},0x3e8);});
 </script>
 </body>
 </html>
