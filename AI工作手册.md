@@ -178,3 +178,4 @@ service-worker.js / manifest.json ← PWA
 - **验证**：桌机+手机双机位截图 4 张（E:\上传网页\_probe\shots-v4\dt-现代-全站目录树.png / dt-现代-模块A计算机基础.png / mb-* 同名 2 张）——键帽阵列、墨色激活块、白字均正确；控件观感审计（audit-controls.mjs，189 页）无系统性破损（47 处 skip-link 为无障碍误报，真问题仅 scene-link 33px 触摸目标偏小 + 移动端浮动球压内容，列入遗留）。
 - **发布**：6b0db4e（113 文件 +142/−137，含 SW v385→v387），ls-remote 确认 e0e2c9f..6b0db4e 已推送到 GitHub；线上 Pages 构建有延迟，Last-Modified 待复核。
 - **沉淀**：① 凡「层叠滑块+文字」控件，必须检查全站内联 !important 刷色函数（contrastFix）的豁免名单；② 键帽类控件统一 36px 高 + var(--line) 发丝线，激活态墨底白字。
+- **续推（同日）**：`现代-生活场景速查.html` 的 `.scene-link` 由 padding 4px 11px（高 33px）改为 `inline-flex + min-height:36px + padding:0 12px`，触摸目标对齐键帽 36px 标准；发布 `ee633f5`，重跑 audit-controls（189 页）确认现报「高 36px」。新增探针 `E:\上传网页\_probe\cdpshot\probe-overlap.mjs`（390x844 fixed 元素压文字取证）：93 页命中多为 skip-link/瞬态 toast 假象，真命中仅 to-top/home-fab/cy-dock 覆盖右下角小徽标，属浮动球固有行为 → 判定不改动。
