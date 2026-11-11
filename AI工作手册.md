@@ -169,3 +169,12 @@ service-worker.js / manifest.json ← PWA
 - **其余修复**：① ed.css 词汇层补 `.title-area p/.ed-kicker/.small` 白字钉回（赞赏支持/打字测试白字隐形，特异性 0,1,1>0,1,0）与 `.container{border:0}`（暗号/黑客彩框）；② 暗号大全 outputZone 初始空白 → DOMContentLoaded 默认渲染一条随机暗号（真内容非纸老虎）；③ cy-common body `padding-bottom:88px` 预留固定 dock 空间（创意站底部不再压内容）；④ 娱乐游戏/工具导航 `t is not defined` 运行时错误（变量重命名漏引用）；⑤ 双人井字棋/分享卡片删页内重复小标题、反馈渠道渐变描边→发丝线。
 - **验证与发布**：冒烟 189/190 · 闸门绿 · 产物校验 20/0/0 · indexdiff body 0 变化（仅混淆种子重掷 1 行）· err-scan 0 错误 · 游离闭合符全清；发布 86a6a10（116 文件 +166/−136），ls-remote 确认 d411fe1..86a6a10 已上线。遗留候选：反馈渠道 promo 图仍为旧彩虹设计（图片资产，需人工重制）、分享卡片 promo 同、作者介绍头像待用户真图、黑客模拟器 SYSTEM BREACH 巨型水印为页面主题元素（保留）。
 - **发布注意**：一键自动化发布.bat 有 6 处 pause（含成功路径），非交互执行用 `cmd //c "一键自动化发布.bat" < /dev/null`（pause 遇 EOF 立即返回）。
+
+## 2026-11-12 V4.3 · 模块字母条「键帽化」+ contrastFix 竞态豁免（已发布 6b0db4e）
+
+- **起因**：用户截图指出模块导航条「按键没适配」——原 .mod-pill 是透明裸文字 + 悬浮胶囊滑块，无实体按键感。
+- **设计**（assets/css/xd-common.css，24 行）：`.mod-pill` 改为 36px 固定高**发丝线键帽**（1px var(--line) 描边 + 纸面底 + 居中字母，gap 4→6px）；激活态 `.mod-slider` 为**墨色实心滑块**，滑块上文字强制白色。视觉＝键帽阵列 + 墨块游标，与留白编辑风一致。
+- **🔴 隐形杀手（竞态）**：`assets/js/zl-features.js` 的 `contrastFix()` 会对「浅底浅字」内联刷 `!important` 色，**看不见层叠在按键下的实心滑块**，导致激活键墨底墨字（整页刷新偶发正常、从目录树进入必现）。修＝contrastFix 跳过 `.mod-strip` 及其子元素；同步去 xd-features.js 旧圆点。
+- **验证**：桌机+手机双机位截图 4 张（E:\上传网页\_probe\shots-v4\dt-现代-全站目录树.png / dt-现代-模块A计算机基础.png / mb-* 同名 2 张）——键帽阵列、墨色激活块、白字均正确；控件观感审计（audit-controls.mjs，189 页）无系统性破损（47 处 skip-link 为无障碍误报，真问题仅 scene-link 33px 触摸目标偏小 + 移动端浮动球压内容，列入遗留）。
+- **发布**：6b0db4e（113 文件 +142/−137，含 SW v385→v387），ls-remote 确认 e0e2c9f..6b0db4e 已推送到 GitHub；线上 Pages 构建有延迟，Last-Modified 待复核。
+- **沉淀**：① 凡「层叠滑块+文字」控件，必须检查全站内联 !important 刷色函数（contrastFix）的豁免名单；② 键帽类控件统一 36px 高 + var(--line) 发丝线，激活态墨底白字。
