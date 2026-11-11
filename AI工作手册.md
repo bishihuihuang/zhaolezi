@@ -160,3 +160,12 @@ service-worker.js / manifest.json ← PWA
 - **逐页 bespoke**：作者介绍整页重写（居中名片+楷体署名+真实文案+ed-fold，契约与头像保留，换掉「啥也没有/简介空空如也」占位文案）；免责声明去装饰 div+去重标题+卡扁平；在线词典 fold 移位+按钮去渐变。
 - **验证**：冒烟 189/190 · 产物校验 PASS · indexdiff 0 变化 · 闸门绿 403<407 · 无游离闭合符；发布 d411fe1（117 文件 +1000/−1253），线上 Last-Modified 23:52 GMT 确认真部署。
 - **铁律新增**：① CSS 注释里绝不写「星号+斜杠」序列（会提前闭注吞规则）；② 批量 CSS 正则替换后**必须截图亲眼看**（正则会产非法值、计算样式会骗人）；③ 计算样式探测脚本 .tmp/cdpshot/probe-style.mjs 可直查任意页任意元素的 computed 值。
+
+## 2026-11-12 V4.2 · 接手审计：全站 189 页视觉审计收官 + 三个真 bug 修复（已发布 86a6a10）
+
+- **审计方式**：不信任任何记载，全部实证重跑。① 五条铁律逐项验证：indexdiff body 结构 0 变化 / 源区自包含（190 html+5 css+13 js+全部资源目录）/ --blue=#667eea 与 THEME_EARLY data-theme=zhaolezi / Ctrl+K(Ctrl/Cmd/K 与 /) 命令面板在产物 common.js 实证存在 / 发布走 bat。② 上届声称的验证全套重跑：闸门 403<407 绿、产物校验 20/0/0、冒烟 189/190（豁免提示词-管理器）、err-scan 189 页 0 运行时错误、游离闭合符全清。③ **189 页桌面截图全量逐页亲眼看**（E:\上传网页\_probe\shots-v4\dt-*.png），按家族推进：找乐子游戏 11+工具 13+站务 20+创意 15+提示词 2+全能 2+现代课程 127（含 14 测验与全部特殊交互页）。
+- **🔴 真 bug 一（E/F/G 测验内容挤左半栏）**：这三页的 `<nav class="lesson-nav">` 被放在了 `</article>` **外面**（其余 124 页都在内部），成为 `main{display:flex}` 的第二个子元素 → article 被挤成 ~700px 左半栏、nav 按键行占右侧。修=源文件把 nav 挪回 article 内（A 页为正确样板）。教训：**同模板页面的 DOM 嵌套一致性也要抽查**（class 相同不等于结构相同）。
+- **🔴 真 bug 二（callout 内 `<b>` 全部块级化断句）**：xd-common.css `.callout b{display:block}` 本意是 callout 标题行块级，却波及正文内联加粗 → 模块J「保命口诀」每个加粗词独占一行、术语词典「69」孤行、毕业证书「A 到 N 十四个模块」孤行。修=`.callout > b:first-child{display:block}` 仅标题块级。教训：**块级化规则必须限定"标题位"（:first-child），不能裸选标签**。
+- **其余修复**：① ed.css 词汇层补 `.title-area p/.ed-kicker/.small` 白字钉回（赞赏支持/打字测试白字隐形，特异性 0,1,1>0,1,0）与 `.container{border:0}`（暗号/黑客彩框）；② 暗号大全 outputZone 初始空白 → DOMContentLoaded 默认渲染一条随机暗号（真内容非纸老虎）；③ cy-common body `padding-bottom:88px` 预留固定 dock 空间（创意站底部不再压内容）；④ 娱乐游戏/工具导航 `t is not defined` 运行时错误（变量重命名漏引用）；⑤ 双人井字棋/分享卡片删页内重复小标题、反馈渠道渐变描边→发丝线。
+- **验证与发布**：冒烟 189/190 · 闸门绿 · 产物校验 20/0/0 · indexdiff body 0 变化（仅混淆种子重掷 1 行）· err-scan 0 错误 · 游离闭合符全清；发布 86a6a10（116 文件 +166/−136），ls-remote 确认 d411fe1..86a6a10 已上线。遗留候选：反馈渠道 promo 图仍为旧彩虹设计（图片资产，需人工重制）、分享卡片 promo 同、作者介绍头像待用户真图、黑客模拟器 SYSTEM BREACH 巨型水印为页面主题元素（保留）。
+- **发布注意**：一键自动化发布.bat 有 6 处 pause（含成功路径），非交互执行用 `cmd //c "一键自动化发布.bat" < /dev/null`（pause 遇 EOF 立即返回）。
