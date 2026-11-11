@@ -20,6 +20,8 @@ body {
     line-height: 1.85;
     padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
              env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    /* 底部固定 .cy-dock（高约60px+14px偏移）会压住末尾内容，预留清空区 */
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
 }
 
 /* 触摸设备：禁用 hover 残留 */

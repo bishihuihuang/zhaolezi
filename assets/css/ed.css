@@ -222,6 +222,7 @@ td {
     width: min(94%, 1040px);
     margin-inline: auto;
     background: none;
+    border: 0;                 /* 原多页给容器加彩色粗框（var(--gold) 等），编辑风撤框 */
     border-radius: 0;
     box-shadow: none;
     padding: 0;
@@ -267,7 +268,8 @@ td {
     margin: 0 0 var(--ed-s4);
     padding: 9px 16px;
 }
-.title-area h2 {
+.title-area h2,
+.title-area h1 {
     background: none !important;
     -webkit-background-clip: initial;
     background-clip: initial;
@@ -278,6 +280,16 @@ td {
     letter-spacing: .015em;
     font-weight: 300;
     text-align: left;
+}
+/* 原多页把 .title-area 做成蓝底白字横幅：蓝底已被撤，白字须一并钉回，
+   否则 var(--btn-txt) 白字落在浅纸底=隐形（特异性 .title-area p 0,1,1 > .ed-lede 0,1,0） */
+.title-area .ed-kicker,
+.title-area p,
+.title-area small {
+    color: var(--ed-muted) !important;
+    -webkit-text-fill-color: var(--ed-muted);
+    text-shadow: none !important;
+    animation: none !important;
 }
 .back-area {
     background: none !important;

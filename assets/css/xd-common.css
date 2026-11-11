@@ -181,7 +181,7 @@ kbd { display: inline-block; padding: 2px 9px; border-radius: 6px; border: 1px s
 .callout.info { background: color-mix(in srgb, var(--blue) 7%, transparent); border-color: var(--blue); }
 .callout.tip { background: color-mix(in srgb, var(--green) 7%, transparent); border-color: var(--green); }
 .callout.warn { background: color-mix(in srgb, var(--red) 7%, transparent); border-color: var(--red); }
-.callout b { display: block; margin-bottom: 4px; }
+.callout > b:first-child { display: block; margin-bottom: 4px; } /* 仅标题行块级；正文内联 b 保持行内，否则句子被切碎（如模块J保命口诀） */
 
 /* 步骤列表：编号归于素净 */
 .step-list { counter-reset: step; margin: 16px 0; }

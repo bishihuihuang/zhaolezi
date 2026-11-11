@@ -150,3 +150,13 @@ service-worker.js / manifest.json ← PWA
 - **创意/提示词/全能**：cy-common V5 + 15 页去装饰与规整；提示词-欢迎页纯纸面重写（splashShown/跳转逻辑原封）；提示词-管理器与全能-文件保存规整扫（渐变→令牌/阴影→无/圆角统一）。
 - **净化与验证**：死装饰 CSS 括号匹配式剥离；transition:all 清除 25 页；风格闸门绿（存量 403 < 基线 407）；冒烟 189/190（豁免 1）；产物校验 20/0/0；indexdiff 首页 body 结构 0 变化；p0 回归探针 0 异常。
 - **新契约提醒**：① 页面 JS 若新增单字母变量会被风格闸门拦截（ exempts: i/j/k/x/y/e/_ ）；② 深度内容统一放 `<details class="ed-fold"><summary>…</summary><div class="ed-fold-body">…</div></details>`；③ 编辑风页头三件套 = `.ed-kicker` + `h1` + `.ed-lede`；④ ed.css 不注入 index.html，别给首页引用它。
+
+## 2026-11-11 V4.1 · 截图战役：揪出并修复 V4.0 设计系统「半死」缺陷（已发布 d411fe1）
+
+- **起因**：用户要求「实际截图观看的分析」。搭 CDP 单实例 Edge 截图管线（.tmp/cdpshot/shot-all.mjs，桌面 1280×900 + 手机 390×844 双机位，189 页全量），亲眼看后**发现 V4.0 发布版设计系统只活了部分**。
+- **🔴 根因一（最关键）**：ed.css 头注释写了「--zl-*/主题变量」，注释里的 `*/` 把文件首注释提前闭合，多余注释文字（全角标点无分号）一直吞到 :root 选择器 → **整个 --ed-* 令牌块被浏览器整条丢弃**。症状=页头挤窄栏竖排、字阶/字距/圆角/留白全失效。修=改写注释措辞；新增 `.tmp/游离注释闭合探测.js` 全站扫（现全站无同类）。
+- **🔴 根因二**：`ensureImgLazy` 正则 `[^>]*` 在 onerror 属性值内的 `>` 处提前截断，把 loading 塞进属性值中间 → 作者介绍/背包头像区解析碎片。修=带 onerror/onload 的 img 跳过注入。
+- **其余修复**：① `.container` 多页 max-height+overflow 内滚裁切内容 → max-height:none/overflow:visible（扫雷雷区不再截断）；② 彩虹滚动条 → thumb 加 !important 中性化；③ 页级自造 .decor-circle/.decorations 光斑 → ed 装饰静默改属性子串选择器 `[class*=decor/orb/glow/deco-/bg-flow]`；④ `.title-area` flex 行 → display:block 纵向堆叠 + grid-column 1/-1 通栏；⑤ `.back-area` 收缩为幽灵 pill；⑥ `.page-head` 通栏原语；⑦ 应用页（全能/提示词）6 处被早前正则替换打断的非法 `var(--gold-b,...),#xxx)` 坏背景 → 修为 none/纯色。
+- **逐页 bespoke**：作者介绍整页重写（居中名片+楷体署名+真实文案+ed-fold，契约与头像保留，换掉「啥也没有/简介空空如也」占位文案）；免责声明去装饰 div+去重标题+卡扁平；在线词典 fold 移位+按钮去渐变。
+- **验证**：冒烟 189/190 · 产物校验 PASS · indexdiff 0 变化 · 闸门绿 403<407 · 无游离闭合符；发布 d411fe1（117 文件 +1000/−1253），线上 Last-Modified 23:52 GMT 确认真部署。
+- **铁律新增**：① CSS 注释里绝不写「星号+斜杠」序列（会提前闭注吞规则）；② 批量 CSS 正则替换后**必须截图亲眼看**（正则会产非法值、计算样式会骗人）；③ 计算样式探测脚本 .tmp/cdpshot/probe-style.mjs 可直查任意页任意元素的 computed 值。
